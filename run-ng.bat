@@ -1,0 +1,1 @@
+python btd6bot/main.py "ng"

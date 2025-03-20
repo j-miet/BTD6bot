@@ -1,0 +1,10 @@
+This folder has previous code and files used in btd6bot.
+
+-For a thorough history, check 'project history.txt'
+
+-To see the first backup version of this project, check the 'btd6bot - 29.9.2024' folder.
+ (project was started on 14.9.2024 so this was the progress made in about 2 weeks)
+
+-ocr_matcher was the original method of testing ocr, which at the time was the screen_ocr library.
+ But this ocr was effective only with pre-existing images, so Images directory was needed to store
+ them.

@@ -1,0 +1,185 @@
+"""Contains Rounds class."""
+
+import time
+
+from bot import kb_mouse, times
+from bot.commands.flow import AutoStart, change_autostart
+from bot.bot_vars import BotVars
+import bot.menu_return
+from bot.ocr.ocr import weak_substring_check, strong_substring_check, strong_delta_check
+from bot.ocr.ocr_reader import OCR_READER
+from utils import timing
+from utils.exceptions import BotError
+
+class Rounds:
+    """Handles game start, round checks and returning to main menu.
+
+    Begin and end round (constant) values are imported from current plan file, or else they would need to be passed to
+    round_check repeatedly. Also, current round begin time is class variable, as it's needed to print round end times.
+
+    Attributes:
+        CURRENT_ROUND (tuple[float, float, float, float], class attribute): Text location of current in-game round, 
+            located in the upper-right of screen.
+        UPGRADE_TEXT (tuple[float, float, float, float], class attribute): Used in starting the first round.
+        NEXT_TEXT (tuple[float, float, float, float], class attribute): Exiting map.
+        LEVEL_UP (tuple[float, float, float, float], class attribute): Level up text location --CURRENTLY UNUSED--
+        DEFEAT (tuple[float, float, float, float], class attribute): Defeat screen 'bloons leaked' text location.
+        BUTTONS (dict[str, tuple[float, float]], class attribute): All required button locations to operate in-game 
+            rounds and exiting game.
+
+        begin (int, class attribute): Current plan first round. Should only change its value through a plan file when 
+            initialize() is called.
+        end (int, class attribute): Current plan last round. Should only change its value through a plan file when 
+            initialize() is called.
+        current_round_begin_time (float, class attribute): Stores starting time of current round. Should only change 
+            its value after round_check verifies current round.
+        defeat_status (bool, class attribute): Whether bot has been unable to place/upgrade a tower for a set period of 
+            time: this time is determined under BotVars.checking_time_limit.
+    """
+
+    CURRENT_ROUND: tuple[float, float, float, float] = (0.7181666666667, 0.027001, 0.8119791666667, 0.0685185185185)
+    UPGRADE_TEXT: tuple[float, float, float, float] = (0.875, 0.0175925925926, 0.9682291666667, 0.0638888888889) 
+    NEXT_TEXT: tuple[float, float, float, float] = (0.4364583333333, 0.8046296296296, 0.5526041666667, 0.8740740740741)
+    LEVEL_UP: tuple[float, float, float, float] = (0.4270833333333, 0.4907407407407, 0.5708333333333, 0.5648148148148)
+    DEFEAT: tuple[float, float, float, float] = (0.446875, 0.5361111111111, 0.5635416666667, 0.5712962962963)
+    BUTTONS: dict[str, tuple[float, float]] = {
+        'next_button': (0.5, 0.85),
+        'home_button': (0.37, 0.78),
+        'home_button2': (0.44, 0.78),
+        'defeat_home_button': (0.33, 0.75),
+        'defeat_home_button_first_round': (0.38, 0.75)
+        }
+    begin_round: int = 0
+    end_round: int = 0
+    current_round_begin_time: float = 0
+
+    defeat_status: bool = False
+
+    @staticmethod
+    def _defeat_check() -> bool:
+        # TODO: implemented this, put it under Rounds.round_check, Monkey._place and Monkey._check_upgrade.
+        ...
+
+    @staticmethod
+    def return_menu(final_round_start: float, total_start: float, final_round: int) -> None:
+        """Return to main menu after game completion.
+        
+        After game ends, a victory screen pops up. Then ocr is performed to find 'Next' text and click it + click the
+        home button opening after it.
+
+        Takes arguments of start and end time of final round, map start time and final round number to print
+        final round and map durations. Then clicks 'Next' and 'Home' button to return to main menu.
+
+        Args:
+            final_round_start: Start time of final round.
+            total_start: Start time from round 1 placements.
+            final_round: Final round number.
+        """
+        while not strong_delta_check('Next', Rounds.NEXT_TEXT, OCR_READER):
+            kb_mouse.click((0.999, 0.01))    # click away if round 100 insta pop-up.
+            time.sleep(1)
+        final_round_end = time.time()
+        times.time_print(final_round_start, final_round_end, f'Round {final_round}')
+        time.sleep(0.5)
+        times.time_print(total_start, final_round_end, 'Total')
+
+        print('Exiting map in...', end=' ')
+        timing.counter(3)
+        kb_mouse.click(Rounds.BUTTONS['next_button'])
+        time.sleep(0.5)
+        kb_mouse.click(Rounds.BUTTONS['home_button'])
+        time.sleep(0.5)
+        # for some reason, in apopalypse, the home button is placed slighty more to the right than usual.
+        kb_mouse.click(Rounds.BUTTONS['home_button2'])
+        bot.menu_return.returned()
+
+    @staticmethod
+    def start() -> None:
+        """Starts the game after seeing the 'Upgrades' message box top-right.
+
+        Checks also current autostart status and will change it to True if not already, as True is the default value 
+        (you start the bot with Autostart setting enabled in-game).
+        """
+        start_time = time.time()
+        while not weak_substring_check('Upgrades', Rounds.UPGRADE_TEXT, OCR_READER): 
+            if time.time() - start_time > 15:
+                for _ in range(3):
+                    kb_mouse.press_esc()
+                raise BotError("Failed to enter game: wrong map name in plan file, or map/game mode not unlocked.", 1)
+            kb_mouse.click((0.5, 0.69)) #if game mode is 'Apopalypse', click the button.
+            time.sleep(1)
+        time.sleep(0.5)
+        print('--> Running...')
+        kb_mouse.click((0.999, 0.01))  # closes any difficulty info pop-up window after entering a game.
+        time.sleep(1)
+        if AutoStart.autostart_status == False:
+            change_autostart()     
+
+    @staticmethod
+    def round_check(prev_round: int, map_start: float, mode: str = '') -> int:
+        """Handles round text checking, round time printing, updating current round and the end round check.
+        
+        Takes in the previous round value (which initially starts from begin-1) so that round updating can be done
+        inside this function. Otherwise, current round updating would be performed at the end of each plan file.
+
+        Has also checks for defeat screen detection.
+
+        Args:
+            prev_round: Previous round number.
+            map_start: Starting time of entire plan.
+            mode: Only used in forcing end round if game mode if 'Apopalypse'.
+            
+        Returns:
+            Current round number.
+        """
+        current_round: int
+        if Rounds.defeat_status:
+            wait_start = time.time()
+            while not weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
+                if time.time()-wait_start > 5:
+                    print("Didn't find defeat screen, returning to menu anyway.")
+                    kb_mouse.press_esc()
+                    time.sleep(1)
+                    kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
+                    time.sleep(0.5)
+                    kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
+                    bot.menu_return.returned()
+                    print('Plan completed.\n')
+                    return Rounds.end_round + 1
+                time.sleep(0.3)
+            print('Defeat screen detected. Returning to menu...', end=' ')
+            Rounds.defeat_status = False
+            timing.counter(3)
+            kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
+            time.sleep(0.5)
+            kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
+            print('\nPlan completed.\n')
+            return Rounds.end_round + 1
+        
+        current_round = prev_round + 1
+        if current_round == Rounds.begin_round:
+            Rounds.start()
+        elif current_round == Rounds.end_round+1:
+            Rounds.return_menu(Rounds.current_round_begin_time, map_start, Rounds.end_round)
+            print('\nPlan completed.\n')
+            return current_round
+        elif mode.lower() == 'apopalypse':
+            return Rounds.end_round
+        else:
+            total_time = time.time()
+            while not strong_substring_check(str(current_round)+'/'+str(Rounds.end_round), Rounds.CURRENT_ROUND, 
+                                             OCR_READER):
+                if (weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER) or
+                    (time.time() - total_time >= BotVars.checking_time_limit)):
+                    print('Defeat screen detected, returning...', end=' ')
+                    Rounds.defeat_status = True
+                    timing.counter(3)
+                    kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
+                    time.sleep(0.5)
+                    kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
+                    print("\nPlan completed.\n")
+                    return Rounds.end_round+1
+            times.time_print(Rounds.current_round_begin_time, time.time(), f'Round {current_round-1}')
+            print('===Current round:', current_round, '===')
+        Rounds.current_round_begin_time = time.time()
+        return current_round

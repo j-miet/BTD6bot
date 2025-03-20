@@ -1,0 +1,1080 @@
+---------------------------------------------------------------------------
+---------- Help/Readme for BTD6bot | Updated for game version 47 ----------
+---------------------------------------------------------------------------
+# This documentation is quite long and detailed so if you just want to get the bot going, scroll to 'TL;DR' section.
+  --a large factor contributing to its length is the 'CREATING CUSTOM GAMEPLANS' section: in the (hopefully near) 
+    future, a plan editor has been added with its own separate guide page, which allows cutting the length of this document by 600 lines or so.
+  --not only that, after all core features have been implemented, this entire text will be rewritten as it's a bit
+    dated, repetitive and too dense. 
+
+### This readme doesn't support searching: a better one can be found at github:
+---add github project address here---
+### Copy paste the above link (hyperlinks don't work as this document is essentially just a txt file)
+
+-----------------------
+<<<Table of contents>>>
+-----------------------
+-TL;DR
+-BTD6bot
+ --System/Hardware Requirements
+ --Features
+ --Game settings/requirements
+   >in-game
+   >bot
+ --How to navigate bot GUI
+-CREATING CUSTOM GAMEPLANS
+ --Plan file naming
+ --Writing plan contents after plan file exists
+   >plan info + how to select a hero
+   >rounds
+ --Write commands inside round blocks  
+   >Coordinate system 
+   >Commands
+
+
+
+---------------------------------------------------------------------------
+---------------------------------- TL;DR ----------------------------------
+---------------------------------------------------------------------------
+WHAT IS IT:
+-A program that automates gameplay in 'Bloons TD 6' by 
+ 1. following pre-specified rules,
+ 2. simulating mouse + keyboard to do things in-game, and
+ 3. using ocr (optical character recognition) to get information from the game.
+
+-So essentially 2. = sending information, 3. = getting information ==> 1. = combines 2. and 3. to make decisions
+ and execute correct commands.
+-supports only single player game modes under 'Play' button. These could technically get your account flagged for 
+ cheating, as botting is againts Ninja Kiwi's ToS. If you're concerned and don't want to risk it, run this bot offline.
+
+FEATURES: 
+-Program is split into Gui and the bot; these can operate separately so gui is not absolutely necessary, but very much 
+recommended. Gui-free version exists, but it lacks the options to run special modes + modify settings: these you need 
+to configure inside gui.
+-Can replay plans with 'Replay mode' enabled. Don't leave bot running for extremely long times as this too could get 
+ you flagged. Again, if you're worried, just play in offline mode.
+-Can choose queue of plans to execute with 'Queue mode' enabled; customize this list under 'Queue mode settings'
+-Can set collection event mode. This is a bit scuffed but should still work: if you want to focus only for maximing 
+ collection event progress, you should probably look elsewhere.
+-Has extra functions such as
+ >'Settings' window has some extra settings you can change, but you can run bot completely fine with default values. 
+  Current settings are nothing special, but eventually more practical ones will be added, such as custom display 
+  resolution.
+ >'Help' window which has this text you're currently reading.
+ >'Set hotkeys' window where you can set bot hotkeys to match your in-game hotkeys.
+ >'Queue mode maplist' to select all the maps you wish to run when queue mode is enabled.
+ >'Show plot' which opens a new window displaying data for currently selected plan.
+-Has a monitoring that display all bot commands during its runtime so user can follow everything if they wish to.
+-bot handles all stuff needed during game:
+  >loads the selected plan with correct hero and round settings
+  >then bot searches for menu 'play' text located under play button before it starts
+  >after it finds it, bot will handle everything from selecting hero to running the map on selected settings, then 
+   returning back to menu.
+   --the code underneath is of course more complex, but you as a user don't need to know about it. But if you wish to  
+     make your own plans, keep reading beyond TL;DR part.
+
+SYSTEM REQUIREMENTS:
+-have Windows operating system (Win10 or newer) - support for other OS might come in the future, but no promises.
+-preferably 2 monitors so you can keep bot monitoring window on second monitor (or just have videos/streams to 
+ entertain you)
+
+IN-GAME UNLOCKS:
+-preferably have all towers and their upgrades unlocked. However, plan documents should try to list all required 
+ monkeys with highest crosspaths + hero required under every plan, and make new plans with minimal to none monkey 
+ knowledge requirements, so you know what plans are possible with your current unlocks. Whether monkey knowledge is 
+ required or not, it's mentioned but the required knowledges are usually not explicitly stated.
+-have required map and game mode unlocked for the plans you'd like to play.
+
+IN-GAME SETTING (*These are extremely important*):
+-set your in-game resolution to maximum i.e. play with your native resolution; support for different resolutions will be
+ added under gui's 'Settings' button eventually but you'll have to stick with current implementation for now.
+-set your in-game language to ENGLISH --> bot needs to match text to pre-existing words, which are written in english.
+-enter any game and change these settings in escape menu:
+ >auto start = ON (*)
+ >placement mode = Drag & Drop
+ *bot will always expect auto start enabled when you start a new session: if any plan requires to disable it, bot does 
+  this automatically and will keep track of autostart status for the rest of current session. But when you close the 
+  entire program and re-open it, make sure the setting is always ON initially!!!
+
+BOT HOTKEYS:
+-press 'Set Hotkeys' button in bot gui to see all required hotkeys. Make sure that these match to your in-game ones, 
+ otherwise bot cannot realistically function at all.
+
+HOW TO START:
+-press 'initialize reader' button; it will load the ocr model into memory, allowing the bot to read text from monitor.  
+ Might take a bit, but eventually the initialize button text changes to 'Open bot window' after it's done.
+-open the monitoring window by pressing 'Open bot window' button and open your BTD6 main menu screen, with 'Play' 
+ text uncovered.
+-read the text in monitoring window text field to ensure everything is set up correctly, then press 'run' OR F9 and 
+ you're set. 
+ >To stop AND RESET bot, press F9 again.
+ >To close entire program instantly, press F11.
+
+DURING BOT RUNNING:
+-keep your game open on your main monitor at all times.
+-you can have the monitoring window on your second monitor if you like to follow what the bot's doing.
+ >you could also put videos/streams there, as long as you avoid moving mouse or pressing any keys.
+ >technically, you can scroll a website on second monitor, as this won't move mouse nor interfere with keyboard: this 
+  is possible due to how mouse clicking is implemented in bot: after it clicks a location, it will always return to 
+  previous position. Also, if you're absolutely certain nothing happens during a round or a few, you can move and click 
+  with mouse: just make sure it's still when bot executes commands.
+  (Some kind of pause button will be implemented at some point: it will not be a perfect instant pause, but rather 
+  pauses between commands, meaning there could be a delay of a few seconds)
+********************
+
+.
+.
+.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~actual help text starts from here~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.
+.
+.
+
+
+-----------------------------------------------------------------------------
+---------------------------------- BTD6bot ----------------------------------
+-----------------------------------------------------------------------------
+-is a program which can be used to automate strategies/plans, in Bloons TD 6.
+-is for standard single player modes only and therefore doesn't support anything else than maps & modes under 'Play' 
+ button in main menu.
+  >!!!IMPORTANT!!! 
+   You should *NEVER* try to use this bot for other modes such as Races, Bosses, CT, other competitive modes etc: don't 
+   be one of those guys with their fresh accounts, topping the leaderboards, only to be banned briefly after. Like come 
+   on, you're better than that!
+  >Even then, there's a small change to the get your account flagged (never happened to me, but botting is against 
+   Terms of Service), especially if you leave this bot running for extremely long periods. You should be fine if you 
+   use this every now and then - just don't leave it on for days. But if you're still concerned, just run BTD6 in 
+   offline mode during bot usage.
+-it simulates mouse clicks and keyboard inputs so after you start the bot (it tells you clearly when):
+  --don't move or click with mouse 
+  --scrolling should be probably ok as it's not needed in BTD6 so you can keep your mouse on second monitor and scroll 
+    a web page/document etc; this is possible because after every click, mouse cursor is returned back to its prior 
+    location. Obviously, already running videos/streams are fine, too.
+  --don't press keyboard keys. If you want to close the bot instantly, however, pressing 'F11' is fine. It should 
+    always work, unless a crash happens during runtime. Only other button is 'F9' which stops current bot loop.
+  --if you're absolutely sure nothing happens during bot runtime (for example, in Deflation you place towers on first 
+    round and then just afk until 60), you can do stuff with mouse and keyboard. But usually this is not adviced as it 
+    might interfere with bot commands, resulting into a possible bot restart.
+-doesn't currently have a way to detect level ups so you should preferably use higher level account. Bot keeps doing 
+ inputs during the level up pop-up and you might be fine, depending on its current actions. If not, bot might skip a 
+ commands, which could result into defeat and returning back to main menu.
+  --If you still use it on lower level accounts, play only single map at a time so if it breaks, go back to menu and 
+    run it again.
+
+TL;DR:
+-support only single player mode under 'play' button.
+-keep game open on main monitor at all times; if you have second monitor, you can put stuff there if it doesn't 
+ interfere with mouse/keyboard inputs.
+-bot is meant for higher-level accounts so it won't handle level ups/monkey knowledge popups: if bot fails due to 
+ these, just restart or let it return on its own.
+
+
+==================================
+## System/Hardware Requirements ##
+==================================
+-works only on Windows operating systems
+  --tested on Win10
+-should work on any modern computer. 
+  --might occasionally require more CPU usage as bot utilizes OCR, that is reading text from screen, and needs frequent 
+    matching for optimal results. Also, initializing the ocr reader requires like 400MB of ram allocated so don't 
+    worry, it's indented.
+  --shouldn't be much of a problem through; even my old laptop from 2015 that takes 3 minutes to boot up BTD6 managed 
+    to run this bot.
+-preferably have at least 2 monitors so you can monitor your monitoring window during bot runtime.
+  --...in other words:
+   1. bot needs your game window open at all times.
+   2. there will be a extra monitoring pop-up window during bot runtime which allows you to follow bot's current 
+      commands. Drag this on your second monitor before you start the bot, or don't, if you feel you'd rather have 
+      other stuff there.
+  --if you only have one monitor, you can just let it run on background. You can't see possible error messages this 
+    way, but bot should be fairly polished, thus errors, especially critical ones, quite rare.
+-you should play on your monitor's native/max resolution. For example, if 1920x1080 then set that for in-game res as 
+ well.
+   --haven't tested ultrawide resolutions
+   --idea is to add different resolution supports in the future.
+
+TL;DR:
+-have Windows (10 or newer) as your operating system
+-preferably have at least 2 monitors, but 1 works too.
+-set your in-game resolution to your monitor's maximum (native) resolution
+
+
+==============
+## Features ##
+==============
+-can be used to play any single map plan. Has also options for replaying and queueing multiple maps. Shows info of 
+ currently chosen plan if available.
+-has decently polished GUI (Graphical User Interface) so setting up and running bot should be relatively easy
+-'Show Plot' button in main window shows plot for all commands executed on each turn for chosen plan; you should be 
+ able to read what each command means, even if they're written in Python language. On top of this, shows some data 
+ charts if possible.
+-during bot execution, prints bot actions in a text box inside monitoring window. Shows also current (and possible  
+ next-in-queue) map. 
+ Monitoring text box displays:
+  -hero selection in menu and getting into a map
+  -placing a monkey (and attemps at placing it until succeeds)
+  -upgrading monkey (and attemps at upgrading it until succeeds)
+  -targeting changes
+  -ability use
+  -round times and total map at the end (not 100% accurate but still pretty good)
+  -detecting and setting game status to defeat and searching for defeat screen
+  -possible error messages if there were typos/bad inputs in code
+  -probably other, less important, stuff
+
+
+===================================
+## Game settings/requirements ##
+===================================
+## in-game ##
+
+ [Settings]
+ -set you language to ENGLISH
+   --bot uses OCR (Optical character recognition) to read text from the screen and match it to key words
+ -start any game, press 'Esc' and set 'Auto Start = ON' and also enable 'Drag & Drop'
+   --bot operates on auto start condition: it will only start game once per map, after first round tower placements.
+     >some special plans exists where autostart gets disabled, but bot will automatically disable this and revert back 
+      to auto after finishing.
+   --'Drag & Drop' means one click = tower placed, this is what we want. 'Drop & Lock' break it completely as towers 
+      can't be placed with single click.
+ -go to hotkeys window and leave it open; you need to copy some of your in-game hotkeys for bot in a minute
+  --bot relies heavily on your hotkey inputs; tower placements, upgrading, closing tower screen etc.
+  --it will ABSOLUTELY NOT WORK if it fails to use them.
+  --you should have following keys set to something:
+   ~all towers + hero
+   ~upgrade paths (top, mid, bottom)
+   ~target change + target reverse
+   ~special 1 & 2
+   ~sell & play 
+   ~abilities 1-10
+  --you will have additional help section open for you when you need to change set up keys for bot; more on that in 
+    #Bot section
+
+ [Progression Requirements]
+ -have all towers unlocked with all upgrades available, or play plans that match your unlocks: choose a map + strat, 
+  then checks what towers/upgrades are used, either by looking at the info panel, or by scrolling through the 'Show 
+  Plot' commands.
+ -make sure the map+strat combination you are playing is actually unlocked!
+ -(Optional) monkey knowledge
+  --generally, plans should not rely on these, but if they do, you will know it from gui info panel (under map image)
+  --so it can never harm to have them on but they are not required, unless stated otherwise.
+  --unless you're sure which knowledges are required, either tests them or stick no non-mk plans until you have 
+    everything.
+
+## bot ##
+ -set your in-game hotkeys for bot to use
+  --open your btd6bot program
+  --click the 'Set Hotkeys' button; this will open a new window on top of main window
+  --there will be a help text included but simply
+   1. select any row from left panel -> it becomes highlighted
+   2. then press the 'Set Hotkey' button below that panel -> button becomes grayed out
+   3. then press any keyboard key that is supported (read the help text on right to see these) -> button is no longer 
+      grayed out
+   4. you should now see that the value on the right side of '=' sign has changed in that row you highlighted before
+  --now just repeat this for all keys if necessary; of course, if the keybinds are already matching yours, no need to
+    touch them!
+~~Yeah, that's it - nothing else needed for bot. Hotkeys will be saved in a text file and read there every time you 
+  open program, so you don't need to set them again every time! They are also updated before entering game, in case you 
+  wish to change them during program runtime.
+
+TL;DR (on setting up your BTD6 settings + bot settings):
+-set your in-game language to ENGLISH.
+-set auto start = ON and enable 'Drag & Drop' - both are absolutely necessary for bot to operate!
+-have all towers and their upgrades unlocked, or play plans that support your current progression.
+-have required map, difficulty and game mode unlocked for the plan you'd like to play.
+-monkey knowledge requirements vary: if there's a need for them, it will be mentioned clearly in map info text inside 
+ bot GUI. If you're unsure, play on those without requiring any.
+-above are for in-game stuff. For bot, all you need is to press 'Set Hotkeys' in bot GUI and match hotkeys to your 
+ in-game ones.
+
+
+=============================
+## How to navigate bot GUI ##
+=============================
+Now that you've set in-game settings and hotkeys, it's time to give the bot a go!
+After you open program, you are placed into main window of GUI
+
+-GUI is divided into different windows:
+  ~Main Window; 
+   -initial window, opens other windows with button presses, has drop-down menus for maps and strategies + show plot 
+    button.
+  ~Hotkey Window
+   -set your in-game hotkeys for bot to utilize them (you should've already done this)
+  ~Queue mode maplist window
+   -choose sequence of plans for bot to execute if Queue mode is enabled
+  ~Help Window (you're currently here reading this text)
+  ~Settings Window, for some advanced settings: you can have these at default values.
+  ~Monitoring Window
+   -during bot execution, prints bot actions in a text window. Shows also current (and possible next-in-queue) map.
+   -before you can open this window, the ocr initializer must be loaded, taking approximately 10-15 seconds.
+
+Let's do a short overview of what each window does:
+
+## General info ##
+-if any top level window is open, 'Open bot window' button is disabled temporarily. This is especially important if 
+ monitoring window is open to avoid opening multiple instances of bot.
+-you can close any top level window at any time. If you close main window, entire program terminates.
+ *Alternate way to shut down program (unless it crashes) is to press 'F11' key - don't bind any hotkeys to this button! 
+
+[Main Window]
+-keeps the program running - if you close this, everything closes.
+ --has different button that lead to windows mentioned above + a few other buttons/switches/drop-down menus.
+ --has image of your currently chosen map.
+ --has info text box of you currently chosen plan; this is a manually written file so it might be empty for some plans
+-if you want to quickly start bot, choose map + strategy from drop-down menus -> press 'Initialize reader', wait for a 
+ bit, then press 'Open bot window'.
+ --this will open the monitoring window which allows you to run the bot itself by pressing 'Run'
+-you can enable optional modes before starting bot (must initialize ocr reader first):
+ --Queue mode plays all maps in current queue. To edit queue, press 'Queue mode maplist' button.
+  >toggling it will disable drop-menu boxes, the info box, the map image and also the plot button as there's no reason 
+   to let user update them
+ --Replay mode repeats current map, or if queue mode is on, all maps in current queue, indefinitely.
+-'Show plot' button open a separate window which displays a chart.
+ --one is the bot commands chart:
+   >on x-axis, you have round numbers where bot does issues commands
+   >on y-axis, or rather on top of each x-axis box, it displays all commands it will issues over round, starting from 
+    top
+   >to move chart, press the slider object at any location.
+ --other charts are for data like round times and cash spent on each round/in total etc.
+-'Queue mode maplist' opens, as stated before, opens new window where you can modify your current map queue for Queue 
+  mode.
+-'Set Hotkeys' should be familiar to you at this point - it's used to copy your in-game hotkeys for bot.
+-'Help' is the current window you are reading at this very moment.
+
+[Hotkey Window]
+-used to copy your in-game hotkeys for bot to use
+  --saved in a text file so program can always read them, modify rows and save again etc.
+  --has separate guide text included.
+
+[Queue mode maplist window]
+-reads all currently saved plans and displays them on right panel. On left panel, shows all currently selected plans, 
+ loaded from a text file
+ --can add same plan multiple times, move plans them up/down in order and remove them.
+ --will only read from this list if 'Queue mode' switch button is ticked.
+
+[Help Window]
+-general help window (you might be reading it at the moment), it will be updated if any notable changes happen to this 
+ program.
+
+[Monitoring Window]
+-after pressing 'Open bot window', a monitoring window is opened. It controls currently running bot.
+-Prints some help text to remind user for setting up everything prior to running bot.
+ --after this, all prints during bot runtime are directed to this window
+ --window can be scrolled and will automatically move down as more text is printed
+-has current map image + basic info box. Will also display next map in queue if it exists. This updates automatically 
+ after map completion
+-has 'RUN' button which will start bot. After that it displays 'STOP' instead to stop bot.
+ --pressing 'RUN' makes bot search for start menu 'Play' text 
+  -well it actually searches 'play' around that location on your screen. You could fool it with putting text doc over 
+  that spot with same word and it would match.
+  -but you wouldn't do that - so have the game screen open before you press 'RUN'
+ --*IMPORTANT* pressing 'STOP' will *stop* bot, not pause it. This will reset bot, so it will run a plan from the 
+   start, and perhaps more importantly, reset queue of maps back to first one.
+ 
+
+
+-----------------------------------------------------------------------------------------------
+---------------------------------- CREATING CUSTOM GAMEPLANS ----------------------------------
+-----------------------------------------------------------------------------------------------
+
+This section is technical in nature, as current way of adding plans requires moving and editing .py files.
+ >a gui-level plan editor is planned, but currently no ETA on that.
+ >new plans will be added every now and then: initial goal is to get a relatively rng-free strat for every single 
+  expert map so black borders become feasible.
+
+-plans are divided into:
+ >creating a plan file (= naming it accordingly + making sure the map it's meant for has existing image)
+ >writing all the stuff in it (= adding info text, hero, rounds and commands)
+
+
+======================
+## Plan file naming ##
+======================
+-name plan file according to map + diff + game mode you want. 
+ -original implementation had folder for each map but ultimately decision came down to placing them under a single 
+  folder instead and separate them by current naming format
+ ---this format both immediately tells user which map, difficulty and mode it's meant for, and thus avoids duplicates
+ ---it would be cleaner to have all these .py files replaced with some format of text files and build a separate 
+    handler for such files, but current files are pretty easy to work with anyway so can't really bother. And in 
+    reality, it would be quite pointless, as current system works well with object-oriented style + all chart plotting 
+    is also heavily tied to this file structure.
+-you can use the 'plan template/plan_template.py' as base template.
+-all plan files must be put under 'plans' folder.
+
+>>>So how to do it:
+ 'map_nameDifficultyMode' where
+   -map_name is maps name, with _ replacing spaces (so if multiple spaces then first_second_third)
+   -Difficulty is game difficulty - Easy, Medium or Hard - and will ALWAYS start with capital letter AND end with 
+    lowercase 
+     >this allows program to know where map name ends, and also where difficulty name starts and ends
+   -Mode work just like difficulty: begins with a capital letter, rest lowercase (or more spefically, rest on them 
+    won't matter in Mode, but keep things consistent!)
+  -you can create up to 9 plans on a single map+diff+mode by adding a number 2-9 (and of course, no number at all).
+*Optional* After plan file is done, drop the scaled map image (resolution must be 320x195 - yes it's pretty weird) to 
+Files/map images.
+
+Remember: file names have spaces, but map_name has spaces replaced with '_'.
+
+-examples
+    Dark Castle, Hard, on Chimps -> 'dark_castleHardChimps.py' (dark castle.png)
+    End of the road, Medium, on Military only -> end_of_the_roadMediumMilitary (end of the road.png)
+    #Ouch, Easy, Deflation -> ouchEasyDeflation (ouch.png)
+    #Ouch, Easy, Deflation, but a different plan, say 2nd and 9th -> ouchEasyDeflation2 / ouchEasyDeflation9
+
+
+[all map names (map_name)]          [all difficulties (Difficulty)]          [game modes (Mode)]
+monkey meadow                                                  Easy                     Standard
+in the loop                                                  Medium                      Primary
+middle of the road                                             Hard                    Deflation
+tree stump                                                                              Military
+town center                                                                           Apopalypse
+one two tree                                                                             Reverse
+scrapyard                                                                                  Magic
+the cabin                                                                              Double_hp
+resort                                                                                  Halfcash
+tinkerton                                                                              Alternate
+skates                                                                                Impoppable
+lotus island                                                                              Chimps
+candy falls
+winter park
+carved
+park path
+alpine run
+frozen over
+cubism
+four circles
+hedge
+end of the road
+logs
+sulfur springs
+luminous cove
+water park
+polyphemus
+covered garden
+quarry
+quiet street
+bloonarius prime
+balance
+encrypted
+bazaar
+adora's temple
+spring spring
+kartsndarts
+moon landing
+haunted
+downstream
+firing range
+cracked
+streambed
+chutes
+rake
+spice islands
+castle revenge
+dark path
+erosion
+midnight mansion
+sunken columns
+x factor
+mesa
+geared
+spillway   
+cargo
+pat's pond
+peninsula
+high finance
+another brick
+off the coast
+cornfield
+underground
+glacial trail
+dark dungeons
+sanctuary
+ravine
+flooded valley
+infernal
+bloody puddles
+workshop
+quad
+dark castle
+muddy puddles
+ouch
+ancient portal
+last resort
+
+TL;DR (on setting up a map file):
+-name maps with 'this_map_nameDifficultyMode.py' format (Python file)
+  --move this under 'btd6bot/plans' folder
+-a plan template can be found in 'plan template.py' - just make a copy out of it.
+-Optionally, you can add an image for a map in 'map images' folder: if map image doesn't exists, download one (from 
+https://bloons.fandom.com/wiki/Maps?so=search#Bloons_TD_6_Maps, for example), scale it to right res (320x195 currently) 
+and drop it inside btd6bot/Files/map images (if folder doesn't exist, create it)
+
+
+==================================================
+## Writing plan contents after plan file exists ##
+==================================================
+You should now have a plan template in front of you that is placed inside 'btd6bot/plans'.
+If you used the template file (plan template/plan template.py) it should look like this (without the /////////)
+
+/////////
+"""
+[Plan Name]
+[Game Version]
+[Monkey Knowledge]
+[Hero]
+-------------------------------------------------------------
+
+.
+.
+.
+
+"""
+
+from time import time
+
+from bot.flow import begin, end_round, change_autostart, sleep
+import bot.menu_start as menu_start
+from bot.monkeys.monkey import Monkey
+from bot.monkeys.hero import Hero
+from bot.monkeys.ability import ability
+from bot.rounds import Rounds
+
+def play(rounds: tuple[str, str, str, int, int, str]) -> None:
+    BEGIN, END = menu_start.load(*rounds)
+    current_round = BEGIN-1
+    map_start = time()
+    while current_round < END+1:
+        current_round = Rounds.round_check(current_round, map_start)
+        if current_round == BEGIN:     
+            begin()
+        elif current_round == END:
+            ...
+/////////
+
+## plan info + how to select a hero ##
+At the beginning of plan file, there is document string:
+
+"""
+[Plan Name]
+[Game Version]
+[Monkey Knowledge]
+[Hero]
+-------------------------------------------------------------
+
+.
+.
+.
+
+"""
+
+"""Lines between these triple quotes""" are displayed in gui info panel, just under map image. Most of these lines are 
+not actually required, in fact only [Hero] must be found, but should be included to give information for user.
+
+Plan Name: should be the file name of this plan without the .py
+[Plan Name] dark_castleEasyStandard
+
+Game Version: version this plan was last tested: for most plans, this could be many version back, but for harder 
+ones, they should be tested every patch or two and updated here.
+[Game Version] 45
+
+Monkey Knowledge: Whether plan requires knowledge or not: you can type 'Yes' or 'No'/'-'. 
+ >And yes, you should this for Chimps plans too; maybe the '-' looks better there as all monkey knowledge is always  
+  disabled so there's no choice between 'Yes' or 'No'.
+ >You don't need to specify the knowledges necessarily, but if you want to, include them in the general section (see 
+  General).
+[Monkey Knowledge] No
+[Monkey Knowledge] -    (this means the same as first)
+[Monkey Knowledge] Yes
+
+Hero: this is the most important as it decides your hero for current plan. If you don't use hero in current plan, type 
+'-'; you could also type None, but '-' looks better. Also, if hero name is invalid, bot will auto-select Quincy as 
+default value.
+[Hero] Quincy     (write hero names in first uppercase, rest lowercase)
+[Hero] sauda      (but if you forget, no worries, only the name matter - not the casing)
+[Hero] -
+[Hero] None       (this and one above means no specific hero is selected)
+
+[all heroes]
+Quincy
+Gwen
+Striker
+Obyn
+Rosalia
+Churchill
+Benjamin
+Pat
+Ezili
+Adora
+Etienne
+Sauda
+Brickell
+Psi
+Geraldo   (don't use Geraldo: shop use is yet to be implemented)
+Corvus    (don't use Corvus: spellbook use is yet to be implemented)
+
+## rounds ##
+The code below info section should not be touched, except the if and elif blocks:
+
+///
+if current_round == BEGIN:     
+    begin()
+elif current_round == END:
+    ...
+///
+
+First round is always denoted like this
+    if current_round == BEGIN:
+
+and if nothing else, it has to contain the begin() function call
+    begin()
+
+to let bot start the round. Here BEGIN is a (constant) variable that has first round value stored. You don't need to 
+input this number: program automatically sets this value based on your file name. Same holds for END which stands for 
+end/final round. So by combining these, your first round will always look like this
+
+if current_round == BEGIN:
+    begin()
+
+<NOTE> remember to indent code inside 'if' block; press 'Tab' or add 4 spaces.
+
+After this, your rounds start with 'elif' instead of 'if' and have either round number
+
+elif current_round == 10:
+    ...some code here...
+
+or if it's the final round, you replace number with END
+
+elif current_round == END:
+    ...some code here...
+
+But what if round blocks have nothing in them? Well there's 2 ways to handle this:
+ 1. add ... inside the round block. This way the 'elif' block is not empty and will not throw an error.
+ 2. don't include the block at all! If there's no commands, why even check!
+    >this also includes END round: if nothing happens there, no need to include it!
+
+Deflation plans:
+-If you set up plans for Deflation, it's completely fine to have all instructions under first round and have nothing 
+ else under it: rounds can change so quickly that bot might skip over some rounds, which it doesn't handle very well.
+-Two very important things for deflation: 
+ 1. rounds cannot be paused, so game will always start in normal speed. To enable fast speed (which would normally be   
+    the same as enabling normal speed), you type the command:
+        begin('normal')
+
+ 2. because you typically put all commands under first round, you need to let bot know when it should move on from 
+    searching round 2, to searching for final round END: you need to add the following as final command:
+        current_round == END
+
+<NOTE: MAKING PLANS WITHOUT AUTOSTART ON>
+-On harder maps, it might be necessary to let bot get the end of round gold, then do something and only after having 
+ done these things, it will start the next round.
+-For such plans, 'change_autostart' and end_round exist. First one changes current autostart setting after loading to a 
+ game (and should not be used before this) and latter pressed round start button only once to continue on to next round 
+ (with fast speed setting). 
+-To use these, you need to place 'change_autostart()' inside first block and as first command, then place all other 
+ commands like new monkeys and then set end_round.
+-The idea behind end_round is that bot can't detect end of rounds, only if round label has changed, so it needs a timer 
+ to end round and continue on to next one. Thus, end_round() has base timer value of 0, but you can set your own with 
+ end_round(30) which would mean bot waits for 30 seconds, then presses the start button once to start next round. As 
+ you may tell by now, every single round expect END round requires end_round call.
+-If this wall of text makes no sense/hard to internalize, you should check some plan files inside btd6bot/plans 
+ for Advanced/Expert Chimps maps to see how it's done in practise.
+ >best example would be sanctuaryHardChimps.py
+
+
+TL;DR (on writing round blocks):
+-always include begin round 'if current_round == BEGIN' block and put 'begin()' inside it, without quotations of course
+ --Also, remember the 'if' on first round instead of 'elif'.
+-rounds after BEGIN start with 'elif'. Remember to replace BEGIN with actual round number, unless it's final round.  
+ Then you'd use END instead.
+ --preferably avoid marking empty rounds. If you do wish to include them (maybe it's easier to track plan progression) 
+   add ... in them, and nothing else.
+-Remember to indent your rounds: commands under if/elif statements must be intended with 4 spaces/Tab.
+-Deflation mode plans need to extra stuff!
+  >for fast speed, you type begin('normal') instead of begin()
+  >you must include current_round == END *at the very end* of first round block 
+-if you use change_autostart() to disable autostart for current plan, understand how to use end_round().
+
+
+=========================================
+## Write commands inside round blocks ##
+=========================================
+Commands are written in Python code. Here's all the current ones:
+
+Monkey(name, pos_x, pos_y)
+  .target(set_target, x, y, cpos_x, cpos_y)
+  .upgrade(set_upg, cpos_x, cpos_y)
+  .special(s, x, y, cpos_x, cpos_y)
+  .sell()
+Hero(x_coordinate, y_coordinate)
+  .target(set_target, x, y, cpos_x, cpos_y)
+  .special(s, x, y, cpos_x, cpos_y)
+  .sell()
+  .force_target()
+ability(r, ability_number, timer)
+wait(timer)
+click(x, y)
+begin(speed)
+change_autostart()
+end_round(timer)
+
+To utilize these, you will need coordinates to place monkeys/target special abilities/click on screen objects-
+
+## coordinate system ##
+-coodinates are normalized to [0,1) interval to have all display resolutions under one system.
+-upper left corner is (0,0), lower right is (approximately) (1,1) so x-coodinate increases as you move right and 
+  y-coodinate increases as you move down
+-however, actual game screen without corners + monkeys window i.e. where you can place towers, is smaller:
+ >x-coordinates are on interval [0.0141, 0.8567]
+ >y-coordinates are on interval [0.02593, 0.9731]
+  --if you accidentally go below/above this values, bot will throw an error. But typically you don't have to worry  
+    about this as you'd use a tool to get coordinates anyway!
+-to get coordinates, use the tool of your choice located in 'tools' folder
+    1. show_coordinates: 
+       -constantly updated scalr coordinates to display. Also shows (actual) pixel coordinates for comparison. 
+       -if you press '+', it stores current scalar location to clipboard so you can then copy paste it.
+       -press F11 to exit script.
+    2. coordinate_tracker:
+       -first asks user for start round. Set this according to your game modes start round, or just something else if 
+        necessary
+       -right mouse click saves current mouse position to 'BTD6coordinates.txt' file. After saving, it asks for 
+        optional comment.
+        >If you want to write down something (like which monkey was placed here), write text and press Enter. Otherwise 
+         press Enter without writing anything.
+       -'+' button moves counter to next round so you can separate different rounds with this. It adds a new round line 
+        to 'BTD6coordinates.txt'
+       -at any point, if you wish to quit this script, press F11.
+       -you can keep 'BTD6coordinates.txt' open to see how it updates after commands - just don't edit it manually 
+        during script runtime!
+       -if you want to clear all text from the text file, you have to do it manually. This avoids accidental deletion 
+        of data. So you'd open BTD6coordinates.txt, remove all text, then save.
+
+## commands ##
+[ Monkey(name, pos_x, pos_y) ]
+>places a monkey named name to position (pos_x, pos_y)
+ --name is a string so you need the quotations around its name -> 'dart', 'sniper', 'super' etc.
+ --x_coordinate and y_coordinate are values between 0 and 1 (1 not included), as stated before.
+>monkeys have a checking system for placements so you can queue placements before you can actually afford the monkey
+ --it keeps trying to place monkey and checks if it exists. If not, repeats this until it's placed.
+ --this is usually a good thing but it's important to note that this will block command flow: no other commands can be read until placement is done!
+ --in worst cases:
+   >bot cannot place a monkey, or
+   >attemps at placing take too long, which means bot cannot find the round after
+      -example: tries to place monkey on round 10, but it takes so long that actual game round is 12. After bot places 
+       the monkey, it searches for round 11, but obviously never does.
+    -->in both cases: if nothing happens for a while, it assumes it got stuck and exists the current plan.
+    -->solutions are:
+       1. don't queue placements too much beforehand, or
+       2. if you don't need abilities or plan doesn't require disabling autostart, you could just use the Deflation 
+          format: put everything under first round and add 'current_round = END' line at the end (without quotations)
+
+[monkeys]
+(Primary)             (Military)                (Magic)               (Support)
+dart                      sniper                 wizard                    farm
+boomer                       sub                  super                   spike
+bomb                        boat                  ninja                 village
+tack                         ace                   alch                engineer
+ice                         heli                  druid                   beast 
+glue                      mortar              mermonkey
+                        dartling
+
+
+[ Hero(pos_y, pos_x) ]
+>places selected hero to position (pos_y, pos_x) 
+ --hero is selected by adding the name in plan info located at the top of plan file.
+>just like Monkey, has a checking system for placements although with heroes you are less likely to cause issues.
+
+<IMPORTANT NOTE> if you ever want to use commands on monkey/hero (upgrading, retargetin, use special, selling), you 
+need to store its value in a variable. Give it a describtive name, so you remember which name refer to which monkey.
+For example:
+
+        dart1 = Monkey('dart', 0.5, 0.5)
+        hero = Hero(0.5, 0.6)
+
+-would first place a dart monkey, refered as 'dart1', to location (0.5, 0.5)
+-then place hero slighty below it, at (0.5, 0.6); remember, y-coodinate increases down.
+
+[ Monkey.upgrade(set upg, cpos_x = None, cpos_y = None) ]
+>upgrades current monkey. Upgrades are passed as a list of upgrade paths which allows for multiple upgrades in 
+a row. Includes optional parameter for repositioned monkeys; see the <UPDATING CURRENT POSITION> below
+ --replace Monkey with your own monkey reference name. Above we wrote 'dart1 = Monkey(...)' so to upgrade dart1, we 
+   write dart1.upgrade = ...
+ --list_of_upgrades consist of all upgrades from left to right. Upgrades are strings of format "x-y-z" where x is top 
+   path, y middle path and z bottom path, x,y,z numbers between 0-5. 
+ --Upgrading follows the normal rules: 
+   1. don't skip any upgrade paths e.g. ["1-0-0", "3-0-0"] is not possible whereas ["1-0-0", "2-0-0", "3-0-0"] works.
+   2. don't try to break normal rules: one path can go up to 5, second one up to 2 and last one stays 0.
+So for an actual example, let's upgrade our dart1 which starts initially as "0-0-0", to "2-1-0":
+
+        dart1.upgrade(["1-0-0", "2-0-0", "2-1-0"])
+        dart1.upgrade(["1-0-0", "1-1-0", "2-1-0"])
+        dart1.upgrade(["0-1-0", "1-1-0", "2-1-0"])
+
+All of the above lead to same end result, but obviously do it in a different order.
+>just as with Monkey/Hero, bot keeps trying to upgrade until it succeeds. 
+ --so read the Monkey-section carefully to understand how this works: you can easily break your plan if you don't know 
+   how to utilize this. But if you know how it works, it's a powerful tool to queue up upgrades before money is there.
+
+<UPDATING CURRENT POSITION> What if monkey positions change between rounds? There are certain maps where monkey 
+positions can change between rounds, for example on Geared and Sanctuary. For these maps, you can use the optional 
+parameters cpos_x and cpos_y to point to that new position; otherwise, your upgrade command points to original 
+placement position and obviouslyresults into something it was not supposed to do.
+Note that inserting actual (= other than None) values for both cpos_x and cpos_y will update the current monkey's 
+positional values permanently so unless it has changed again since last commands, you don't need to do cpos every 
+single time, although it probably adviced to track exact position at all times.
+
+Example: say you have the same dart monkey 'dart1' in a position (0.5, 0.5), but now after a round has changed, its 
+current position is in (0.75, 0.25). If you wanted to upgrade it to 3-1-0, you need to update position with cpos:
+        dart1.upgrade(["3-1-0], cpos_x=0.75, cpos_y=0.25)
+
+<ANOTHER NOTE> What if we don't need all optional parameters? Parameters are treated by their position: you need to 
+type all values in between UNLESS you explicitly refer to
+a specific parameter. For example, if we needed to upgrade dart1 to 1-0-0 on a new position 0.5, 0.5, we can either 
+type 
+        dart1.upgrade(['1-0-0'], 0.5, 0.5)
+or
+        dart1.upgrade(['1-0-0]', cpos_x = 0.5, cpos_y = 0.5)
+With upgrades, both are just fine: latter tells immediately that it refers to cpos, but after spending enough time with
+upgrading, first is just as good to use. In the next section 'target', we might have a need for more parameters!
+
+
+[ Monkey.target(set_target, x = None, y = None, cpos_x = None, cpos_y = None)
+  Hero.target(set_target, x = None, y = None, cpos_x = None, cpos_y = None) ]
+>changes targeting priority of current monkey or hero by giving it a string input set_target. 
+ Includes an OPTIONAL target parameter which should only be used tower requiring it e.g. Mortar, Dartling, Spike etc.
+ --all monkeys (used synonymously with hero here) have default priority; most use the basic targeting system: "First", 
+   "Close", "Last" and "Strong"
+ --certain monkeys have their own priority system, for example Heli, Ace, Spike, Etienne. Some towers like Mortar/
+   Dartling also require targeting to hit a shoot at specific location and has some extra stuff included:
+   >First of all: don't try to micro with Dartling, so set it immediately to 'locked'. If you wish to change direction 
+    after, you can't use 'target' again - you need to use 'special'!
+  ->with Mortar, you can only use 'special' to change location of fire: 'target' won't do anything!
+  IN FACT, YOU CANNOT USE 'target' TO RETARGET ANY MONKEY ON SAME TARGETIN PRIORITY!
+  ---so if you want to keep using 'locked' on a Dartling, but change direction, you need to use 'special'. This applies 
+     to at least Heli (reposition a stationary heli), Mortar and Dartling.
+     --the 'special' command tutorial follows after this section.
+
+To use target command, you will again need a monkey like dart1 which to refer to
+
+        dart1.target("Strong")
+        dartling1 = Dartling("dartling", 0.1, 0.2)
+        dartling1.target("locked", 0, 0.95)
+ 
+Here we set dart1 to "Strong". Then we place Dartling to some coordinates and finally set it to target some coordinate, 
+in this case, near to bottom left corner.
+As you can see, dart1.target didn't require coordinates; they have a base value of None. When this is the case, you can 
+just write the target in quotations.
+But if you need to add the coordinate, you have to use (new_target, x_coordinate, y_coordinate) format.
+
+<IMPORTANT NOTE> Bot can't detect hero level ups. Currently, only Etienne out of all heroes will automatically switch 
+to new targeting (Zone Control) at lvl 12.
+Now this a problem because in code he has whatever targeting status saved which doesn't match to his current Zone 
+control status in-game. As targeting change is programmed with moving specific amount of steps to either right (target 
+change hotkey) or left (reverse target hotkey) from the current one, it causes the variable value and actual status to 
+differ.
+So you need to pay attention when this level up happens and set a command at the start of round which updates status 
+without trying to change his current one. If you for example set your hero to a variable 'hero', at the beginning of 
+that round when Etienne hits lvl 12, your need to include the command: 
+
+        hero.force_target()
+
+ For other monkeys, like aces (paths x-x-3+) or heli (paths 2+-x-x), the program knows when you've upgraded and can 
+ update the values accordingly.
+
+<POSITION NOTE> Just like with upgrading, use cpos_x and cpos_y to point to the new position of monkey if map alters 
+their locations. Current location is updated to (cpos_x, cpos_y) as well. If you want to retarget a tower i.e. change 
+target location, but keep same targeting priority, see 'special' command just below!
+
+[targeting options]
+
+#all that fall under basic targeting options "first", "close", "last", "strong"
+
+dart
+boomer
+bomb
+ice (x-x-3+)
+glue
+sniper
+sub
+boat
+wizard
+super (no in-game hotkey implemented for robo monkey's second hand targeting, so it stays on 'last' always)
+alch
+druid
+mermonkey
+villge (5-0-0)
+engineer
+beast
+
+
+#special
+heli: "lock", "pursuit"
+  >"pursuit" requires 2+-x-x
+
+ace: "circle", "infinite", "eight", "wingmonkey", "centered"
+  >"centered" requires x-x-3+
+  >"wingmonkey" requires monkey knowledge
+
+mortar: cannot be targeted via 'target', use .special(1, x_pos, y_pos) instead
+
+dartling: "locked" 
+  >after initial placement, you need to use .special(1, x_pos, y_pos)
+
+spike: "normal", "far", "close", "smart"
+  >requires x-x-2+
+
+
+[ Monkey.special(s = 1, x = None, y = None, cpos_x = None, cpos_y = None) //
+  Hero.special(s = 1, x = None, y = None, cpos_x = None, cpos_y = None) ]
+>uses special (1 or 2) of current monkey (again, we refer to also heroes by this) with optional coordinates. Specials 
+ are often used for extra placement options such as
+ -heli hover location
+ -switching ace directions
+ -ezili's totem placement
+ -obyn ability placements
+ -x-1-4+ engineer trap placement
+ -beast handler's pet positions, 
+ -mortar and dartling retargeting, etc.
+ --for most monkeys, it's enough to use 1. special. But beast handler can use 2. special as well, as it has 2 different 
+   pets.
+
+Using specials require a monkey so once again we can use dart1, mortar1 but also beast1. Type either 1 or 2 depending 
+which special to use and if monkey requires targeting, provide coordinates:
+
+        dart1.special(1)
+        dart1.special() --> this is same as above: special has default value 1 i.e. uses special ability 1.
+
+        mortar.special(1, 0.5, 0.5)
+
+        beast1 = Monkey("beast", 0.8, 0.4)
+        beast1.upgrade(["1-0-0", "2-0-0", "2-1-0", "2-2-0"])
+        beast1.special(1, 0.1, 0.1)
+        beast1.special(2, 0.2, 0.2)
+
+Here we use dart special 1. Well, dart monkey has no special, so nothing happens. Coordinates, just like with 
+targeting, have base value of None.
+Then we use mortar special on specific target which actually just retargets mortar.
+Then we create a beast handler, upgrade it to 2-2-0 and use both it's special to target the pets on top and middle 
+paths.
+<NOTE> you should always make sure where each special refer to if it uses the 2. special as well. With beast handler, 
+it depends which crosspaths you choose!
+
+<POSITION NOTE> Just like with targeting/upgrading, use cpos_x and cpos_y to point to the new position if map alters 
+monkey locations. Current location is
+                updated to (cpos_x, cpos_y) as well.
+
+But what if you need both a new target location and to update current position? For example:
+ ---new target location (x,y) for dartling, but the gear in Geared has rotated so we also need the new dartling 
+ position (cpos_x, cpos_y)
+
+ vs
+
+ ---new targeting priority for a sniper which ends up in a new position (cpos_x, cpos_y), due to Geared gear rotation.
+
+With first one you need 'target', 'x', 'y', 'cpos_x' and 'cpos_y' parameters IN THIS ORDER. Also, since you can't use 
+target on previous value, you need 'special' instead. 
+
+We want dartling to target location (0.4, 0.8), but let's pretend that map moves dartling from (0.15, 0.8) to 
+(0.2, 0.5) after first round.
+
+        dartling = Monkey('dartling', 0.15, 0.8)
+        # round changes
+        dartling.target("locked", x=0.4, y=0.8)  --> this would still point at tower location (0.15, 0.8), nothing 
+                                                      happens!
+        dartling.target("locked", x=0.4, y=0.8, cpos_x=0.15, cpos_y=0.8) --> THIS WON'T WORK as you already have "lock" 
+                                                                             as priority... throws an error.
+        dartling.special(x=0.4, y=0.8, cpos_x=0.2, cpos_y=0.1) --> use this instead! But it still points to wrong tower
+                                                                   location...
+        dartling.special(x=0.4, y=0.8, cpos_x=0.15, cpos_y=0.8) --> this one works!
+
+But sniper doesn't need the targeting position (x,y) like dartling so they would remain x = None, y = None. But instead 
+of always writing those 'None' values, like this
+        sniper.target('first', None, None, 0.2, 0.2)
+you could write
+        sniper.target('first', cpos_x = 0.2, cpos_y = 0.2)
+which might be a bit slower to type, but tells immediately that sniper is in a new position and makes reader to process 
+this faster than with first one (i.e. is less ambiguous).
+
+
+[ ability(ability_number, timer) ]
+>uses current ability ability_number (1-10) and has optional argument 'timer' to time abilities from round start
+ --ability_number is any whole number from 1 to 10. As abilities are listed in their unlocking order, they will remain 
+   the same UNLESS YOU SELL A TOWER WITH CURRENT ABILITY.
+ --timer is an optional value which is used to time the ability usage after 'timer' amount of seconds has passed. Not 
+ 100% accurate so extremely precise timings won't work.
+   Can give decimal values like 0.5 which is half a second, 0.1 is 1/10th of a second etc. You can just use fractions 
+   too, like 1/2, 1/3 and so forth.
+   If no value is given, uses ability immediately. If ability is on cooldown, however, program won't check this so make 
+   sure to track their status before you place a command!
+
+As abilities are universal and their order is decided on when they are unlocked, they don't require specific monkey to 
+be refered.
+
+        ability(1)
+        ability(1, 0)
+
+        ability(4, 5)
+
+Here first two rows refer to same thing: use ability '1' immediately after command is processed. Last row uses ability 
+number 4 after 5 seconds have passed after round start.
+Mind you, if you set ability to be timed and the command is processed after that window has already passed, it will use 
+it instantly. So remember that code is read line by line and therefore might interfere with your timings. So try to 
+leave enough timing room between other commands and ability uses.
+
+
+[ Monkey.sell // Hero.sell]
+>sells specified monkey or hero.
+ 
+        dart1.sell()
+
+        hero.target("Strong")
+        hero.sell()
+
+The 'hero' object still exists as a variable after 'sell', but refering to it is useless as the tower has been sold 
+in-game. So if you want to 're-buy' the tower, create
+a new monkey/hero object by setting it to a variable, perhaps even to a comptelety new one - never refer to sold 
+monkeys/heroes afterwards.
+
+
+[ wait(timer=0) ]
+>simple allows your bot to wait for specified amount of time, halting its code progression during this. Time is given 
+in seconds just like with abilities.
+ --you can use it to control time flow. This might be useful ability timings but to also stall bot from reading next 
+ command
+ --an use case of this would be to set targeting to, say, 'strong' before next round start, but not before  
+   current round has finished!
+
+--------
+--------
+**Advanced; use these in harder plans if necessary. Good examples of their use cases are found in Advanced/Expert 
+Chimps plan files.
+
+[ begin(speed)]
+>this was already discussed at the end of plan writing section.
+>speed has default value 'fast' which means fast forward. Another value is 'normal' which is for normal speed.
+>for deflation plans, because they have autostart on default speed by default, you use 'normal' for fast forward 
+ instead.
+
+
+[ click(x, y) ]
+>simply left-mouse clicks at the specified location.
+>idea is to use this for clicking map objects for advantage, or to remove them.
+ --most of these location depend on their initial locations, so no general command exists. Instead, you would use click 
+   like this:
+        click(0.25, 0.25)   # press a removable object
+        click(0.3, 0.25)   # click yes to remove, whatever the location of OK button is.
+ >other than removing object, maps like Workshop might have objects which offer a very useful aiding mechanic.
+
+
+[ change_autostart() ]
+>reverses current autostart condition. If used, place it inside the first round block (FIRST) and as very first line 
+ AND as the first line of final round (END)
+>requires using of end_round() commands every round to force-start the round after: place this always at the end of 
+ round block!
+
+
+[ end_round(time_limit=0) ]
+>used to manually end rounds i.e. press the 'forward' button once in-game. Must be used in conjunction with 
+change_autostart()!

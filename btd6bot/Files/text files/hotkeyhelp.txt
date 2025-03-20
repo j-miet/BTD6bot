@@ -1,0 +1,37 @@
+<<< Set these to match your in-game hotkeys!
+
+[Supported keys]
+-letters (a-z), digits (0-9) and other keys that input text symbols (+-* etc.)
+-following special/modifier keys:
+ alt, ctrl, enter, shift, backspace, tab, insert, delete, home, end
+ page up, page down, directional keys (up, down, left, right), F keys (F1-F8)
+
+--Note that F9 and F11 are reserved: F9 is bot start/stop hotkey when monitoring window is opened, 
+   F11 terminates entire program at any point, instantly.
+
+[How to set a hotkey]
+Click the hotkey row from panel that you'd like to modify - row is now highlighted.
+Press 'Set Hotkey' button below hotkey box. When button is grayed out, press any supported key.
+You should now see the right side of '=' change on that row you chose.
+## Remember to check all hotkeys by scrolling the panel down as some may be initially hidden ##
+
+[Other]
+>When you input above special/modifier keys, they show as 'Key.keyname' - this is completely normal.
+>Some keys might not get displayed correctly, but they should still work.
+>Most hotkey meanings should be easy to interpret but here's a breakdown:
+
+ 'dart monkey',..., 'beast handler' are monkeys + 'hero' stands, unsuprisingly, for hero.
+                             
+ 'upgrade ...' are for the corresponding upgrade paths.
+
+ 'target change' and 'target reverse' change targeting forward and backward, respectively.
+                             
+ 'special 1' and 'special 2' are special hotkeys which are tower-specific. Few examples:
+  -monkey ace direction change (clockwise/counterclockwise),
+  -changing mortar/dartling gun firing location,
+  -beast handler pet placing,
+  -ezili totem placement, etc.
+
+ 'sell' and 'play' for tower selling and pressing play button.
+
+ 'ability ...' for abilities 1-10.

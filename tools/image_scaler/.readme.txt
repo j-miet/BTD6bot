@@ -1,0 +1,1 @@
+# If 'map images' and 'raw map images' folders are missing, run the script once to create them.

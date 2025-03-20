@@ -1,0 +1,1 @@
+python -c "import coordinate_tracker; coordinate_tracker.run_tracker()"

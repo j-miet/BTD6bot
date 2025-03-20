@@ -1,0 +1,38 @@
+//pytest//
+
+-----Setting up tests for new project-----
+-had some difficulties getting pytest recognizing module imports, but this helped:
+https://stackoverflow.com/a/50610630
+
+TL;DR: 
+-create pyproject.toml file to root
+-add source folder 'btd6bot' and to pythonpath -> remember to insert square brackets [] if multiple paths.
+
+-----For user-----
+
+To run you need:
+-install pytest and pytest-mock, with pip:  
+    pip install pytest pytest-mock     
+
+
+How to use in VS Code: 
+-put all tests under root folder e.g. btd6bot/tests/
+ >if unit test, place inside 'unit' folder
+ >if integration test, place inside 'integration' folder
+-search '>Python: Configure tests' in search bar and select pytest + set test folder as 'tests'
+
+# Running all tests #
+-to run tests, change directory to project root (if it wasn't already) and type
+    pytest 
+ then press enter. 
+ >>>NOTE that integration tests require Btd6 game to be opened on main monitor, in main menu screen!
+
+# Running only specific tests # 
+-it might be better to run tests in batches: first unit tests, then integration tests.
+ >same as before, cd into project root.
+ >to run unit tests, type
+    pytest tests/unit
+ >to run integration tests, type
+    pytest tests/integration
+---and if you'd still like to only run a specific test file, say an unit test, type
+    pytest tests/unit/test_file_name.py

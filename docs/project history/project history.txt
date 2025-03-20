@@ -1,0 +1,1224 @@
+=== In-game version: 47 ===
+
+-------------------------------------------------
+---Added (after 0.11 so these are part of 0.12)---
+-------------------------------------------------
+
+-changed how ocr works with static exceptions strings: if it fails initially to match, it now checks what current 
+ monkey and upgrade path is, then checks if it matches with any exceptions. If yes, then perform ocr again but now againts actual upgrade name instead of another ocr string. This seems to fix all ocr issues, but only time will tell.
+
+-renamed bot.api to bot.commands (because entire 'bot' itself is api, not just the in-game commands)
+
+-Changed bot start/stop and termination hotkeys from F8 & F10 to F9 & F11 respectively.
+ >when pausing button is added, it could be then inserted in F10.
+
+-added git support for program. Can now commit files to Github.
+
+-added exceptions.py under utils for custom exceptions. Might divide this under multiple modules if/when more classes 
+ are introduced.
+
+-plotting memory leak is finally fixed!!!
+ >simple solution was to move plotting under a new process via multiprocessing; this creates entirely new memory space 
+  that is not connected to main process at all. This removes any interference between main thread and matplotlib event 
+  loop thread: after a plot window closes, all memory allocated there is always freed. So if matploblib still had some 
+  issues under this new process, they would be locally contained and vanish after a window gets closed.
+
+-tested all upgrade crosspaths in ocr and added rest of the exceptions; only 6 in total, so delta=0.8 fits pretty well 
+ although a couple are just at the 0.8 threshold.
+ >if further problems arise with upgrade matching, it might be better to move to money+hp based ocr system.
+
+-multiple plans can now be made on same map+strategy setting, by adding a number 2-9 at the end.
+ >e.g. logsHardChimps, logsHardChimps4, logsHardChimps9 are valid, but logsHardChimps10 (or higher) is not.
+
+-added some gui stuff:
+ >created placeholder text for image labels: images are not included in project by default (when eventually this 
+  project moves onto github) so user needs to download and scale them!
+ >made map and strat comboboxes read only + automatically remove the blue highlight marker, either by clicking the box  
+  itself, or root window (= main window).
+
+-added latest map, Enchanted Glade.
+
+-aand re-ordered some stuff, once again, now in bot:
+ >renamed bot -> monkeys to api (idea is that all commands used in plans are found under here)
+  -added flow.py where round timing function are found (they where previously in bot.flow)
+ >renamed flow to times (now it tracks just round time printing and time recording; if pause function is added, it goes 
+  here)
+
+-added unit tests for utils.plan_data; timing is too simple so it won't get any tests for now.
+ >unit testing was useful, as it reveal a bug with plan difficulty and mode parsing: if difficulty and mode would 
+ have same capital letter i.e. Medium and Military, it would focus on the first M twice and not work properly. This bug 
+ hadn't occured yet as there was no plan with such settings.
+
+-renamed 'roundplot time data' folder to 'times data' and updated all paths accordingly
+-created 'money data' folder which contains costs.json and income.json
+ >costs: includes all monkey base and upgrade costs. Costs scale by difficulty: 
+    easy = 0.85
+    medium = 1 -> these values are stored so other difficulties are easy to obtain via scaling
+    hard = 1.08,
+    impoppable = 1.25
+ >income: total income of each round. Is in list format, so index+1 equal to round number e.g. index position 94 points 
+  to round 95.
+  ---these values will be used eventually in roundplot.
+
+-added main_no_gui.py and corresponding batch file, to run gui-less version of bot: it lacks many of the gui features, 
+ but can nonetheless run any plan.
+
+-bot is now entirely independent of path.py, meaning it only relies on Files folder now!
+ >additionally, removed path.py dependecy from set_plan.py and utils package, meaning only gui depends on it!
+  --and for above reason, path.py is now gui_paths.py and located under gui.
+
+-renamed gui_vars.py to bot_vars.py and moved under bot. Added gui_vars.json under 'text files' folder that handles 
+ gui-level values. Bot then reads these values, and if succesful, updates bot_vars.BotVars class values. If 
+ unsuccesful, uses the default values. 
+ >This means bot can now operate separately from gui!
+
+-a slight refactoring of code: bot_init is removed and hotkey.py goes inside bot package, gui_vars and set_plan into 
+ source root. Now control flow is something like this
+    main -> gui -> set_plan -> plans -> bot 
+ >this means bot can now operate without gui as it will update hotkeys in menu.load.
+ >gui_vars is still required, but this might be changed soon by saving its data to a json file, then importing this 
+  data into a new 'gui_vars'-like file located under bot. And to update this data every time bot is run through gui, 
+  menu.load will also call a method similar to that of hotkeys.
+  --this would mean that a bit of extra work must be done, as current iteration updates values only through gui 
+    instead of any iteration of bot. But the good thing is, new version would make bot tools importable without needing 
+    gui!
+
+-revamped modules in monkeys package: 
+ >removed getters and setters in Monkey and Hero because user doesn't need to access them
+ >added better docstrings with examples included. Following now includes docstrings with examples:
+    ability (function in ability.py)
+    Monkey (class)
+        special (method)
+        sell (method)
+        target (method)
+        upgrade (method)
+    Hero (class)
+        force_target (method, only for placing lvl 12 Etienne and setting targeting to 'zone' without checks)
+        target (method)
+  --These doctest should only be run after opening Btd6 and entering to 'monkey meadow' in sandbox mode.
+  --Either run them from terminal, or by running _doctests.py located in source folder bt6bot
+
+-added new coordinates of 'Play' text location in main menu as patch 47.x introduces 'Legends' button.
+
+
+
+########
+----version history----
+
+>Project folder and initial plan was created on 16.9.2024.
+>Using number system to mark down milestones between each iteration = it's a version backlog.
+ --Unfortunately I didn't write down dates for each milestone to gauge how much time was spent on each, but at least it 
+   shows how stuff has evolved over time.
+   ->Starting from 0 and getting to 0.10 took about 7 weeks and closer to 300 hours of work.
+     Working on 0.10 and 0.11 together exceeded that, so currently (as of 22.2.2025) while working on 0.12 for closer 
+     to 2 months, it's safety to say I have put over 1000 hours in this project.
+   ->Of course, it's not just writing new code: learning, planning, testing and fixing stuff takes like 90-95% of time 
+     nowadays. 
+     --In the past, when things were less complicated, it was closer to 50-50. And at the beginning, it was mostly   
+       just writing code to get results without thinking about how the project would look in a few months: this of 
+       course resulted into major structural refactorizations and code reworks because initial code was quite bad. But 
+       it was very important process: I learned a lot + it was tons of fun to visit older code, seeing how much I had 
+       improved.
+----
+
+0.11 (probably like 3 months since 0.10)
+>>>Biggest "patch" so far: lots of improvements in code, new major features and big refactoring of code with new 
+    folders and files
+
+-added defeat status checking via two different ways:
+ >if tower/upgrading takes too long (by default 120 seconds), bot is set to 'defeat' state and will attempt to exit to 
+ menu as soon as possible.
+ >detecting a defeat screen while searching for the next round
+ >>>level-up and monkey knowledge pop-ups are left untouched: these occur way too randomly to handle them. But if plan 
+ happens to fail because of them, above defeat check will at least prevent getting the bot stuck.
+
+-plan infos are now located in docstrings at the beginning of each plan file.
+ >It's important to update these, as current hero is always read from '[Hero] ...' section. If this section cannot be 
+ found/has invalid syntax or hero name, hero is defaulted into 'None' value.
+
+-added support for apopalypse plans: they didn't take the starting screen into account + had issue with clicking on 
+ home button before returning to menu: for some reason, the home button is in a slighty different position than usual...
+
+-add more data to 'Show Plot': should at least have
+ >time each round takes and total time (need to have completed current plan at least once to save these)
+  --can record new times automatically by enabling the setting in gui 'Settings' window.
+
+-added a new settings window: currently, it only allows to change round recording status to On/Off. But new stuff can 
+ be added later.
+
+-if user wants to disable autostart for a specific strat, they only need to type change_autostart() at the beginning of 
+    the first round: bot stores this status and will revert it automatically after loading into a new game.
+
+-main window clearly displays that ocr reader must be loaded before the bot can be run:
+ >button has 'initialize reader' text before. After being pressed, a wait window opens while reader loads and closes  
+    after
+ >then button text value is updated to 'open bot window' and works as expected.
+
+-Major refactoring of project structure: hopefully this one will be last major one.
+
+-moved kb_mouse.py under 'api' module as it only communicates within game api.
+
+-split constants.py contents to files they're closely related to + renamed it to path.py - now only containing paths.
+
+-fixed some gui bugs to prevent user from opening multiple monitoring windows
+ >these were tied to the query mode check button: 
+  --when current list of selected maps in queue is 0, you should not be able to open a monitoring window
+  --if you opened any window and then toggled query mode button on, then close said window, it would keep query mode 
+  toggle on (obviously) but re-enable 'run bot' button -> causes a lot of errors as it tries to read empty list of 
+    inputs!
+ >so now after some tweaking, query mode status is checked after closing any individual window. Also, 'run bot' is 
+ automatically re-enabled if query toggle is on AND queue list has >0 entities; before this, it would require you to 
+ toggle off then toggle on the query toggle button to re-enable status.
+
+-fixed a long-existing bug in program with keyboard input lag both in and outside of program:
+ the listener thread allocated to tracking exit key (F10) for quick termination had a time.sleep() timer outside the 
+ if-statement. This naturally caused an input delay to typing during program runtime, which obviously also hinders any 
+ typing process outside the program (e.g. writing code/comments, googling stuff). So now this sleep timer has been 
+ compeletely removed from both termination listener and bot start/stop listener inside MonitoringWindow. Simple as that.
+ >I'm not actually sure why these were even added in first place; maybe I thought it caused high CPU utilization which 
+  was more likely tied to ocr methods instead (and in the current program implementation, this is definitely the case).
+
+-reworked GUI main window's info screen: now uses Text instead of Label, and has a Scrollbar object attached to it.
+
+-divided gui_roundplot.py code into separate functions + made some improvements on code.
+ >still, it should be eventually reimplemented without the use of matplotlib because of lackluster performance.
+
+-collection event handler added under api.menu.
+
+-created a gui_vars.py file to handle necessary importable variables
+ >re-implement bot thread terminating in gui_windows.is_monitoringwindow() by saving the most recent thread to 
+  gui_vars.py (was bot_thread.py previously) file.
+  >previously, is_monitoringwindow() would take the initial thread after a monitoring window is created. But it would 
+  not update this thread reference again, which of course causes problems if monitoring window is stopped & started and 
+  then closed during running.
+ >collection event status is also saved in this file so it can be easily passed onto api.menu.
+
+-New folder structure:
+ >added api and functions packages, removed assist and relocated the modules inside elsewhere
+ >strategies (as in map + difficulty + game mode) are now referenced as 'plans' instead. This is done to avoid 
+  ambiguity as strategy references also to difficulty + game mode combinations.
+ >moved round handling from each plan file to 'rounds.py'
+ >renamed btd6bot/btd6bot image and txt folder names by removing underscore '_' and added space instead.
+ >Also renamed 'matching_images' to 'ocr temp' and 'strategy_info' to 'plan info'.
+
+-plans now use variables for current round time and current hero, meaning these values need not to be passed for their  
+ respective functions anymore.
+
+-Hero class uses now super() to initialize values
+
+-added hotkey (currently F8) to start/stop bot. This had to be implemented via another Listener object as tkinter's own 
+ bind method unfortunately requires the monitoring window on top/currently selected; that doesn't work with bot as it 
+ needs to constantly click/place inputs on game screen.
+
+-documentations have now 'docs' folder located in project root
+ >'other' folder is now 'naming' as it contains only naming standards now
+ >'project history' is pulled out from here and placed in root folder
+ >all existing documentations refering to these files should be updated, hopefully.
+
+-type hints added for classes + methods and functions, used mypy to verify them. 
+ >Variables/constants are not typed as they should be quite obvious. Might add some for the more complex ones 
+ eventually if it's deemed necessary.
+
+-added full docstrings for each class, method and function. These include
+ >general description and possibly a detailed one after, if required
+ >parameters and short descriptions
+ >return values and short descriptions
+
+-added support for newest map, Last Resort
+
+
+0.10 (2 weeks or so)
+-Moved from screen_ocr to pytesseract as it has superior accuracy and optimization; especially when combined with image 
+ zooming and background manipulation
+ --Also allows to create better testing tools for OCR.
+Initial reason was during creating Sactuary Chimps strat:
+Issues with matching strings:
+>Cannot match 3-0-1 boomer...returns delta of 0.25 before...and after (delta = similarity between two string, both 
+ extracted from ocr temp)
+ --could try to fix this by first checking what does it actually match to and then try to add better junk filtering to 
+   SequenceMatcher
+>Another problem is that top path 'Glaives' and 'Moar Glaives' matching can't be separated: need stronger OCR
+
+.
+.
+.
+
+-...aaand already moved to another ocr, this time easyocr.
+ --pytesseract had serious accuracy issues and fixing those required a lot of difficult solution. And still, while 
+   getting better results, they weren't good enough
+ --easyocr is super easy to set up and run. Speedwise quite similar to pytesseract, too.
+ --only "negative" thing would be that it requires setting up a reader before using which takes about 10-15 seconds - 
+   this is done before program opens to GUI and is needed to be done only once. Reader is loaded inside 
+   assist.ocr_reader so all reader tools can use the same one.
+
+-added new ocr.py module under assist-package to better separate ocr tools as they are now much more refined
+ >added matching_images folder to save/track images needed for ocr
+
+-implement at least one Expert Chimps strategy
+ >Map is Sanctuary
+ --took a lot longer than expected, mostly due to awful rng elements and how to deal with them
+ --is now *black border viable*, but will still fail on some attempts: rng is impossible to eliminate entirely
+ --so if you want to go for black border, just keep retrying until bot succeeds
+
+
+0.9 (long gap here between 0.8 and 0.9, at least 3 weeks)
+GUI + MAJOR IMPROVEMENTS ON MULTIPLE SYSTEMS
+-add GUI to btd6Bot program
+ >general idea is descripted in btd6bot_gui_mainscreen and btd6bot_gui_botrunning images
+ Stuff to do:
+ -create main window
+  --map folder for maps -> difficulty+gamemode as a map name. Allows for adding custom strategies too!
+ -create windows displaying stuff during the bot running
+  >current map's image
+  >data of current strat
+  >log panel which shows all command line outputs during bot executing stuff (= redirect stdout to this panel)
+ -create other windows that open after pressing them. Use these for 
+  >inputting user hotkeys, 
+  >opening help window
+  >choosing sequence of maps for queue map mode
+ -on/off switches for replay and queue map modes
+ -should not allow starting two separate monitor windows (which would mean could run multiple bots concurrently), or in 
+  general, allow pressing start when other windows are open
+  --furthermore, don't allow opening a second instance of any other window (help, hotkeys, queue setup)
+ -uses multithreading to handle two multiple open windows; will also handle thread termination
+ -uses text files to load/save data like hotkeys and current map queue
+
+-add Dark Castle Easy-Standard strat -> this will be the default setting
+
+-fixed upgrade detection as this was actually broken during all this time. Separated it to functions.get_upg_text 
+ function which uses difflib module to compare
+ to OCR strings.
+
+ -go over entirety of program and 
+ >rewrite comments
+ >check code syntax and structure; should stuff be renamed to make easier to read in the future?
+
+-add automatic targeting option to dartling gun (for bottom path 4 & 5)
+
+-add newest map from v45: Ancient portal
+
+-write down how to implement future additions (these are found in GUI help window -> 'Techinal' OR the file GUI reads 
+ from located in btd6bot\btd6bot\text_files\help.txt)
+
+-remove all os.chdir() references; instead, use absolute references through path constants from assist/constants.py
+
+-go over Dev Tools and rewrite comments + check possible code improvements
+
+-reorganized project folder layout
+
+-tower selling implemented with Monkey.sell_tower()
+
+-setting hotkeys in GUI implemented!
+
+-add graph to show how plan is laid out: each round when bot actually does something and what commands are done inside 
+ strategy file!
+
+-rename Multimap mode to Queue mode
+ >remember to name also multimap_list.txt
+
+-combined different constant values under constants.py file. Put hotkeys.py and functions.py to same folder with 
+ constants.py and made them into a package called 'assist' 
+ >also changed most sequences of numbers into tuples inside functions.py and monkey.py; easier to handle them this way
+ >replaced almost all constants with easier references that point into constants.py so it's easier to update their 
+  values now
+
+
+0.8
+-added more validity checks to monkey.py. Can now check if hero, monkey and target names are valid.
+ >haven't implemented a valid upgrade path checking and it's really not high of a priority as current one is very 
+  user-friendly
+-added menu screen 'Play' text detection so bot now knows when it has entered main menu
+-implemented text recognition instead because text detection libraries exists and scale better for future additions
+ >no need to store images anymore
+ >no need to get all images over and over for different resolutions
+ >wll work for any future text whereas if a new picture is needed, well need to do above step again for all resolution
+ >is actually simple to implement with screen_ocr library (pip install screen_ocr). Other exists too but I went with 
+  this.
+  >>doesn't have a documentation so had to toy around for a bit before finding right tools
+  ---TL;DR CANCELLED resolution-scaled image matching; 
+-upgrade detection is fine now: checks all possible paths to upgrade and presses correct upgrade hotkey
+-abilities can now be timed from round starts (=use ability, say, 5 seconds after round starts), making them much more 
+ variable
+-other than that, cleared up some code and made couple optimizations
+-still, some issues with global variables - gotta fix that. Also need to revamp mapping system + implement GUI next.
+
+
+0.7
+-target settings implemented for all towers (first, last, close, strong and other custom ones)
+ >not tested, but should just fine
+ >hero level tracking not implemented so when Etienne reaches lvl 12, he automatically switches to 'Zone Control' and  
+  stays that way
+  >>so if you use Etienne, note down the round he hits lvl 12 and add a line 'hero.change_target('Zone')' at the  
+    beginning
+-basic upgrade detection implemented, still needs a lot of work
+-improved tower placing detection speed
+-ability use (both towers and heroes)
+ >well this literally just means using hotkeys 1-9 + 0 so nothing impressive really...
+
+
+0.6
+-implemented tower placing detection
+ >program checks if 'sell' button appears after clicking a coordinate and keeps trying to place a tower until the image 
+  is recognised
+-target settings (first, last, close and strong) implemented only for heroes so far
+
+
+0.5
+-for single-map mode, ask if user wants to set infinite repeating of a map by typing REPLAY then press Enter. Or just 
+ press Enter (or give any other input) if not 
+-automatically start a map from menu
+-can automatically choose a correct hero before entering a map
+-add queue of maps to play (done via custom_maplist.txt)
+-mouseTracker.py has now mouse + keyboard control, making coordinate saving much easier
+-implemented a stopping function to bot; can be set as a "hotkey"...
+ >"hotkey" means that if you press all the required keys at least once during runtime, program terminates. So still a  
+ safety net to avoid accidental exits.
+
+
+0.4
+-big, big upgrades!
+-can now read rows from a text file. Rows consists of map name, difficulty and game mode. Then this info is passed onto 
+ maps.py which chooses rounds for specific modes
+ >then map name, difficulty, game mode, first round and last round are all passed into a match-case that will direct  
+  flow to the correct map
+ >map module will then use info to choose right settings for specific modes and execute
+ >finally, will return to main menu or optionally continue to repeat map or play others in queue (not yet fully  
+ implemented)
+-reimplemented map's match-case structure to if-elif, because match-case can't use non-typed values to match with
+ >in other words, if case: final_round, it doesn't intepret that - would need to use literal '40' or similar instead
+ >but since different modes have different last rounds, was worth to re-do it with ifs instead
+-finally implemented tower placing and upgrading via OOP in towers.py. Will certainly make individual round code so 
+ much clearer.
+ >each tower is part of Monkey-class and has attributes for tower type ('Dart, Ice, Ninja, Super, etc.) and location, 
+  with x and y coordinates separated
+ >just remember to first create a monkey-object and then also place it. After that it can be upgraded via giving it 
+  sequence of hotkeys for upgrades - it can parse them
+
+
+0.3
+-can play Monkey Meadow map on easy + standard; literally just copied rest of round images up to 40. Code is very 
+ repetitive.
+-also implemented some timing functions so that placement and upgrading pacing is better
+-created a Maps-folder and decided ultimately to do all map's strats on same module, instead of splitting each 
+ difficulty+mode combination to separate one
+ >would've been a lot of files and folders. Now just one folder with still plenty of modules but considerably fewer 
+  what would've been
+-created a basis for level-tracking within maps.py file: idea is to make main program asks for user input, then direct 
+ this input to maps.py
+ >then maps.py chooses first and end rounds depending on difficulty and gamemode and passes them onto functions calling 
+  a specific map function
+
+
+0.2
+-improved mouseTracker.py to listen to keyboard inputs via pynput-module. This however runs at the same time during 
+ input() which reads inputs slowly. But good enough.
+-made monkey_meadow.py and implemented basic round strategy basis with match-case
+-took a few screenshots to test monkey_meadow.py modules functionality. Image recognition had issues but they were due 
+ to a bad implementation:
+ >initially checked if current round image exists on monitor. If not, would jump to next round. But hovering a tower 
+  disables round number -> pretty much jumps to the end of plan
+ >better and current one: checks the round image, if it matches to round number, does all the stuff of that round. Then 
+  waits the next round image, matches and repeat this 
+ >so major diff is: in first, we proceed after the image is no longer found - in second, we match after image is found, 
+  do stuff then wait for the next image
+-implemented scaling coordinate system so mouse location should work similarly on any resolution
+
+
+0.1
+-mouseTracker.py reads from input() and can be used to write down round-based placements on a BTD6coordinates.txt file
+ >so for example input 'place a dart monkey' at (200,300) would print: 'X: 200 Y: 300 | place a dart monkey
+-made functions.py for general functions.
+-image recognition implemented with pyautogui-library + separate rounds images, as check_rounds in function.py
+-main file btd6Bot.py doesn't do anything yet
+-created test.py where I tested plenty of code blocks individually, will delete later
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ORIGINAL PLAN
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Project:
+
+-plays Bloons TD 6 automatically on chosen map, with predetermined settings
+ >settings include:
+  --hero
+  --map
+  --difficulty
+  --game mode
+  --strategy
+    -towers + their input locations
+    -upgrades, in order
+    -targeting (first, strong, last etc.)
+    -direction/position (only if applicaple; helis, dart guns, mermonkey mid path ability etc.)
+    -abilities (for both heroes and towers)
+  --game speed (should always be set to faster)
+  *anything else?*
+
+
+----Fundamental----
+
+-mouse control to a specific location + clicking
+ >in a game like bloons, mouse can handle everything; at least can't think anything that absolutely requires keyboard inputs
+ >could consider keyboard inputs
+    -however, different players use different layouts so one's hotkey is not necessarily another'set
+    -could of course set up a file which lists hotkeys which are required for bot to work or just avoid using keyboard hotkeys!
+ >could also implement insta-return to original coordinate: this way - if played in windowed mode - you could just do stuff on second monitor
+
+-how to tell program the current round
+ >important because can't mod game files -> only way is to use visual cues like pixel/image comparing OR text reading (far more advanced, requires separate library)
+ >has to recognise every round from monitor and detect round change to allow tower cyclic commands for each round - otherwise would need to use A LOT of timing functions...
+ >should not confuse two rounds at any point
+    -for this, you need all normal rounds accounted e.g. 1-100 so 100 images.
+    -probably easiest to use round numbering syntax X / Y where X current round and Y final round, and save all images without background
+    -then match to this picture on each round (do a frequent matching, like each second or even less if needed)
+    -when program detects the current round, it will execute all instructions for that given round, then tries to match for the next rounds image
+    -after final round concludes, it terminates (unless we want to implement looping for farming purposes OR play multiple maps in a row)
+    [should start with image matching. Later on can try the text reading implementation after you have a functional program with most of the important stuff working]
+
+-creating a basis for a setting file
+ >contain pre-game settings like hero, maps, difficulty, game mode, game speed
+ >then also in-game strategy with all in-game inputs like tower placements, upgrades, behaviours, abilities - and of course their timings based on rounds
+ >should use some kind of text file: initially just txt or Python to test stuff. Later file standard is needed, maybe a JSON file?
+
+
+
+----Other----
+
+-resolution scaling
+ >different monitors have different pixel coordinates so program should be able to scale coordinate positions accordingly
+    -not only for mouse inputs but for also images so that round detection works properly (this might require implementing that text reading library instead...)
+ >so use a scalar 0-1 instead so that actual location is this number * x-coordinate - same for y
+ >x-axis goes from left to right, with 0 being upper left corner of monitor and 1919 being the upper right
+ >for y, starts from up and increases down - so 0 is upper edge - and 1079 is the lower edge - of monitor
+
+
+-repeating same strategy (= farm a map like Dark Castle) OR play multiple different strategies in a row
+-easier way to add player strategies, e.g. program can read from a file and save a strat (would need to match with regex)
+-some kind of GUI for a more user-friendly experience and custom strat data importing
+
+
+
+------------------------------------------
+SOME OLD CODE:
+
+~~~setting up game modes; this one has slow input during input() because keyBoardListener constantly interferes with it. 
+   Solution was to attach Listener-object to another function that will return either 's' or 'm' and stop this Listener.
+   Then input() can be run inside new function and will work as expected. This newer version uses a global variable, through, but it will not be referenced after its use
+   Another solution could have been to use pyperclip-module and just copy-paste the correct letter to another program without need global variables, but yeah...
+
+def run_btd6bot(key_pressed):  
+    try: 
+        if key_pressed.char == 's' or key_pressed.char == 'S':
+            #keyBoardListener.stop()
+            time.sleep(1)
+            print('Give map name, difficulty and gamemode. Possible inputs: ')
+            print(open('maps.txt').read() + '\n\n')
+            read_list = open('maps.txt').readlines()     #creates a list of each row in maps.txt
+            map_list = []
+            for map in read_list:        #remove whitespace characters from each row
+                map_list.append(map.strip())
+            time.sleep(1)
+            functions.flush_input()      #flushes existing input so input() doesn't contain previous key presses
+            user = input()               #asks user input
+            input_list = map_list[map_list.index(user)].split()             #reads user input and finds matching index in maps.txt, then splits each word into another list.
+            maps.playmap(input_list[0], input_list[1] , input_list[2])      #then we call playmap function with variables 1. map 2. difficulty 3. game mode
+              
+        #Pressing 'M' initializes multi-map mode
+        elif key_pressed.char == 'm' or key_pressed.char == 'M':
+            #keyBoardListener.stop()
+            time.sleep(1)
+            read_list = open('map_list').readlines()
+            map_list = []
+            for map in read_list:
+                map_list.append(map.strip())
+            for listed_maps in map_list:                                    #loops over all maps in map_list.py from top to bottom.
+                maps.playmap(listed_maps[0], listed_maps[1], listed_maps[2])
+        else:
+            print('Invalid input')
+
+    except AttributeError:
+        if key_pressed == pynput.keyboard.Key.esc:      #pressing Esc halts the program
+            print('Program closing...')
+            return False
+        print('Invalid input')
+
+
+with pynput.keyboard.Listener(on_press = run_btd6bot) as keyBoardListener:
+    keyBoardListener.join() 
+
+
+--------------------------------------------------------
+~~~round structure before implementing Monkey class. Before this, I also used match-case instead of if-elif but case 
+values have to be literals, not variables.
+   But because end round depends on game mode, it was reasonable to use to change to this, instead of manually setting 
+   the last round on every single mode.
+
+if current_round == 1:
+                functions.kb_input('d')        #place ninja and upgrade to 1-0-0
+                functions.click(0.33229, 0.48333)
+                functions.click(0.33229, 0.48333)
+                functions.kb_input(',')
+                                   
+                functions.kb_input('q')         #place dart
+                functions.click(0.4651, 0.44167) 
+
+                #start game with Fast speed
+                functions.click(0.95521, 0.93889)
+                functions.click(0.95521, 0.93889)
+            elif current_round == 2:
+                functions.click(0.33229, 0.48333)     #upgrade 1-0-0 ninja to 2-0-0
+                functions.kb_input(',')
+                functions.click(0.01771, 0.99907)   #clicks away to close monkey panel
+            elif current_round == 4:
+                functions.click(0.33229, 0.48333)   #upgrade ninja to 2-0-1
+                functions.kb_input('-')
+                functions.click(0.01771, 0.99907)
+            elif current_round == 8:
+                functions.click(0.33229, 0.48333)   #upgrade ninja to 3-0-1
+                functions.kb_input(',')
+                functions.click(0.01771, 0.99907)
+            elif current_round == 13:
+                functions.kb_input('f')       #place alch and upgrade to 2-0-0
+                functions.click(0.25677, 0.47593)
+                functions.click(0.25677, 0.47593)
+                functions.kb_input(',')
+                time.sleep(0.5)
+                functions.kb_input(',')
+                functions.click(0.01771, 0.99907)
+            elif current_round == 16:
+                functions.click(0.25677, 0.47593)   #upgrade alch to 3-0-0
+                functions.kb_input(',')
+                functions.click(0.01771, 0.99907)
+            elif current_round == 26:
+                functions.click(0.33229, 0.48333)   #upgrade ninja to 4-0-1
+                functions.kb_input(',')
+                functions.click(0.01771, 0.99907)
+            elif current_round == 33:
+                functions.click(0.25677, 0.47593)   #upgrade alch to 4-0-2
+                functions.kb_input(',')
+                time.sleep(0.5)
+                functions.kb_input('.')
+                time.sleep(0.5)
+                functions.kb_input('.')
+                functions.click(0.01771, 0.99907)
+            elif current_round == 37:
+                functions.kb_input('z')             #place a sniper and upgrade to 2-0-4
+                functions.click(0.76094, 0.30463)
+                functions.click(0.76094, 0.30463)
+                functions.kb_input(',')
+                time.sleep(0.5)
+                functions.kb_input(',')
+                time.sleep(0.5)
+                functions.kb_input('-')
+                time.sleep(0.5)
+                functions.kb_input('-')
+                time.sleep(0.5)
+                functions.kb_input('-')
+                functions.click(0.01771, 0.99907)
+            elif current_round == 38:               #upgrade sniper to 2-0-4
+                functions.click(0.76094, 0.30463)
+                functions.kb_input('-')
+                functions.click(0.01771, 0.99907)
+            elif current_round == end:                 #final round, remember to update this based on game mode
+                    time.sleep(10)                     #enough time for round to end
+                    functions.click(0.5, 0.85)         #exit to main menu
+                    time.sleep(1)
+                    functions.click(0.37, 0.78)
+                    print('Done!')
+                    return  # game ends
+
+
+--------------------------------------------------------
+~~~upgrade checking done initially. This was soooo overcomplicated and repetitive, not even speaking of writing the 
+code...just look at the current one instead!
+
+    def upgrade(self, upgrade_list : list):
+        time.sleep(0.3)
+        functions.click(self.get_pos_x(), self.get_pos_y())
+        for upg in upgrade_list:
+                u = self.get_upg()
+                print(f'upgrading {self.name} {u} to {upg}...')              
+                if upg == '0-0-1':
+                    self.press_upgrade(upg, 'b')   
+                elif upg == '0-0-2':
+                    self.press_upgrade(upg, 'b')
+                    if self.name == 'Ace':
+                        self.set_target('Centered')
+                elif upg == '0-0-3':
+                    self.press_upgrade(upg, 'b')
+                elif upg == '0-0-4':
+                    self.press_upgrade(upg, 'b')   
+                elif upg == '0-0-5':    
+                    self.press_upgrade(upg, 'b')      
+                elif upg == '0-1-0':
+                    self.press_upgrade(upg, 'm')
+                elif upg == '0-1-1':
+                    if u == '0-1-0':
+                        self.press_upgrade(upg, 'b')
+                    elif u == '0-0-1':
+                        self.press_upgrade(upg, 'm')
+                elif upg == '0-1-2':
+                    if u == '0-0-2':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '0-1-1':
+                        self.press_upgrade(upg, 'b')
+                        if self.name == 'Ace':
+                            self.set_target('Centered')
+                elif upg == '0-1-3':
+                    if u == '0-0-3':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '0-1-2':
+                        self.press_upgrade(upg, 'b')
+                elif upg == '0-1-4':
+                    if u == '0-0-4':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '0-1-3':
+                        self.press_upgrade(upg, 'b')   
+                elif upg == '0-1-5':
+                    if u == '0-1-4':
+                        self.press_upgrade(upg, 'b')
+                    elif u == '0-0-5':
+                        self.press_upgrade(upg, 'm')
+                elif upg == '0-2-0':
+                    self.press_upgrade(upg, 'm')
+                elif upg == '0-2-1':
+                    if u == '0-1-1':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '0-2-0':
+                        self.press_upgrade(upg, 'b')
+                elif upg == '0-2-2':
+                    if u == '0-1-2':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '0-2-1':
+                        self.press_upgrade(upg, 'b')
+                        if self.name == 'Ace':
+                            self.set_target('Centered')
+                elif upg == '0-2-3':
+                    if u == '0-2-2':
+                        self.press_upgrade(upg, 'b')
+                    elif u == '0-1-3':
+                        self.press_upgrade(upg, 'm')
+                elif upg == '0-2-4':
+                    if u == '0-1-4':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '0-2-3':
+                        self.press_upgrade(upg, 'b')
+                elif upg == '0-2-5':
+                    if u == '0-1-5':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '0-2-4':
+                        self.press_upgrade(upg, 'b')
+                elif upg == '0-3-0':
+                    self.press_upgrade(upg, 'm')
+                elif upg == '0-3-1':
+                    if u == '0-2-1':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '0-3-0':
+                        self.press_upgrade(upg, 'b')
+                elif upg == '0-3-2':
+                    if u == '0-3-1':
+                        self.press_upgrade(upg, 'b')
+                        if self.name == 'Ace':
+                            self.set_target('Centered')
+                    elif u == '0-2-2':
+                        self.press_upgrade(upg, 'm')
+                elif upg == '0-4-0':
+                    self.press_upgrade(upg, 'm')
+                elif upg == '0-4-1':
+                    if u == '0-3-1':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '0-4-0':
+                        self.press_upgrade(upg, 'b')
+                elif upg == '0-4-2':
+                    if u == '0-4-1':
+                        self.press_upgrade(upg, 'b')
+                        if self.name == 'Ace':
+                            self.set_target('Centered')
+                    elif u == '0-3-2':
+                        self.press_upgrade(upg, 'm')
+                elif upg == '0-5-0':
+                    self.press_upgrade(upg, 'm')
+                elif upg == '0-5-1':
+                    if u == '0-5-0':
+                        self.press_upgrade(upg, 'b')
+                    elif u == '0-4-1':
+                        self.press_upgrade(upg, 'm')
+                elif upg == '0-5-2':
+                    if u == '0-4-2':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '0-5-1':
+                        self.press_upgrade(upg, 'b')
+                        if self.name == 'Ace':
+                            self.set_target('Centered')
+                elif upg == '1-0-0':
+                    self.press_upgrade(upg, 't')                   
+                elif upg == '1-0-1':
+                    if u == '1-0-0':
+                        self.press_upgrade(upg, 'b')
+                    elif u == '0-0-1':
+                        self.press_upgrade(upg, 't')
+                elif upg == '1-0-2':
+                    if u == '0-0-2':
+                        self.press_upgrade(upg, 't')
+                    elif u == '1-0-1':
+                        self.press_upgrade(upg, 'b')
+                        if self.name == 'Ace':
+                            self.set_target('Centered')
+                elif upg == '1-0-3':
+                    if u == '0-0-3':
+                        self.press_upgrade(upg, 't')
+                    elif u == '1-0-2':
+                        self.press_upgrade(upg, 'b')
+                elif upg == '1-0-4':
+                    if u == '0-0-4':
+                        self.press_upgrade(upg, 't')
+                    elif u == '1-0-3':
+                        self.press_upgrade(upg, 'b')
+                elif upg == '1-0-5':
+                    if u == '0-0-5':
+                        self.press_upgrade(upg, 't')
+                    elif u == '1-0-4':
+                        self.press_upgrade(upg, 'b')
+                elif upg == '1-1-0':
+                    if u == '1-0-0':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '0-1-0':
+                        self.press_upgrade(upg, 't')
+                elif upg == '1-2-0':
+                    if u == '0-2-0':
+                        self.press_upgrade(upg, 't')
+                    elif u == '1-1-0':
+                        self.press_upgrade(upg, 'm')
+                elif upg == '1-3-0':
+                    if u == '0-3-0':
+                        self.press_upgrade(upg, 't')
+                    elif u == '1-2-0':
+                        self.press_upgrade(upg, 'm')
+                elif upg == '1-4-0':
+                    if u == '0-4-0':
+                        self.press_upgrade(upg, 't')
+                    elif u == '1-3-0':
+                        self.press_upgrade(upg, 'm')
+                elif upg == '1-5-0':
+                    if u == '0-5-0':
+                        self.press_upgrade(upg, 't')
+                    elif u == '1-4-0':
+                        self.press_upgrade(upg, 'm')
+                elif upg == '2-0-0':
+                    self.press_upgrade(upg, 't') 
+                    if self.name == 'Heli':
+                        self.set_target('Pursuit')
+                elif upg == '2-0-1':
+                    if u == '1-0-1': 
+                        self.press_upgrade(upg, 't')   
+                        if self.name == 'Heli':
+                            self.set_target('Pursuit')                
+                    elif u == '2-0-0': 
+                        self.press_upgrade(upg, 'b')
+                elif upg == '2-0-2':
+                    if u == '2-0-1':
+                        self.press_upgrade(upg, 'b')
+                        if self.name == 'Ace':
+                            self.set_target('Centered')
+                    elif u == '1-0-2':
+                        self.press_upgrade(upg, 't')
+                        if self.name == 'Heli':
+                            self.set_target('Pursuit')
+                elif upg == '2-0-3':
+                    if u == '2-0-2':
+                        self.press_upgrade(upg, 'b')
+                    elif u == '1-0-3':
+                        self.press_upgrade(upg, 't')
+                        if self.name == 'Heli':
+                            self.set_target('Pursuit') 
+                elif upg == '2-0-4':
+                    if u == '1-0-4':
+                        self.press_upgrade(upg, 't')
+                        if self.name == 'Heli':
+                            self.set_target('Pursuit')                
+                    elif u == '2-0-3':
+                        self.press_upgrade(upg, 'b')                  
+                elif upg == '2-0-5':
+                    if u == '1-0-5':
+                        self.press_upgrade(upg, 't')
+                        if self.name == 'Heli':
+                            self.set_target('Pursuit') 
+                elif upg == '2-1-0':
+                    if u == '2-0-0':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '1-1-0':
+                        self.press_upgrade(upg, 't')
+                        if self.name == 'Heli':
+                            self.set_target('Pursuit') 
+                elif upg == '2-2-0':
+                    if u == '2-1-0':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '1-2-0':
+                        self.press_upgrade(upg, 't')
+                        if self.name == 'Heli':
+                            self.set_target('Pursuit') 
+                elif upg == '2-3-0':
+                    if u == '2-2-0':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '1-3-0':
+                        self.press_upgrade(upg, 't')
+                        if self.name == 'Heli':
+                            self.set_target('Pursuit') 
+                elif upg == '2-4-0':
+                    if u == '2-3-0':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '1-4-0':
+                        self.press_upgrade(upg, 't')
+                        if self.name == 'Heli':
+                            self.set_target('Pursuit') 
+                elif upg == '2-5-0':
+                    if u == '2-4-0':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '1-5-0':
+                        self.press_upgrade(upg, 't')
+                        if self.name == 'Heli':
+                            self.set_target('Pursuit') 
+                elif upg == '3-0-0':
+                    self.press_upgrade(upg, 't')
+                elif upg == '3-0-1':
+                    if u == '2-0-1': 
+                        self.press_upgrade(upg, 't')
+                    elif u == '3-0-0': 
+                        self.press_upgrade(upg, 'b')
+                elif upg == '3-0-2':
+                    if u == '2-0-2':
+                        self.press_upgrade(upg, 't')
+                    elif u == '3-0-1':
+                        self.press_upgrade(upg, 'b')
+                        if self.name == 'Ace':
+                            self.set_target('Centered')
+                elif upg == '3-1-0':
+                    if u == '3-0-0':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '2-1-0':
+                        self.press_upgrade(upg, 't')
+                elif upg == '3-2-0':
+                    if u == '3-1-0':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '2-2-0':
+                        self.press_upgrade(upg, 't')
+                elif upg == '4-0-0':
+                    self.press_upgrade(upg, 't') 
+                elif upg == '4-0-1':
+                    if u == '4-0-0':
+                        self.press_upgrade(upg, 'b')
+                    elif u == '3-0-1':
+                        self.press_upgrade(upg, 't')
+                elif upg == '4-0-2':
+                    if u == '4-0-1':
+                        self.press_upgrade(upg, 'b')
+                        if self.name == 'Ace':
+                            self.set_target('Centered')
+                    elif u == '3-0-2':
+                        self.press_upgrade(upg, 't')
+                elif upg == '4-1-0':
+                    if u == '4-0-0':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '3-1-0':
+                        self.press_upgrade(upg, 't')
+                elif upg == '4-2-0':
+                    if u == '4-1-0':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '3-2-0':
+                        self.press_upgrade(upg, 't')
+                elif upg == '5-0-0':
+                    self.press_upgrade(upg, 't')  
+                elif upg == '5-0-1':
+                    if u == '4-0-1':
+                        self.press_upgrade(upg, 't')
+                    elif u == '5-0-0':
+                        self.press_upgrade(upg, 'b')
+                elif upg == '5-0-2':
+                    if u == '4-0-2':
+                        self.press_upgrade(upg, 't')
+                    elif u == '5-0-1':
+                        self.press_upgrade(upg, 'b')
+                        if self.name == 'Ace':
+                            self.set_target('Centered')
+                elif upg == '5-1-0':
+                    if u == '5-0-0':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '4-1-0':
+                        self.press_upgrade(upg, 't')
+                elif upg == '5-2-0':
+                    if u == '4-1-0':
+                        self.press_upgrade(upg, 'm')
+                    elif u == '4-2-0':
+                        self.press_upgrade(upg, 't')  
+        ###
+        time.sleep(0.3)                     #Sleep is used at the end so program has time to input upgrades
+        functions.click_away()              #click away so overlay doesn't block anything
+
+
+--------------------------------------------------------
+#UNEXPLAINABLE BEHAVIOUR: hero placement must be done by clicking hero portrait instead of using hotkey
+#for some absurd reason, simulating the key press associated with hero placement works outside of Bloons
+#but within Bloons window, it won't register. AND THIS IS ONLY WITH THAT KEYBIND - EVERYTHING ELSE WORKS!
+#Not only this, everything worked just fine BEFORE Bloons version 45.0, but afterwards stopped working...
+#tested on older laptop and there hero placing actually works with hotkey, just how is this possible...?
+if self.name == 'hero':
+    functions.click(0.89, 0.21)
+else:
+    functions.kb_input(self.get_hotkey())
+#SOLVED: for some reason, after adding 0.1 second delay between press and release of key in functions.kb_input, it now registers...
+#still weird that it worked for everything else before that delay...at least it's solved now
+
+
+--------------------------------------------------------
+~~~final pytesseract reader which got replaced by easyocr.
+    Idea and code behind contours:
+    https://stackoverflow.com/questions/59736948/remove-false-text-regions-from-an-image
+
+    Tesseract options
+    https://muthu.co/all-tesseract-ocr-options/
+
+
+tl_x, tl_y, br_x, br_y = coordinates[0], coordinates[1], coordinates[2], coordinates[3]
+    width, height = br_x - tl_x, br_y - tl_y
+    pyautogui.screenshot(imageFilename=constants.PATH+'\\matching_images\\strong_new.png',
+                         region=(tl_x, tl_y, width, height))
+    img = cv2.imread(constants.PATH+'\\matching_images\\strong_new.png')
+
+    # Load image, create blank mask, grayscale, Otsu's threshold
+    mask = np.zeros(img.shape, dtype=np.uint8)
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+
+    # Find contours and filter using contour area
+    cnts = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = cnts[0] if len(cnts) == 2 else cnts[1]
+    for c in cnts:
+        area = cv2.contourArea(c)
+        #changed from original 'area > ...' because need to bound chunks from above. Alter this as you deem necessary.
+        if  35 < area < 180:
+            cv2.drawContours(mask, [c], -1, (255,255,255), -1)
+
+    # Bitwise and to reconstruct image
+    result = cv2.bitwise_and(img, mask)    
+    cv2.imwrite(constants.PATH+'\\matching_images\\strong_result.png', result)    #uncomment if you need result image
+    zoomed = zoom(result, 3)
+    #cv2.imwrite(constants.PATH+'\\matching_images\\strong_zoomed.png', zoomed)   #uncomment if you need zoomed image
+    #return pytesseract.image_to_string(zoomed, config='--oem 1')
+
+
+--------------------------------------------------------
+~~~reading plan info from a separate text files. Current implementation reads data from the plan file docstrings so 
+    separate files are no longer needed.
+
+    def show_mapinfo(self) -> None:
+        """Displays optional info screen
+        
+        Info texts are defined in 'plan info' folder where their name corresponds to same .py file.
+        If no file exist, displays a blank screen.
+        """
+        original = self.get_original()
+        if original+'.txt' in os.listdir(path.PLANS_INFO_PATH): 
+            with open(path.PLANS_INFO_PATH+'\\'+original+'.txt') as file_read:
+                infolist = plan_data.list_format(file_read.readlines())
+            readtext = '\n'.join(infolist)
+            self.current_info = readtext
+            self.info_box['state'] = 'normal'
+            self.info_box.delete(1.0, tk.END)
+            self.info_box.insert('end', self.current_info)
+            self.info_box['state'] = 'disabled'
+        else:     
+            self.current_info = ''
+            self.info_box['state'] = 'normal'
+            self.info_box.delete(1.0, tk.END)
+            self.info_box.insert('end', '')
+            self.info_box['state'] = 'disabled'
+
+
+--------------------------------------------------------
+~~~Previous getter/setter setup for Monkey class. These were used to make calling getters and setters easy + perform 
+    data validity checks before setting values in. There were problems, however:
+    1. These setter wouldn't check initial values for name and x & y positions which made them pretty useless.
+    2. Upgrade and targeting setter were actually unused for a long time...
+    3. Users writing plans don't need to access getters nor setters as existing methods like 'target' and 'upgrade' are 
+        already filling their respective roles.
+    --So the new version calls setters for name + positions inside __init__ and has removed these @property methods 
+        entirely.
+
+    @property
+    def name(self) -> str:    
+        """Name getter.
+
+        Note for all setters/getters of this class:
+        All use the 'property' decorator to allow for
+        1. writing less code, and more importantly,
+        2. easier syntax: no need to call a separate getter/setter, as a getter can now be called with self.attr and a 
+        setter with self.attr = new_val.
+
+        Actual attributes are denoted by adding _ in front of the attribute name, for example self._name;
+        modifying these should only be done by __init__, setters, and setter-accessed methods.
+
+        Because setters are only used to verify valid inputs, they might get removed eventually.
+
+        Returns:
+            Monkey's name.
+        """
+        return self._name
+
+    @name.setter
+    def name(self, set_name: str) -> None:
+        """Name setter.
+
+        Args:
+            set_name: Monkey's name.
+        """
+        this_name = set_name.lower()
+        if this_name in Monkey._MONKEY_NAMES:
+            self._name = this_name
+        else:
+            self._error('name', set_name)
+
+    @property
+    def pos_x(self) -> float | None:
+        """X-position getter.
+
+        Returns:
+            Monkey's x-position.
+        """
+        return self._pos_x
+
+    @pos_x.setter
+    def pos_x(self, set_pos_x: float) -> None:
+        """X-position setter.
+
+        Args:
+            set_pos_x: Monkey's x-position.
+        """
+        if 0 <= set_pos_x <= 1:
+            self._pos_x = set_pos_x
+        else:
+            self._error('pos_x', str(set_pos_x))
+
+    @property
+    def pos_y(self) -> float | None:
+        """Y-position getter.
+
+        Returns:
+            Monkey's y-position.
+        """
+        return self._pos_y
+    
+    @pos_y.setter
+    def pos_y(self, set_pos_y: float) -> None:
+        """Y-position setter.
+
+        Args:
+            set_pos_y: Monkey's y-position.
+        """
+        if 0 <= set_pos_y <= 1:
+            self._pos_y = set_pos_y
+        else:
+            self._error('pos_y', str(set_pos_y))
+    
+    @property
+    def targeting(self) -> str | None:
+        """Targeting getter.
+
+        Returns:
+            Monkey's current targeting priority.
+        """
+        return self._targeting
+
+    @targeting.setter
+    def targeting(self, set_target: str) -> None:
+        """Targeting setter.
+
+        Args:
+            set_target: Monkey's new targeting priority.
+        """
+        val = self._change_target(set_target.lower())
+        if val != 'OK':
+            self._error('target', set_target, val)
+        kb_mouse.press_esc()      # closes currently opened targeting window. 
+        self._targeting = set_target.lower()
+
+    @property
+    def upgrade_path(self) -> str:
+        """Upgrade getter.
+
+        Returns:
+            Monkey's current upgrade path.
+        """
+        return self._upgrade_path
+
+    @upgrade_path.setter
+    def upgrade_path(self, set_upg: list[str]) -> None:
+        """Upgrade setter.
+
+        Args:
+            set_upg: Monkey's next list of upgrades.
+        """
+        if set_upg != []:
+            for upg in set_upg:
+                if re.search("^[0-5]-[0-2]-0$|^[0-5]-0-[0-2]$|"
+                            "^[0-2]-[0-5]-0$|^0-[0-5]-[0-2]$|"
+                            "^[0-2]-0-[0-5]$|^0-[0-2]-[0-5]$", upg) == None:
+                    self._error('upgrade', upg, set_upg)
+                    return
+            self
+        else:
+            self._error('upgrade_list', set_upg)
+
+    # for Hero class
+    @property
+    def hero_name(self) -> str | None:
+        """Hero name getter.
+
+        Returns:
+            Hero's name.
+        """    
+        return self._hero_name
+
+    @hero_name.setter
+    def hero_name(self, set_hero_name: str) -> None:
+        """Hero name setter.
+
+        Hero names don't need a separate check as that's already done within bot.menu_return module.
+
+        Args:
+            set_hero_name: Hero's name string.
+        """
+        self._hero_name = set_hero_name.lower()
+
+    @property
+    def targeting(self) -> str | None:
+        """Hero targeting getter.
+
+        Returns:
+            Hero's current targeting priority.
+        """
+        return self._targeting
+
+    @targeting.setter
+    def targeting(self, set_target: str) -> None:
+        """Hero targeting setter.
+
+        Args:
+            set_target: Hero's next targeting priority.
+        """
+        val = self._change_hero_target(set_target.lower())
+        if val != 'OK':
+            self._error('target', set_target, val)
+        kb_mouse.press_esc()  
+        self._targeting = set_target.lower()
+
+
+--------------------------------------------------------
+~~~utils.plan_data.return_strategy from the very beginning until about 6 months later: only then, during writing of 
+   unit tests, it occured that code below causes an error with following plan name: 'balanceMediumMilitary'.
+   -reason: index will always return the first occurence of a capital letter. With Medium and Military, it refers twice 
+    to the M in Medium.
+   -fixing it was easy: just use indexing in for loop instead of looping elements themselves.
+
+    diff_and_mode = []
+    for s in plan:
+        if s.isupper():
+            diff_and_mode.append(plan.index(s))
+    return plan[diff_and_mode[0]:diff_and_mode[1]]+'-'+ plan[diff_and_mode[1]:]

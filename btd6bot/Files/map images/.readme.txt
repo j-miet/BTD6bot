@@ -1,0 +1,13 @@
+# To have map images displayed in gui instead of ascii:
+  1. get images for all maps you need, or just all maps in general
+     >probably easiest way is to use bloons wiki https://bloons.fandom.com/wiki/Maps?so=search#Bloons_TD_6_Maps
+      and go over any map page, then click the image: this will open clear hud-less image. Then just save as .png. Repeat for all maps.
+  2. put all map images inside tools/image_scaler/raw map images AND make sure image names are all in lowercase.
+     >note that #ouch should be typed without the # symbol.
+      >examples: in the loop.png, adora's temple.png, ouch.png
+  3. run the script with run.bat file
+  4. now you should have properly scaled images with 320x195 res: quite weird res, but fits the current gui nicely.
+  5. then just copy these under this folder e.g. btd6bot/Files/map images
+
+# Why are images not included?
+  I'd rather not copy and distribute any official game assets. Images would also increase the project size a lot.

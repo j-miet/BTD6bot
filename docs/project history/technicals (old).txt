@@ -1,0 +1,112 @@
+-------------------------------------------------------------------------------------
+---------------------------------- TECHNICAL STUFF ---------------------------------- 
+-------------------------------------------------------------------------------------
+
+>programmed in Python 3.12
+>tested on Windows 10
+
+>>>Program can be roughly separated into frontend (GUI) & backend (API between bot and game):
+
+GUI (= communication between user and bot program):
+
+-gui_windows.py (entire GUI)
+-gui_tools.py (thread termination & stdout redirecting)
+-gui_roundplot.py (plot showing what code is run on each round of selected plan)
+-gui_vars.py (saves collection event status and most recent bot thread; important in preventing phantom threads.)
+-map images (all map images)
+-plan info (optional info text for selected plan)
+-text files (saving and loading stuff)
+
+API (= communication between bot program and game):
+-api
+ -flow.py (time flow)
+ -menu.py (menu navigation)
+ -monkey.py (monkeys and heroes)
+ -ocr.py (optical character recognition = read text from images)
+ -ocr_reader.py (a reader object for ocr)
+ -rounds.py (for checking and updating current round)
+-plans
+  -map_nameDifficultyMode.py (all implemented plans)
+-ocr images (screenshots for ocr)
+-set_plan.py (sort of bridge between GUI and API: gets round data, chooses correct plan module and passes necessary 
+    information to it)
+
+OTHER (= supporting files):
+-constants.py (lots of constant values)
+-hotkeys.py (loads hotkeys from hotkeys.txt for bot to utilize)
+-functions
+ -data.py (sorting data)
+ -kb_mouse.py (mouse and keyboard control)
+ -timing.py (timing things)
+
+ 
+>>>Control flow (roughly, without everything included):
+
+main.py
+    =>gui_windows.py
+        -gui_tools.py & gui_vars.py
+        -gui_roundplot.py
+        -map images
+        -plan info
+        -text files --> hotkey.txt --> hotkeys.py
+        =>set_plan.py
+            =>map_nameDifficultyMode.py (any plan file)
+                =>menu.py
+                    =>monkey.py, rounds.py, timing.py (running current plan)
+                        -ocr images
+                        =>menu (plan finishes)
+                            =>...back to gui_windows.py 
+                                ---> repeat above, or exit program = ends tkinter main loop in main.py.
+
+
+>>>stuff regarding optical character recognition (ocr):
+
+-It's very CPU-heavy
+    despite the efforts, ocr needs a lot of resources if you want to perform it fast enough. So yes, running this
+    bot will keep the usage high often, then drop it down when nothing happens, then up it goes again. GPU-wise, no idea
+    as my current GPU doesn't support the pytorch CUDA stuff, but it's probably *a lot* better - just not necessary for
+    this bot to function.
+-It's hard to get it to function without problems
+    These are all the ocr libraries have been used at some point:
+     -pyautogui (this was actually just comparing two images, pixel by pixel, using some delta value so not actual ocr)
+     -screen_ocr (used this for like a month. Tested with static images: all rounds/upgrades were in .png...)
+     -screen_ocr_winrt (= winrt backend; tested briefly, but was even worse than normal)
+     -pytesseract (for like 2 days; was still inaccurate and required external software installation)
+     -easyocr
+    Only the latest has been consistent enough to allow making harder plans, such as a Sanctuary
+    Chimps run. For others, there were speed and/or accuracy issues, but their CPU usage was low compared to
+    easyocr. So that's the downside of current one. 
+    But even with this one, multiple ocr functions had to be made for different cases as even some
+    simple text pieces can fail, but then some complex senteces come out almost perfect.
+
+
+
+----------------------------------------------------------------------
+[all non-standard libraries/packages/modules and their main utilities]
+
+#External = downloaded through pip
+
+>pynput (key & mouse simulation, in particular key presses as those don't work in pyautogui. Also Listener threads for listening user inputs)
+>pyautogui (mouse simulation, getting current monitor res and monitor screenshots. Was used first in image matching until OCR replaced this)
+>easyocr (OCR; used screen_ocr before - first with base backend and then briefly with winrt before overhauling stuff for pytesseract. And then finally to easyocr)
+>tkinter (Graphical user interface)
+>matplotlib (round structure plots)
+>cv2 (assisting ocr with different image manipulation tools)
+>PIL (also image stuff)
+
+
+#Custom = self-implemented for this program, but might require standard and/or external libraries
+
+>assist (general package for common utility; contains constant.py, functions.py and hotkeys.py modules)
+  constants (absolute paths, mouse click position)
+  functions (all sorts of tools used everywhere during program runtime)
+  hotkeys (handles hotkey reading from file and updating them for bot)
+  ocr (everyting OCR related)
+  ocr_reader (creates a reader object which every ocr tool can utilize)
+>plans (all plans that bot can run)
+  'any plan .py file' (delegates bot commands from choosing hero until returning back to map main menu after finishing map)
+>gui_windows (responsible of all GUI control)
+>gui_tools (tools to help manage threads and standard output in GUI)
+>roundplot (handles plots opening after pressing 'Show plot' button in GUI)
+>maps (chooses first and ends depending on the plan and sends required information for corresponding plan module)
+>monkey (everything related to in-game commands such as placements, upgrades, abilities etc.)
