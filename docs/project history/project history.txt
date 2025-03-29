@@ -22,10 +22,12 @@
 
 0.12 (20.3.2025)
 
--finally pushed the project into github. It also means this document is no longer updated: git will now serve as version control.
+-finally pushed the project into github. It also means this document is no longer updated: git will now serve as 
+ version control.
 
 -changed how ocr works with static exceptions strings: if it fails initially to match, it now checks what current 
- monkey and upgrade path is, then checks if it matches with any exceptions. If yes, then perform ocr again but now againts actual upgrade name instead of another ocr string. This seems to fix all ocr issues, but only time will tell.
+ monkey and upgrade path is, then checks if it matches with any exceptions. If yes, then perform ocr again but now 
+ againts actual upgrade name instead of another ocr string. This seems to fix all ocr issues, but only time will tell.
 
 -renamed bot.api to bot.commands (because entire 'bot' itself is api, not just the in-game commands)
 
@@ -455,42 +457,56 @@ Project:
 ----Fundamental----
 
 -mouse control to a specific location + clicking
- >in a game like bloons, mouse can handle everything; at least can't think anything that absolutely requires keyboard inputs
+ >in a game like bloons, mouse can handle everything; at least can't think anything that absolutely requires keyboard 
+  inputs
  >could consider keyboard inputs
     -however, different players use different layouts so one's hotkey is not necessarily another'set
-    -could of course set up a file which lists hotkeys which are required for bot to work or just avoid using keyboard hotkeys!
- >could also implement insta-return to original coordinate: this way - if played in windowed mode - you could just do stuff on second monitor
+    -could of course set up a file which lists hotkeys which are required for bot to work or just avoid using keyboard 
+     hotkeys!
+ >could also implement insta-return to original coordinate: this way - if played in windowed mode - you could just do 
+  stuff on second monitor
 
 -how to tell program the current round
- >important because can't mod game files -> only way is to use visual cues like pixel/image comparing OR text reading (far more advanced, requires separate library)
- >has to recognise every round from monitor and detect round change to allow tower cyclic commands for each round - otherwise would need to use A LOT of timing functions...
+ >important because can't mod game files -> only way is to use visual cues like pixel/image comparing OR text reading 
+ (far more advanced, requires separate library)
+ >has to recognise every round from monitor and detect round change to allow tower cyclic commands for each round - 
+  otherwise would need to use A LOT of timing functions...
  >should not confuse two rounds at any point
     -for this, you need all normal rounds accounted e.g. 1-100 so 100 images.
-    -probably easiest to use round numbering syntax X / Y where X current round and Y final round, and save all images without background
+    -probably easiest to use round numbering syntax X / Y where X current round and Y final round, and save all images 
+     without background
     -then match to this picture on each round (do a frequent matching, like each second or even less if needed)
-    -when program detects the current round, it will execute all instructions for that given round, then tries to match for the next rounds image
-    -after final round concludes, it terminates (unless we want to implement looping for farming purposes OR play multiple maps in a row)
-    [should start with image matching. Later on can try the text reading implementation after you have a functional program with most of the important stuff working]
+    -when program detects the current round, it will execute all instructions for that given round, then tries to match 
+     for the next rounds image
+    -after final round concludes, it terminates (unless we want to implement looping for farming purposes OR play 
+     multiple maps in a row)
+    [should start with image matching. Later on can try the text reading implementation after you have a functional 
+    program with most of the important stuff working]
 
 -creating a basis for a setting file
  >contain pre-game settings like hero, maps, difficulty, game mode, game speed
- >then also in-game strategy with all in-game inputs like tower placements, upgrades, behaviours, abilities - and of course their timings based on rounds
- >should use some kind of text file: initially just txt or Python to test stuff. Later file standard is needed, maybe a JSON file?
+ >then also in-game strategy with all in-game inputs like tower placements, upgrades, behaviours, abilities - and of 
+  course their timings based on rounds
+ >should use some kind of text file: initially just txt or Python to test stuff. Later file standard is needed, maybe a 
+  JSON file?
 
 
 
 ----Other----
 
 -resolution scaling
- >different monitors have different pixel coordinates so program should be able to scale coordinate positions accordingly
-    -not only for mouse inputs but for also images so that round detection works properly (this might require implementing that text reading library instead...)
+ >different monitors have different pixel coordinates so program should be able to scale coordinate positions 
+  accordingly
+    -not only for mouse inputs but for also images so that round detection works properly (this might require 
+     implementing that text reading library instead...)
  >so use a scalar 0-1 instead so that actual location is this number * x-coordinate - same for y
  >x-axis goes from left to right, with 0 being upper left corner of monitor and 1919 being the upper right
  >for y, starts from up and increases down - so 0 is upper edge - and 1079 is the lower edge - of monitor
 
 
 -repeating same strategy (= farm a map like Dark Castle) OR play multiple different strategies in a row
--easier way to add player strategies, e.g. program can read from a file and save a strat (would need to match with regex)
+-easier way to add player strategies, e.g. program can read from a file and save a strat (would need to match with 
+ regex)
 -some kind of GUI for a more user-friendly experience and custom strat data importing
 
 
@@ -498,10 +514,13 @@ Project:
 ------------------------------------------
 SOME OLD CODE:
 
-~~~setting up game modes; this one has slow input during input() because keyBoardListener constantly interferes with it. 
+~~~setting up game modes; this one has slow input during input() because keyBoardListener constantly interferes with 
+it. 
    Solution was to attach Listener-object to another function that will return either 's' or 'm' and stop this Listener.
-   Then input() can be run inside new function and will work as expected. This newer version uses a global variable, through, but it will not be referenced after its use
-   Another solution could have been to use pyperclip-module and just copy-paste the correct letter to another program without need global variables, but yeah...
+   Then input() can be run inside new function and will work as expected. This newer version uses a global variable, 
+   through, but it will not be referenced after its use
+   Another solution could have been to use pyperclip-module and just copy-paste the correct letter to another program 
+   without need global variables, but yeah...
 
 def run_btd6bot(key_pressed):  
     try: 
