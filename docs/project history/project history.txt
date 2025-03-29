@@ -1,8 +1,28 @@
-=== In-game version: 47 ===
+# This document is no longer updated #
 
--------------------------------------------------
----Added (after 0.11 so these are part of 0.12)---
--------------------------------------------------
+
+########
+----version history----
+
+>Project folder and initial plan was created on 16.9.2024.
+>Using number system to mark down milestones between each iteration = it's a version backlog.
+ --Unfortunately I didn't write down dates for each milestone to gauge how much time was spent on each, but at least it 
+   shows how stuff has evolved over time.
+   ->Starting from 0 and getting to 0.10 took about 7 weeks and closer to 300 hours of work.
+     Working on 0.10 and 0.11 together exceeded that, so currently (as of 22.2.2025) while working on 0.12 for closer 
+     to 2 months, it's safety to say I have put over 1000 hours in this project.
+   ->Of course, it's not just writing new code: learning, planning, testing and fixing stuff takes like 90-95% of time 
+     nowadays. 
+     --In the past, when things were less complicated, it was closer to 50-50. And at the beginning, it was mostly   
+       just writing code to get results without thinking about how the project would look in a few months: this of 
+       course resulted into major structural refactorizations and code reworks because initial code was quite bad. But 
+       it was very important process: I learned a lot + it was tons of fun to visit older code, seeing how much I had 
+       improved.
+----
+
+0.12 (20.3.2025)
+
+-finally pushed the project into github. It also means this document is no longer updated: git will now serve as version control.
 
 -changed how ocr works with static exceptions strings: if it fails initially to match, it now checks what current 
  monkey and upgrade path is, then checks if it matches with any exceptions. If yes, then perform ocr again but now againts actual upgrade name instead of another ocr string. This seems to fix all ocr issues, but only time will tell.
@@ -99,27 +119,6 @@
   --Either run them from terminal, or by running _doctests.py located in source folder bt6bot
 
 -added new coordinates of 'Play' text location in main menu as patch 47.x introduces 'Legends' button.
-
-
-
-########
-----version history----
-
->Project folder and initial plan was created on 16.9.2024.
->Using number system to mark down milestones between each iteration = it's a version backlog.
- --Unfortunately I didn't write down dates for each milestone to gauge how much time was spent on each, but at least it 
-   shows how stuff has evolved over time.
-   ->Starting from 0 and getting to 0.10 took about 7 weeks and closer to 300 hours of work.
-     Working on 0.10 and 0.11 together exceeded that, so currently (as of 22.2.2025) while working on 0.12 for closer 
-     to 2 months, it's safety to say I have put over 1000 hours in this project.
-   ->Of course, it's not just writing new code: learning, planning, testing and fixing stuff takes like 90-95% of time 
-     nowadays. 
-     --In the past, when things were less complicated, it was closer to 50-50. And at the beginning, it was mostly   
-       just writing code to get results without thinking about how the project would look in a few months: this of 
-       course resulted into major structural refactorizations and code reworks because initial code was quite bad. But 
-       it was very important process: I learned a lot + it was tons of fun to visit older code, seeing how much I had 
-       improved.
-----
 
 0.11 (probably like 3 months since 0.10)
 >>>Biggest "patch" so far: lots of improvements in code, new major features and big refactoring of code with new 

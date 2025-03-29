@@ -41,8 +41,8 @@
 -installed 'ruff' extension which is very good at detecting poor coding practises with indentation, naming and 
  duplicate lines.
 
-==>You can run mypy/ruff in VS Code terminal, or just use cmd/powershell. You need to type:
-	ruff 'your_file_path'
+==>You can run ruff in VS Code terminal, or just use cmd/powershell. You need to type:
+	ruff 'your_file_path' check
 
 ----Other----
 #doctests
