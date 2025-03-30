@@ -5,11 +5,16 @@
 [Monkey Knowledge]
 -------------------------------------------------------------
 ===Monkeys required===
-*list all monkeys + their crosspaths here
+*list all monkeys + their highest crosspaths here
+ Or you can just list all of them if you want to
 _______________________________________
 *put description/any additional comments here*
 """
 
+# can replace all imports below with a single
+#   from._plan_imports import *
+# statement after plan file is placed in plans folder.
+# But this format works too, just has more lines of code
 from time import time
 
 from bot.commands.flow import begin, end_round, change_autostart, wait
