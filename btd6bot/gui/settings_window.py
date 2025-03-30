@@ -53,7 +53,7 @@ class SettingsWindow:
         record_text.grid(column=0, row=3, columnspan=5, pady=5)
         record_text.insert('end', "Records all round times during a plan and updates them under "
                             "\'Show Plot\'. Plan must be completed with all rounds finished in one go "
-                            "and bot returned to menu screen. Overrides existing data so updating times is easy.")
+                            "and bot returned to menu screen. Overwrites existing data so updating times is easy.")
         record_text['state'] = 'disabled'
         
         

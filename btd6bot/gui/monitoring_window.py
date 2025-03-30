@@ -85,11 +85,12 @@ class MonitoringWindow:
         self.textbox = tk.Text(self.monitoringwindow, width=55, height=25, state='normal', wrap=tk.WORD)
         self.textbox.grid(column=0, columnspan=2, row=0, rowspan=4, sticky='n')
         self.textbox.insert('end', "Welcome to BTD6bot!\n"
-                            "Make sure that:\n"
+                            "Make sure that game:\n"
                             ">Game language is set as ENGLISH\n"
                             ">Game resolution has aspect ratio 16:9\n"
+                            ">Game is in fullscreen (windowed won't work)\n"
                             ">Bot hotkeys match to your in-game equivalents\n"
-                            ">You have the following setting in 'Esc' menu in-game:\n"
+                            ">You have the following settings in 'Esc' menu in-game:\n"
                             " -Autostart = ON\n"
                             " -Drag & Drop = ON\n"
                             " -Disable nudge mode = ON\n"
