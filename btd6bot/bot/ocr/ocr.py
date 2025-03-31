@@ -36,12 +36,13 @@ Constants:
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import difflib
+import json
 import pathlib
 import time
 
 from PIL import Image
 import pyautogui
-from numpy import array as numpyarray
+from numpy import array, repeat
 
 from bot import kb_mouse
 
@@ -61,69 +62,28 @@ class OcrValues:
             i.e. 0.01 doesn't match to 100 checks per second.
 
         DELTA (float, class attribute):
-            Controls OCR string matching accuracy in file_text and check_upg_text. Possible to lower this if upgrade 
-            detection is causing too many false rejections. But at the same time, don't lower it too much as you could 
-            get false positives. Based on testing so far, 0.8 gives satisfactory results, barring a few problematic 
-            cases which are manually handled and listed inside MATCH_STRINGS.  
-            Delta value itself is included i.e. 0.8 means that all deltas on closed interval [0.8, 1] are valid.
+            Controls OCR string matching accuracy in strong_delta_check for general strings - upgrade string are 
+            handled separately. Delta value itself is included i.e. 0.8 means that all deltas on closed interval 
+            [0.8, 1] are valid.
 
-        MATCH_STRINGS (set[str], class attribute):
-            Contains all manual ocr string combinations of form 'input_str||text_str' where input_str is the value 
-            passed onto strong_delta_check function and text_str the string which is read from an screen location 
-            screenshot. These strings are used with upgrading towers: with high enough delta, ocr won't accept text that
-            differ on more than few letters, yet it can still be too high for certain upgrades that are just a bit hard
-            for ocr to interpret precisely. To strike a balance, keep delta high enough to remove any false positives 
-            (current value 0.8 works for almost all upgrades) and list all the problematic cases under a single 
-            constant.
-
-            Tested (+ any anomalities)
-
-            -dart  
-            -boomer  
-            -bomb (0-0-5 passes with exactly 0.8 delta)  
-            -tack  
-            -ice (1-x-x added as exception)  
-            -glue  
-
-            -sniper (4-x-x added as exception)  
-            -sub 
-            -boat (x-x-3 added as exception)  
-            -ace  
-            -heli  
-            -mortar  
-            -dartling  
-
-            -wizard  
-            -super  
-            -ninja  
-            -alch  
-            -druid (5-x-x added as exception)  
-            -mermonkey  
-
-            -farm  
-            -spike  
-            -village  
-            -engineer  
-            -beast (5-x-x added as exception, 0-5-0 passes with exactly 0.8 delta)  
+        OCR_UPGRADE_DATA (dict[str, list[str, float]], class attribute):
+            Contains all manual upgrade names and their respective deltas for strong_delta_check. Each key 
+            is a identifier for monkey and crosspath, with values being the ocr data. For example,
+            OCR_UPGRADE_DATA['dart 1-x-x'] would return something similar to ["sharp shots", 0.8].
 
         OCR_IMAGE_PATH (pathlib.PATH, class attribute):
-            Folder location that stores temporary ocr temp. These are constantly overwritten as process repeats 
+            Folder location that stores temporary ocr images. Images are constantly overwritten as ocr process repeats 
             screenshotting and reading text from screenshot image.
     """
     READ_FILE_FREQUENCY: float = 0.01
-    DELTA: float = 0.8
+    DELTA: float = 0.75
 
-    MATCH_STRINGS: dict[str, str] = {   
-        "boomer x-4-x": "turbo charge",     
-        "ice 1-x-x": "permafrost",
-        "sniper 4-x-x": "maim moab",
-        "boat x-x-3": "merchantman",
-        "druid 5-x-x": "superstorm",
-        "village x-x-2": "monkey commerce",
-        "beast 5-x-x": "megalodon"
-    }
+    OCR_IMAGE_PATH: pathlib.Path = pathlib.Path(__file__).parent.parent.parent/'Files'/'ocr temp'
 
-    OCR_IMAGE_PATH: pathlib.Path = pathlib.Path(__file__).parent.parent.parent / 'Files' / 'ocr temp'
+    def _get_ocr_strings() -> dict[str, list[str, float]]:
+        with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'ocr_upgrade_data.json') as f:
+            return json.load(f)
+    OCR_UPGRADE_DATA = _get_ocr_strings()
 
 
 def white_shades(rgb_range: int = 1) -> list[tuple[int, int, int]]:
@@ -212,9 +172,9 @@ def weak_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> st
     """
     tl_x, tl_y, br_x, br_y = coordinates[0], coordinates[1], coordinates[2], coordinates[3]
     width, height = br_x - tl_x, br_y - tl_y
-    pyautogui.screenshot(imageFilename=OcrValues.OCR_IMAGE_PATH / 'weak_new.png',
+    pyautogui.screenshot(imageFilename=OcrValues.OCR_IMAGE_PATH/'weak_new.png',
                          region=(tl_x, tl_y, width, height))
-    img = numpyarray(Image.open(OcrValues.OCR_IMAGE_PATH / 'weak_new.png'))
+    img = array(Image.open(OcrValues.OCR_IMAGE_PATH/'weak_new.png'))
     try:
         result = reader.readtext(img)
         string = ''
@@ -241,11 +201,13 @@ def strong_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> 
     """
     tl_x, tl_y, br_x, br_y = coordinates[0], coordinates[1], coordinates[2], coordinates[3]
     width, height = br_x - tl_x, br_y - tl_y
-    pyautogui.screenshot(imageFilename=OcrValues.OCR_IMAGE_PATH / 'strong_new.png',
+    pyautogui.screenshot(imageFilename=OcrValues.OCR_IMAGE_PATH/'strong_new.png',
                          region=(tl_x, tl_y, width, height))
-    blackwhite_image = remove_white_and_gray(Image.open(OcrValues.OCR_IMAGE_PATH / 'strong_new.png'))
-    blackwhite_image.save(OcrValues.OCR_IMAGE_PATH / 'strong_text.png')
-    final = numpyarray(Image.open(OcrValues.OCR_IMAGE_PATH / 'strong_text.png'))
+    blackwhite_image = remove_white_and_gray(Image.open(OcrValues.OCR_IMAGE_PATH/'strong_new.png'))
+    blackwhite_image.save(OcrValues.OCR_IMAGE_PATH/'strong_text.png')
+    final = array(Image.open(OcrValues.OCR_IMAGE_PATH/'strong_text.png'))
+    #for i in range(2):             # zooming of images, quite expensive to calculate.
+    #    final = repeat(final, 3, axis=i)
     try:
         result = reader.readtext(final)
         string = ''
@@ -256,7 +218,7 @@ def strong_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> 
     return string
     
 def weak_substring_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader) -> bool:
-    """Attemps to find inputed string from the screenshot image's ocr string as a substring.
+    """Attemps to find inputed string from screenshot ocr string by substring matching.
 
     Tries to read the input_str from screen within specified coordinates. If it's found, returns True, otherwise False.
     Order of coordinates: (left, top, right, bottom), meaning (top_left x, top_left y, bottom_right x, bottom_right y),
@@ -267,7 +229,7 @@ def weak_substring_check(input_str: str, coords: tuple[float, float, float, floa
     Use cases:
         -checking menu play button text,
         
-        -when game begins i.e. locating 'upgrade' text. Will not check game ending, however as this still has weird 
+        -when game begins i.e. locating 'upgrade' text. Will not check game ending, however, as this still has weird 
             inconsistencies.
 
         -finding the defeat screen 'bloons leaked' message.
@@ -292,13 +254,17 @@ def weak_substring_check(input_str: str, coords: tuple[float, float, float, floa
 def strong_delta_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader, 
                        upg_match: str = '',
                        ) -> bool:
-    """Attemps to match string with strong_image_ocr output or match two upgrade ocr strings, by their similarity.
+    """Attemps to match a string with strong_image_ocr string by their similarity.
 
-    Similar to weak_substring_check. Big difference is now that both string can be non-static i.e. we're not
-    necessarily comparing one pretyped string to OCR string, but two OCR strings. As this process is vastly more
-    complex, a better matching tool is required in form of strong_image_ocr function. However, it being stronger
-    makes static matching horrendously difficult (= it over-processes simple input) so that responsibility is left
-    for weak_substring_check.
+    Differs from substring checking by using a delta parameter which compares similar symbols in two strings.
+    This makes it powerful when matching to complex ocr like upgrade texts, or two ocr strings (latter was used before 
+    but has currently no use). However, for simpler static string matching, it faces the problem of over-processing 
+    inputs and thus makes bad errors, like passing rounds and creating mismatch between current round that bot sees and 
+    actual game round. Thus, this responsibility is left for weak_substring_check instead.  
+    To add to above, delta matching is still very effective on some simple static strings. For example, when a monkey/
+    hero is placed, ocr checks this by reading the 'sell' text. But quite often this string is either missing one of 
+    the letters 'l' or one gets replaced by 'i' or 1, making substring matching ineffective. But with enough delta, ocr 
+    can identify them as same.
     
     'difflib' module offers ways to compare objects like strings and return a value which measures their similarity.
     SequenceMatcher matches two strings with optional junk symbol detector: this allows to ignore spaces/tabs and
@@ -307,36 +273,28 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
     where 0 is for entirely different strings and 1 for perfect matches.
 
     After some testing, common deltas seem to exceed 0.8 often. Shouldn't be too high either as ocr could reject valid
-    strings, too. And in some cases, relatively high delta can still match two different upgrades: for these rare 
-    cases, it's better to just check them by matching to actual string. These exceptions are saved in 
-    OcrValues.MATCH_STRINGS dictionary: if current monkey and upgrade path match, it will use actual string value to 
-    match with instead of an image text, but still requires high delta to avoid false positives.
-
-    Is implemented under separate method as static string matching is more reliant and some strings like current
-    round match constantly unless delta condition is set very high; this constant matching causes mismatch between the
-    bot's current round and actual current round, and so breaks everything. And as different static strings would still
-    require separate deltas, it's easier to just use basic substring matching.
+    strings, too. And in some cases, relatively high delta can still match two different upgrades. For this reason, all 
+    upgrade strings are saved in OcrValues.OCR_UPGRADE_DATA dictionary. Not only that, each string has individual delta 
+    which helps at tweaking problematic cases, but keeping majority of upgrades passable: for latter, a high delta (>= 
+    0.8) is used as base value to avoid false positives, when two consecutive upgrade strings share too many symbols.
 
     Like mentioned, uses quick_ratio() instead of ratio() due to it being considerably faster.
 
-    Use cases:
-        -upgrading monkeys,
-
-        -checking 'sell' text when placing monkeys; high enough DELTA will match even with one letter mismatch when
-            it spells 'sel' instead,
-
-        -end screen 'next' text (again, simple short text but can still cause error in a single letter so high DELTA 
-            helps
-
-        -checking collection event 'Collect' text.
+    Use cases:  
+    -upgrading monkeys,  
+    -checking 'sell' text when placing monkeys; high enough DELTA will match even with one letter mismatch when it 
+        spells 'sel' instead,  
+    -end screen 'next' text (again, simple short text but can still cause error in a single letter so high DELTA 
+        helps  
+    -checking collection event 'Collect' text.
 
     Args:
         input_str: A string, extracted from an image using strong_image_ocr()s
         coords: Image location, an integer-valued 4-tuple. First two values correspond to top-left (x,y)
             location, last two to bottom-right (x,y) location.
         reader: An easyocr.Reader object that handles reading from image. Loaded from ocr_reader.py.
-        upg_match: Identification string in case upgrade falls under exceptions. Exceptions are listed under 
-            OcrValues.MATCH_STRINGS
+        upg_match: Identification string if ocr is performed for upgrade strings. Upgrades are listed under 
+            OcrValues.OCR_UPGRADE_DATA
 
     Returns:
         A boolean value depending on if upgrade strings are similar enough (above DELTA threshold) or not.
@@ -345,28 +303,31 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
     (br_x, br_y) = kb_mouse.pixel_position((coords[2], coords[3]))
     text = strong_image_ocr((tl_x, tl_y, br_x, br_y), reader)
     if len(text) != 0:
-        r = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), input_str.lower()).quick_ratio()
-        print(input_str.lower()+'\n'+text.lower()+'\n'+str(r))         # uncomment for testing purposes
-        if r >= OcrValues.DELTA:
-            return True
-        elif upg_match in OcrValues.MATCH_STRINGS.keys():
-            match_str = OcrValues.MATCH_STRINGS[upg_match]
+        if input_str == '_upgrade_':
+            match_str = OcrValues.OCR_UPGRADE_DATA[upg_match][0]
+            delta_limit = OcrValues.OCR_UPGRADE_DATA[upg_match][1]
             d = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), match_str).quick_ratio()
-            print(d)
-            if d >= 0.75:
+            #print('Text: '+text.lower())       # TODO debug loggers here after debug setting implemented
+            #print("Match delta: "+str(d))
+            if d >= delta_limit:
+                return True
+        elif input_str != '':
+            r = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), input_str.lower()).quick_ratio()
+            #print(input_str.lower()+'\n'+text.lower()+'\n'+str(r))
+            if r >= OcrValues.DELTA:
                 return True
     time.sleep(OcrValues.READ_FILE_FREQUENCY)
     return False
 
 def strong_substring_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader) -> bool:
-    """Used for checking current round.
+    """Attemps to find inputed string from screenshot ocr string by substring matching with black and white text box.
     
     Middle ground for weak_substring_check and strong_delta_check: uses strong_image_ocr to get black and white text
     box, but still uses substring matching instead of DELTA.
 
     Why this implementation? weak_substring_check can have difficulties with accurate input when map background under
     rounds is more complex, so black background makes it easier - this was particularly problematic if round message
-    is shorter than, say, chimps mode 'round .../100' round text.
+    is shorter than, say, 'round .../100' text of impoppable/chimps.
 
     Use cases:
         -checking current round text.
