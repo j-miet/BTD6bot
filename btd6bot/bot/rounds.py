@@ -3,7 +3,7 @@
 import time
 
 from bot import kb_mouse, times
-from bot.commands.flow import AutoStart, change_autostart
+from bot.commands.flow import AutoStart, change_autostart, begin
 from bot.bot_vars import BotVars
 import bot.menu_return
 from bot.ocr.ocr import weak_substring_check, strong_substring_check, strong_delta_check
@@ -56,9 +56,42 @@ class Rounds:
     defeat_status: bool = False
 
     @staticmethod
-    def _defeat_check() -> bool:
-        # TODO: implemented this, put it under Rounds.round_check, Monkey._place and Monkey._check_upgrade.
-        ...
+    def defeat_check(current_time: float, cycle: int, frequency: int) -> bool:
+        """Checks and updates current defeat status.
+        
+        Checks if current time hasn't exceeded BotVars.checking_time_limit, then checks if current cycle matches the 
+        given frequency. If both true, searches once for defeat screen and either finds it, sets defeat_status to True
+        and returns True, or return False if no defeat detected. If checking time limit is exceeded instead, does the 
+        same as with finding defeat screen.
+
+        How to use: insert this inside a loop where you wish to check defeat conditions every Nth cycle by passing
+        frequency = N. Then implement a counter which starts from 1, gets incremented after each loop, and caps out at 
+        frequency value, then resets back to 1; check Rounds.round_check for an example.
+
+        If cycle = frequency, defeat check is performed every loop which means no incrementing is needed.
+
+        Args:
+            current_time: A time.time() float value.
+            cycle: Current loop iteration cycle, must be less or equal to frequency value.
+            frequency: Amount of cycles it takes between defeat checks.
+        """
+        if isinstance(cycle, int) and cycle >= 1 and isinstance(frequency, int) and frequency >= cycle:
+            if time.time() - current_time < BotVars.checking_time_limit:
+                if cycle == frequency:   # frequency of defeat checks: 2 = every second loop, N = every Nth loop.
+                    if weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
+                        print("\n**Defeat screen detected, game status set to defeat.**")
+                        Rounds.defeat_status = True
+                        return True
+                    else:
+                        return False
+                return False
+            else:
+                print("Checking time limit reached! Game status set to defeat.")
+                Rounds.defeat_status = True
+                return True
+        else:
+            print("Bad cycle and/or frequency values.")
+            return False
 
     @staticmethod
     def return_menu(final_round_start: float, total_start: float, final_round: int) -> None:
@@ -137,17 +170,19 @@ class Rounds:
             wait_start = time.time()
             while not weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
                 if time.time()-wait_start > 5:
-                    print("Didn't find defeat screen, returning to menu anyway.")
+                    print("Defeat: no defeat screen found, returning via espace menu.")
                     kb_mouse.press_esc()
                     time.sleep(1)
+                    kb_mouse.click(Rounds.BUTTONS['home_button2'])
+                    time.sleep(0.25)
                     kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
-                    time.sleep(0.5)
+                    time.sleep(0.25)
                     kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
                     bot.menu_return.returned()
                     print('Plan completed.\n')
                     return Rounds.end_round + 1
                 time.sleep(0.3)
-            print('Defeat screen detected. Returning to menu...', end=' ')
+            print('Defeat: returning to menu in...', end=' ')
             Rounds.defeat_status = False
             timing.counter(3)
             kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
@@ -166,19 +201,23 @@ class Rounds:
         elif mode.lower() == 'apopalypse':
             return Rounds.end_round
         else:
+            if not AutoStart.called_begin:
+                begin()
             total_time = time.time()
+            defeat_check = 1
+            defeat_check_cycle = 3
             while not strong_substring_check(str(current_round)+'/'+str(Rounds.end_round), Rounds.CURRENT_ROUND, 
                                              OCR_READER):
-                if (weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER) or
-                    (time.time() - total_time >= BotVars.checking_time_limit)):
-                    print('Defeat screen detected, returning...', end=' ')
-                    Rounds.defeat_status = True
+                if defeat_check > defeat_check_cycle:
+                    defeat_check = 1
+                if Rounds.defeat_check(total_time, defeat_check, defeat_check_cycle):
                     timing.counter(3)
                     kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
                     time.sleep(0.5)
                     kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
                     print("\nPlan completed.\n")
                     return Rounds.end_round+1
+                defeat_check += 1
             times.time_print(Rounds.current_round_begin_time, time.time(), f'Round {current_round-1}')
             print('===Current round:', current_round, '===')
         Rounds.current_round_begin_time = time.time()

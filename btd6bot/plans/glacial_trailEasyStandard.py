@@ -25,7 +25,6 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         if current_round == BEGIN:
             engi_temp = Monkey('engineer', 0.1651041666667, 0.5027777777778)
             dart_temp = Monkey('dart', 0.7151041666667, 0.6138888888889)
-            begin()
         elif current_round == 6:
             engi_temp.sell()
             Hero(0.1651041666667, 0.5027777777778)

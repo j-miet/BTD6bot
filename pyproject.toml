@@ -1,5 +1,5 @@
 [tool.pytest.ini_options]
 pythonpath = ["btd6bot"]
 addopts = [
-    "--import-mode=importlib",
+    "--import-mode=importlib"
 ]

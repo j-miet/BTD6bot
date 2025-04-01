@@ -1,11 +1,5 @@
 """Testing if bot.commands works (excluding flow.py) via doctests.
 
-Works like an integration test as it simulates commands in-game.
-
-To test, have BTD6 opened in main menu screen, then run this script. Opening might take a bit because of ocr model 
-loading into memory.
-
-Testing is handled by docstring tests i.e. doctests.
 Files with doctests included: monkey.py, hero.py, ability.py
 """
 
@@ -22,8 +16,12 @@ from bot.ocr.ocr import weak_substring_check
 from bot.ocr.ocr_reader import OCR_READER
 from bot.rounds import Rounds
 
-def _test_commands() -> None:
+def test_commands_doctest(capsys) -> None:
+    timer = time.time()
     while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
+        if time.time()-timer >= 10:
+            assert "Failed to find main menu screen" == False # this prevents test from continuing
+            return
         print("Searching for main menu screen...")
         time.sleep(1)
 
@@ -53,11 +51,10 @@ def _test_commands() -> None:
     doctest.run_docstring_examples(Hero.target, globals()); print('Hero.target checked')
     doctest.run_docstring_examples(ability, globals()); print('ability checked')
     
+    captured = capsys.readouterr()
+    assert "Failed to upgrade" not in captured.out
     time.sleep(1)
     kb_mouse.press_esc()
     time.sleep(1)
     kb_mouse.click((0.4458333333333, 0.7814814814815))
-    print('All tests finished.')
-
-if __name__ == '__main__':
-    _test_commands()
+    print('Doctests finished.')

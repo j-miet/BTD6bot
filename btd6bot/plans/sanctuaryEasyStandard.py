@@ -24,7 +24,6 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             sniper_bot1 = Monkey('sniper', 0.6453125, 0.762037037037)
             sniper_bot2 = Monkey('sniper', 0.6651041666667, 0.8074074074074)
             sniper_bot2.target('strong')
-            begin()
         elif current_round == 3:
             sniper_bot3 = Monkey('sniper', 0.7536458333333, 0.8796296296296)
         elif current_round == 7:
