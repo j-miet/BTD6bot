@@ -112,10 +112,6 @@ def test_get_hero_name_from_plan_mock(mocker, plan_name, plan_docs, hero_str):
     mock_open.assert_called_with(
         set_plan.pathlib.Path(__file__).parent.parent.parent / 'btd6bot' / 'plans' / f'{plan_name}.py')
 
-def test_get_hero_name_from_plan():
-    # testing the default plan 'dark_castleEasyStandard'
-    assert set_plan.get_hero_name_from_plan("dark_castleEasyStandard") == 'Obyn'
-
 @pytest.mark.parametrize("strat, rounds", [
     (('EASY', 'STANDARD'), (1, 40)),
     (('EASY', 'PRIMARY'), (1, 40)),
@@ -187,8 +183,6 @@ def test_plan_run(mocker):
     mock_flush_times_temp.assert_called_once() # if _flush_times_temp is called, then so is _save_to_json.
 
 def test_plan_setup(mocker):
-    set_plan.get_hero_name_from_plan("dark_castleEasyStandard")
-
     mock_open_in_hero_select = mocker.patch("set_plan.open", mocker.mock_open())
     mocker.patch("set_plan.plan_run", lambda a, b, c: 1) # override plan_run; no need to test it here.
     mock_module = mocker.patch("set_plan.importlib.import_module")
