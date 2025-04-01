@@ -56,9 +56,21 @@ class Rounds:
     defeat_status: bool = False
 
     @staticmethod
-    def _defeat_check() -> bool:
-        # TODO: implemented this, put it under Rounds.round_check, Monkey._place and Monkey._check_upgrade.
-        ...
+    def defeat_check(current_time: float, cycle: int, frequency: int) -> bool:
+        defeat_check = cycle
+        if time.time() - current_time < BotVars.checking_time_limit:
+            if defeat_check == frequency:   # frequency of defeat checks: 2 = every second loop, N = every Nth loop.
+                if weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
+                    print("\n**Defeat screen detected, game status set to defeat.**")
+                    Rounds.defeat_status = True
+                    return True
+                else:
+                    return False
+            return False
+        else:
+            print("Checking time limit reached! Game status set to defeat.")
+            Rounds.defeat_status = True
+            return True
 
     @staticmethod
     def return_menu(final_round_start: float, total_start: float, final_round: int) -> None:
@@ -137,17 +149,19 @@ class Rounds:
             wait_start = time.time()
             while not weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
                 if time.time()-wait_start > 5:
-                    print("Didn't find defeat screen, returning to menu anyway.")
+                    print("Defeat: no defeat screen found, returning via espace menu.")
                     kb_mouse.press_esc()
                     time.sleep(1)
+                    kb_mouse.click(Rounds.BUTTONS['home_button2'])
+                    time.sleep(0.25)
                     kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
-                    time.sleep(0.5)
+                    time.sleep(0.25)
                     kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
                     bot.menu_return.returned()
                     print('Plan completed.\n')
                     return Rounds.end_round + 1
                 time.sleep(0.3)
-            print('Defeat screen detected. Returning to menu...', end=' ')
+            print('Defeat: returning to menu in...', end=' ')
             Rounds.defeat_status = False
             timing.counter(3)
             kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
@@ -167,18 +181,20 @@ class Rounds:
             return Rounds.end_round
         else:
             total_time = time.time()
+            defeat_check = 1
+            defeat_check_cycle = 3
             while not strong_substring_check(str(current_round)+'/'+str(Rounds.end_round), Rounds.CURRENT_ROUND, 
                                              OCR_READER):
-                if (weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER) or
-                    (time.time() - total_time >= BotVars.checking_time_limit)):
-                    print('Defeat screen detected, returning...', end=' ')
-                    Rounds.defeat_status = True
+                if defeat_check > defeat_check_cycle:
+                    defeat_check = 1
+                if Rounds.defeat_check(total_time, defeat_check, defeat_check_cycle):
                     timing.counter(3)
                     kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
                     time.sleep(0.5)
                     kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
                     print("\nPlan completed.\n")
                     return Rounds.end_round+1
+                defeat_check += 1
             times.time_print(Rounds.current_round_begin_time, time.time(), f'Round {current_round-1}')
             print('===Current round:', current_round, '===')
         Rounds.current_round_begin_time = time.time()

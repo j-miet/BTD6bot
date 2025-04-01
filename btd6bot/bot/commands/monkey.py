@@ -684,7 +684,15 @@ class Monkey(_MonkeyConstants):
 
         total_time = time.time()
         upgraded = 0
-        while time.time() - total_time < BotVars.checking_time_limit and not upgraded:
+        defeat_check = 1
+        defeat_check_cycle = 3
+        while not upgraded:
+            if defeat_check > defeat_check_cycle:
+                defeat_check = 1
+            if Rounds.defeat_check(total_time, defeat_check, defeat_check_cycle):
+                print(f'**Failed to upgrade {self._name.capitalize()}**')
+                return
+            defeat_check += 1
             kb_mouse.kb_input(hotkeys[button])
             if self._name == 'super' and re.search("^4-[0-2]-0$|^4-0-[0-2]$|^5-[0-2]-0$|^5-0-[0-2]$", upg) != None:
                 kb_mouse.kb_input(Key.enter)    # if upgrade is Sun Temple/True Sun God, press Enter to confirm it
@@ -720,9 +728,6 @@ class Monkey(_MonkeyConstants):
                     print('Upgraded.')
                     self._upgrade_path = upg
                     return
-        Rounds.defeat_status = True
-        print(f'\n**Failed to upgrade {self._name.capitalize()}. Current game status set to Defeat**')
-        return
 
     def _place(self) -> None:
         """Places a monkey to an in-game location.
@@ -740,7 +745,15 @@ class Monkey(_MonkeyConstants):
         print(f'Placing {self._name.capitalize()}...', end=' ')
         total_time = time.time()
         placed = 0
-        while time.time() - total_time < BotVars.checking_time_limit and not placed:
+        defeat_check = 1
+        defeat_check_cycle = 3
+        while not placed:
+            if defeat_check > defeat_check_cycle:
+                defeat_check = 1
+            if Rounds.defeat_check(total_time, defeat_check, defeat_check_cycle):
+                print(f'**Failed to place {self._name.capitalize()}**')
+                return
+            defeat_check += 1
             kb_mouse.kb_input(self._get_hotkey())
             kb_mouse.click((self._pos_x, self._pos_y), 2)
             if self._rel_pos == 'right':
@@ -758,9 +771,6 @@ class Monkey(_MonkeyConstants):
                 kb_mouse.press_esc()
                 print(f'{self._name.capitalize()} placed.')
                 return
-        Rounds.defeat_status = True
-        print(f'\n**Failed to place {self._name.capitalize()}. Current game status set to Defeat**')
-        return
     
     def special(self, s: str | int = 1,
                 x: float | None = None,
