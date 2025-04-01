@@ -57,20 +57,41 @@ class Rounds:
 
     @staticmethod
     def defeat_check(current_time: float, cycle: int, frequency: int) -> bool:
-        defeat_check = cycle
-        if time.time() - current_time < BotVars.checking_time_limit:
-            if defeat_check == frequency:   # frequency of defeat checks: 2 = every second loop, N = every Nth loop.
-                if weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
-                    print("\n**Defeat screen detected, game status set to defeat.**")
-                    Rounds.defeat_status = True
-                    return True
-                else:
-                    return False
-            return False
+        """Checks and updates current defeat status.
+        
+        Checks if current time hasn't exceeded BotVars.checking_time_limit, then checks if current cycle matches the 
+        given frequency. If both true, searches once for defeat screen and either finds it, sets defeat_status to True
+        and returns True, or return False if no defeat detected. If checking time limit is exceeded instead, does the 
+        same as with finding defeat screen.
+
+        How to use: insert this inside a loop where you wish to check defeat conditions every Nth cycle by passing
+        frequency = N. Then implement a counter which starts from 1, gets incremented after each loop, and caps out at 
+        frequency value, then resets back to 1; check Rounds.round_check for an example.
+
+        If cycle = frequency, defeat check is performed every loop which means no incrementing is needed.
+
+        Args:
+            current_time: A time.time() float value.
+            cycle: Current loop iteration cycle, must be less or equal to frequency value.
+            frequency: Amount of cycles it takes between defeat checks.
+        """
+        if isinstance(cycle, int) and cycle >= 1 and isinstance(frequency, int) and frequency >= cycle:
+            if time.time() - current_time < BotVars.checking_time_limit:
+                if cycle == frequency:   # frequency of defeat checks: 2 = every second loop, N = every Nth loop.
+                    if weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
+                        print("\n**Defeat screen detected, game status set to defeat.**")
+                        Rounds.defeat_status = True
+                        return True
+                    else:
+                        return False
+                return False
+            else:
+                print("Checking time limit reached! Game status set to defeat.")
+                Rounds.defeat_status = True
+                return True
         else:
-            print("Checking time limit reached! Game status set to defeat.")
-            Rounds.defeat_status = True
-            return True
+            print("Bad cycle and/or frequency values.")
+            return False
 
     @staticmethod
     def return_menu(final_round_start: float, total_start: float, final_round: int) -> None:
