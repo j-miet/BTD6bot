@@ -20,14 +20,7 @@ Strategy used: https://www.youtube.com/watch?v=5lw5KgJhaf4
 -I've added some tower retargeting + extra ability uses to minimize rng, but not all of it can be removed. So bloons can randomly leak on some rounds, mainly in mid/late game (65 seems to be a common one) - if that happens, try again. Should work after a few attemps.
 """
 
-from time import time
-
-from bot.commands.flow import begin, end_round, change_autostart, wait
-from bot.commands.monkey import Monkey
-from bot.commands.hero import Hero
-from bot.commands.ability import ability, click
-import bot.menu_start as menu_start
-from bot.rounds import Rounds
+from._plan_imports import *
 
 def play(rounds: tuple[str, str, str, int, int, str]) -> None:
     BEGIN, END = menu_start.load(*rounds)

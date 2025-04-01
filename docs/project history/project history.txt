@@ -1,11 +1,33 @@
-=== In-game version: 47 ===
+# This document is no longer updated #
 
--------------------------------------------------
----Added (after 0.11 so these are part of 0.12)---
--------------------------------------------------
+
+########
+----version history----
+
+>Project folder and initial plan was created on 16.9.2024.
+>Using number system to mark down milestones between each iteration = it's a version backlog.
+ --Unfortunately I didn't write down dates for each milestone to gauge how much time was spent on each, but at least it 
+   shows how stuff has evolved over time.
+   ->Starting from 0 and getting to 0.10 took about 7 weeks and closer to 300 hours of work.
+     Working on 0.10 and 0.11 together exceeded that, so currently (as of 22.2.2025) while working on 0.12 for closer 
+     to 2 months, it's safety to say I have put over 1000 hours in this project.
+   ->Of course, it's not just writing new code: learning, planning, testing and fixing stuff takes like 90-95% of time 
+     nowadays. 
+     --In the past, when things were less complicated, it was closer to 50-50. And at the beginning, it was mostly   
+       just writing code to get results without thinking about how the project would look in a few months: this of 
+       course resulted into major structural refactorizations and code reworks because initial code was quite bad. But 
+       it was very important process: I learned a lot + it was tons of fun to visit older code, seeing how much I had 
+       improved.
+----
+
+0.12 (20.3.2025)
+
+-finally pushed the project into github. It also means this document is no longer updated: git will now serve as 
+ version control.
 
 -changed how ocr works with static exceptions strings: if it fails initially to match, it now checks what current 
- monkey and upgrade path is, then checks if it matches with any exceptions. If yes, then perform ocr again but now againts actual upgrade name instead of another ocr string. This seems to fix all ocr issues, but only time will tell.
+ monkey and upgrade path is, then checks if it matches with any exceptions. If yes, then perform ocr again but now 
+ againts actual upgrade name instead of another ocr string. This seems to fix all ocr issues, but only time will tell.
 
 -renamed bot.api to bot.commands (because entire 'bot' itself is api, not just the in-game commands)
 
@@ -99,27 +121,6 @@
   --Either run them from terminal, or by running _doctests.py located in source folder bt6bot
 
 -added new coordinates of 'Play' text location in main menu as patch 47.x introduces 'Legends' button.
-
-
-
-########
-----version history----
-
->Project folder and initial plan was created on 16.9.2024.
->Using number system to mark down milestones between each iteration = it's a version backlog.
- --Unfortunately I didn't write down dates for each milestone to gauge how much time was spent on each, but at least it 
-   shows how stuff has evolved over time.
-   ->Starting from 0 and getting to 0.10 took about 7 weeks and closer to 300 hours of work.
-     Working on 0.10 and 0.11 together exceeded that, so currently (as of 22.2.2025) while working on 0.12 for closer 
-     to 2 months, it's safety to say I have put over 1000 hours in this project.
-   ->Of course, it's not just writing new code: learning, planning, testing and fixing stuff takes like 90-95% of time 
-     nowadays. 
-     --In the past, when things were less complicated, it was closer to 50-50. And at the beginning, it was mostly   
-       just writing code to get results without thinking about how the project would look in a few months: this of 
-       course resulted into major structural refactorizations and code reworks because initial code was quite bad. But 
-       it was very important process: I learned a lot + it was tons of fun to visit older code, seeing how much I had 
-       improved.
-----
 
 0.11 (probably like 3 months since 0.10)
 >>>Biggest "patch" so far: lots of improvements in code, new major features and big refactoring of code with new 
@@ -456,42 +457,56 @@ Project:
 ----Fundamental----
 
 -mouse control to a specific location + clicking
- >in a game like bloons, mouse can handle everything; at least can't think anything that absolutely requires keyboard inputs
+ >in a game like bloons, mouse can handle everything; at least can't think anything that absolutely requires keyboard 
+  inputs
  >could consider keyboard inputs
     -however, different players use different layouts so one's hotkey is not necessarily another'set
-    -could of course set up a file which lists hotkeys which are required for bot to work or just avoid using keyboard hotkeys!
- >could also implement insta-return to original coordinate: this way - if played in windowed mode - you could just do stuff on second monitor
+    -could of course set up a file which lists hotkeys which are required for bot to work or just avoid using keyboard 
+     hotkeys!
+ >could also implement insta-return to original coordinate: this way - if played in windowed mode - you could just do 
+  stuff on second monitor
 
 -how to tell program the current round
- >important because can't mod game files -> only way is to use visual cues like pixel/image comparing OR text reading (far more advanced, requires separate library)
- >has to recognise every round from monitor and detect round change to allow tower cyclic commands for each round - otherwise would need to use A LOT of timing functions...
+ >important because can't mod game files -> only way is to use visual cues like pixel/image comparing OR text reading 
+ (far more advanced, requires separate library)
+ >has to recognise every round from monitor and detect round change to allow tower cyclic commands for each round - 
+  otherwise would need to use A LOT of timing functions...
  >should not confuse two rounds at any point
     -for this, you need all normal rounds accounted e.g. 1-100 so 100 images.
-    -probably easiest to use round numbering syntax X / Y where X current round and Y final round, and save all images without background
+    -probably easiest to use round numbering syntax X / Y where X current round and Y final round, and save all images 
+     without background
     -then match to this picture on each round (do a frequent matching, like each second or even less if needed)
-    -when program detects the current round, it will execute all instructions for that given round, then tries to match for the next rounds image
-    -after final round concludes, it terminates (unless we want to implement looping for farming purposes OR play multiple maps in a row)
-    [should start with image matching. Later on can try the text reading implementation after you have a functional program with most of the important stuff working]
+    -when program detects the current round, it will execute all instructions for that given round, then tries to match 
+     for the next rounds image
+    -after final round concludes, it terminates (unless we want to implement looping for farming purposes OR play 
+     multiple maps in a row)
+    [should start with image matching. Later on can try the text reading implementation after you have a functional 
+    program with most of the important stuff working]
 
 -creating a basis for a setting file
  >contain pre-game settings like hero, maps, difficulty, game mode, game speed
- >then also in-game strategy with all in-game inputs like tower placements, upgrades, behaviours, abilities - and of course their timings based on rounds
- >should use some kind of text file: initially just txt or Python to test stuff. Later file standard is needed, maybe a JSON file?
+ >then also in-game strategy with all in-game inputs like tower placements, upgrades, behaviours, abilities - and of 
+  course their timings based on rounds
+ >should use some kind of text file: initially just txt or Python to test stuff. Later file standard is needed, maybe a 
+  JSON file?
 
 
 
 ----Other----
 
 -resolution scaling
- >different monitors have different pixel coordinates so program should be able to scale coordinate positions accordingly
-    -not only for mouse inputs but for also images so that round detection works properly (this might require implementing that text reading library instead...)
+ >different monitors have different pixel coordinates so program should be able to scale coordinate positions 
+  accordingly
+    -not only for mouse inputs but for also images so that round detection works properly (this might require 
+     implementing that text reading library instead...)
  >so use a scalar 0-1 instead so that actual location is this number * x-coordinate - same for y
  >x-axis goes from left to right, with 0 being upper left corner of monitor and 1919 being the upper right
  >for y, starts from up and increases down - so 0 is upper edge - and 1079 is the lower edge - of monitor
 
 
 -repeating same strategy (= farm a map like Dark Castle) OR play multiple different strategies in a row
--easier way to add player strategies, e.g. program can read from a file and save a strat (would need to match with regex)
+-easier way to add player strategies, e.g. program can read from a file and save a strat (would need to match with 
+ regex)
 -some kind of GUI for a more user-friendly experience and custom strat data importing
 
 
@@ -499,10 +514,13 @@ Project:
 ------------------------------------------
 SOME OLD CODE:
 
-~~~setting up game modes; this one has slow input during input() because keyBoardListener constantly interferes with it. 
+~~~setting up game modes; this one has slow input during input() because keyBoardListener constantly interferes with 
+it. 
    Solution was to attach Listener-object to another function that will return either 's' or 'm' and stop this Listener.
-   Then input() can be run inside new function and will work as expected. This newer version uses a global variable, through, but it will not be referenced after its use
-   Another solution could have been to use pyperclip-module and just copy-paste the correct letter to another program without need global variables, but yeah...
+   Then input() can be run inside new function and will work as expected. This newer version uses a global variable, 
+   through, but it will not be referenced after its use
+   Another solution could have been to use pyperclip-module and just copy-paste the correct letter to another program 
+   without need global variables, but yeah...
 
 def run_btd6bot(key_pressed):  
     try: 

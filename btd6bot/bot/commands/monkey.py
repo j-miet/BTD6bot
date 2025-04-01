@@ -3,14 +3,14 @@
 Monkey class creates a prototype of a monkey and is responsible for 
 -placing (happens automatically after creating a monkey object) and upgrading them
 -changing their targeting priority
--using their special abilities
+-using possible special abilities
 -selling them
 
 It also implements 
 -checking of succesful placements and upgrades, which allows queueing up these commands beforehand, for
  example if player can't currently afford a monkey, bot keeps repeating the command until it succeeds.
 -checks for correct inputs in coordinate and targeting values. With upgrades, it only checks for non-empty
- inputs and correct path string format, but
+ inputs.
 
 Special abilities and selling don't have any ocr-level checks like targetting and upgrading do.
 
@@ -185,6 +185,7 @@ class Monkey(_MonkeyConstants):
         self._name = name
         self._pos_x = pos_x
         self._pos_y = pos_y
+        self._rel_pos = self._get_relative_position()
         self._targeting = self._basic_monkey_targeting()
         self._upgrade_path = '0-0-0'
         self._check_init_values()
@@ -221,6 +222,19 @@ class Monkey(_MonkeyConstants):
         time.sleep(1)
         Rounds.defeat_status = True
         print(f'\n**An Error has occured. Current game state treated as Defeat**')
+
+    def _get_relative_position(self) -> str:
+        """Get relative position of monkey to determine which side the upgrade panel opens.
+        
+        Returns:
+            "left" if monkey is on right, "right" if on left, "middle" if close to midpoint.
+        """
+        if self._pos_x < 0.428:
+            return "right"
+        elif self._pos_x > 0.439:
+            return "left"
+        else:
+            return "middle"
 
     def _check_init_values(self) -> None:
         """Checks the validity of name, pos_x and pos_y values during initialization.
@@ -451,7 +465,7 @@ class Monkey(_MonkeyConstants):
                         kb_mouse.kb_input(hotkeys['target reverse'], 2)
                 else:
                     return self._name, target
-            case 'ace': # changing centered path location is not supported
+            case 'ace':
                 if target == 'circle':
                     if current == 'infinite':
                         kb_mouse.kb_input(hotkeys['target change'], 1)
@@ -568,8 +582,6 @@ class Monkey(_MonkeyConstants):
             upg_path: Current update path after upgrading.
             path_index: Which path was updated: 0 for top, 1 for middle, 2 for bottom.
         """
-        if Rounds.defeat_status:
-            return
         upg, i = upg_path, path_index
         if self._name == 'ace' and i == 2 and int(upg[2*i]) == 2:
             self._targeting = 'centered'
@@ -600,17 +612,18 @@ class Monkey(_MonkeyConstants):
             print(f'Upgrading {u} {self._name.capitalize()} to {upg}...', end=' ')
             for i in range(0, 3):
                 if int(u[2*i]) != int(upg[2*i]):
-                    self._press_upgrade(upg, paths[i])
+                    self._select_upgrade(upg, paths[i])
+                    if Rounds.defeat_status:
+                        return
                     self._update_auto_target_paths(upg, i)
                     break
         kb_mouse.press_esc()
 
-    def _press_upgrade(self, upg: str, button: str) -> None:
-        """Handles which coordinates are checked depending on upgrade path.
+    def _select_upgrade(self, upg: str, button: str) -> None:
+        """Calls upgrading method with correct coordinate and path inputs.
 
-        Checks the upgrade path and passes it onto checker, which uses 4 different tuples of coordinates to find 2
-        possible upgrade text boxes (left and right) on screen. These text boxes are then used to check for upgrade
-        text location and validate it, which is ultimately handled by check_upgrade method.
+        After upgrade path is verified, _check_upgrade gets passed with coordinates that correspond to current upgrade 
+        text boxes: one for left panel and one for right.
 
         Args:
             upg: Current upgrade path string/the upgrade we want to buy for our monkey.
@@ -619,92 +632,91 @@ class Monkey(_MonkeyConstants):
         if button == 'upgrade top':
             self._check_upgrade(upg, button,
                                 Monkey._TOP_UPG_CURRENT_LEFTWINDOW,
-                                Monkey._TOP_UPG_NEXT_LEFTWINDOW,
                                 Monkey._TOP_UPG_CURRENT_RIGHTWINDOW,
-                                Monkey._TOP_UPG_NEXT_RIGHTWINDOW,
                                 0)
         elif button == 'upgrade mid':
             self._check_upgrade(upg, button,
                                 Monkey._MID_UPG_CURRENT_LEFTWINDOW,
-                                Monkey._MID_UPG_NEXT_LEFTWINDOW,
                                 Monkey._MID_UPG_CURRENT_RIGHTWINDOW,
-                                Monkey._MID_UPG_NEXT_RIGHTWINDOW,
                                 1)
         elif button == 'upgrade bot':
             self._check_upgrade(upg, button,
                                 Monkey._BOT_UPG_CURRENT_LEFTWINDOW,
-                                Monkey._BOT_UPG_NEXT_LEFTWINDOW,
                                 Monkey._BOT_UPG_CURRENT_RIGHTWINDOW,
-                                Monkey._BOT_UPG_NEXT_RIGHTWINDOW,
                                 2)
             
     def _check_upgrade(self, upg: str,
                       button: str,
                       current_l: tuple[float, float, float, float],
-                      upg_l: tuple[float, float, float, float],
                       current_r: tuple[float, float, float, float], 
-                      upg_r: tuple[float, float, float, float],
                       upg_path: int
                       ) -> None:
         """Keeps trying to upgrade a monkey, then sends confirmation message after a succesful attempt.
 
-        Also updates upgrade attribute.
+        Also updates _upgrade_path attribute.
 
-        Implemented with ocr: first finds the current upgrade's string, presses upgrade and checks if this string 
-        matches the current upgrade string on left. If not, keeps repeating until it succeeds.
+        Implemented with ocr: first finds the current upgrade string, presses upgrade and passes result onto ocr 
+        function. Ocr will handle the actual matching with corresponding result string that gets read from a json file; 
+        see ocr.strong_delta_check for more info.
 
         If monkey is placed on the right side of map, it opens upgrade panel on left. Similarly, if monkey is placed
-        on the left side of map, it opens upgrade panel on right. For these reasons, we have to include both left and
-        right coordinates for both current and next upgrade image.
+        on the left side of map, it opens upgrade panel on right. For these reasons, both left and
+        right coordinates have to be included for current upgrade.
 
         Args:
-            upg: Next upgrade path for our monkey.
+            upg: Next upgrade path for this monkey.
             button: Crosspath button - top, middle or bottom.
             current_l: Current upgrade image location on screen, if the panel opens on the left.
-            upg_l: Next upgrade image location, if the panel opens on the left.
             current_r: Current upgrade image location on screen, if the panel opens on the right.
-            upg_r: Next upgrade image location, if the panel opens on the right.
             upg_path: Integer for upgrade path: 0 = top, 1 = middle, 2 = bot. Is necessary for some special monkey 
                 upgrade paths which ocr needs to identify and handle separately.
         """
-        (l1, l2) = kb_mouse.pixel_position((upg_l[0], upg_l[1]))
-        (l3, l4) = kb_mouse.pixel_position((upg_l[2], upg_l[3]))
-        (r1, r2) = kb_mouse.pixel_position((upg_r[0], upg_r[1]))
-        (r3, r4) = kb_mouse.pixel_position((upg_r[2], upg_r[3]))
-        next_upg_left = (l1,l2,l3,l4)
-        next_upg_right = (r1,r2,r3,r4)
-
-        # upgrade path info for ocr to detect special cases.
+        # upgrade current path info for ocr to detect special cases.
         c_path = self._upgrade_path
         if upg_path == 0:
             upg_match = self._name+' '+str(int(c_path[0])+1)+'-x-x'
         elif upg_path == 1:
             upg_match = self._name+' x-'+str(int(c_path[2])+1)+'-x'
         elif upg_path == 2:
-            upg_match = self._name+'x-x-'+str(int(c_path[4])+1)
+            upg_match = self._name+' x-x-'+str(int(c_path[4])+1)
         else:
-            upg_match = ''    # this should never happen
+            upg_match = '' # not possible, and should stay that way.
 
-        # extract text out from next upgrade images, which become current upgrade texts to match with.
-        text_left = ocr.strong_image_ocr(next_upg_left, OCR_READER)
-        text_right = ocr.strong_image_ocr(next_upg_right, OCR_READER)
         total_time = time.time()
-        while time.time() - total_time < BotVars.checking_time_limit:
+        upgraded = 0
+        while time.time() - total_time < BotVars.checking_time_limit and not upgraded:
             kb_mouse.kb_input(hotkeys[button])
             if self._name == 'super' and re.search("^4-[0-2]-0$|^4-0-[0-2]$|^5-[0-2]-0$|^5-0-[0-2]$", upg) != None:
                 kb_mouse.kb_input(Key.enter)    # if upgrade is Sun Temple/True Sun God, press Enter to confirm it
             start = time.time()
             while (time.time()-start < 0.75):
-                if (ocr.strong_delta_check(
-                        text_left, 
-                        (current_l[0], current_l[1], current_l[2], current_l[3]),
-                        OCR_READER, 
-                        upg_match) or
-                    ocr.strong_delta_check(
-                        text_right, 
+                if self._rel_pos == 'right':
+                    if ocr.strong_delta_check(
+                        '_upgrade_', 
                         (current_r[0], current_r[1], current_r[2], current_r[3]),
                         OCR_READER,
-                        upg_match)):
+                        upg_match):
+                        upgraded = 1
+                elif self._rel_pos == 'left':
+                    if ocr.strong_delta_check(
+                        '_upgrade_', 
+                        (current_l[0], current_l[1], current_l[2], current_l[3]),
+                        OCR_READER, 
+                        upg_match):
+                        upgraded = 1
+                elif self._rel_pos == 'middle':
+                    if (ocr.strong_delta_check(
+                            '_upgrade_', 
+                            (current_l[0], current_l[1], current_l[2], current_l[3]),
+                            OCR_READER, 
+                            upg_match) or
+                        ocr.strong_delta_check(
+                            '_upgrade_', 
+                            (current_r[0], current_r[1], current_r[2], current_r[3]),
+                            OCR_READER,
+                            upg_match)):
+                        upgraded = 1
+                if upgraded:
                     print('Upgraded.')
                     self._upgrade_path = upg
                     return
@@ -713,11 +725,10 @@ class Monkey(_MonkeyConstants):
         return
 
     def _place(self) -> None:
-        """Initialization method; don't call this outside __init__!
-
-        Places a monkey to an in-game location after a new Monkey is created. Checks if it's been placed at that 
-        location and if not, keeps trying until it succeeds: this helps a lot with placements as user no longer needs 
-        to time monkey placement.
+        """Places a monkey to an in-game location.
+         
+        Checks if it's been placed at that location and if not, keeps trying until it succeeds: this helps a lot with 
+        placements as user no longer needs to time monkey placement and can instead queue them in advance.
 
         However, user should not attempt to create a new Monkey too early in advance, as this method will naturally 
         ignore any other calls until it succeeds. This could potentially skip over a round or multiple, and ruin 
@@ -728,14 +739,22 @@ class Monkey(_MonkeyConstants):
             return
         print(f'Placing {self._name.capitalize()}...', end=' ')
         total_time = time.time()
-        while time.time() - total_time < BotVars.checking_time_limit:
+        placed = 0
+        while time.time() - total_time < BotVars.checking_time_limit and not placed:
             kb_mouse.kb_input(self._get_hotkey())
-            kb_mouse.click((self._pos_x, self._pos_y))
-            kb_mouse.click((self._pos_x, self._pos_y))
-            if not (ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER)    
+            kb_mouse.click((self._pos_x, self._pos_y), 2)
+            if self._rel_pos == 'right':
+                if ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER):
+                    placed = 1
+            elif self._rel_pos == 'left':
+                if ocr.strong_delta_check('Sell', Monkey._LEFT_PANEL_SELL_LOCATION, OCR_READER):
+                    placed = 1
+            elif self._rel_pos == 'middle':
+                if (ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER)    
                     or ocr.strong_delta_check('Sell', Monkey._LEFT_PANEL_SELL_LOCATION, OCR_READER)):
-                    time.sleep(0.3)
-            else:
+                    placed = 1
+            time.sleep(0.3)
+            if placed:
                 kb_mouse.press_esc()
                 print(f'{self._name.capitalize()} placed.')
                 return
@@ -1055,7 +1074,8 @@ class Monkey(_MonkeyConstants):
             abilities can only be accessed with 'special' - and some only with 'special' as we saw with mortar.
 
             Use cpos_x and cpos_y to update monkey location if it has changed from previous (e.g. map is 
-            Geared or Sanctuary)
+            Geared or Sanctuary). Unlike with upgrade command, special uses no ocr and thus can't verify where cpos
+            in pointing to.
             >>> mortar2 = Monkey('mortar', 0.8, 0.2)
             Placing Mortar... Mortar placed.
             >>> glue = Monkey('glue', 0.8, 0.4)
@@ -1174,21 +1194,23 @@ class Monkey(_MonkeyConstants):
             On some specific maps, like Geared or Sanctuary, monkey positions change over time. Bot only knows the 
             original/previous location, so you must update this by passing cpos_x and cpos_y (=current position)
             arguments. After you enter new coordinates with cpos_x, cpos_y, these values are also set as current pos_x 
-            and pos_y values. Just be careful where you update cpos, as it could upgrade other monkeys yet update 
-            upgrade status to current monkey.
+            and pos_y values. Just be careful where you update cpos, as it could point to wrong location and break the
+            upgrading process as ocr can't find the correct upgrade string.
             >>> engi = Monkey('engineer', 0.45, 0.9)
             Placing Engineer... Engineer placed.
-            >>> engi.upgrade(['1-0-0'], cpos_x=0.5, cpos_y=0.9) # this actually upgrades previous 1-0-1 bomb to 2-1-0
+            >>> 
+                engi.upgrade(['1-0-0'], cpos_x=0.5, cpos_y=0.9) # this actually points to previous 1-0-1 bomb
+            
+            >>> engi.upgrade(['1-0-0'], cpos_x=0.45, cpos_y=0.9) # this works as point to right location
             Upgrading 0-0-0 Engineer to 1-0-0... Upgraded.
 
             >...a round later, engineer monkey has somehow moved to location (0.75, 0.9)...
 
-            >>> engi.upgrade(['1-1-0']) # still refers to location (0.5, 0.9) i.e. the bomb monkey, making it 2-2-0.
-            Upgrading 1-0-0 Engineer to 1-1-0... Upgraded.
+            >>> 
+            engi.upgrade(['1-1-0']) # still refers to location (0.5, 0.9) i.e. the bomb monkey
 
-            Back to engineer, but bot thinks it's 2-1-0 now...however, the 1-0-0, 1-1-0 upgrades went to bomb instead, 
-            meaning actual engi is still 0-0-0 and after the following upgrade, 1-0-0.
-            >>> engi.upgrade(['2-1-0'], cpos_x=0.45, cpos_y=0.9)
+            >>> engi.upgrade(['1-1-0', '2-1-0'], cpos_x=0.45, cpos_y=0.9)
+            Upgrading 1-0-0 Engineer to 1-1-0... Upgraded.
             Upgrading 1-1-0 Engineer to 2-1-0... Upgraded.
 
             If location hasn't changed since last upgrade, you can leave the cpos arguments out. Or you could add them 

@@ -12,6 +12,7 @@ def read_plans() -> list[str]:
     namelist: list[str] = os.listdir(pathlib.Path(__file__).parent.parent / 'plans')
     try:
         namelist.remove('__init__.py')
+        namelist.remove('_plan_imports.py')
         for file_name in namelist[:]:
             if '.py' not in file_name:
                 namelist.remove(file_name)
