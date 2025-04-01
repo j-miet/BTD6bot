@@ -3,7 +3,7 @@
 import time
 
 from bot import kb_mouse, times
-from bot.commands.flow import AutoStart, change_autostart
+from bot.commands.flow import AutoStart, change_autostart, begin
 from bot.bot_vars import BotVars
 import bot.menu_return
 from bot.ocr.ocr import weak_substring_check, strong_substring_check, strong_delta_check
@@ -201,6 +201,8 @@ class Rounds:
         elif mode.lower() == 'apopalypse':
             return Rounds.end_round
         else:
+            if not AutoStart.called_begin:
+                begin()
             total_time = time.time()
             defeat_check = 1
             defeat_check_cycle = 3

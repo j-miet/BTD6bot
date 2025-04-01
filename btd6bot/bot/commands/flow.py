@@ -33,6 +33,7 @@ class AutoStart:
     AUTOSTART_TOGGLE: tuple[float, float] = (0.69, 0.284)
 
     autostart_status: bool = True
+    called_begin = False
 
 
 def wait(timer: int = 0) -> None:
@@ -69,6 +70,7 @@ def begin(speed: str='fast') -> None:
         kb_mouse.kb_input(Key.space)
         time.sleep(0.2)
         kb_mouse.kb_input(Key.space)
+    AutoStart.called_begin = True
 
 def change_autostart() -> None:
     """Change current autostart setting.

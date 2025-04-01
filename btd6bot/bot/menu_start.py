@@ -17,6 +17,7 @@ import pyautogui
 import pynput
 
 from bot import kb_mouse
+from bot.commands.flow import AutoStart
 from bot.commands.hero import Hero
 from bot.bot_vars import BotVars
 import bot.hotkeys
@@ -200,6 +201,7 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
     bot.hotkeys.hotkeys = bot.hotkeys.generate_hotkeys()
     Rounds.begin_round, Rounds.end_round = begin_r, end_r
     Rounds.defeat_status = False
+    AutoStart.called_begin = False
     try:
         p = pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json'
         with open(p) as f:

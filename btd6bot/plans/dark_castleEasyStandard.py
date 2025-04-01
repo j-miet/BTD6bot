@@ -21,7 +21,6 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         current_round = Rounds.round_check(current_round, map_start, rounds[2])
         if current_round == BEGIN:
             hero = Hero(0.2927083333333, 0.45)
-            begin()
         elif current_round == 3:
             ninja = Monkey('ninja', 0.3067708333333, 0.5648148148148)
         elif current_round == 5:

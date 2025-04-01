@@ -30,7 +30,6 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         current_round = Rounds.round_check(current_round, map_start, rounds[2])
         if current_round == BEGIN:
             Hero(0.1651041666667, 0.5027777777778)
-            begin()
         elif current_round == 8:
             dart = Monkey('dart', 0.1239583333333, 0.5055555555556)
             dart.target('strong')
