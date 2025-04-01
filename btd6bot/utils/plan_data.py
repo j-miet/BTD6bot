@@ -13,6 +13,9 @@ def read_plans() -> list[str]:
     try:
         namelist.remove('__init__.py')
         namelist.remove('_plan_imports.py')
+    except ValueError:
+        ...
+    try:
         for file_name in namelist[:]:
             if '.py' not in file_name:
                 namelist.remove(file_name)

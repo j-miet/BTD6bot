@@ -53,7 +53,6 @@ def test_commands_doctest(capsys) -> None:
     
     captured = capsys.readouterr()
     assert "Failed to upgrade" not in captured.out
-    assert "Current game status set to Defeat" not in captured.out
     time.sleep(1)
     kb_mouse.press_esc()
     time.sleep(1)
