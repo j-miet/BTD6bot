@@ -67,6 +67,16 @@ def kb_input(input: Key | KeyCode | str, times: int = 1) -> None:
             if times >= 2:
                 time.sleep(0.1)
 
+def move_cursor(xy: tuple[float, float], set_duration: float = 0.0) -> None:
+    """Moves mouse to specified coordinate location.
+    
+    Args:
+        xy: Scalar coordinate tuple of location coordinates.
+    """
+    x, y = pixel_position((xy[0], xy[1]))
+    pyautogui.moveTo(x, y, duration=set_duration)
+    time.sleep(0.1)
+
 def press_esc() -> None:
     """Simulates Esc key press."""
     kb_input(Key.esc)
