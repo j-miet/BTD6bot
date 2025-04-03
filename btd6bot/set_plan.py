@@ -29,6 +29,12 @@ if TYPE_CHECKING:
     from typing import Any
     from types import ModuleType
 
+def _check_if_temp_valid(begin_r: int, end_r: int) -> bool:
+    """Check if times_temp has all round data + total time rows."""
+    with open(pathlib.Path(__file__).parent /'Files'/'times_temp.txt') as f:
+        lines = f.readlines()
+    return True if len(lines) == end_r-begin_r+2 else False
+
 def _flush_times_temp() -> None:
     """Flushes existing contents of Files//times_temp.txt to allow new plan time data to be saved."""
     with open(pathlib.Path(__file__).parent /'Files'/'times_temp.txt', 'w') as f:
@@ -159,8 +165,10 @@ def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str,
         if gui_vars["time_recording_status"]:
             _flush_times_temp()
         plan_module.play(info)
-        if gui_vars["time_recording_status"]:
+        if gui_vars["time_recording_status"] and _check_if_temp_valid(info[3], info[4]):
             _save_to_json(plan_name)
+        else:
+            print("Plan was exited prematurely, no time data saved.")
     except BotError as err:
         print(err)
 
