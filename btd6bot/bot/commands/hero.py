@@ -6,6 +6,8 @@ It has also some custom methods for specific heroes like Geraldo and Corvus (the
 Examples of this module can be found in 'plans' folder and picking any .py plan file that uses a hero.
 """
 
+import time
+
 from bot import kb_mouse
 from bot.commands.monkey import Monkey
 from bot.hotkeys import hotkeys
@@ -42,8 +44,11 @@ class Hero(Monkey):
         corvus (Can't use spellbook yet! This will be added soon)
 
     Attributes:
-        current_plan_hero_name (str, class attribute): Hero name in current plan. If you use hero outside a plan file, 
-            you must set a value of this variable with Hero.current_plan_hero_name = ...
+        HERO_LEFT_MENU (tuple[tuple[float, float]], class attribute): Hero item locations if panel is on the left. Used 
+            for Geraldo shop/Corvus spellbook.
+        HERO_RIGHT_MENU (tuple[tuple[float, float]], class attribute): Hero item locations if panel is on the right.
+        current_plan_hero_name (str, class attribute, class attribute): Hero name in current plan. If you use hero 
+            outside a plan file, you must set a value of this variable with Hero.current_plan_hero_name = ...
         
         name (str): For heroes, this is always 'hero', to differentiate them from monkeys. Initialized with super().
         pos_x (float | None): X-coordinate location. Initialized with super().
@@ -81,6 +86,42 @@ class Hero(Monkey):
         >>> hero.sell()
         Hero sold!
     """
+    HERO_LEFT_MENU = (
+        (0.0453125, 0.1712962962963),
+        (0.0932291666667, 0.1712962962963),
+        (0.1432291666667, 0.1712962962963),
+        (0.1901041666667, 0.1712962962963),
+        (0.0453125, 0.3268518518519),
+        (0.0932291666667, 0.3268518518519),
+        (0.1432291666667, 0.3268518518519),
+        (0.1901041666667, 0.3268518518519),
+        (0.0453125, 0.4638888888889),
+        (0.0932291666667, 0.4638888888889),
+        (0.1432291666667, 0.4638888888889),
+        (0.1901041666667, 0.4638888888889),
+        (0.0453125, 0.6101851851852),
+        (0.0932291666667, 0.6101851851852),
+        (0.1432291666667, 0.6101851851852),
+        (0.1901041666667, 0.6101851851852)
+        )
+    HERO_RIGHT_MENU = (
+        (0.6817708333333, 0.175),
+        (0.7307291666667, 0.175),
+        (0.7786458333333, 0.175),
+        (0.8255208333333, 0.175),
+        (0.6817708333333, 0.325),
+        (0.7307291666667, 0.325),
+        (0.7786458333333, 0.325),
+        (0.8255208333333, 0.325),
+        (0.6817708333333, 0.4657407407407),
+        (0.7307291666667, 0.4657407407407),
+        (0.7786458333333, 0.4657407407407),
+        (0.8255208333333, 0.4657407407407),
+        (0.6817708333333, 0.6083333333333),
+        (0.7307291666667, 0.6083333333333),
+        (0.7786458333333, 0.6083333333333),
+        (0.8255208333333, 0.6083333333333)
+    )
     current_plan_hero_name: str | None = None # if you need Hero class without existing plan, modify this variable.
 
     def __init__(self, pos_x: float, pos_y: float) -> None:
@@ -98,6 +139,7 @@ class Hero(Monkey):
         super().__init__('hero', pos_x, pos_y)
         self._hero_name = self._hero_name_lowercase(Hero.current_plan_hero_name)
         self._targeting = self._basic_hero_target()
+        self._prepare_hero_menu()
 
     def _hero_name_lowercase(self, hero: str | None) -> str | None:
         """Normalizes hero name to lowercase.
@@ -126,6 +168,14 @@ class Hero(Monkey):
                 return None
             case _:
                 return 'first'
+            
+    def _prepare_hero_menu(self) -> None:
+        """Sets custom panel, like Geraldo shop or Corvus spellbook, in order to access them."""
+        if self._hero_name in {'geraldo', 'corvus'}:
+            kb_mouse.click((self._pos_x, self._pos_y))
+            time.sleep(0.3)
+            self.special(1)
+            kb_mouse.press_esc()
 
     def _change_hero_target(self, target: str,
                            x: float | None = None,  # currently no hero has a targeting mode requiring coordinates.
@@ -146,12 +196,13 @@ class Hero(Monkey):
         if target == current:
             print(f'Target already set to {current.capitalize()}.')
             return 'OK'
-        if cpos_x is not None and cpos_y is not None:
-            kb_mouse.click((cpos_x, cpos_y))
+        if cpos_x is not None:
             self._pos_x = cpos_x
+        if cpos_y is not None:
             self._pos_y = cpos_y
-        else:
-            kb_mouse.click((self._pos_x, self._pos_y))
+        kb_mouse.click((self._pos_x, self._pos_y))
+        if cpos_x is not None:
+            self._update_panel_position(cpos_x)
         match self._hero_name:
             case 'benjamin':
                 print('???')
@@ -296,24 +347,102 @@ class Hero(Monkey):
         kb_mouse.press_esc()
         self._targeting = set_target.lower()
 
-    '''
-    def geraldo_shop(self, item, pos_x: float | None, pos_y: float | None) -> None:
-        """UNFINISHED -- Implements Geraldo's shop item placement.
+    def shop(self, item: int,
+            target_x: float | None,
+            target_y: float | None,
+            cpos_x: float | None = None,
+            cpos_y: float | None = None
+            ) -> None:
+        """Use Geraldo's shop items at selected location.
         
+        Items are selected using integers 1-16 as follows:  
+        1: Shooty turret  
+        2: Stack of old nails  
+        3: Creepy idol  
+        4: Jar of pickles  
+        5: Rare Quincy action figure  
+        6: See invisibility potion  
+        7: Tube of amaz-o-glue  
+        8: Sharpening stone  
+        9: Worn hero's cape  
+        10: Blade trap  
+        11: Bottle of 'Gerry's fire' ho sauce  
+        12: Fertilizer
+        13: Pet rabbit  
+        14: Rejuv potion  
+        15: Genie bottle  
+        16: Paragon power totem
 
+        Args:
+            item: Selected shop item.
+            target_x: Item target location x-coordinate.
+            target_y: Item target location y-coordinate.
+            cpos_x: Updated current x-coordinate position.
+            cpos_y: Updated current y-coordinate position.
         """
         if Rounds.defeat_status:
             return
         elif self._hero_name == 'geraldo':
-            None
+            if cpos_x is not None:
+                self._pos_x = cpos_x
+            if cpos_y is not None:
+                self._pos_y = cpos_y
+            kb_mouse.click((self._pos_x, self._pos_y))
+            if cpos_x is not None:
+                self._update_panel_position(cpos_x)
+            if self._panel_pos == 'left':
+                kb_mouse.click(Hero.HERO_LEFT_MENU[item-1])
+            elif self._panel_pos == 'right':
+                kb_mouse.click(Hero.HERO_RIGHT_MENU[item-1])
+            kb_mouse.move_cursor((0.45, 0.01))
+            kb_mouse.click((target_x, target_y))
+            kb_mouse.press_esc()
+            print(f"Geraldo item {item} used.")
 
-    def corvus_spell(self, spells) -> None:
-        """UNFINISHED -- Implements Corvus's spells.
+    def spellbook(self, spells: list[int],
+            cpos_x: float | None = None,
+            cpos_y: float | None = None
+            ) -> None:
+        """Use Corvus's spells.
         
+        Spells are passed as a list of integers in range 1-16. List of spells:  
+        1: Spear  
+        2: Aggression  
+        3: Malevolence  
+        4: Storm  
+        5: Repel  
+        6: Echo  
+        7: Haste  
+        8: Trample  
+        9: Frostbound  
+        10: Ember
+        11: Ancestral might  
+        12: Overload  
+        13: Nourishment  
+        14: Soul barrier  
+        15: Vision  
+        16: Recovery
 
+        Args:
+            item: Selected spell in spellbook.
+            cpos_x: Updated current x-coordinate position.
+            cpos_y: Updated current y-coordinate position.
         """
         if Rounds.defeat_status:
             return
         elif self._hero_name == 'corvus':
-            None
-    '''
+            if cpos_x is not None:
+                self._pos_x = cpos_x
+            if cpos_y is not None:
+                self._pos_y = cpos_y
+            kb_mouse.click((self._pos_x, self._pos_y))
+            if cpos_x is not None:
+                self._update_panel_position(cpos_x)
+            for spell in spells:       
+                if self._panel_pos == 'left':
+                    kb_mouse.click(Hero.HERO_LEFT_MENU[spell-1])
+                elif self._panel_pos == 'right':
+                    kb_mouse.click(Hero.HERO_RIGHT_MENU[spell-1])
+                self.special(2)
+                print(f"Corvus spell {spell} used.")
+            kb_mouse.press_esc()
