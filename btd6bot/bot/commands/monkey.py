@@ -711,6 +711,8 @@ class Monkey(_MonkeyConstants):
         else:
             upg_match = '' # not possible, and should stay that way.
 
+        print(self._panel_pos)
+
         total_time = time.time()
         upgraded = 0
         defeat_check = 1
@@ -1345,4 +1347,5 @@ class Monkey(_MonkeyConstants):
             self._update_panel_position(cpos_x)
         kb_mouse.kb_input(hotkeys["merge beast"])
         kb_mouse.click((x,y))
+        kb_mouse.press_esc()
         print(f"Beast merged.") 
