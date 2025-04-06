@@ -28,7 +28,6 @@ class HotkeyWindow:
             solved easily.
 
         hotkeywindow (tk.Toplevel): Toplevel object that creates a new window where other elements can be inserted.
-        hotkeylabel (tk.Label): Label for hotkeyoptionslist.
         hotkeyoptionlist (tk.Listbox): Listbox containing all hotkeys as separate rows.
         sethotkeybutton (tk.Button): Button to rebind currently selected hotkey in hotkey list.
         info (tk.Label): Label that displays hotkey help text.
@@ -48,8 +47,8 @@ class HotkeyWindow:
         self.hotkeywindow.minsize(800,600)
         self.hotkeywindow.maxsize(800,600)
 
-        self.hotkeylabel = tk.Label(self.hotkeywindow, text='Hotkeys', height=2)
-        self.hotkeylabel.grid(column=0, row=0, sticky="nsew")
+        hotkeylabel = tk.Label(self.hotkeywindow, text='Hotkeys', height=1, relief="groove")
+        hotkeylabel.grid(column=0, row=0, sticky="nsew", padx=20, pady=5)
         self.hotkeyoptionlist = tk.Listbox(self.hotkeywindow, width=30)
         self.hotkeyoptionlist.grid(column=0, row=1, padx=20, sticky="nsew")
 
@@ -57,6 +56,8 @@ class HotkeyWindow:
                                          command=self.set_hotkey)
         self.sethotkeybutton.grid(column=0, row=2, sticky="s")
 
+        hotkeyhelplabel = tk.Label(self.hotkeywindow, text='Instructions', height=1, relief="groove")
+        hotkeyhelplabel.grid(column=1, row=0, sticky="nsew", padx=20, pady=5)
         self.info = tk.Label(self.hotkeywindow, justify='left', relief='sunken',
                              text=self.showhotkeyhelp())
         self.info.grid(column=1, row=1, padx=20, sticky="nsew")
