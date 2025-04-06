@@ -45,8 +45,8 @@ Etienne
 Sauda
 Brickell
 Psi
-Geraldo   (don't use Geraldo: shop use is yet to be implemented)
-Corvus    (don't use Corvus: spellbook use is yet to be implemented)
+Geraldo
+Corvus
 
 ------------------------------------------------------------------------------------------------
 
@@ -168,3 +168,6 @@ ouch
 ancient portal
 last resort
 enchanted glade
+spa pits
+
+Examples: middle_of_the_roadMediumApopalypse.py, quadHardDouble_hp.py, cubismEasyStandard 
