@@ -64,11 +64,9 @@ class MouseLocations:
         'psi' : (0.1307291666667, 0.9203703703704),
         'geraldo' : (0.2104166666667, 0.9148148148148)
         }
-    
     HEROES2: dict[str, tuple[float, float]] = {
         'corvus' : (0.0541666666667, 0.835185185185266667)
-        }
-    
+        }  
     BUTTONS: dict[str, tuple[float, float]] = {
         'heroes' : (0.275, 0.8888888888889),
         'hero_select' : (0.5734375, 0.5592592592593),
@@ -78,14 +76,12 @@ class MouseLocations:
         'search_map' : (0.0395833333333, 0.1518518518519),
         'search_map_bar' :(0.4338541666667, 0.0462962962963),
         'choose_map' : (0.2817708333333, 0.3055555555556),
-        }
-    
+        } 
     DIFFICULTY: dict[str, tuple[float, float]] = {
         'EASY' : (0.3255208333333, 0.3814814814815),
         'MEDIUM' : (0.5026041666667, 0.3833333333333),
         'HARD' : (0.6744791666667, 0.3861111111111)
-        }
-    
+        }   
     MODES: dict[str, tuple[float, float]] = {
         'standard' : (0.3276041666667, 0.5564814814815),
         'top_left' : (0.5036458333333, 0.4259259259259),
@@ -95,7 +91,6 @@ class MouseLocations:
         'bottom_middle' : (0.6682291666667, 0.6981481481481),
         'bottom_right' : (0.8411458333333, 0.6990740740741)
         }
-    
     SAVE_OVERRIDE: tuple[float, float] = (0.5984375, 0.6842592592593)
     HEROSCREEN_SCROLL: tuple[float, float] = (0.1401041666667, 0.5731481481481)
 
@@ -213,9 +208,11 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
         event_val: str = gui_vars_dict["current_event_status"]
         record_val: bool = gui_vars_dict["time_recording_status"]
         time_limit_val: int = gui_vars_dict["checking_time_limit"]
+        botdata_val: bool = gui_vars_dict["get_botdata"]
         BotVars.current_event_status = event_val
         BotVars.time_recording_status = record_val
         BotVars.checking_time_limit = time_limit_val
+        BotVars.get_botdata = botdata_val
     except ValueError:
         print("Unable to read at least one of the gui_vars.json keys. Defaulting to bot_vars initial values.")
 
