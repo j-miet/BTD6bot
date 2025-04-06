@@ -24,11 +24,12 @@ class AutoStart:
     
     Attributes:
         AUTOSTART_TOGGLE (tuple[float, float], class attribute): Location of in-game menu autostart toggle button.
-
         autostart_status (bool, class attribute): Whether bot has autostart enabled or not. Starts with initial value 
             True. But if any plan modifies this using flow.change_autostart, it's set to False. And if value if False, 
             then after loading into a game, bot will automatically revert this to True, even if it's immediately set to 
             False again by plan itself: otherwise, other plans would keep the False state and be unable to execute.
+        called_begin (bool, class attribute): Whether begin() was called during first round. Default is False, which 
+            means bot will automatically call it after first round block ends.
     """
     AUTOSTART_TOGGLE: tuple[float, float] = (0.69, 0.284)
 

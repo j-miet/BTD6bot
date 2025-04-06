@@ -1,7 +1,7 @@
 """Implements Hero class, a superclass of Monkey.
 
 Hero class creates a hero prototype similar to Monkey. As it inherits the Monkey class, it has same or similar methods.
-It has also some custom methods for specific heroes like Geraldo and Corvus (these are not implemented yet!!!)
+It has also some custom methods for specific heroes like Geraldo and Corvus.
 
 Examples of this module can be found in 'plans' folder and picking any .py plan file that uses a hero.
 """
@@ -40,8 +40,8 @@ class Hero(Monkey):
         sauda
         brickell
         psi
-        geraldo (Can't use shop yet! This will be added soon)
-        corvus (Can't use spellbook yet! This will be added soon)
+        geraldo
+        corvus
 
     Attributes:
         HERO_LEFT_MENU (tuple[tuple[float, float]], class attribute): Hero item locations if panel is on the left. Used 

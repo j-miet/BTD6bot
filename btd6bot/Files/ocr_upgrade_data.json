@@ -375,11 +375,11 @@
         "beast x-1-x": ["microraptor", 0.8],
         "beast x-2-x": ["adasaurus", 0.8],
         "beast x-3-x": ["velociraptor", 0.8],
-        "beast x-4-x": ["tyrannosaurus rex", 0.8],
+        "beast x-4-x": ["tyrannosaurus rex", 0.76],
         "beast x-5-x": ["giganotosaurus", 0.8],
         "beast x-x-1": ["gyrfalcon", 0.8],
         "beast x-x-2": ["horned owl", 0.8],
         "beast x-x-3": ["golden eagle", 0.8],
-        "beast x-x-4": ["giant condor", 0.8],
+        "beast x-x-4": ["giant condor", 0.78],
         "beast x-x-5": ["pouakai", 0.8]
     }
