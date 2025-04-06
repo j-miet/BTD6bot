@@ -4,7 +4,7 @@
 [Hero] Sauda
 [Monkey Knowledge] -
 -------------------------------------------------------------
-===Monkeys required===
+===Monkeys & upgrades required===
 dart 0-0-0
 engineer 4-2-0
 druid 1-3-0

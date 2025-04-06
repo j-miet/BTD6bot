@@ -4,9 +4,9 @@
 [Hero] Psi
 [Monkey Knowledge] -
 ---------------------------------------------------------------
-===Monkeys required===
+===Monkeys & upgrades required===
 dart 0-0-1
-sniper 4-0-2, 1-1-0
+sniper 4-1-2
 alch 4-0-1
 mermonkey 2-0-4
 village 3-2-0

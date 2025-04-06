@@ -4,7 +4,7 @@
 [Hero] Psi
 [Monkey Knowledge] -
 -------------------------------------------------------------
-===Monkeys required===
+===Monkeys & upgrades required===
 sub 2-0-4
 bomb 2-0-4
 alch 3-0-0

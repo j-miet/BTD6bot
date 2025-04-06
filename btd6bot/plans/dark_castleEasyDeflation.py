@@ -4,7 +4,7 @@
 [Hero] Gwen
 [Monkey Knowledge] -
 -------------------------------------------------------------
-===Monkeys required===
+===Monkeys & upgrades required===
 ace 2-0-3
 alch 4-2-0
 village 2-2-0

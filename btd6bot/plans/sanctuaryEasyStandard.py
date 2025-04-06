@@ -4,9 +4,9 @@
 [Hero] Psi
 [Monkey Knowledge] -
 ---------------------------------------------------------------
-===Monkeys required===
+===Monkeys & upgrades required===
 dart 0-0-1
-sniper 3-0-2, 1-1-0
+sniper 3-1-2
 boomer 4-0-2
 _______________________________________
 Derived from sanctuary_HardChimps.
