@@ -375,7 +375,7 @@ class Monkey(_MonkeyConstants):
         Most monkeys have the basic 4 targeting choises: first, last, close, and strong. 
         This method handles targeting change for such cases.
         
-        With Robo monkey, no hotkey for second hand exists so currently unable to change its targeting.
+        With Robo monkey, you need to change second hand targeting manually with click command.
 
         Args:
             current: Current targeting priority as a string.
@@ -1029,9 +1029,6 @@ class Monkey(_MonkeyConstants):
         'ice' has initial value 'first'; change targeting only for x-x-3+ paths  
         'tack', 'farm' have value None; but you have no need to target these anyway
 
-        x-3+-x robo monkey's second hand targeting cannot be changed at the moment as there is no hotkey for this. It 
-        stays as 'last' which also means the main hand can't be set to 'last'.
-
         Examples:
             Dart monkey has default targeting value 'first' so calling it again does nothing.
             >>> dart = Monkey('dart', 0.5, 0.1)  
@@ -1128,6 +1125,51 @@ class Monkey(_MonkeyConstants):
             self._error('target', set_target, val)
         kb_mouse.press_esc()      # closes currently opened targeting window   
         self._targeting = set_target.lower()
+
+    def target_robo(self, 
+                    direction: str, 
+                    clicks: int, 
+                    cpos_x: float | None = None,
+                    cpos_y: float | None = None
+                    ) -> None:
+        """Change robo monkey second arm targeting.
+        
+        Unlike 'target' method, this one lacks complex internal systems. Instead, it does just the following:  
+        -clicks on current super monkey location  
+        -clicks either left or right arrow to change targeting, set amount of times  
+        -then closes the panel
+
+        Cannot set same targeting option for both arms.
+
+        Args:
+            direction: Either 'left' or 'right' depending which targeting direction you'd wish to click.
+            clicks: Total amout of clicks.
+        """
+        if Rounds.defeat_status:
+            return
+        if cpos_x is not None:
+            self._pos_x = cpos_x
+        if cpos_y is not None:
+            self._pos_y = cpos_y
+        kb_mouse.click((self._pos_x, self._pos_y))
+        if cpos_x is not None:
+            self._update_panel_position(cpos_x)
+        if self._panel_pos == 'left':
+            if direction == 'left':
+                kb_mouse.click((0.044, 0.294), clicks)
+            elif direction == 'right':
+                kb_mouse.click((0.185, 0.292), clicks)
+            else:
+                print("Could not change targeting.")
+        else:
+            if direction == 'left':
+                kb_mouse.click((0.680, 0.292), clicks)
+            elif direction == 'right':
+                kb_mouse.click((0.822, 0.292), clicks)
+            else:
+                print("Could not change targeting.")
+        kb_mouse.press_esc()
+        print("Changed robo monkey second arm targeting.")
 
     def upgrade(self, set_upg: list[str], cpos_x: float | None = None, cpos_y: float | None = None) -> None:
         """Upgrade current monkey.
