@@ -165,10 +165,11 @@ def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str,
         if gui_vars["time_recording_status"]:
             _flush_times_temp()
         plan_module.play(info)
-        if gui_vars["time_recording_status"] and _check_if_temp_valid(info[3], info[4]):
-            _save_to_json(plan_name)
-        else:
-            print("Plan was exited prematurely, no time data saved.")
+        if gui_vars["time_recording_status"]:
+            if _check_if_temp_valid(info[3], info[4]):
+                _save_to_json(plan_name)
+            else:
+                print("Plan could not be finished, no time data saved.")
     except BotError as err:
         print(err)
 
