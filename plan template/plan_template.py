@@ -4,7 +4,7 @@
 [Hero]
 [Monkey Knowledge]
 -------------------------------------------------------------
-===Monkeys required===
+===Monkeys & upgrades required===
 *list all monkeys + their highest crosspaths here*
 Example: sniper 5-3-1 means plan uses tier 5 top path, tier 3 middle path, and tier 1 bottom path for snipers.
 _______________________________________
