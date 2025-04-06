@@ -48,6 +48,7 @@ def kb(key: Key | KeyCode | None) -> None:
     """Listens to keyboard inputs.
 
     Plus ('+'): copies current mouse location in scalar coordinates to clipboard.
+    Minus ('-'): copies current mouse location in pixels to clipboard.
     F8: Terminate script instantly.
 
     Args:c
@@ -61,7 +62,12 @@ def kb(key: Key | KeyCode | None) -> None:
         sx, sy = scalar_position(x,y)
         pos_x, pos_y = str(sx), str(sy)
         pyperclip.copy(pos_x+', '+pos_y)
-        print("--> Coordinates "+pos_x+", "+pos_y+" copied to clipboard.")
+        print("--> Coordinates "+pos_x+", "+pos_y+" copied to clipboard " +"#"*8)
+    elif isinstance(key, KeyCode) and key.char == '-':
+        px, py = pyautogui.position()
+        pos_x, pos_y = str(px), str(py)
+        pyperclip.copy(pos_x+', '+pos_y)
+        print("--> Pixel coordinates "+pos_x+", "+pos_y+" copied to clipboard "+'#'*8)
 
 def run() -> None:
     # sends every keyboard input through kb function; starts a secondary thread
@@ -69,5 +75,5 @@ def run() -> None:
     kb_listener.start()
 
     print("Press '+' to copy current mouse location as scalar coordinate to clipboard, or F8 to exit.")
-    print('Pixel coordinates'.rjust(11) + '---' + 'Scalar coordinates'.rjust(10))
+    print('Pixel coordinates'.rjust(11) + ' <--- # ---> ' + 'Scalar coordinates'.rjust(10))
     coordinates(5, 16)
