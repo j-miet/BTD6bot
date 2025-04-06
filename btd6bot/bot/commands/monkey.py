@@ -968,7 +968,7 @@ class Monkey(_MonkeyConstants):
                cpos_x: float | None = None,
                cpos_y: float | None = None
                ) -> None:
-        """Change targeting priority of a monkey.
+        """Changes targeting priority of a monkey.
 
         If monkey is 'mortar', use special(1, x, y) instead: mortars don't support 'target' command.
 
@@ -1126,53 +1126,8 @@ class Monkey(_MonkeyConstants):
         kb_mouse.press_esc()      # closes currently opened targeting window   
         self._targeting = set_target.lower()
 
-    def target_robo(self, 
-                    direction: str, 
-                    clicks: int, 
-                    cpos_x: float | None = None,
-                    cpos_y: float | None = None
-                    ) -> None:
-        """Change robo monkey second arm targeting.
-        
-        Unlike 'target' method, this one lacks complex internal systems. Instead, it does just the following:  
-        -clicks on current super monkey location  
-        -clicks either left or right arrow to change targeting, set amount of times  
-        -then closes the panel
-
-        Cannot set same targeting option for both arms.
-
-        Args:
-            direction: Either 'left' or 'right' depending which targeting direction you'd wish to click.
-            clicks: Total amout of clicks.
-        """
-        if Rounds.defeat_status:
-            return
-        if cpos_x is not None:
-            self._pos_x = cpos_x
-        if cpos_y is not None:
-            self._pos_y = cpos_y
-        kb_mouse.click((self._pos_x, self._pos_y))
-        if cpos_x is not None:
-            self._update_panel_position(cpos_x)
-        if self._panel_pos == 'left':
-            if direction == 'left':
-                kb_mouse.click((0.044, 0.294), clicks)
-            elif direction == 'right':
-                kb_mouse.click((0.185, 0.292), clicks)
-            else:
-                print("Could not change targeting.")
-        else:
-            if direction == 'left':
-                kb_mouse.click((0.680, 0.292), clicks)
-            elif direction == 'right':
-                kb_mouse.click((0.822, 0.292), clicks)
-            else:
-                print("Could not change targeting.")
-        kb_mouse.press_esc()
-        print("Changed robo monkey second arm targeting.")
-
     def upgrade(self, set_upg: list[str], cpos_x: float | None = None, cpos_y: float | None = None) -> None:
-        """Upgrade current monkey.
+        """Upgrades current monkey.
 
         Upgrades are passed a list, which allows to queue multiple upgrades in one call. But even if you need just one 
         upgrade, you still need to wrap it in a list; see Examples below.
@@ -1316,3 +1271,78 @@ class Monkey(_MonkeyConstants):
             self._do_upgrades(set_upg, cpos_x, cpos_y)
         else:
             self._error('upgrade_list', set_upg)
+
+    def target_robo(self, 
+                    direction: str, 
+                    clicks: int, 
+                    cpos_x: float | None = None,
+                    cpos_y: float | None = None
+                    ) -> None:
+        """Changes robo monkey second arm targeting.
+        
+        Unlike 'target' method, this one lacks complex internal systems. Instead, it does just the following:  
+        -clicks on current super monkey location  
+        -clicks either left or right arrow to change targeting, set amount of times  
+        -then closes the panel
+
+        Cannot set same targeting option for both arms.
+
+        Args:
+            direction (str): Either 'left' or 'right' depending which targeting direction you'd wish to click.
+            clicks (int): Total amout of clicks.
+            cpos_x (float | None. Default = None): Updated current x-position.
+            cpos_y (float | None. Default = None): Updated current y-position.
+        """
+        if Rounds.defeat_status:
+            return
+        if self._name != 'super':
+            print('This monkey is not a super monkey.')
+            return
+        if cpos_x is not None:
+            self._pos_x = cpos_x
+        if cpos_y is not None:
+            self._pos_y = cpos_y
+        kb_mouse.click((self._pos_x, self._pos_y))
+        if cpos_x is not None:
+            self._update_panel_position(cpos_x)
+        if self._panel_pos == 'left':
+            if direction == 'left':
+                kb_mouse.click((0.044, 0.294), clicks)
+            elif direction == 'right':
+                kb_mouse.click((0.185, 0.292), clicks)
+            else:
+                print("Could not change targeting.")
+        else:
+            if direction == 'left':
+                kb_mouse.click((0.680, 0.292), clicks)
+            elif direction == 'right':
+                kb_mouse.click((0.822, 0.292), clicks)
+            else:
+                print("Could not change targeting.")
+        kb_mouse.press_esc()
+        print("Changed robo monkey second arm targeting.")
+
+    def merge(self, x: float, y: float, cpos_x: float | None = None, cpos_y: float | None = None) -> None:
+        """Merges this beast handler into another.
+
+        Args:
+            x (float): X-position of beast handler you merge into.
+            y (float): Y-position of beast handler you merge into.
+            cpos_x (float | None. Default = None): Updated current x-position.
+            cpos_y (float | None. Default = None): Updated current y-position.
+        """
+        if Rounds.defeat_status:
+            return
+        if self._name != 'beast':
+            print("This monkey is not a beast handler.")
+            return
+        if cpos_x is not None:
+            self._pos_x = cpos_x
+        if cpos_y is not None:
+            self._pos_y = cpos_y
+        kb_mouse.click((self._pos_x, self._pos_y))
+        if cpos_x is not None:
+            self._update_panel_position(cpos_x)
+        kb_mouse.kb_input(hotkeys["merge beast"])
+        kb_mouse.click((x,y))
+        print(f"Beast merged.") 
