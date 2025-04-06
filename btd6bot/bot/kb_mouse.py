@@ -4,15 +4,11 @@ pyautogui.FAILSAFE controls build-in pyautogui fail-safe of dragging mouse to a 
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
 import time
 
 import pyautogui
 import pynput
-from pynput.keyboard import Key
-
-if TYPE_CHECKING:
-    from pynput.keyboard import KeyCode
+from pynput.keyboard import Key, KeyCode
 
 pyautogui.FAILSAFE = False      
 WIDTH, HEIGHT = pyautogui.size()
@@ -60,12 +56,21 @@ def kb_input(input: Key | KeyCode | str, times: int = 1) -> None:
     """
     if isinstance(times, int) and times >= 1:
         keyboard = pynput.keyboard.Controller()
-        for _ in range(times):
-            keyboard.press(input)
-            time.sleep(0.1)
-            keyboard.release(input)
-            if times >= 2:
+        if isinstance(input, str) and input.strip("<>") in {f"{num}" for num in range(96, 106)}: # numpad keys
+            input_key = int(input.strip("<>"))
+            for _ in range(times):
+                keyboard.press(KeyCode(input_key))
                 time.sleep(0.1)
+                keyboard.release(KeyCode(input_key))
+                if times >= 2:
+                    time.sleep(0.1)
+        else:
+            for _ in range(times):
+                keyboard.press(input)
+                time.sleep(0.1)
+                keyboard.release(input)
+                if times >= 2:
+                    time.sleep(0.1)
 
 def move_cursor(xy: tuple[float, float], set_duration: float = 0.0) -> None:
     """Moves mouse to specified coordinate location.
