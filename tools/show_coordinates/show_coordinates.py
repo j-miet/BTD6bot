@@ -1,8 +1,6 @@
-"""Updates and shows coordinates of mouse location, both in actual pixels and in decimals normalized to interval [0,1].
+"""Updates and shows coordinates of mouse location, both in actual pixels and in decimals normalized to interval [0,1).
 
 Notice that x increases as you cursor moves right and y increases as cursor moves downwards.
-
-Press F10 to stop this script.
 """
 import os
 import signal
@@ -48,7 +46,7 @@ def kb(key: Key | KeyCode | None) -> None:
     """Listens to keyboard inputs.
 
     Plus ('+'): copies current mouse location in scalar coordinates to clipboard.
-    Minus ('-'): copies current mouse location in pixels to clipboard.
+    Asterisk ('*'): copies current mouse location in pixels to clipboard.
     F8: Terminate script instantly.
 
     Args:c
@@ -63,7 +61,7 @@ def kb(key: Key | KeyCode | None) -> None:
         pos_x, pos_y = str(sx), str(sy)
         pyperclip.copy(pos_x+', '+pos_y)
         print("--> Coordinates "+pos_x+", "+pos_y+" copied to clipboard " +"#"*8)
-    elif isinstance(key, KeyCode) and key.char == '-':
+    elif isinstance(key, KeyCode) and key.char == '*':
         px, py = pyautogui.position()
         pos_x, pos_y = str(px), str(py)
         pyperclip.copy(pos_x+', '+pos_y)
