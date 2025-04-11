@@ -98,42 +98,42 @@ class SettingsWindow:
 
     def update_roundtime_status(self) -> None:
         """After re-opening this window, updates toggle button value to actual round time status value."""
-        with open(gui_paths.FILES_PATH+'\\gui_vars.json') as f:
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
         if gui_vars_dict["get_botdata"] == True:
             self.roundtime.set('On')
 
     def change_roundtime_status(self) -> None:
         """Changes round time display status value based on toggle button value."""
-        with open(gui_paths.FILES_PATH+'\\gui_vars.json') as f:
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
         if self.roundtime.get() == 'On':
             gui_vars_dict["get_botdata"] = True
         elif self.roundtime.get() == 'Off':
             gui_vars_dict["get_botdata"] = False
-        with open(gui_paths.FILES_PATH+'\\gui_vars.json', 'w') as f:
+        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
             json.dump(gui_vars_dict, f, indent=4)
 
     def update_current_status(self) -> None:
         """After re-opening this window, updates toggle button value to actual record status value."""
-        with open(gui_paths.FILES_PATH+'\\gui_vars.json') as f:
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
         if gui_vars_dict["time_recording_status"] == True:
             self.record_time.set('On')
 
     def change_record_status(self) -> None:
         """Changes time recording status value based on toggle button value."""
-        with open(gui_paths.FILES_PATH+'\\gui_vars.json') as f:
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
         if self.record_time.get() == 'On':
             gui_vars_dict["time_recording_status"] = True
         elif self.record_time.get() == 'Off':
             gui_vars_dict["time_recording_status"] = False
-        with open(gui_paths.FILES_PATH+'\\gui_vars.json', 'w') as f:
+        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
             json.dump(gui_vars_dict, f, indent=4)
 
     def read_checking_time_limit(self) -> str:
-        with open(gui_paths.FILES_PATH+'\\gui_vars.json') as f:
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, int | bool | str] = json.load(f)
         return str(gui_vars_dict["checking_time_limit"])
 
@@ -145,11 +145,11 @@ class SettingsWindow:
         try:
             val = int(self.time_limit_entry.get())
             if 0 < val <= 3600:
-                with open(gui_paths.FILES_PATH+'\\gui_vars.json') as f:
+                with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
                     gui_vars_dict: dict[str, Any] = json.load(f)
                 gui_vars_dict["checking_time_limit"] = val
                 self.time_limit.set(str(gui_vars_dict["checking_time_limit"]))
-                with open(gui_paths.FILES_PATH+'\\gui_vars.json', 'w') as f:
+                with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
                     json.dump(gui_vars_dict, f, indent=4)
         except ValueError:
             ...

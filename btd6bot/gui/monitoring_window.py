@@ -141,7 +141,7 @@ class MonitoringWindow:
         style = ttk.Style()
         style.configure('Style.TButton', font='TkFixedFont')
         try:
-            photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH+'\\'+plan_data.return_map(self.all_plans[0])+'.png')
+            photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(self.all_plans[0])+'.png'))
             self.monitor_mapscreen = ttk.Label(self.monitoringwindow, image=photo, compound='top', anchor='nw', 
                                                padding="0 15 0 0", justify='left')
             self.monitor_mapscreen.image = photo # type: ignore
@@ -192,7 +192,7 @@ class MonitoringWindow:
         
         Requires data from bot.bot_data.BotData class to function.
         """
-        with open(gui_paths.FILES_PATH+'\\gui_vars.json') as f:
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict = json.load(f)
         if gui_vars_dict["get_botdata"] == True:
             BotData.set_data()
@@ -212,10 +212,10 @@ class MonitoringWindow:
 
     def update_event_status_to_json(self) -> None:
         """Updates collection event status to gui_vars.json."""
-        with open(gui_paths.FILES_PATH+'\\gui_vars.json') as f:
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict = json.load(f)
         gui_vars_dict["current_event_status"] = self.collection_val
-        with open(gui_paths.FILES_PATH+'\\gui_vars.json', 'w') as f:
+        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
             json.dump(gui_vars_dict, f, indent=4)
 
     def stop_or_run(self) -> None:
@@ -270,7 +270,7 @@ class MonitoringWindow:
         except IndexError:
             self.monitor_infobox_next.configure(text='-'*12) 
         try:
-            new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH+'\\'+plan_data.return_map(current)+'.png')
+            new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(current)+'.png'))
             self.monitor_mapscreen['text'] = ''
             self.monitor_mapscreen.configure(image=new_image)
             self.monitor_mapscreen.image = new_image # type: ignore

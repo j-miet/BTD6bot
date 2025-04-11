@@ -167,7 +167,7 @@ class MainWindow:
         style = ttk.Style()
         style.configure('Style.TButton', font='TkFixedFont')
         try:
-            map_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH+'\\dark castle.png')
+            map_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'dark castle.png')
             self.mapscreen = ttk.Label(mainframe, image=map_image, compound='top', anchor='nw', relief='sunken', 
                                       justify='left', style='Style.TButton')
             # Save image reference; otherwise Python garbage collection destroys it.
@@ -256,8 +256,9 @@ class MainWindow:
             if self.maps_box.get() == map_name:
                 self.current_map = map_name
                 try:
-                    temp = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH+
-                                '\\'+MainWindow.MAP_IMAGES[MainWindow.MAP_IMAGES.index(self.current_map+'.png')])
+                    temp = tk.PhotoImage(
+                        file=gui_paths.MAP_IMAGES_PATH/
+                                MainWindow.MAP_IMAGES[MainWindow.MAP_IMAGES.index(self.current_map+'.png')])
                     self.mapscreen['text'] = ''
                     self.mapscreen.configure(image=temp)
                     self.mapscreen.image = temp # type: ignore 
@@ -292,7 +293,7 @@ class MainWindow:
         If no valid info string is found, displays a blank screen.
         """
         original = self.get_original()
-        with open(gui_paths.PLANS_PATH+'\\'+original+'.py') as file_read:
+        with open(gui_paths.PLANS_PATH/(original+'.py')) as file_read:
             infolist = file_read.readlines()
         try:
             if infolist[0] == '\"\"\"\n':
