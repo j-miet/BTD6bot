@@ -74,6 +74,7 @@ class QueueModeWindow:
         with open(gui_paths.QUEUE_LIST_PATH, 'w') as file_write:
             for line in listed:
                 file_write.write(line)  
+        self.myplans.selection_set(index[0]-1)
 
     def move_down(self) -> None:
         """Handles moving currently selected row down."""
@@ -92,6 +93,7 @@ class QueueModeWindow:
         with open(gui_paths.QUEUE_LIST_PATH, 'w') as file_write:
             for line in listed:
                 file_write.write(line)
+        self.myplans.selection_set(index[0]+1)
 
     def add_plan(self) -> None:
         """Add a new plan to current queue.
