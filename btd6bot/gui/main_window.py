@@ -118,9 +118,9 @@ class MainWindow:
         self.init_button_first_time = True
 
         # variables to check if replay/queue/collection mode is enabled
+        self.collection = tk.StringVar(value='Off')
         self.replay = tk.StringVar(value='Off')
         self.queue = tk.StringVar(value='Off')
-        self.collection = tk.StringVar(value='Off')
 
         mainframe = tk.Frame(root, borderwidth=5, relief='groove', padx=15, pady=15)
         mainframe.columnconfigure(0, weight=1)
@@ -167,7 +167,7 @@ class MainWindow:
         style = ttk.Style()
         style.configure('Style.TButton', font='TkFixedFont')
         try:
-            map_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH+'\\dark castle.png')
+            map_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'dark castle.png')
             self.mapscreen = ttk.Label(mainframe, image=map_image, compound='top', anchor='nw', relief='sunken', 
                                       justify='left', style='Style.TButton')
             # Save image reference; otherwise Python garbage collection destroys it.
@@ -211,8 +211,8 @@ class MainWindow:
                                            state='disabled')
         self.queue_toggle.grid(column=3, row=4, sticky='e')
 
-        self.replay_toggle = tk.Checkbutton(mainframe, text='Replay mode', anchor='e', variable=self.replay, 
-                                            command=self.replay_mode_check , offvalue='Off', onvalue='On', pady=10,
+        self.replay_toggle = tk.Checkbutton(mainframe, text='Replay mode', anchor='e', variable=self.replay,
+                                            offvalue='Off', onvalue='On', pady=10,
                                             state='disabled')
         self.replay_toggle.grid(column=3, row=4, sticky='se')
 
@@ -256,8 +256,9 @@ class MainWindow:
             if self.maps_box.get() == map_name:
                 self.current_map = map_name
                 try:
-                    temp = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH+
-                                '\\'+MainWindow.MAP_IMAGES[MainWindow.MAP_IMAGES.index(self.current_map+'.png')])
+                    temp = tk.PhotoImage(
+                        file=gui_paths.MAP_IMAGES_PATH/
+                                MainWindow.MAP_IMAGES[MainWindow.MAP_IMAGES.index(self.current_map+'.png')])
                     self.mapscreen['text'] = ''
                     self.mapscreen.configure(image=temp)
                     self.mapscreen.image = temp # type: ignore 
@@ -292,7 +293,7 @@ class MainWindow:
         If no valid info string is found, displays a blank screen.
         """
         original = self.get_original()
-        with open(gui_paths.PLANS_PATH+'\\'+original+'.py') as file_read:
+        with open(gui_paths.PLANS_PATH/(original+'.py')) as file_read:
             infolist = file_read.readlines()
         try:
             if infolist[0] == '\"\"\"\n':
@@ -444,11 +445,10 @@ class MainWindow:
                 gui_tools.terminate_thread(MonitoringWindow.current_bot_thread)
                 sys.stdout =  old_stdout # return to original output stream
                 if self.queue.get() == 'On':
+                    self.start_button.configure(state='disabled')
                     with open(gui_paths.QUEUE_LIST_PATH) as f:
                         if len(f.readlines()) != 0:
                             self.start_button.configure(state='active')
-                            return
-                    self.start_button.configure(state='disabled')
                     return
                 if self.reader_init:
                     self.start_button.configure(state='active')
@@ -479,7 +479,6 @@ class MainWindow:
                     with open(gui_paths.QUEUE_LIST_PATH) as f:
                         if len(f.readlines()) != 0:
                             self.start_button.configure(state='active')
-                    return
                 elif self.init_button_first_time:
                     self.start_button.configure(state='active')
                 elif self.reader_init:
@@ -488,26 +487,19 @@ class MainWindow:
             self.start_button.configure(state='disabled')
             time.sleep(0.01)
 
-    def replay_mode_check(self) -> None:
-        """Disables and enabled initialization button based on replay mode toggle.
-        
-        If replay mode is off and reader has been initialized, enabled start button.
-        """
-        if self.replay.get() == 'Off' and self.reader_init:
-            self.start_button.configure(state='active') 
-
     def queue_mode_check(self) -> None:
         """Disables and enabled initialization button based on queue mode toggle.
          
         If queue mode is off and reader has been initialized, enabled start button.
         If queue mode is On, but queue has no plans, also disables start button.
         """
-        if self.queue.get() == 'Off' and self.reader_init:
-            self.start_button.configure(state='active') 
-        else:
+        if self.queue.get() == 'On':
+            self.start_button.configure(state='disable')
             with open(gui_paths.QUEUE_LIST_PATH) as file_read:             
-                if len(file_read.readlines()) == 0:
-                    self.start_button.configure(state='disabled')
+                if len(file_read.readlines()) != 0:
+                    self.start_button.configure(state='active')
+        else:
+            self.start_button.configure(state='active')
 
     def hotkey_window(self) -> None:
         """Open hotkey window which operates on its own thread."""
@@ -531,6 +523,9 @@ class MainWindow:
                 self.hotkey_button.configure(state='active')
                 if self.queue.get() == 'On':
                     self.start_button.configure(state='disabled')
+                    with open(gui_paths.QUEUE_LIST_PATH) as f:
+                        if len(f.readlines()) != 0:
+                            self.start_button.configure(state='active')
                 elif self.init_button_first_time:
                     self.start_button.configure(state='active')
                 elif self.reader_init:
@@ -559,6 +554,9 @@ class MainWindow:
                 self.help_button.configure(state='active')
                 if self.queue.get() == 'On':
                     self.start_button.configure(state='disabled')
+                    with open(gui_paths.QUEUE_LIST_PATH) as f:
+                        if len(f.readlines()) != 0:
+                            self.start_button.configure(state='active')
                 elif self.init_button_first_time:
                     self.start_button.configure(state='active')
                 elif self.reader_init:
@@ -585,8 +583,11 @@ class MainWindow:
         while True:
             while not current_settings.winfo_exists():
                 self.settings_button.configure(state='active')
-                if self.queue.get() == 'On' and self.reader_init:
+                if self.queue.get() == 'On':
                     self.start_button.configure(state='disabled')
+                    with open(gui_paths.QUEUE_LIST_PATH) as f:
+                        if len(f.readlines()) != 0:
+                            self.start_button.configure(state='active')
                 elif self.init_button_first_time:
                     self.start_button.configure(state='active')
                 elif self.reader_init:

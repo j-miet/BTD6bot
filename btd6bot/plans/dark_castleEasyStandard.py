@@ -4,7 +4,7 @@
 [Hero] Obyn
 [Monkey Knowledge] -
 -------------------------------------------------------------
-===Monkeys required===
+===Monkeys & upgrades required===
 ninja 4-0-2
 sub 2-0-4
 alch 3-0-0

@@ -1,23 +1,25 @@
 """
 [Plan Name] sanctuaryHardChimps
-[Game Version] 47
+[Game Version] 48
 [Hero] Psi
 [Monkey Knowledge] -
 ---------------------------------------------------------------
-===Monkeys required===
+===Monkeys & upgrades required===
 dart 0-0-1
-sniper 4-0-2, 4-2-0
+sniper 4-2-2
 alch 4-0-1
 mermonkey 2-0-5
 village 3-2-0
 glue 5-2-0
 boomer 5-0-2
 _______________________________________
-Strategy used: https://www.youtube.com/watch?v=5lw5KgJhaf4
+Strategy: https://www.youtube.com/watch?v=5lw5KgJhaf4
 
--Can do black border. There are plenty of black-border capable strats out there, but they seem to require more micro/abilities (like using Geraldo items). So it's a trade-off between more rng + less micro, and vice versa.
+-Can do black border. Has some rng, but you should be able to finish in one go after a few attempts.
 
--I've added some tower retargeting + extra ability uses to minimize rng, but not all of it can be removed. So bloons can randomly leak on some rounds, mainly in mid/late game (65 seems to be a common one) - if that happens, try again. Should work after a few attemps.
+-Has plenty of adjustments compared to original as it would not work consistently for black border.
+
+-Updated for version 48; the pierce nerf to 4-x-x boomerang hurts and makes saving for 5-x-x glue a lot more rng-dependent. To make it easier, upgrading sniper to 3-2-0 sniper before 63 and to 4-2-0 during it + some extra ability uses, seems to increase consistency a lot. Some extra ability uses have been added for late game rounds to avoid random leaks.
 """
 
 from._plan_imports import *
@@ -124,7 +126,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             end_round(10)
         elif current_round == 36:
             sniper1.upgrade(['2-0-2'], cpos_x=0.4104166666667, cpos_y=0.0592592592593)
-            end_round(3)
+            end_round(10)
         elif current_round == 37:
             end_round(18)
         elif current_round == 38:
@@ -133,13 +135,13 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 39:
             sniper1.upgrade(['3-0-2'], cpos_x=0.333, cpos_y=0.0354814814815)
             village = Monkey('village', 0.3729166666667, 0.125)
-            end_round(2)
+            end_round(12)
         elif current_round == 40: 
             ability(1, 1)
             end_round(4)
         elif current_round == 41:
             village.upgrade(['0-1-0', '0-2-0'], cpos_x=0.5260416666667, cpos_y=0.1453703703704)
-            end_round(5)
+            end_round(15)
         elif current_round == 42:
             mermonkey1 = Monkey('mermonkey', 0.3875, 0.2361111111111)
             end_round(5)
@@ -162,21 +164,21 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
              mermonkey1.special(1, 0.4395833333333, 0.3731481481481)
              alch1 = Monkey('alch', 0.5041666666667, 0.1972222222222)
              alch1.upgrade(['1-0-0', '2-0-0', '3-0-0', '3-0-1'])
-             end_round(5)
+             end_round(9)
         elif current_round == 50:
              alch1.upgrade(['4-0-1'], cpos_x=0.4322916666667, cpos_y=0.2064814814815)
-             end_round(2)
+             end_round(6)
         elif current_round == 51:
              end_round(10)
         elif current_round == 52:
              village.upgrade(['1-2-0', '2-2-0'], cpos_x=0.446375, cpos_y=0.1111037037037)
-             end_round(5)
+             end_round(8)
         elif current_round == 53:
             glue = Monkey('glue', 0.5385416666667, 0.2064814814815)
             end_round(15)
         elif current_round == 54:
             glue.upgrade(['1-0-0', '2-0-0', '3-0-0', '3-1-0'], cpos_x=0.4666666666667, cpos_y=0.2231481481481)
-            end_round(3)
+            end_round(8)
         elif current_round == 55:
             glue.upgrade(['3-2-0'], cpos_x=0.3927083333333, cpos_y=0.2027777777778)
             end_round(12)
@@ -185,10 +187,10 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 57:
             ability(1, 4)
             glue.upgrade(['4-2-0'], cpos_x=0.5416666666667, cpos_y=0.2046296296296)
-            end_round(2)
+            end_round(5)
         elif current_round == 58:
             village.upgrade(['3-2-0'], cpos_x=0.453125, cpos_y=0.1490740740741)
-            end_round(15)
+            end_round(17)
         elif current_round == 59:
             end_round(12)
         elif current_round == 60:
@@ -196,83 +198,42 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 61:
             end_round(10)
         elif current_round == 62:
-            end_round(20)
+            sniper2.upgrade(['2-1-0', '3-1-0', '3-2-0'], cpos_x=0.4651041666667, cpos_y=0.0444444444444)
+            end_round(15)
         elif current_round == 63:
-            ability(1, 6.5)
+            ability(1, 6.75)
             ability(2, 12)
-            end_round(5)
+            sniper2.upgrade(['4-2-0'], 0.396875, 0.0240740740741)
+            end_round(3)
         elif current_round == 64:
-            end_round(10)
+            change_autostart()
         elif current_round == 65:
-            end_round(33)
-        elif current_round == 66:
-            ability(2, 6.5)
-            ability(1, 9)
-            end_round(8)
-        elif current_round == 67:
-            end_round(13)
-        elif current_round == 68:
-            end_round(11)
-        elif current_round == 69:
-            end_round(16)
-        elif current_round == 70:
-            end_round(20)
-        elif current_round == 71:
-            end_round(10)
-        elif current_round == 72:
-            end_round(16)
+            ability(1, 21.5)
         elif current_round == 73:
-            ability(2, 10)
-            glue.upgrade(['5-2-0'], cpos_x=0.5322916666667, cpos_y=0.2231481481481)
-            end_round(13)
-        elif current_round == 74:
-            end_round(33)
+            ability(1, 10)
+            ability(2, 11.5)
         elif current_round == 75:
-            sniper1.upgrade(['4-0-2'], cpos_x=0.328125, cpos_y=0.0564814814815)
-            sniper1.target('strong')
-            end_round(3)
+            ability(1, 13.5)
         elif current_round == 76:
-            end_round(3)
+            ability(2, 1)
         elif current_round == 77:
-            end_round(23)
-        elif current_round == 78:
-            end_round(32)
-        elif current_round == 79:
-            end_round(36)
-        elif current_round == 80:
-            end_round(38)
-        elif current_round == 81:
-            end_round(18)
+            ability(1, 15.5)
+            glue.upgrade(['5-2-0'], cpos_x=0.5364583333333, cpos_y=0.1814814814815)
         elif current_round == 82:
-            ability(1, 7)
-            ability(2, 15)
-            end_round(10)
-        elif current_round == 83:
-            end_round(22)
+            ability(1, 8)
+            ability(2, 18)
         elif current_round == 84:
             boomerang.upgrade(['5-0-2'], cpos_x=0.4348958333333, cpos_y=0.2842592592593)
-            end_round(5)
-        elif current_round == 85:
-            end_round(34)
-        elif current_round == 86:
-            end_round(15)
         elif current_round == 87:
-            end_round(20)
-        elif current_round == 88:
-            end_round(20)
-        elif current_round == 89:
-            end_round(16)
-        elif current_round == 90:
-            end_round(7)
-        elif current_round == 91:
-            end_round(12)
+            ability(2, 13)
         elif current_round == 92:
-            ability(2, 15)
-            end_round(10)
+            ability(2, 14)
         elif current_round == 93:
+            change_autostart()
             end_round(18)
         elif current_round == 94:
             mermonkey1.upgrade(['2-0-5'], cpos_x=0.4072916666667, cpos_y=0.2342592592593)
+            ability(1, 12)
             mermonkey2 = Monkey('mermonkey', 0.4989583333333, 0.1990740740741)
             mermonkey2.upgrade(['1-0-0', '2-0-0', '2-0-1', '2-0-2', '2-0-3'])
             end_round(4)
@@ -282,18 +243,21 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 96:
             mermonkey2.upgrade(['2-0-4'], cpos_x=0.5, cpos_y=0.16)
             mermonkey2.special(1, 0.4375, 0.3374814814815)
-            end_round(17)
+            ability(1, 14)
+            end_round(16)
         elif current_round == 97:
-            sniper2.upgrade(['2-1-0', '3-1-0'], cpos_x=0.541, cpos_y=0.022)
-            end_round(22)
+            end_round(24)
         elif current_round == 98:
-            sniper2.upgrade(['4-1-0', '4-2-0'], cpos_x=0.464, cpos_y=0.031)
+            sniper1.upgrade(['4-2-0'], 0.4067708333333, cpos_y=0.0527777777778)
             ability(2, 10.5)
             alch2 = Monkey('alch', 0.490625, 0.1037037037037)
             alch2.upgrade(['1-0-0', '2-0-0', '3-0-0', '4-0-0', '4-0-1'])
             end_round(6)
         elif current_round == 99:
-            end_round(10)
+            sniper3 = Monkey('sniper', 0.7838541666667, 0.3796296296296)
+            sniper3.upgrade(['1-0-0', '2-0-0', '3-0-0', '3-1-0', '3-2-0'])
+            sniper3.target('strong')
+            end_round(5)
         elif current_round == END:
             ability(1, 10)
             ability(2, 13)

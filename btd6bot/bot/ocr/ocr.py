@@ -307,7 +307,7 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
             match_str = OcrValues.OCR_UPGRADE_DATA[upg_match][0]
             delta_limit = OcrValues.OCR_UPGRADE_DATA[upg_match][1]
             d = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), match_str).quick_ratio()
-            #print('Text: '+text.lower())       # TODO debug loggers here after debug setting implemented
+            #print('\nText: '+text.lower())       # TODO debug loggers here after debug setting implemented
             #print("Match delta: "+str(d))
             if d >= delta_limit:
                 return True

@@ -34,25 +34,25 @@ def scale_images() -> None:
     file types than images.
     Creates new folder for scaled images if it doesn't already exists.
     """
-    if os.path.exists(Path(__file__).parent / 'raw map images'):
+    if os.path.exists(Path(__file__).parent/'raw map images'):
         ...
     else:
         print("Didn't find folder 'raw map images', creating one...")
-        os.mkdir(Path(__file__).parent / 'raw map images')   # this is your new folder, located inside 'map images'.
-    images = os.listdir(Path(__file__).parent / 'raw map images')
+        os.mkdir(Path(__file__).parent/'raw map images')   # this is your new folder, located inside 'map images'.
+    images = os.listdir(Path(__file__).parent/'raw map images')
 
-    if os.path.exists(Path(__file__).parent / 'map images'):
+    if os.path.exists(Path(__file__).parent/'map images'):
         ...
     else:
         print("Didn't find folder 'map images', creating one...")
-        os.mkdir(Path(__file__).parent / 'map images')
+        os.mkdir(Path(__file__).parent/'map images')
     
     print('Resizing images...')
     for im in images:
         try:
-            temp = Image.open(Path(__file__).parent / 'raw map images' / im)
+            temp = Image.open(Path(__file__).parent/'raw map images'/im)
             scaled = temp.resize(scaled_res)
-            scaled.save(Path(__file__).parent / 'map images' / im)
+            scaled.save(Path(__file__).parent/'map images'/im)
             temp.close()
         except FileNotFoundError:
             ... # skipping over 

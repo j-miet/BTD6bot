@@ -203,7 +203,7 @@ $RECYCLE.BIN/
 
 # Custom
 .vscode
-btd6bot/_sandbox.py
+btd6bot/.sandbox
 btd6bot/Files/ocr temp/strong_new.png
 btd6bot/Files/ocr temp/strong_text.png
 btd6bot/Files/ocr temp/weak_new.png

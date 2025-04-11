@@ -27,7 +27,6 @@ import time
 from pynput.keyboard import Key, KeyCode
 
 from bot import kb_mouse
-from bot.bot_vars import BotVars
 from bot.hotkeys import hotkeys
 import bot.ocr.ocr as ocr
 from bot.ocr.ocr_reader import OCR_READER
@@ -118,6 +117,11 @@ class Monkey(_MonkeyConstants):
         pos_y (float | None): Y-coordinate location. Value must be on interval [0, 1), or actually [0.02593, 0.9731].
             Just like with pos_x, bot will check correct values, but it won't check monkey size: while a sniper is slim 
             enough, trying to place a heli at y=0.02593 doesn't work.
+        panel_pos (str): Side where upgrade panel opens. This is always relative to middle x-coordinate of non-panel 
+            screen i.e. somewhere around 0.42-0.44. Panel opens to the opposite side of this relative position e.g. 
+            monkey to the left has panel on right. Values are 'left', 'right' and 'middle'. Last value is only needed 
+            as a placeholder because different resolutions could change the panel opening side: actual side should be 
+            checked via ocr and set as final value.
         targeting (str): Targeting priority, initial value is set via basic_monkey_targeting method automatically. 
             Change this value via 'target' method afterwards.
         upgrade_path (str): Current upgrade path of Monkey, initially '0-0-0'. Change value via 'upgrade' method 
@@ -185,7 +189,7 @@ class Monkey(_MonkeyConstants):
         self._name = name
         self._pos_x = pos_x
         self._pos_y = pos_y
-        self._rel_pos = self._get_relative_position()
+        self._panel_pos = self._init_panel_position()
         self._targeting = self._basic_monkey_targeting()
         self._upgrade_path = '0-0-0'
         self._check_init_values()
@@ -223,18 +227,39 @@ class Monkey(_MonkeyConstants):
         Rounds.defeat_status = True
         print(f'\n**An Error has occured. Current game state treated as Defeat**')
 
-    def _get_relative_position(self) -> str:
-        """Get relative position of monkey to determine which side the upgrade panel opens.
+    def _init_panel_position(self) -> str:
+        """Get upgrade panel position of current monkey.
         
+        Values 'left' and 'right' are always opposite of relative position of monkey from middle. The 'middle' value is 
+        only required because different resolution could shift the small interval of middle values. Then for some 
+        resolutions it could be left, for other right. However, 'middle' is a placeholder value anyway, as _place will 
+        ovewrite it and set it as one of the directional values.
+
         Returns:
             "left" if monkey is on right, "right" if on left, "middle" if close to midpoint.
         """
-        if self._pos_x < 0.428:
-            return "right"
-        elif self._pos_x > 0.439:
+        if self._pos_x > 0.439:
             return "left"
+        elif self._pos_x < 0.428:
+            return "right"
         else:
             return "middle"
+        
+    def _update_panel_position(self, new_x: float) -> None:
+        if new_x > 0.439:
+            self._panel_pos = 'left'
+            return True
+        elif new_x < 0.428:
+            self._panel_pos = 'right'
+            return True
+        else:
+            if ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER):
+                self._panel_pos = 'right'
+                return True
+            elif ocr.strong_delta_check('Sell', Monkey._LEFT_PANEL_SELL_LOCATION, OCR_READER):
+                self._panel_pos = 'left'
+                return True
+        return False
 
     def _check_init_values(self) -> None:
         """Checks the validity of name, pos_x and pos_y values during initialization.
@@ -350,7 +375,7 @@ class Monkey(_MonkeyConstants):
         Most monkeys have the basic 4 targeting choises: first, last, close, and strong. 
         This method handles targeting change for such cases.
         
-        With Robo monkey, no hotkey for second hand exists so currently unable to change its targeting.
+        With Robo monkey, you need to change second hand targeting manually with click command.
 
         Args:
             current: Current targeting priority as a string.
@@ -437,12 +462,13 @@ class Monkey(_MonkeyConstants):
             print(f'Already set to {target.capitalize()}.')
             kb_mouse.press_esc()
             return 'OK'
-        if cpos_x is not None and cpos_y is not None:
+        if cpos_x is not None:
             self._pos_x = cpos_x
+        if cpos_y is not None:
             self._pos_y = cpos_y
-            kb_mouse.click((cpos_x, cpos_y))
-        else:
-            kb_mouse.click((self._pos_x, self._pos_y))
+        kb_mouse.click((self._pos_x, self._pos_y))
+        if cpos_x is not None:
+            self._update_panel_position(cpos_x)
         match self._name:
             case 'tack':
                 return self._name, target
@@ -603,10 +629,13 @@ class Monkey(_MonkeyConstants):
             cpos_y: If monkey's current y-coordinate position has changed, update it. Default value is None.
         """
         paths = ['upgrade top', 'upgrade mid', 'upgrade bot'] 
-        if cpos_x is not None and cpos_y is not None:
+        if cpos_x is not None:
             self._pos_x = cpos_x
+        if cpos_x is not None:
             self._pos_y = cpos_y
         kb_mouse.click((self._pos_x, self._pos_y))
+        if cpos_x is not None:
+            self._update_panel_position(cpos_x)
         for upg in upgrade_list:
             u = self._upgrade_path
             print(f'Upgrading {u} {self._name.capitalize()} to {upg}...', end=' ')
@@ -682,6 +711,8 @@ class Monkey(_MonkeyConstants):
         else:
             upg_match = '' # not possible, and should stay that way.
 
+        print(self._panel_pos)
+
         total_time = time.time()
         upgraded = 0
         defeat_check = 1
@@ -698,31 +729,19 @@ class Monkey(_MonkeyConstants):
                 kb_mouse.kb_input(Key.enter)    # if upgrade is Sun Temple/True Sun God, press Enter to confirm it
             start = time.time()
             while (time.time()-start < 0.75):
-                if self._rel_pos == 'right':
+                if self._panel_pos == 'right':
                     if ocr.strong_delta_check(
                         '_upgrade_', 
                         (current_r[0], current_r[1], current_r[2], current_r[3]),
                         OCR_READER,
                         upg_match):
                         upgraded = 1
-                elif self._rel_pos == 'left':
+                elif self._panel_pos == 'left':
                     if ocr.strong_delta_check(
                         '_upgrade_', 
                         (current_l[0], current_l[1], current_l[2], current_l[3]),
                         OCR_READER, 
                         upg_match):
-                        upgraded = 1
-                elif self._rel_pos == 'middle':
-                    if (ocr.strong_delta_check(
-                            '_upgrade_', 
-                            (current_l[0], current_l[1], current_l[2], current_l[3]),
-                            OCR_READER, 
-                            upg_match) or
-                        ocr.strong_delta_check(
-                            '_upgrade_', 
-                            (current_r[0], current_r[1], current_r[2], current_r[3]),
-                            OCR_READER,
-                            upg_match)):
                         upgraded = 1
                 if upgraded:
                     print('Upgraded.')
@@ -739,6 +758,9 @@ class Monkey(_MonkeyConstants):
         ignore any other calls until it succeeds. This could potentially skip over a round or multiple, and ruin 
         your current plan execution. Rather, you should create a Monkey if you know you it can be affored soon, 
         preferably during the same round you call it, or in some cases, the next round - but not any further!
+
+        This method also updates upgrade panel position to 'left' or 'right' if it was 'middle', to remove any 
+        ambiguity and need to handle this value separately under other methods.
         """
         if Rounds.defeat_status:
             return
@@ -756,17 +778,16 @@ class Monkey(_MonkeyConstants):
             defeat_check += 1
             kb_mouse.kb_input(self._get_hotkey())
             kb_mouse.click((self._pos_x, self._pos_y), 2)
-            if self._rel_pos == 'right':
+            if self._panel_pos == 'right':
                 if ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER):
                     placed = 1
-            elif self._rel_pos == 'left':
+            elif self._panel_pos == 'left':
                 if ocr.strong_delta_check('Sell', Monkey._LEFT_PANEL_SELL_LOCATION, OCR_READER):
                     placed = 1
-            elif self._rel_pos == 'middle':
-                if (ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER)    
-                    or ocr.strong_delta_check('Sell', Monkey._LEFT_PANEL_SELL_LOCATION, OCR_READER)):
+            else:
+                if self._update_panel_position(self._pos_x):
                     placed = 1
-            time.sleep(0.3)
+            time.sleep(0.1)
             if placed:
                 kb_mouse.press_esc()
                 print(f'{self._name.capitalize()} placed.')
@@ -894,10 +915,13 @@ class Monkey(_MonkeyConstants):
             print('Wrong input value on special ability; use 1 or 2')
             return
         # current position click; used on monkey-moving maps like Geared/Sanctuary. Updates new coordinates to monkey.
-        elif cpos_x is not None and cpos_y is not None:
+        if cpos_x is not None:
             self._pos_x = cpos_x
+        if cpos_y is not None:
             self._pos_y = cpos_y
         kb_mouse.click((self._pos_x, self._pos_y))
+        if cpos_x is not None:
+            self._update_panel_position(cpos_x)
         kb_mouse.kb_input(hotkeys['special '+str(s)])
         if x is not None and y is not None:
             kb_mouse.click((x, y))
@@ -946,7 +970,7 @@ class Monkey(_MonkeyConstants):
                cpos_x: float | None = None,
                cpos_y: float | None = None
                ) -> None:
-        """Change targeting priority of a monkey.
+        """Changes targeting priority of a monkey.
 
         If monkey is 'mortar', use special(1, x, y) instead: mortars don't support 'target' command.
 
@@ -970,10 +994,10 @@ class Monkey(_MonkeyConstants):
 
         Targeting options
         --
-        >>> 
-            'heli' {default: 'follow'}
-                'lock' = Lock In Place
-                'pursuit'   # use only for 2+-x-x
+        >>> #
+            'heli' {default: 'follow'}  
+                'lock' = Lock In Place  
+                'pursuit'   # use only for 2+-x-x  
         >>>     
             'ace' {default: 'circle'}
                 'circle'
@@ -1006,9 +1030,6 @@ class Monkey(_MonkeyConstants):
         'village' has initial value 'first'; change targeting only for 5-x-x paths  
         'ice' has initial value 'first'; change targeting only for x-x-3+ paths  
         'tack', 'farm' have value None; but you have no need to target these anyway
-
-        x-3+-x robo monkey's second hand targeting cannot be changed at the moment as there is no hotkey for this. It 
-        stays as 'last' which also means the main hand can't be set to 'last'.
 
         Examples:
             Dart monkey has default targeting value 'first' so calling it again does nothing.
@@ -1108,7 +1129,7 @@ class Monkey(_MonkeyConstants):
         self._targeting = set_target.lower()
 
     def upgrade(self, set_upg: list[str], cpos_x: float | None = None, cpos_y: float | None = None) -> None:
-        """Upgrade current monkey.
+        """Upgrades current monkey.
 
         Upgrades are passed a list, which allows to queue multiple upgrades in one call. But even if you need just one 
         upgrade, you still need to wrap it in a list; see Examples below.
@@ -1252,3 +1273,79 @@ class Monkey(_MonkeyConstants):
             self._do_upgrades(set_upg, cpos_x, cpos_y)
         else:
             self._error('upgrade_list', set_upg)
+
+    def target_robo(self, 
+                    direction: str, 
+                    clicks: int, 
+                    cpos_x: float | None = None,
+                    cpos_y: float | None = None
+                    ) -> None:
+        """Changes robo monkey second arm targeting.
+        
+        Unlike 'target' method, this one lacks complex internal systems. Instead, it does just the following:  
+        -clicks on current super monkey location  
+        -clicks either left or right arrow to change targeting, set amount of times  
+        -then closes the panel
+
+        Cannot set same targeting option for both arms.
+
+        Args:
+            direction (str): Either 'left' or 'right' depending which targeting direction you'd wish to click.
+            clicks (int): Total amout of clicks.
+            cpos_x (float | None. Default = None): Updated current x-position.
+            cpos_y (float | None. Default = None): Updated current y-position.
+        """
+        if Rounds.defeat_status:
+            return
+        if self._name != 'super':
+            print('This monkey is not a super monkey.')
+            return
+        if cpos_x is not None:
+            self._pos_x = cpos_x
+        if cpos_y is not None:
+            self._pos_y = cpos_y
+        kb_mouse.click((self._pos_x, self._pos_y))
+        if cpos_x is not None:
+            self._update_panel_position(cpos_x)
+        if self._panel_pos == 'left':
+            if direction == 'left':
+                kb_mouse.click((0.044, 0.294), clicks)
+            elif direction == 'right':
+                kb_mouse.click((0.185, 0.292), clicks)
+            else:
+                print("Could not change targeting.")
+        else:
+            if direction == 'left':
+                kb_mouse.click((0.680, 0.292), clicks)
+            elif direction == 'right':
+                kb_mouse.click((0.822, 0.292), clicks)
+            else:
+                print("Could not change targeting.")
+        kb_mouse.press_esc()
+        print("Changed robo monkey second arm targeting.")
+
+    def merge(self, x: float, y: float, cpos_x: float | None = None, cpos_y: float | None = None) -> None:
+        """Merges this beast handler into another.
+
+        Args:
+            x (float): X-position of beast handler you merge into.
+            y (float): Y-position of beast handler you merge into.
+            cpos_x (float | None. Default = None): Updated current x-position.
+            cpos_y (float | None. Default = None): Updated current y-position.
+        """
+        if Rounds.defeat_status:
+            return
+        if self._name != 'beast':
+            print("This monkey is not a beast handler.")
+            return
+        if cpos_x is not None:
+            self._pos_x = cpos_x
+        if cpos_y is not None:
+            self._pos_y = cpos_y
+        kb_mouse.click((self._pos_x, self._pos_y))
+        if cpos_x is not None:
+            self._update_panel_position(cpos_x)
+        kb_mouse.kb_input(hotkeys["merge beast"])
+        kb_mouse.click((x,y))
+        kb_mouse.press_esc()
+        print(f"Beast merged.") 

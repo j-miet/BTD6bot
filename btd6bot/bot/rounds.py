@@ -3,6 +3,7 @@
 import time
 
 from bot import kb_mouse, times
+from bot.bot_data import BotData
 from bot.commands.flow import AutoStart, change_autostart, begin
 from bot.bot_vars import BotVars
 import bot.menu_return
@@ -111,6 +112,8 @@ class Rounds:
         while not strong_delta_check('Next', Rounds.NEXT_TEXT, OCR_READER):
             kb_mouse.click((0.999, 0.01))    # click away if round 100 insta pop-up.
             time.sleep(1)
+        if BotVars.get_botdata:
+            BotData.set_data(current_round=Rounds.end_round+1)
         final_round_end = time.time()
         times.time_print(final_round_start, final_round_end, f'Round {final_round}')
         time.sleep(0.5)
@@ -167,6 +170,8 @@ class Rounds:
         """
         current_round: int
         if Rounds.defeat_status:
+            if BotVars.get_botdata:
+                BotData.set_data(current_round=Rounds.end_round+1)
             wait_start = time.time()
             while not weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
                 if time.time()-wait_start > 5:
@@ -221,4 +226,9 @@ class Rounds:
             times.time_print(Rounds.current_round_begin_time, time.time(), f'Round {current_round-1}')
             print('===Current round:', current_round, '===')
         Rounds.current_round_begin_time = time.time()
+        if BotVars.get_botdata:
+            BotData.set_data(round_time=Rounds.current_round_begin_time,
+                             current_round=Rounds.begin_round,
+                             begin_round=Rounds.begin_round,
+                             end_round=Rounds.end_round)
         return current_round

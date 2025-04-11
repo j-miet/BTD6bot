@@ -211,7 +211,7 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
     # Axis 'round times'
     try:
         # move this block starting here...
-        with open(gui_paths.FILES_PATH+'\\time_data.json') as f:
+        with open(gui_paths.FILES_PATH/'time_data.json') as f:
             time_data = json.load(f)[plan_name]
         plan_rounds: list[str] = time_data["rounds"]
         plan_times: list[str] = time_data["times"]
@@ -336,7 +336,7 @@ def plot_plan(plan_str: str) -> None:
     Args:
         plan: Plan name.
     """
-    with open(gui_paths.PLANS_PATH+'\\'+plan_str+'.py') as file_read:
+    with open(gui_paths.PLANS_PATH/(plan_str+'.py')) as file_read:
         try:
             get_plan = plan_data.list_format(file_read.readlines())
         except FileNotFoundError:

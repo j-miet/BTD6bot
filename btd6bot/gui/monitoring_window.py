@@ -18,6 +18,8 @@ from utils import plan_data
 from utils import timing
 import gui.gui_paths as gui_paths
 
+from bot.bot_data import BotData
+
 if TYPE_CHECKING:
     from typing import Any, TextIO
     from pynput.keyboard import Key, KeyCode
@@ -109,6 +111,15 @@ class MonitoringWindow:
         self.old_stdout = sys.stdout
         sys.stdout = gui_tools.TextRedirector(self.textbox, "stdout")
 
+        self.roundtime_label = tk.Label(self.monitoringwindow, width=15, height=3, text='Round timer', relief='sunken')
+        self.roundtime_label.grid(column=0, row=4, sticky='sw', padx=10)
+
+        self.roundtime = tk.StringVar(value='-')
+
+        self.roundtime_display = tk.Label(self.monitoringwindow, width=8, height=3, relief='sunken', 
+                                          textvariable=self.roundtime)
+        self.roundtime_display.grid(column=0, row=4, sticky='s')
+
         scroll = tk.Scrollbar(self.monitoringwindow, orient='vertical')
         scroll.grid(column=3, row=0, rowspan=4, sticky='ns')
         self.textbox.configure(yscrollcommand=scroll.set)
@@ -130,7 +141,7 @@ class MonitoringWindow:
         style = ttk.Style()
         style.configure('Style.TButton', font='TkFixedFont')
         try:
-            photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH+'\\'+plan_data.return_map(self.all_plans[0])+'.png')
+            photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(self.all_plans[0])+'.png'))
             self.monitor_mapscreen = ttk.Label(self.monitoringwindow, image=photo, compound='top', anchor='nw', 
                                                padding="0 15 0 0", justify='left')
             self.monitor_mapscreen.image = photo # type: ignore
@@ -176,12 +187,35 @@ class MonitoringWindow:
         self.bot_hk_listener.daemon = True
         self.bot_hk_listener.start()  
 
+    def update_round_timer(self) -> None:
+        """Update round timer value during rounds.
+        
+        Requires data from bot.bot_data.BotData class to function.
+        """
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+            gui_vars_dict = json.load(f)
+        if gui_vars_dict["get_botdata"] == True:
+            BotData.set_data()
+            self.roundtime.set("0.00")
+            while self.bot_thread.is_alive():
+                if BotData.current_round == 0:
+                    time.sleep(0.1)
+                elif BotData.current_round < BotData.end_r+1:
+                    current = time.time()-BotData.round_time
+                    self.roundtime.set(f"{current:.2f}")
+                else:
+                    time.sleep(3)
+                    BotData.set_data()
+                    self.roundtime.set("0.00")
+                time.sleep(0.01) 
+            self.roundtime.set("-")
+
     def update_event_status_to_json(self) -> None:
         """Updates collection event status to gui_vars.json."""
-        with open(gui_paths.FILES_PATH+'\\gui_vars.json') as f:
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict = json.load(f)
         gui_vars_dict["current_event_status"] = self.collection_val
-        with open(gui_paths.FILES_PATH+'\\gui_vars.json', 'w') as f:
+        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
             json.dump(gui_vars_dict, f, indent=4)
 
     def stop_or_run(self) -> None:
@@ -197,6 +231,8 @@ class MonitoringWindow:
         MonitoringWindow.current_bot_thread = self.get_bot_thread()
         self.bot_thread.start()
         self.monitor_run_button.configure(text='Stop')
+        roundtimer_thread = threading.Thread(target=self.update_round_timer, daemon=True)
+        roundtimer_thread.start()
 
     def run_bot(self) -> None:
         """Checks if replay mode is enabled/disabled and runs the sequence of plans listed in self.all_plans.
@@ -234,7 +270,7 @@ class MonitoringWindow:
         except IndexError:
             self.monitor_infobox_next.configure(text='-'*12) 
         try:
-            new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH+'\\'+plan_data.return_map(current)+'.png')
+            new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(current)+'.png'))
             self.monitor_mapscreen['text'] = ''
             self.monitor_mapscreen.configure(image=new_image)
             self.monitor_mapscreen.image = new_image # type: ignore

@@ -4,7 +4,7 @@
 [Hero] Sauda
 [Monkey Knowledge] -
 -------------------------------------------------------------
-===Monkeys required===
+===Monkeys & upgrades required===
 dart 5-2-0
 engineer 5-2-0
 druid 1-3-0
@@ -15,9 +15,9 @@ glue 0-2-4
 ice 5-2-0
 sub 0-4-0
 _______________________________________
-Original: https://www.youtube.com/watch?v=2OuH8JLDeBo
+Strategy: https://www.youtube.com/watch?v=2OuH8JLDeBo
 
--Should be rng-free so black border is quaranteed.
+-Should be rng-free so black border is guaranteed.
 """
 
 from._plan_imports import *

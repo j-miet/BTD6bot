@@ -4,7 +4,7 @@
 [Hero] Quincy
 [Monkey Knowledge] -
 -------------------------------------------------------------
-===Monkeys required===
+===Monkeys & upgrades required===
 ninja 4-0-1
 alch 3-2-0
 sniper 2-0-4
