@@ -281,7 +281,7 @@ def run_tracker() -> None:
     print('Press right mouse to add commands text, "+" to change round, and f8 (or CTRL+C) to ' 
         'quit.')
     print("[All right-click commands]: help, -m, -h, -u, -t, -s, -ucp, -tcp, -scp, -c")        
-    with open(pathlib.Path(__file__).parent / 'commands.txt', 'a') as TrackerVals.coordinates_file:
+    with open(pathlib.Path(__file__).parent/'commands.txt', 'a') as TrackerVals.coordinates_file:
         TrackerVals.coordinates_file.write('if current_round == BEGIN:\n')
     print('Current round is ' + str(TrackerVals.ct_round_counter))
 
@@ -290,7 +290,7 @@ def run_tracker() -> None:
     # don't write to file manually during this script's runtime! But you can open it on side and see how it updates, though!
     while True:
         time.sleep(0.2)
-        TrackerVals.coordinates_file = open(pathlib.Path(__file__).parent / 'commands.txt', 'a')
+        TrackerVals.coordinates_file = open(pathlib.Path(__file__).parent/'commands.txt', 'a')
         if TrackerVals.ct_user_input == '<>':   # right mouse button identifier
             flush_input()
             comment_input = input('Insert command text --->')     # this input() is now part of main thread so it won't slow  # down like it would if it were inside mouse_tracker

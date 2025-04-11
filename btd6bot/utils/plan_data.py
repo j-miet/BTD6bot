@@ -9,7 +9,7 @@ def read_plans() -> list[str]:
     Returns:
         List of all plan file names without .py suffix.
     """
-    namelist: list[str] = os.listdir(pathlib.Path(__file__).parent.parent / 'plans')
+    namelist: list[str] = os.listdir(pathlib.Path(__file__).parent.parent/'plans')
     try:
         namelist.remove('__init__.py')
         namelist.remove('_plan_imports.py')

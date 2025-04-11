@@ -47,7 +47,7 @@ def generate_hotkeys() -> dict[str, str | Key]:
     Returns:
         actual_hotkeys: Dictionary with keys as strings and values as string or Key type.
     """
-    with open(pathlib.Path(__file__).parent.parent / 'Files' / 'text files' / 'hotkeys.txt') as file_read: 
+    with open(pathlib.Path(__file__).parent.parent/'Files'/'text files'/'hotkeys.txt') as file_read: 
         hotkeys_text = plan_data.list_format(file_read.readlines())
     h_keys: list[str] = []
     h_values: list[str] = []

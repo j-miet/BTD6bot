@@ -31,13 +31,13 @@ if TYPE_CHECKING:
 
 def _check_if_temp_valid(begin_r: int, end_r: int) -> bool:
     """Check if times_temp has all round data + total time rows."""
-    with open(pathlib.Path(__file__).parent /'Files'/'times_temp.txt') as f:
+    with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt') as f:
         lines = f.readlines()
     return True if len(lines) == end_r-begin_r+2 else False
 
 def _flush_times_temp() -> None:
     """Flushes existing contents of Files//times_temp.txt to allow new plan time data to be saved."""
-    with open(pathlib.Path(__file__).parent /'Files'/'times_temp.txt', 'w') as f:
+    with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt', 'w') as f:
         print('times_temp.txt contents cleared.')
 
 def _update_time_data(plan_name: str) -> dict[str, Any]:
@@ -141,7 +141,7 @@ def get_hero_name_from_plan(plan_name: str) -> str:
         under bot so at this point it can be anything.
     """
     plan_file_name = plan_name+'.py'
-    with open(pathlib.Path(__file__).parent / 'plans' / plan_file_name) as plan_file:
+    with open(pathlib.Path(__file__).parent/'plans'/plan_file_name) as plan_file:
         plan_code = plan_data.list_format(plan_file.readlines())
     for line in plan_code:
         if '[Hero]' in line:
