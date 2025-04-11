@@ -18,7 +18,7 @@ Strategy: https://www.youtube.com/watch?v=vXuRW2ItaJI
 
 -Very reliant on ability usage, but should have minimal rng nontheless.
 
--In original, round 99 absolutely requires anti-bloon ability. This has been replaced with a x-x-4 mermonkey as that can grab ddts.
+In original, round 99 absolutely requires anti-bloon ability. This has been replaced with a x-x-4 mermonkey which can stall fortified ddts long enough.
 """
 
 from._plan_imports import *

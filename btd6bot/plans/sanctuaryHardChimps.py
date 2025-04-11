@@ -19,7 +19,9 @@ Strategy: https://www.youtube.com/watch?v=5lw5KgJhaf4
 
 -Has plenty of adjustments compared to original as it would not work consistently for black border.
 
--Updated for version 48; the pierce nerf to 4-x-x boomerang hurts and makes saving for 5-x-x glue a lot more rng-dependent. To make it easier, upgrading sniper to 3-2-0 sniper before 63 and to 4-2-0 during it + some extra ability uses, seems to increase consistency a lot. Some extra ability uses have been added for late game rounds to avoid random leaks.
+Updated for version 48; the pierce nerf to 4-x-x boomerang hurts + x-x-4 mermonkey can no longer grab BFBs. These changes make saving for 5-x-x glue very difficult.
+However, upgrading sniper to 3-2-0 sniper before 63 and to 4-2-0 during it + adding some extra ability uses, makes surviving until 77 doable where glue can be bought. 
+Some extra ability uses had to be added for late game, too.
 """
 
 from._plan_imports import *
