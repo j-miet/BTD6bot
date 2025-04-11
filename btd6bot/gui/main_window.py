@@ -444,11 +444,10 @@ class MainWindow:
                 gui_tools.terminate_thread(MonitoringWindow.current_bot_thread)
                 sys.stdout =  old_stdout # return to original output stream
                 if self.queue.get() == 'On':
+                    self.start_button.configure(state='disabled')
                     with open(gui_paths.QUEUE_LIST_PATH) as f:
                         if len(f.readlines()) != 0:
                             self.start_button.configure(state='active')
-                            return
-                    self.start_button.configure(state='disabled')
                     return
                 if self.reader_init:
                     self.start_button.configure(state='active')
@@ -479,7 +478,6 @@ class MainWindow:
                     with open(gui_paths.QUEUE_LIST_PATH) as f:
                         if len(f.readlines()) != 0:
                             self.start_button.configure(state='active')
-                    return
                 elif self.init_button_first_time:
                     self.start_button.configure(state='active')
                 elif self.reader_init:
@@ -495,6 +493,10 @@ class MainWindow:
         """
         if self.replay.get() == 'Off' and self.reader_init:
             self.start_button.configure(state='active') 
+        else:
+            with open(gui_paths.QUEUE_LIST_PATH) as f:
+                if len(f.readlines()) != 0:
+                    self.start_button.configure(state='active')
 
     def queue_mode_check(self) -> None:
         """Disables and enabled initialization button based on queue mode toggle.
@@ -502,12 +504,13 @@ class MainWindow:
         If queue mode is off and reader has been initialized, enabled start button.
         If queue mode is On, but queue has no plans, also disables start button.
         """
-        if self.queue.get() == 'Off' and self.reader_init:
-            self.start_button.configure(state='active') 
-        else:
+        if self.queue.get() == 'On':
+            self.start_button.configure(state='disable')
             with open(gui_paths.QUEUE_LIST_PATH) as file_read:             
-                if len(file_read.readlines()) == 0:
-                    self.start_button.configure(state='disabled')
+                if len(file_read.readlines()) != 0:
+                    self.start_button.configure(state='active')
+        else:
+            self.start_button.configure(state='active')
 
     def hotkey_window(self) -> None:
         """Open hotkey window which operates on its own thread."""
@@ -531,6 +534,9 @@ class MainWindow:
                 self.hotkey_button.configure(state='active')
                 if self.queue.get() == 'On':
                     self.start_button.configure(state='disabled')
+                    with open(gui_paths.QUEUE_LIST_PATH) as f:
+                        if len(f.readlines()) != 0:
+                            self.start_button.configure(state='active')
                 elif self.init_button_first_time:
                     self.start_button.configure(state='active')
                 elif self.reader_init:
@@ -559,6 +565,9 @@ class MainWindow:
                 self.help_button.configure(state='active')
                 if self.queue.get() == 'On':
                     self.start_button.configure(state='disabled')
+                    with open(gui_paths.QUEUE_LIST_PATH) as f:
+                        if len(f.readlines()) != 0:
+                            self.start_button.configure(state='active')
                 elif self.init_button_first_time:
                     self.start_button.configure(state='active')
                 elif self.reader_init:
@@ -585,8 +594,11 @@ class MainWindow:
         while True:
             while not current_settings.winfo_exists():
                 self.settings_button.configure(state='active')
-                if self.queue.get() == 'On' and self.reader_init:
+                if self.queue.get() == 'On':
                     self.start_button.configure(state='disabled')
+                    with open(gui_paths.QUEUE_LIST_PATH) as f:
+                        if len(f.readlines()) != 0:
+                            self.start_button.configure(state='active')
                 elif self.init_button_first_time:
                     self.start_button.configure(state='active')
                 elif self.reader_init:
