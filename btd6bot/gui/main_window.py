@@ -118,9 +118,9 @@ class MainWindow:
         self.init_button_first_time = True
 
         # variables to check if replay/queue/collection mode is enabled
+        self.collection = tk.StringVar(value='Off')
         self.replay = tk.StringVar(value='Off')
         self.queue = tk.StringVar(value='Off')
-        self.collection = tk.StringVar(value='Off')
 
         mainframe = tk.Frame(root, borderwidth=5, relief='groove', padx=15, pady=15)
         mainframe.columnconfigure(0, weight=1)
@@ -211,8 +211,8 @@ class MainWindow:
                                            state='disabled')
         self.queue_toggle.grid(column=3, row=4, sticky='e')
 
-        self.replay_toggle = tk.Checkbutton(mainframe, text='Replay mode', anchor='e', variable=self.replay, 
-                                            command=self.replay_mode_check , offvalue='Off', onvalue='On', pady=10,
+        self.replay_toggle = tk.Checkbutton(mainframe, text='Replay mode', anchor='e', variable=self.replay,
+                                            offvalue='Off', onvalue='On', pady=10,
                                             state='disabled')
         self.replay_toggle.grid(column=3, row=4, sticky='se')
 
@@ -485,18 +485,6 @@ class MainWindow:
                 return
             self.start_button.configure(state='disabled')
             time.sleep(0.01)
-
-    def replay_mode_check(self) -> None:
-        """Disables and enabled initialization button based on replay mode toggle.
-        
-        If replay mode is off and reader has been initialized, enabled start button.
-        """
-        if self.replay.get() == 'Off' and self.reader_init:
-            self.start_button.configure(state='active') 
-        else:
-            with open(gui_paths.QUEUE_LIST_PATH) as f:
-                if len(f.readlines()) != 0:
-                    self.start_button.configure(state='active')
 
     def queue_mode_check(self) -> None:
         """Disables and enabled initialization button based on queue mode toggle.
