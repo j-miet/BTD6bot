@@ -113,9 +113,14 @@ def begin_round() -> int:
     """
     while True:
         try:
-            start = input("Please input starting round (1-100), or 'exit' to quit: ")
+            start = input("Please input starting round (1-100).\n" \
+                          "Other commands: 'delete' = delete commands.txt contents, 'exit' = exit script.\n"
+                          "-> ")
             if start == 'exit':
                 os.kill(os.getpid(), signal.SIGTERM)
+            elif start == 'delete':
+                with open(pathlib.Path(__file__).parent/'commands.txt', 'w') as f:
+                    print("commands.txt contents deleted.")
             elif int(start) in range(1, 101):
                 return int(start)
             else:
@@ -268,7 +273,6 @@ def add_command(comment_str: str) -> None:
 
 def run_tracker() -> None:
     TrackerVals.ct_round_counter = begin_round()
-    first_round = TrackerVals.ct_round_counter
     # creates two Listener thread objects. First listens to mouse clicks and second to keyboard inputs
     m_listener = pynput.mouse.Listener(on_click = mouse_tracker)
     m_listener.start()
