@@ -133,6 +133,9 @@ class Monkey(_MonkeyConstants):
         upgrade: Upgrade this monkey.  
         special: Use special of this monkey.  
         sell: Sell this monkey.  
+        robo_target: Control targeting of robo monkey's second arm.
+        merge: Merge beast handlers with another.
+        center: Change monkey ace centered path location.
 
     See also:
     --
@@ -375,8 +378,6 @@ class Monkey(_MonkeyConstants):
         Most monkeys have the basic 4 targeting choises: first, last, close, and strong. 
         This method handles targeting change for such cases.
         
-        With Robo monkey, you need to change second hand targeting manually with click command.
-
         Args:
             current: Current targeting priority as a string.
             target: New targeting priority.     
@@ -710,8 +711,6 @@ class Monkey(_MonkeyConstants):
             upg_match = self._name+' x-x-'+str(int(c_path[4])+1)
         else:
             upg_match = '' # not possible, and should stay that way.
-
-        print(self._panel_pos)
 
         total_time = time.time()
         upgraded = 0
@@ -1349,3 +1348,29 @@ class Monkey(_MonkeyConstants):
         kb_mouse.click((x,y))
         kb_mouse.press_esc()
         print(f"Beast merged.") 
+
+    def center(self, x: float, y: float, cpos_x: float | None = None, cpos_y: float | None = None) -> None:
+        """Change monkey ace centered path location.
+
+        Args:
+            x (float): X-coordinate.
+            y (float): Y-coordinate.
+            cpos_x (float | None. Default = None): Updated current x-position.
+            cpos_y (float | None. Default = None): Updated current y-position.
+        """
+        if Rounds.defeat_status:
+            return
+        if self._name != 'ace':
+            print("Can only be used on ace.")
+            return
+        if cpos_x is not None:
+            self._pos_x = cpos_x
+        if cpos_y is not None:
+            self._pos_y = cpos_y
+        kb_mouse.click((self._pos_x, self._pos_y))
+        if cpos_x is not None:
+            self._update_panel_position(cpos_x)
+        kb_mouse.kb_input(hotkeys["centered path"])
+        kb_mouse.click((x,y))
+        kb_mouse.press_esc()
+        print(f"Ace center location updated.") 
