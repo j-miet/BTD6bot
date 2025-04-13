@@ -299,19 +299,16 @@ class MainWindow:
             if infolist[0] == '\"\"\"\n':
                 info_comment_end = infolist[1:].index('\"\"\"\n')
                 readtext = ''.join(infolist[1:info_comment_end+1])
-                self.current_info = readtext
                 self.info_window['state'] = 'normal'
                 self.info_window.delete(1.0, tk.END)
-                self.info_window.insert('end', self.current_info)
+                self.info_window.insert('end', readtext)
                 self.info_window['state'] = 'disabled'
             else:
-                self.current_info = ''
                 self.info_window['state'] = 'normal'
                 self.info_window.delete(1.0, tk.END)
                 self.info_window.insert('end', '')
                 self.info_window['state'] = 'disabled'
         except IndexError:    
-            self.current_info = ''
             self.info_window['state'] = 'normal'
             self.info_window.delete(1.0, tk.END)
             self.info_window.insert('end', '')

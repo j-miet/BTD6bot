@@ -21,9 +21,9 @@ bomb 0-3-0
 _______________________________________
 Strategy: https://www.youtube.com/watch?v=OAAyTLp7VF4
 
-Can do black border: depends on rng a bit, but should be quite consistent. 
+Can do black border: depends on rng a bit, but should be quite consistent.
 Rounds 37-40, in particular 40, can leak randomly: the issue is with how quickly bot detects round change and times ability correctly, and sometimes ability is not required at all if wizard firewall is in right spot.
-Round 100 can also fail, so you might fail right at the end.
+Round 100 can also fail, unfortunately.
 """
 
 from._plan_imports import *

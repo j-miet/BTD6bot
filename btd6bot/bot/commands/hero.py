@@ -64,6 +64,8 @@ class Hero(Monkey):
         target: Change targeting priority of this hero.  
         special: Use special of this monkey (inherited from Monkey).  
         sell: Sell this monkey (inherited from Monkey).
+        shop: Geraldo's shop items.
+        spellbook: Corvus's spells.
 
         See also:
           ability.ability for ability usage.

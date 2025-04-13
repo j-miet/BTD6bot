@@ -37,7 +37,7 @@ class SettingsWindow:
         tk.Label(self.settings_window, 
                  text='These control bot behaviour (more stuff is added later).\n'
                     'Settings carry over sessions: remember to adjust them if necessary.\n'
-                    '# Text can be scrolled down if there\'s more available #\n'
+                    '# Text in boxes can be scrolled if there\'s more available #\n'
                  ).grid(column=1, row=0, columnspan=3)
         
 
@@ -89,7 +89,7 @@ class SettingsWindow:
                                            command=self.set_time_limit_value)
         time_limit_button.grid(column=1, row=8, sticky='w', pady=(1,10))
 
-        time_limit_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=3)
+        time_limit_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=4)
         time_limit_text.grid(column=0, row=9, columnspan=5)
         time_limit_text.insert('end', "Time limit, in seconds, until bot stops trying to place/upgrade a monkey/search "
                                 "for the next round, and returns to menu. Only needed if ocr gets stuck; high value "

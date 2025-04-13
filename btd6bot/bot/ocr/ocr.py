@@ -80,6 +80,7 @@ class OcrValues:
 
     OCR_IMAGE_PATH: pathlib.Path = pathlib.Path(__file__).parent.parent.parent/'Files'/'ocr temp'
 
+    @staticmethod
     def _get_ocr_strings() -> dict[str, list[str, float]]:
         with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'ocr_upgrade_data.json') as f:
             return json.load(f)
