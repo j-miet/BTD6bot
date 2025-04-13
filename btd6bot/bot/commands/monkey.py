@@ -711,8 +711,6 @@ class Monkey(_MonkeyConstants):
         else:
             upg_match = '' # not possible, and should stay that way.
 
-        print(self._panel_pos)
-
         total_time = time.time()
         upgraded = 0
         defeat_check = 1
