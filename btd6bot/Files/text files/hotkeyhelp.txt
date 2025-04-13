@@ -23,11 +23,8 @@ You should now see the right side of '=' change on that row you chose.
  'dart monkey',..., 'beast handler' are monkeys + 'hero' stands, unsuprisingly, for hero.                       
  'upgrade ...' are for the corresponding upgrade paths.  
  'target change' and 'target reverse' change targeting forward and backward, respectively.                        
- 'special 1' and 'special 2' are special hotkeys which are tower-specific. Examples:  
-  >monkey ace direction change (clockwise/counterclockwise),
-  >changing mortar/dartling gun firing location,
-  >beast handler pet placing,
-  >ezili totem placement
+ 'special 1' and 'special 2' are special ability hotkeys. 
  'sell' for tower selling, 'play' for pressing the play/fast forward button.  
  'ability ...' for abilities 1-10.  
- 'merge' for beast handler merging (this is found under 'advanced hotkeys').
+ 'merge' for beast handler merging, (advanced hotkey)  
+ 'centered path' for ace center location (advanced hotkey).
