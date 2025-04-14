@@ -11,6 +11,7 @@ import tkinter as tk
 from tkinter import ttk
 
 import pynput
+from pynput.keyboard import Key, KeyCode
 
 import gui.gui_tools as gui_tools
 import set_plan as set_plan
@@ -18,11 +19,12 @@ from utils import plan_data
 from utils import timing
 import gui.gui_paths as gui_paths
 
+from bot import times, hotkeys
 from bot.bot_data import BotData
+from bot.bot_vars import BotVars
 
 if TYPE_CHECKING:
     from typing import Any, TextIO
-    from pynput.keyboard import Key, KeyCode
 
 class MonitoringWindow:
     """Creates a monitoring window that handles both starting/stopping of the bot and displaying bot text output.
@@ -61,7 +63,16 @@ class MonitoringWindow:
             created so that MainWindow can start tracking its existence and won't throw an error. After 'Run' button is 
             pressed, stop_or_run method is called and target of this thread is set to run_bot method instead.
     """
-    START_STOP_HOTKEY = pynput.keyboard.Key.f9
+    with open(gui_paths.GUIHOTKEYS_PATH) as gui_hotkeys:
+        hotkey_vals = gui_hotkeys.readlines()
+        try:
+            PAUSE_HOTKEY = hotkeys.PYNPUT_KEYS[hotkey_vals[0].split('= ')[1].strip()]
+        except KeyError:
+            PAUSE_HOTKEY = hotkey_vals[0].split('= ')[1].strip()
+        try:
+            START_STOP_HOTKEY = hotkeys.PYNPUT_KEYS[hotkey_vals[1].split('= ')[1].strip()]
+        except KeyError:
+            START_STOP_HOTKEY = hotkey_vals[1].split('= ')[1].strip()
 
     current_bot_thread: threading.Thread
 
@@ -190,7 +201,7 @@ class MonitoringWindow:
     def update_round_timer(self) -> None:
         """Update round timer value during rounds.
         
-        Requires data from bot.bot_data.BotData class to function.
+        Requires data from various bot classes and therefore doesn't really do anything
         """
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict = json.load(f)
@@ -200,8 +211,10 @@ class MonitoringWindow:
             while self.bot_thread.is_alive():
                 if BotData.current_round == 0:
                     time.sleep(0.1)
+                elif BotVars.paused:
+                    time.sleep(0.1)
                 elif BotData.current_round < BotData.end_r+1:
-                    current = time.time()-BotData.round_time
+                    current = times.current_time()-BotData.round_time
                     self.roundtime.set(f"{current:.2f}")
                 else:
                     time.sleep(3)
@@ -314,8 +327,12 @@ class MonitoringWindow:
             key: Latest keyboard key the user has pressed. 
         """
         if self.monitoringwindow.winfo_exists():
-            if key == MonitoringWindow.START_STOP_HOTKEY:
+            if (key == MonitoringWindow.START_STOP_HOTKEY or 
+                (isinstance(key, KeyCode) and key.char == MonitoringWindow.START_STOP_HOTKEY)):
                 self.stop_or_run()
                 time.sleep(1)
+            elif (key == MonitoringWindow.PAUSE_HOTKEY or
+                (isinstance(key, KeyCode) and key.char == MonitoringWindow.PAUSE_HOTKEY)):
+                BotVars.paused = not BotVars.paused
         else:
             self.bot_hk_listener.stop()
