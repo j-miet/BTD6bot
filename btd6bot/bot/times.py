@@ -4,8 +4,13 @@ Time data is for gui plotting purposes.
 """
 
 import pathlib
+import time
 
+from bot import kb_mouse
 from bot.bot_vars import BotVars
+
+class PauseControl:
+    PAUSE_LENGTH: float = 0
 
 def _record_time(time_str: str) -> None:
     """Appends a time string to a temporary text file."""
@@ -14,7 +19,7 @@ def _record_time(time_str: str) -> None:
             f.write(time_str+'\n')
 
 def time_print(start: float, end: float, str: str) -> None:
-    """Prints the time passed between start and end. Used with time.time().
+    """Prints the time passed between start and end. Used with times.current_time().
 
     Returns the time string in 'm:ss' format (m=minutes, ss=seconds).
 
@@ -41,3 +46,25 @@ def time_print(start: float, end: float, str: str) -> None:
             _record_time(f'{minutes}:{seconds:02d}')
             print('All times succesfully recorded.')
 
+def pause_bot() -> None:
+    """Pauses bot execution."""
+    if BotVars.paused:
+        pause_start = time.time()
+        kb_mouse.click((0.9994791666667, 0.0))
+        kb_mouse.press_esc()
+        print('>>> Bot paused')
+        while BotVars.paused:
+            time.sleep(0.05)
+        PauseControl.PAUSE_LENGTH += time.time() - pause_start
+        time.sleep(0.25)
+        kb_mouse.click((0.9994791666667, 0.0))
+        kb_mouse.press_esc()
+        print('Bot unpaused')
+
+def current_time() -> float:
+    """Returns current time.
+    
+    Takes pauses in to account, meaning the returned value is  
+    time.time() - total pause length for current bot loop.
+    """
+    return time.time()-PauseControl.PAUSE_LENGTH
