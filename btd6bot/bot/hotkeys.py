@@ -32,7 +32,12 @@ PYNPUT_KEYS: dict[str, Key] = {
         'Key.f4': Key.f4,
         'Key.f5': Key.f5,
         'Key.f6': Key.f6,
-        'Key.f7': Key.f7
+        'Key.f7': Key.f7,
+        'Key.f8': Key.f8,
+        'Key.f9': Key.f9,
+        'Key.f10': Key.f10,
+        'Key.f11': Key.f11,
+        'Key.f12': Key.f12
         }
 """Dictionary of supported pynput special keys."""
 
