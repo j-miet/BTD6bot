@@ -24,8 +24,9 @@ class BotVars:
     current_event_status: str = 'Off'
     time_recording_status: bool = False
     get_botdata: bool = False
+    checking_time_limit: int = 300
 
-    checking_time_limit: int = 120
+    paused: bool = False
     #To be added:
     #screen_resolution = ...
     #logging = ...
