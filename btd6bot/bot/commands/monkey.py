@@ -26,7 +26,7 @@ import time
 
 from pynput.keyboard import Key, KeyCode
 
-from bot import kb_mouse
+from bot import kb_mouse, times
 from bot.hotkeys import hotkeys
 import bot.ocr.ocr as ocr
 from bot.ocr.ocr_reader import OCR_READER
@@ -712,22 +712,21 @@ class Monkey(_MonkeyConstants):
         else:
             upg_match = '' # not possible, and should stay that way.
 
-        total_time = time.time()
+        total_time = times.current_time()
         upgraded = 0
         defeat_check = 1
-        defeat_check_cycle = 3
         while not upgraded:
-            if defeat_check > defeat_check_cycle:
+            if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
                 defeat_check = 1
-            if Rounds.defeat_check(total_time, defeat_check, defeat_check_cycle):
+            if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
                 print(f'**Failed to upgrade {self._name.capitalize()}**')
                 return
             defeat_check += 1
             kb_mouse.kb_input(hotkeys[button])
             if self._name == 'super' and re.search("^4-[0-2]-0$|^4-0-[0-2]$|^5-[0-2]-0$|^5-0-[0-2]$", upg) != None:
                 kb_mouse.kb_input(Key.enter)    # if upgrade is Sun Temple/True Sun God, press Enter to confirm it
-            start = time.time()
-            while (time.time()-start < 0.75):
+            start = times.current_time()
+            while (times.current_time()-start < 0.75):
                 if self._panel_pos == 'right':
                     if ocr.strong_delta_check(
                         '_upgrade_', 
@@ -764,14 +763,13 @@ class Monkey(_MonkeyConstants):
         if Rounds.defeat_status:
             return
         print(f'Placing {self._name.capitalize()}...', end=' ')
-        total_time = time.time()
+        total_time = times.current_time()
         placed = 0
         defeat_check = 1
-        defeat_check_cycle = 3
         while not placed:
-            if defeat_check > defeat_check_cycle:
+            if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
                 defeat_check = 1
-            if Rounds.defeat_check(total_time, defeat_check, defeat_check_cycle):
+            if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
                 print(f'**Failed to place {self._name.capitalize()}**')
                 return
             defeat_check += 1
@@ -908,6 +906,7 @@ class Monkey(_MonkeyConstants):
             >>> mortar2.special(1, x=0.4, y=0.4,  cpos_x=0.05, cpos_y=0.75) # back to original location
             Mortar special 1 used.
         """
+        times.pause_bot()
         if Rounds.defeat_status:
             return
         elif s not in [1, 2, '1', '2']:
@@ -956,6 +955,7 @@ class Monkey(_MonkeyConstants):
         >>> boomerang.sell()
         Boomer sold!
         """
+        times.pause_bot()
         if Rounds.defeat_status:
             return
         kb_mouse.click((self._pos_x, self._pos_y))
@@ -1119,6 +1119,7 @@ class Monkey(_MonkeyConstants):
             >>> mortar2.special(1, x=0.1, y=0.8, cpos_x=0.8, cpos_y=0.2) # finally refers back to mortar2
             Mortar special 1 used.
         """
+        times.pause_bot()
         if Rounds.defeat_status:
             return
         val = self._change_target(set_target.lower(), x , y, cpos_x, cpos_y)
@@ -1257,6 +1258,7 @@ class Monkey(_MonkeyConstants):
             >>> dart.upgrade(['5-2-0']) # this would work as position is the same as it was 8 rounds back.
             Upgrading 4-2-0 Dart to 5-2-0... Upgraded.
         """
+        times.pause_bot()
         if Rounds.defeat_status:
             return
         elif self._name == 'hero':
@@ -1294,6 +1296,7 @@ class Monkey(_MonkeyConstants):
             cpos_x (float | None. Default = None): Updated current x-position.
             cpos_y (float | None. Default = None): Updated current y-position.
         """
+        times.pause_bot()
         if Rounds.defeat_status:
             return
         if self._name != 'super':
@@ -1332,6 +1335,7 @@ class Monkey(_MonkeyConstants):
             cpos_x (float | None. Default = None): Updated current x-position.
             cpos_y (float | None. Default = None): Updated current y-position.
         """
+        times.pause_bot()
         if Rounds.defeat_status:
             return
         if self._name != 'beast':
@@ -1358,6 +1362,7 @@ class Monkey(_MonkeyConstants):
             cpos_x (float | None. Default = None): Updated current x-position.
             cpos_y (float | None. Default = None): Updated current y-position.
         """
+        times.pause_bot()
         if Rounds.defeat_status:
             return
         if self._name != 'ace':
