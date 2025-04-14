@@ -8,7 +8,7 @@ Examples of this module can be found in 'plans' folder and picking any .py plan 
 
 import time
 
-from bot import kb_mouse
+from bot import kb_mouse, times
 from bot.commands.monkey import Monkey
 from bot.hotkeys import hotkeys
 from bot.rounds import Rounds
@@ -105,7 +105,7 @@ class Hero(Monkey):
         (0.0932291666667, 0.6101851851852),
         (0.1432291666667, 0.6101851851852),
         (0.1901041666667, 0.6101851851852)
-        )
+    )
     HERO_RIGHT_MENU = (
         (0.6817708333333, 0.175),
         (0.7307291666667, 0.175),
@@ -341,6 +341,7 @@ class Hero(Monkey):
 
             Do not use this force_target in any other situation.            
         """
+        times.pause_bot()
         if Rounds.defeat_status:
             return
         val = self._change_hero_target(set_target.lower(), x, y, cpos_x, cpos_y)
@@ -382,6 +383,7 @@ class Hero(Monkey):
             cpos_x: Updated current x-coordinate position.
             cpos_y: Updated current y-coordinate position.
         """
+        times.pause_bot()
         if Rounds.defeat_status:
             return
         elif self._hero_name == 'geraldo':
@@ -430,6 +432,7 @@ class Hero(Monkey):
             cpos_x: Updated current x-coordinate position.
             cpos_y: Updated current y-coordinate position.
         """
+        times.pause_bot()
         if Rounds.defeat_status:
             return
         elif self._hero_name == 'corvus':

@@ -25,6 +25,7 @@ from bot.menu_return import OcrLocations
 from bot.ocr.ocr import weak_substring_check
 from bot.ocr.ocr_reader import OCR_READER
 from bot.rounds import Rounds
+from bot.times import PauseControl
 from utils import timing
 
 if TYPE_CHECKING:
@@ -197,6 +198,7 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
     Rounds.begin_round, Rounds.end_round = begin_r, end_r
     Rounds.defeat_status = False
     AutoStart.called_begin = False
+    PauseControl.PAUSE_LENGTH = 0
     try:
         p = pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json'
         with open(p) as f:

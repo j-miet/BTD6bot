@@ -6,7 +6,7 @@ abilities depend on the order they become available, not the type of monkey.
 
 import time
 
-from bot import kb_mouse
+from bot import kb_mouse, times
 from bot.hotkeys import hotkeys
 from bot.rounds import Rounds
 
@@ -36,6 +36,7 @@ def ability(key: int, timer: float = 0) -> None:
         >>> ability(1, 5.5)
         Using ability 1 with timer 5.5... Ability used.
     """
+    times.pause_bot()
     if Rounds.defeat_status:
         return
     print(f'Using ability {key} with timer {timer}... ', end='')
@@ -44,13 +45,13 @@ def ability(key: int, timer: float = 0) -> None:
         kb_mouse.kb_input(hotkeys['ability '+str(key)])
         print('Ability used.')
         return
-    while time.time()-begin_time < timer:     
+    while times.current_time()-begin_time < timer:     
         time.sleep(0.01)    # small sleep timer to avoid constant processing of time.time
     kb_mouse.kb_input(hotkeys['ability '+str(key)])
     print('Ability used.')
 
-def click(x: float, y: float) -> None:
-    """Clicks selected position once.
+def click(x: float, y: float, N: int = 1) -> None:
+    """Clicks selected position N times.
     
     Used in removing obstacles and clicking other map objects (such as Workshop machines).
 
@@ -60,6 +61,7 @@ def click(x: float, y: float) -> None:
         x: X-coordinate.
         y: Y-coordinate.
     """
+    times.pause_bot()
     if Rounds.defeat_status:
         return
-    kb_mouse.click((x, y), clicks=1)
+    kb_mouse.click((x, y), clicks=N)
