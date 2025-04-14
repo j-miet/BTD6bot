@@ -27,6 +27,9 @@ class Rounds:
         DEFEAT (tuple[float, float, float, float], class attribute): Defeat screen 'bloons leaked' text location.
         BUTTONS (dict[str, tuple[float, float]], class attribute): All required button locations to operate in-game 
             rounds and exiting game.
+        DEFEAT_CHECK_FREQUENCY (int, class attribute): Controls the frequency of defeat checks under Rounds.¨
+            round_check, Monkey._check_upgrade, and Monkey._place. Increasing the value makes defeat screen detection 
+            slower, but improves speed (and thus accuracy) of ocr in listed methods.
 
         begin (int, class attribute): Current plan first round. Should only change its value through a plan file when 
             initialize() is called.
@@ -50,6 +53,9 @@ class Rounds:
         'defeat_home_button': (0.33, 0.75),
         'defeat_home_button_first_round': (0.38, 0.75)
         }
+    
+    DEFEAT_CHECK_FREQUENCY = 6
+
     begin_round: int = 0
     end_round: int = 0
     current_round_begin_time: float = 0
@@ -76,8 +82,9 @@ class Rounds:
             cycle: Current loop iteration cycle, must be less or equal to frequency value.
             frequency: Amount of cycles it takes between defeat checks.
         """
+        times.pause_bot()
         if isinstance(cycle, int) and cycle >= 1 and isinstance(frequency, int) and frequency >= cycle:
-            if time.time() - current_time < BotVars.checking_time_limit:
+            if times.current_time() - current_time < BotVars.checking_time_limit:
                 if cycle == frequency:   # frequency of defeat checks: 2 = every second loop, N = every Nth loop.
                     if weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
                         print("\n**Defeat screen detected, game status set to defeat.**")
@@ -114,7 +121,7 @@ class Rounds:
             time.sleep(1)
         if BotVars.get_botdata:
             BotData.set_data(current_round=Rounds.end_round+1)
-        final_round_end = time.time()
+        final_round_end = times.current_time()
         times.time_print(final_round_start, final_round_end, f'Round {final_round}')
         time.sleep(0.5)
         times.time_print(total_start, final_round_end, 'Total')
@@ -136,9 +143,9 @@ class Rounds:
         Checks also current autostart status and will change it to True if not already, as True is the default value 
         (you start the bot with Autostart setting enabled in-game).
         """
-        start_time = time.time()
+        start_time = times.current_time()
         while not weak_substring_check('Upgrades', Rounds.UPGRADE_TEXT, OCR_READER): 
-            if time.time() - start_time > 15:
+            if times.current_time() - start_time > 15:
                 for _ in range(3):
                     kb_mouse.press_esc()
                 raise BotError("Failed to enter game: wrong map name in plan file, or map/game mode not unlocked.", 1)
@@ -172,9 +179,9 @@ class Rounds:
         if Rounds.defeat_status:
             if BotVars.get_botdata:
                 BotData.set_data(current_round=Rounds.end_round+1)
-            wait_start = time.time()
+            wait_start = times.current_time()
             while not weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
-                if time.time()-wait_start > 5:
+                if times.current_time()-wait_start > 5:
                     print("Defeat: no defeat screen found, returning via espace menu.")
                     kb_mouse.press_esc()
                     time.sleep(1)
@@ -208,14 +215,14 @@ class Rounds:
         else:
             if not AutoStart.called_begin:
                 begin()
-            total_time = time.time()
+            total_time = times.current_time()
             defeat_check = 1
-            defeat_check_cycle = 3
             while not strong_substring_check(str(current_round)+'/'+str(Rounds.end_round), Rounds.CURRENT_ROUND, 
                                              OCR_READER):
-                if defeat_check > defeat_check_cycle:
+                times.pause_bot()
+                if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
                     defeat_check = 1
-                if Rounds.defeat_check(total_time, defeat_check, defeat_check_cycle):
+                if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
                     timing.counter(3)
                     kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
                     time.sleep(0.5)
@@ -223,9 +230,9 @@ class Rounds:
                     print("\nPlan completed.\n")
                     return Rounds.end_round+1
                 defeat_check += 1
-            times.time_print(Rounds.current_round_begin_time, time.time(), f'Round {current_round-1}')
+            times.time_print(Rounds.current_round_begin_time, times.current_time(), f'Round {current_round-1}')
             print('===Current round:', current_round, '===')
-        Rounds.current_round_begin_time = time.time()
+        Rounds.current_round_begin_time = times.current_time()
         if BotVars.get_botdata:
             BotData.set_data(round_time=Rounds.current_round_begin_time,
                              current_round=Rounds.begin_round,
