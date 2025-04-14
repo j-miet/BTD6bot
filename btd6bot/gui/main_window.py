@@ -12,7 +12,9 @@ import tkinter as tk
 from tkinter import ttk
 
 import pynput
+from pynput.keyboard import Key, KeyCode
 
+from bot import hotkeys
 import gui.gui_tools as gui_tools
 from gui.help_window import HelpWindow
 from gui.hotkey_window import HotkeyWindow
@@ -25,7 +27,6 @@ from utils import plan_data
 
 if TYPE_CHECKING:
     from typing import Any, TextIO
-    from pynput.keyboard import Key, KeyCode
 
 class MainWindow:
     """GUI main window.
@@ -79,7 +80,12 @@ class MainWindow:
         MAP_IMAGES = os.listdir(gui_paths.MAP_IMAGES_PATH)
     except FileNotFoundError:
         ...
-    EXIT_HOTKEY = pynput.keyboard.Key.f11
+
+    with open(gui_paths.GUIHOTKEYS_PATH) as gui_hotkeys:
+        try:
+            EXIT_HOTKEY = hotkeys.PYNPUT_KEYS[gui_hotkeys.readlines()[2].split('= ')[1].strip()]
+        except IndexError:
+            EXIT_HOTKEY = gui_hotkeys.readlines()[2].split('= ')[2].strip()
 
     @staticmethod
     def exit(key: Key | KeyCode | None) -> None:
@@ -91,7 +97,7 @@ class MainWindow:
         Args:
             key: Latest keyboard key the user has pressed.       
         """
-        if key == MainWindow.EXIT_HOTKEY: 
+        if key == MainWindow.EXIT_HOTKEY or (isinstance(key, KeyCode) and key.char == MainWindow.EXIT_HOTKEY): 
             os.kill(os.getpid(), signal.SIGTERM)
 
     # listener thread object sends keyboard inputs to exit function
