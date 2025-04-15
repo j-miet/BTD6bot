@@ -7,7 +7,7 @@ from bot.bot_data import BotData
 from bot.commands.flow import AutoStart, change_autostart, begin
 from bot.bot_vars import BotVars
 import bot.menu_return
-from bot.ocr.ocr import weak_substring_check, strong_substring_check, strong_delta_check
+from bot.ocr.ocr import weak_substring_check, strong_substring_check, strong_delta_check, get_pixelcolor
 from bot.ocr.ocr_reader import OCR_READER
 from utils import timing
 from utils.exceptions import BotError
@@ -39,6 +39,7 @@ class Rounds:
             its value after round_check verifies current round.
         defeat_status (bool, class attribute): Whether bot has been unable to place/upgrade a tower for a set period of 
             time: this time is determined under BotVars.checking_time_limit.
+        escsettings_checked (bool, class attribute): Whether automatic game settings check has been performed once.
     """
 
     CURRENT_ROUND: tuple[float, float, float, float] = (0.7181666666667, 0.027001, 0.8119791666667, 0.0685185185185)
@@ -61,6 +62,30 @@ class Rounds:
     current_round_begin_time: float = 0
 
     defeat_status: bool = False
+    escsettings_checked: bool = False
+
+    @staticmethod
+    def _check_gamesettings() -> None:
+        if not Rounds.escsettings_checked:
+            kb_mouse.press_esc()
+            time.sleep(0.5)
+            dragdrop = get_pixelcolor(0.4427083333333, 0.2777777777778)
+            nugde = get_pixelcolor(0.4458333333333, 0.412962962963)
+            autostart = get_pixelcolor(0.6697916666667, 0.2796296296296)
+            if dragdrop[0] is not 0:
+                kb_mouse.click((0.4427083333333, 0.2777777777778))
+                print("Enabled 'drag & drop'")
+                time.sleep(0.5)
+            if nugde[2] is not 0:
+                kb_mouse.click((0.4458333333333, 0.412962962963))
+                print("Disabled nugde mode'")
+                time.sleep(0.5)
+            if autostart[2] is not 0:
+                kb_mouse.click((0.6697916666667, 0.2796296296296))
+                print("Enabled 'auto start'")
+                time.sleep(0.5)
+            kb_mouse.press_esc()
+            Rounds.escsettings_checked = True
 
     @staticmethod
     def defeat_check(current_time: float, cycle: int, frequency: int) -> bool:
@@ -155,8 +180,10 @@ class Rounds:
         print('--> Running...')
         kb_mouse.click((0.999, 0.01))  # closes any difficulty info pop-up window after entering a game.
         time.sleep(1)
-        if AutoStart.autostart_status == False:
-            change_autostart()     
+        if BotVars.check_gamesettings:
+            Rounds._check_gamesettings()
+        if not AutoStart.autostart_status:
+            change_autostart()
 
     @staticmethod
     def round_check(prev_round: int, map_start: float, mode: str = '') -> int:
