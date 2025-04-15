@@ -25,6 +25,7 @@ class BotVars:
     time_recording_status: bool = False
     get_botdata: bool = False
     checking_time_limit: int = 300
+    check_gamesettings: bool = False
 
     paused: bool = False
     #To be added:
