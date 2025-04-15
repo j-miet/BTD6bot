@@ -29,14 +29,13 @@ class SettingsWindow:
 
         self.settings_window.grid_columnconfigure((0,1,2,3,4), weight=1, uniform='1')
 
-        self.record_time = tk.StringVar(value='Off')
         self.roundtime = tk.StringVar(value='Off')
-        self.update_current_status()
-        self.update_roundtime_status()
+        self.record_time = tk.StringVar(value='Off')
+        self.gamesettings = tk.StringVar(value='Off')
+        self.update_variables()
 
         tk.Label(self.settings_window, 
-                 text='These control bot behaviour (more stuff is added later).\n'
-                    'Settings carry over sessions: remember to adjust them if necessary.\n'
+                 text='Settings are saved in/loaded from a file and carry over sessions\n'
                     '# Text in boxes can be scrolled if there\'s more available #\n'
                  ).grid(column=1, row=0, columnspan=3)
         
@@ -56,16 +55,28 @@ class SettingsWindow:
         roundtime_text.insert('end', "Display current round timer inside monitoring window.")
         roundtime_text['state'] = 'disabled'
 
+        checksettings_toggle = tk.Checkbutton(self.settings_window, 
+                                                text="Update esc menu settings automatically", anchor='nw', 
+                                                onvalue='On', offvalue='Off', pady=5, padx=18, 
+                                                variable=self.gamesettings,
+                                                command=self.change_checksettings_status)
+        checksettings_toggle.grid(column=0, row=4, columnspan=2, sticky='nw')
+        checksettings_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=3)
+        checksettings_text.grid(column=0, row=5, columnspan=5, pady=5)
+        checksettings_text.insert('end', "After entering a game, opens the esc menu and checks if following are "
+                                        "enabled and if not, enables them automatically: drag & drop, disable nudge "
+                                        "mode, auto start. This check is done once in a runtime loop and will only be performed again after you close and reopen entire program.")
+        checksettings_text['state'] = 'disabled'
 
         record_toggle = tk.Checkbutton(self.settings_window, text="Record round times", anchor='nw', onvalue='On', 
                                        offvalue='Off', pady=5, padx=18, variable=self.record_time,
                                        command=self.change_record_status)
-        record_toggle.grid(column=0, row=4, columnspan=2, sticky='nw')
-        record_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=4)
-        record_text.grid(column=0, row=5, columnspan=5, pady=5)
+        record_toggle.grid(column=0, row=6, columnspan=2, sticky='nw')
+        record_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=3)
+        record_text.grid(column=0, row=7, columnspan=5, pady=5)
         record_text.insert('end', "Records all round times during a plan and updates them under "
                             "\'Show Plot\'. Plan must be completed with all rounds finished in one go "
-                            "and bot returned to menu screen. Overwrites existing data so updating times is easy.")
+                            "and bot returned to menu screen. Overwrites existing data, making updating times easy.")
         record_text['state'] = 'disabled'
         
         
@@ -73,35 +84,39 @@ class SettingsWindow:
                               text='o-------------------------------------o\n'
                                    '| Advanced (mostly for debugging) |\n'
                                    'o-------------------------------------o')
-        debug_text.grid(column=0, columnspan=2, row=6, sticky='w', padx=5, pady=(15, 1))
+        debug_text.grid(column=0, columnspan=2, row=8, sticky='w', padx=5, pady=(15, 1))
 
         self.time_limit = tk.StringVar(value=self.read_checking_time_limit())
         
         time_limit_label = tk.Label(self.settings_window, text='Ocr time limit: ')
-        time_limit_label.grid(column=0, row=7, sticky='se', padx=15, pady=(5,1))
+        time_limit_label.grid(column=0, row=9, sticky='se', padx=15, pady=(5,1))
         time_limit_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.time_limit)
-        time_limit_current_value.grid(column=1, row=7, sticky='sw', padx=1, pady=(5,1))
+        time_limit_current_value.grid(column=1, row=9, sticky='sw', padx=1, pady=(5,1))
 
         self.time_limit_entry = tk.Entry(self.settings_window, width=10)
-        self.time_limit_entry.grid(column=0, row=8, sticky='sw', pady=(1,10), padx=21)
+        self.time_limit_entry.grid(column=0, row=10, sticky='sw', pady=(1,10), padx=21)
 
         time_limit_button = tk.Button(self.settings_window, text="Set time limit", anchor='w', padx=5,
                                            command=self.set_time_limit_value)
-        time_limit_button.grid(column=1, row=8, sticky='w', pady=(1,10))
+        time_limit_button.grid(column=1, row=10, sticky='w', pady=(1,10))
 
         time_limit_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=4)
-        time_limit_text.grid(column=0, row=9, columnspan=5)
+        time_limit_text.grid(column=0, row=11, columnspan=5)
         time_limit_text.insert('end', "Time limit, in seconds, until bot stops trying to place/upgrade a monkey/search "
                                 "for the next round, and returns to menu. Only needed if ocr gets stuck; high value "
                                 "(300 or greater) is recommended.")
         time_limit_text['state'] = 'disabled'
 
-    def update_roundtime_status(self) -> None:
-        """After re-opening this window, updates toggle button value to actual round time status value."""
+    def update_variables(self) -> None:
+        """Updates toggle button values with matching gui_vars.json values."""
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
-        if gui_vars_dict["get_botdata"] == True:
-            self.roundtime.set('On')
+            if gui_vars_dict["get_botdata"]:
+                self.roundtime.set('On')
+            if gui_vars_dict["check_gamesettings"]:
+                self.gamesettings.set('On')
+            if gui_vars_dict["time_recording_status"]:
+                self.record_time.set('On')
 
     def change_roundtime_status(self) -> None:
         """Changes round time display status value based on toggle button value."""
@@ -114,12 +129,15 @@ class SettingsWindow:
         with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
             json.dump(gui_vars_dict, f, indent=4)
 
-    def update_current_status(self) -> None:
-        """After re-opening this window, updates toggle button value to actual record status value."""
+    def change_checksettings_status(self) -> None:
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
-        if gui_vars_dict["time_recording_status"] == True:
-            self.record_time.set('On')
+        if self.roundtime.get() == 'On':
+            gui_vars_dict["check_gamesettings"] = True
+        elif self.roundtime.get() == 'Off':
+            gui_vars_dict["check_gamesettings"] = False
+        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+            json.dump(gui_vars_dict, f, indent=4)
 
     def change_record_status(self) -> None:
         """Changes time recording status value based on toggle button value."""
