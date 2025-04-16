@@ -19,6 +19,7 @@ class SettingsWindow:
         time_limit_entry (tk.Entry): Entry box to type new time recording limit value. This value is saved into 
             gui_vars.json file.
     """
+
     def __init__(self) -> None:
         """Initialize settings window."""
         self.settings_window = tk.Toplevel()
@@ -46,15 +47,6 @@ class SettingsWindow:
                                    'o-------o')
         basic_text.grid(column=0, columnspan=2, row=1, sticky='w', padx=5)
 
-        roundtime_toggle = tk.Checkbutton(self.settings_window, text="Display round timer", anchor='nw', onvalue='On', 
-                                            offvalue='Off', pady=5, padx=18, variable=self.roundtime,
-                                            command=self.change_roundtime_status)
-        roundtime_toggle.grid(column=0, row=2, columnspan=2, sticky='nw')
-        roundtime_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=1)
-        roundtime_text.grid(column=0, row=3, columnspan=5, pady=5)
-        roundtime_text.insert('end', "Display current round timer inside monitoring window.")
-        roundtime_text['state'] = 'disabled'
-
         checksettings_toggle = tk.Checkbutton(self.settings_window, 
                                                 text="Update esc menu settings automatically", anchor='nw', 
                                                 onvalue='On', offvalue='Off', pady=5, padx=18, 
@@ -65,7 +57,8 @@ class SettingsWindow:
         checksettings_text.grid(column=0, row=5, columnspan=5, pady=5)
         checksettings_text.insert('end', "After entering a game, opens the esc menu and checks if following are "
                                         "enabled and if not, enables them automatically: drag & drop, disable nudge "
-                                        "mode, auto start. This check is done once in a runtime loop and will only be performed again after you close and reopen entire program.")
+                                        "mode, auto start. This check is done once in a session and will only be "
+                                        "performed again after you close and reopen entire program.")
         checksettings_text['state'] = 'disabled'
 
         record_toggle = tk.Checkbutton(self.settings_window, text="Record round times", anchor='nw', onvalue='On', 
@@ -111,23 +104,10 @@ class SettingsWindow:
         """Updates toggle button values with matching gui_vars.json values."""
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
-            if gui_vars_dict["get_botdata"]:
-                self.roundtime.set('On')
             if gui_vars_dict["check_gamesettings"]:
                 self.gamesettings.set('On')
             if gui_vars_dict["time_recording_status"]:
                 self.record_time.set('On')
-
-    def change_roundtime_status(self) -> None:
-        """Changes round time display status value based on toggle button value."""
-        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-            gui_vars_dict: dict[str, Any] = json.load(f)
-        if self.roundtime.get() == 'On':
-            gui_vars_dict["get_botdata"] = True
-        elif self.roundtime.get() == 'Off':
-            gui_vars_dict["get_botdata"] = False
-        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
-            json.dump(gui_vars_dict, f, indent=4)
 
     def change_checksettings_status(self) -> None:
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:

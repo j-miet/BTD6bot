@@ -198,30 +198,24 @@ class MonitoringWindow:
         self.bot_hk_listener.daemon = True
         self.bot_hk_listener.start()  
 
-    def update_round_timer(self) -> None:
-        """Update round timer value during rounds.
-        
-        Requires data from various bot classes and therefore doesn't really do anything
-        """
-        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-            gui_vars_dict = json.load(f)
-        if gui_vars_dict["get_botdata"] == True:
-            BotData.set_data()
-            self.roundtime.set("0.00")
-            while self.bot_thread.is_alive():
-                if BotData.current_round == 0:
-                    time.sleep(0.1)
-                elif BotVars.paused:
-                    time.sleep(0.1)
-                elif BotData.current_round < BotData.end_r+1:
-                    current = times.current_time()-BotData.round_time
-                    self.roundtime.set(f"{current:.2f}")
-                else:
-                    time.sleep(3)
-                    BotData.set_data()
-                    self.roundtime.set("0.00")
-                time.sleep(0.01) 
-            self.roundtime.set("-")
+    def _update_round_timer(self) -> None:
+        """Update round timer value during rounds."""
+        BotData.set_data()
+        self.roundtime.set("0.00")
+        while self.bot_thread.is_alive():
+            if BotData.current_round == 0:
+                time.sleep(0.1)
+            elif BotVars.paused:
+                time.sleep(0.1)
+            elif BotData.current_round < BotData.end_r+1:
+                current = times.current_time()-BotData.round_time
+                self.roundtime.set(f"{current:.2f}")
+            else:
+                time.sleep(3)
+                BotData.set_data()
+                self.roundtime.set("0.00")
+            time.sleep(0.01) 
+        self.roundtime.set("-")
 
     def update_event_status_to_json(self) -> None:
         """Updates collection event status to gui_vars.json."""
@@ -244,7 +238,7 @@ class MonitoringWindow:
         MonitoringWindow.current_bot_thread = self.get_bot_thread()
         self.bot_thread.start()
         self.monitor_run_button.configure(text='Stop')
-        roundtimer_thread = threading.Thread(target=self.update_round_timer, daemon=True)
+        roundtimer_thread = threading.Thread(target=self._update_round_timer, daemon=True)
         roundtimer_thread.start()
 
     def run_bot(self) -> None:
