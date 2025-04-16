@@ -5,8 +5,6 @@ class BotData:
 
     For example, monitoring window round timer requires this data.
 
-    Data is only stored if bot_vars.BotVars class attribute get_botdata is set as True.
-
     Attributes:
         round_time (float, class attribute): Current round begin time.
         current_round (int, class attribute): Current round.

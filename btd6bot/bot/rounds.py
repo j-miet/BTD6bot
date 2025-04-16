@@ -72,15 +72,15 @@ class Rounds:
             dragdrop = get_pixelcolor(0.4427083333333, 0.2777777777778)
             nugde = get_pixelcolor(0.4458333333333, 0.412962962963)
             autostart = get_pixelcolor(0.6697916666667, 0.2796296296296)
-            if dragdrop[0] is not 0:
+            if dragdrop[0] != 0:
                 kb_mouse.click((0.4427083333333, 0.2777777777778))
                 print("Enabled 'drag & drop'")
                 time.sleep(0.5)
-            if nugde[2] is not 0:
+            if nugde[2] != 0:
                 kb_mouse.click((0.4458333333333, 0.412962962963))
                 print("Disabled nugde mode'")
                 time.sleep(0.5)
-            if autostart[2] is not 0:
+            if autostart[2] != 0:
                 kb_mouse.click((0.6697916666667, 0.2796296296296))
                 print("Enabled 'auto start'")
                 time.sleep(0.5)
@@ -144,8 +144,7 @@ class Rounds:
         while not strong_delta_check('Next', Rounds.NEXT_TEXT, OCR_READER):
             kb_mouse.click((0.999, 0.01))    # click away if round 100 insta pop-up.
             time.sleep(1)
-        if BotVars.get_botdata:
-            BotData.set_data(current_round=Rounds.end_round+1)
+        BotData.set_data(current_round=Rounds.end_round+1)
         final_round_end = times.current_time()
         times.time_print(final_round_start, final_round_end, f'Round {final_round}')
         time.sleep(0.5)
@@ -204,8 +203,7 @@ class Rounds:
         """
         current_round: int
         if Rounds.defeat_status:
-            if BotVars.get_botdata:
-                BotData.set_data(current_round=Rounds.end_round+1)
+            BotData.set_data(current_round=Rounds.end_round+1)
             wait_start = times.current_time()
             while not weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
                 if times.current_time()-wait_start > 5:
@@ -260,9 +258,8 @@ class Rounds:
             times.time_print(Rounds.current_round_begin_time, times.current_time(), f'Round {current_round-1}')
             print('===Current round:', current_round, '===')
         Rounds.current_round_begin_time = times.current_time()
-        if BotVars.get_botdata:
-            BotData.set_data(round_time=Rounds.current_round_begin_time,
-                             current_round=Rounds.begin_round,
-                             begin_round=Rounds.begin_round,
-                             end_round=Rounds.end_round)
+        BotData.set_data(round_time=Rounds.current_round_begin_time,
+                            current_round=Rounds.begin_round,
+                            begin_round=Rounds.begin_round,
+                            end_round=Rounds.end_round)
         return current_round

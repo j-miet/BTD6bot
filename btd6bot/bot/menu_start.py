@@ -210,12 +210,10 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
         event_val: str = gui_vars_dict["current_event_status"]
         record_val: bool = gui_vars_dict["time_recording_status"]
         time_limit_val: int = gui_vars_dict["checking_time_limit"]
-        botdata_val: bool = gui_vars_dict["get_botdata"]
         gamesettings_val: bool = gui_vars_dict["check_gamesettings"]
         BotVars.current_event_status = event_val
         BotVars.time_recording_status = record_val
         BotVars.checking_time_limit = time_limit_val
-        BotVars.get_botdata = botdata_val
         BotVars.check_gamesettings = gamesettings_val
     except ValueError:
         print("Unable to read at least one of the gui_vars.json keys. Defaulting to bot_vars initial values.")

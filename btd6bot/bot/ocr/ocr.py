@@ -87,7 +87,7 @@ class OcrValues:
     OCR_UPGRADE_DATA = _get_ocr_strings()
 
 def get_pixelcolor(x: float, y: float) -> tuple[int, int, int]:
-    """Returns the rgb color of a coordinate location.
+    """Returns rgb color tuple of a coordinate location.
     
     Coordinates are passed as scalar values [0,1).
     """

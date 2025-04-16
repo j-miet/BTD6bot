@@ -114,7 +114,7 @@ def end_round(time_limit: int = 0) -> None:
     plans inside 'plans' folder for comparison, and to understand how they use it in practise.
 
     Args:
-        time_limit: How long is waited before start button is clicked. Measured in seconds so an integer value. 
+        time_limit: Waiting period before start button is clicked. Measured in seconds. 
     """
     if time_limit >= 2:
         print('Next round in... ', end='')
