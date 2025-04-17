@@ -1,6 +1,7 @@
 {
     "current_event_status": "Off",
+    "version": 48,
     "check_gamesettings": true,
-    "time_recording_status": false,
+    "time_recording_status": true,
     "checking_time_limit": 360
 }
