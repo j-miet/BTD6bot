@@ -98,23 +98,19 @@ class MonitoringWindow:
         self.textbox = tk.Text(self.monitoringwindow, width=55, height=25, state='normal', wrap=tk.WORD)
         self.textbox.grid(column=0, columnspan=2, row=0, rowspan=4, sticky='n')
         self.textbox.insert('end', "Welcome to BTD6bot!\n"
-                            "Make sure that game:\n"
+                            "Make sure that:\n"
                             ">Game language is set as ENGLISH\n"
                             ">Game resolution has aspect ratio 16:9\n"
                             ">Game is in fullscreen (windowed won't work)\n"
                             ">Bot hotkeys match to your in-game equivalents\n"
-                            ">You have the following settings in 'Esc' menu in-game:\n"
-                            " -Autostart = ON\n"
-                            " -Drag & Drop = ON\n"
-                            " -Disable nudge mode = ON\n"
                             "------\n"
-                            "~Press 'Run'/F9 to start bot!\n"
-                            "~Press 'Stop'/F9 to stop & RESET bot.\n If queue mode is enabled, your map queue will\n" 
-                            " also reset, meaning that bot starts from the first\n"
-                            " map again.\n"
-                            "~To shut down entire program at any point, press F11.\n"
-                            "#currently, there's no way to 'pause' the bot - you\n"
-                            " either let it finish or reset it back to start.\n"
+                            "~Press 'Run'/your 'start-stop' hotkey to start bot!\n"
+                            "~Press 'Stop'/'start-'stop' again to stop & RESET bot.\n If queue mode is enabled, "
+                            "your map queue will also\n reset, meaning bot starts from the first map again.\n"
+                            "~To pause/unpause bot, press your 'pause' hotkey.\n Bot can only be paused during maps "
+                            "i.e. when it's not\n navigating menu screens, but pauses as soon as it\n becomes " 
+                            "possible.\n"
+                            "~To exit entire program at any point, press your 'exit'\n hotkey.\n"
                             "///////////////////////////////////////////////////////")
         self.textbox['state'] = 'disabled'
         # save current stdout stream to a variable, before redirecting it to textbox
