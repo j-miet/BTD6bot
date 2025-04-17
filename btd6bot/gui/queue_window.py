@@ -1,6 +1,9 @@
 """Contains QueueModeWindow class."""
 
 from __future__ import annotations
+import json
+from typing import Any
+
 import tkinter as tk
 from tkinter import ttk
 
@@ -15,6 +18,7 @@ class QueueModeWindow:
     Attributes:
         queue_optionwindow (tk.Toplevel): Toplevel object that creates a new window where other elements can be 
             inserted.
+        current_plan (str): Plan name string.
         myplans (tk.Listbox): Holds all user-selected plans.
         myplanslabel (tk.Label): Label displaying text above mymaps.
         delbutton (tk.Button): Button handling the removing of user-selected plans.
@@ -31,6 +35,7 @@ class QueueModeWindow:
         self.queue_optionwindow.minsize(910,400)
         self.queue_optionwindow.maxsize(910,400)
 
+        self.current_plan = ''
         self.myplanslabel = tk.Label(self.queue_optionwindow, text='Current queue')
         self.myplanslabel.grid(column=0, row=0)
         self.myplans = tk.Listbox(self.queue_optionwindow, width=40, height=20)
@@ -73,6 +78,7 @@ class QueueModeWindow:
         self.read_allplans_list()
 
     def update_planinfo(self) -> None:
+        """Updates plan info panel based on selected name."""
         index_my = self.myplans.curselection() # type: ignore
         index_all = self.allplans.curselection() # type: ignore
         if index_my:
@@ -88,12 +94,20 @@ class QueueModeWindow:
         Info texts are defined at the beginning of each plan file in 'plans' folder.
         If no valid info string is found, displays a blank screen.
         """
+        original = self.current_plan
         with open(gui_paths.PLANS_PATH/(self.current_plan+'.py')) as file_read:
             infolist = file_read.readlines()
         try:
             if infolist[0] == '\"\"\"\n':
                 info_comment_end = infolist[1:].index('\"\"\"\n')
-                readtext = ''.join(infolist[1:info_comment_end+1])
+                try:
+                    with open(gui_paths.FILES_PATH/'time_data.json') as timedata_read:
+                        current_version: dict[str, Any] = json.load(timedata_read)[original]["version"]
+                except KeyError:
+                    current_version = '-'
+                core_text = ['[Plan Name] '+original+'\n','[Game Version] '+str(current_version)+'\n']
+                core_text.extend(infolist[1:info_comment_end+1])
+                readtext = ''.join(core_text)
                 self.info_window['state'] = 'normal'
                 self.info_window.delete(1.0, tk.END)
                 self.info_window.insert('end', readtext)
@@ -108,8 +122,6 @@ class QueueModeWindow:
             self.info_window.delete(1.0, tk.END)
             self.info_window.insert('end', '')
             self.info_window['state'] = 'disabled'
-
-
 
     def move_up(self) -> None:
         """Handles moving currently selected row up."""

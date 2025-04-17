@@ -3,6 +3,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+import json
 import os
 import signal
 import sys
@@ -304,7 +305,14 @@ class MainWindow:
         try:
             if infolist[0] == '\"\"\"\n':
                 info_comment_end = infolist[1:].index('\"\"\"\n')
-                readtext = ''.join(infolist[1:info_comment_end+1])
+                try:
+                    with open(gui_paths.FILES_PATH/'time_data.json') as timedata_read:
+                        current_version: dict[str, Any] = json.load(timedata_read)[original]["version"]
+                except KeyError:
+                    current_version = '-'
+                core_text = ['[Plan Name] '+original+'\n','[Game Version] '+str(current_version)+'\n']
+                core_text.extend(infolist[1:info_comment_end+1])
+                readtext = ''.join(core_text)
                 self.info_window['state'] = 'normal'
                 self.info_window.delete(1.0, tk.END)
                 self.info_window.insert('end', readtext)
