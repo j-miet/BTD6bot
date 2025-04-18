@@ -1,7 +1,9 @@
 {
     "current_event_status": "Off",
     "version": 48,
-    "check_gamesettings": true,
-    "time_recording_status": true,
-    "checking_time_limit": 360
+    "check_gamesettings": false,
+    "time_recording_status": false,
+    "checking_time_limit": 360,
+    "delta_ocrtext": false,
+    "substring_ocrtext": false
 }
