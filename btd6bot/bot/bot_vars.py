@@ -1,10 +1,10 @@
 """Contains BotVars class."""
 
 class BotVars:
-    """Variables which are used to control some of bot's behaviour, such as placing/upgrading time limits.
+    """Variables which are used to control some of bot's behaviour.
 
     These values are only modified by gui functions. However, all variables have default initialization values, so Gui 
-    is not required as long the bot has access to this file.
+    is not required as long the bot has access to this class.
 
     Attributes:
         current_event_status (str, class attribute): Whether collection event checks are enabled or not. In api.menu, 
@@ -18,13 +18,13 @@ class BotVars:
         checking_time_limit (int, class attribute): A time limit for monkey placing and upgrading until they give up 
             trying. Utilized under monkey placing and upgrading methods in bot.monkeys module. Default value is 120.
     """
+    custom_resolution: bool = False # not implemented
     current_event_status: str = 'Off'
     time_recording_status: bool = False
     checking_time_limit: int = 300
     check_gamesettings: bool = False
+    print_delta_ocrtext: bool = False
+    print_substring_ocrtext: bool = False
+    logging: bool = False   # not implemented
 
     paused: bool = False
-    #To be added:
-    #screen_resolution = ...
-    #logging = ...
-    #display_ocr_text = ...
