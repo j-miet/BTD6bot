@@ -15,9 +15,13 @@ class SettingsWindow:
     
     Attributes:
         settings_window (Tk.Toplevel): Toplevel window.
-        record_time (tk.StringVar): Stores current status of record_toggle button.
-        time_limit_entry (tk.Entry): Entry box to type new time recording limit value. This value is saved into 
-            gui_vars.json file.
+        version (tk.StringVar): Game version.
+        record_time (tk.StringVar): Time recording status.
+        gamesettings (tk.StringVar): Toggle value.
+        time_limit (tk.StringVar): Toggle value.
+        ocrtext (tk.StringVar): Toggle value.
+        version_entry (tk.Entry): Entry box for game version.
+        time_limit_entry (tk.Entry): Entry box for ocr time limit value.
     """
 
     def __init__(self) -> None:
@@ -34,6 +38,8 @@ class SettingsWindow:
         self.record_time = tk.StringVar(value='Off')
         self.gamesettings = tk.StringVar(value='Off')
         self.time_limit = tk.StringVar(value=self.read_value("checking_time_limit"))
+        self.delta_ocrtext = tk.StringVar(value='Off')
+        self.substring_ocrtext = tk.StringVar(value='Off')
         self.update_variables()
 
         tk.Label(self.settings_window, 
@@ -63,7 +69,7 @@ class SettingsWindow:
                                                 onvalue='On', offvalue='Off', pady=5, padx=18, 
                                                 variable=self.gamesettings,
                                                 command=self.change_checksettings_status)
-        checksettings_toggle.grid(column=0, row=5, columnspan=2, sticky='nw')
+        checksettings_toggle.grid(column=0, row=5, columnspan=3, sticky='nw')
         checksettings_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=3)
         checksettings_text.grid(column=0, row=6, columnspan=5, pady=5)
         checksettings_text.insert('end', "Checks if following are enabled and if not, enables them automatically: "
@@ -75,7 +81,7 @@ class SettingsWindow:
                                        anchor='nw', onvalue='On', 
                                        offvalue='Off', pady=5, padx=18, variable=self.record_time,
                                        command=self.change_record_status)
-        record_toggle.grid(column=0, row=7, columnspan=2, sticky='nw')
+        record_toggle.grid(column=0, row=7, columnspan=3, sticky='nw')
         record_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=3)
         record_text.grid(column=0, row=8, columnspan=5, pady=5)
         record_text.insert('end', "Records all round times during a plan and updates them under "
@@ -106,10 +112,24 @@ class SettingsWindow:
 
         time_limit_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=4)
         time_limit_text.grid(column=0, row=12, columnspan=5)
-        time_limit_text.insert('end', "Time limit, in seconds, until bot stops trying to place/upgrade a monkey/search "
-                                "for the next round, and returns to menu. Only needed if ocr gets stuck; high value "
-                                "(300 or greater) is recommended.")
+        time_limit_text.insert('end', "Time limit, in seconds, until bot stops trying to place/upgrade a monkey or "
+                                "search for the next round, and returns to menu. Only needed if ocr gets stuck; value "
+                                "of 300 or greater is recommended.")
         time_limit_text['state'] = 'disabled'
+
+        delta_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
+                                                text="Print ocr delta text values in monitoring window", anchor='nw', 
+                                                onvalue='On', offvalue='Off', pady=5, padx=18, 
+                                                variable=self.delta_ocrtext,
+                                                command=self.change_deltaocr_status)
+        delta_ocrtext_toggle.grid(column=0, row=13, columnspan=3, sticky='nw')
+        substring_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
+                                                text="Print ocr substring text values in monitoring window", 
+                                                anchor='nw', 
+                                                onvalue='On', offvalue='Off', pady=5, padx=18, 
+                                                variable=self.substring_ocrtext,
+                                                command=self.change_substringocr_status)
+        substring_ocrtext_toggle.grid(column=0, row=14, columnspan=3, sticky='nw')
 
     def update_variables(self) -> None:
         """Updates toggle button values with matching gui_vars.json values."""
@@ -119,6 +139,10 @@ class SettingsWindow:
                 self.gamesettings.set('On')
             if gui_vars_dict["time_recording_status"]:
                 self.record_time.set('On')
+            if gui_vars_dict["delta_ocrtext"]:
+                self.delta_ocrtext.set('On')
+            if gui_vars_dict["substring_ocrtext"]:
+                self.substring_ocrtext.set('On')
 
     def change_checksettings_status(self) -> None:
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
@@ -138,6 +162,28 @@ class SettingsWindow:
             gui_vars_dict["time_recording_status"] = True
         elif self.record_time.get() == 'Off':
             gui_vars_dict["time_recording_status"] = False
+        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+            json.dump(gui_vars_dict, f, indent=4)
+
+    def change_deltaocr_status(self) -> None:
+        """Changes ocr substring matching text display status based on toggle button value."""
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+            gui_vars_dict: dict[str, Any] = json.load(f)
+        if self.delta_ocrtext.get() == 'On':
+            gui_vars_dict["delta_ocrtext"] = True
+        elif self.delta_ocrtext.get() == 'Off':
+            gui_vars_dict["delta_ocrtext"] = False
+        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+            json.dump(gui_vars_dict, f, indent=4)
+
+    def change_substringocr_status(self) -> None:
+        """Changes ocr delta matching text display status based on toggle button value."""
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+            gui_vars_dict: dict[str, Any] = json.load(f)
+        if self.substring_ocrtext.get() == 'On':
+            gui_vars_dict["substring_ocrtext"] = True
+        elif self.substring_ocrtext.get() == 'Off':
+            gui_vars_dict["substring_ocrtext"] = False
         with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
             json.dump(gui_vars_dict, f, indent=4)
 
