@@ -42,9 +42,10 @@ import time
 
 from PIL import Image
 import pyautogui
-from numpy import array, repeat
+from numpy import array
 
 from bot import kb_mouse
+from bot.bot_vars import BotVars
 
 if TYPE_CHECKING:
     from PIL.ImageFile import ImageFile
@@ -173,7 +174,7 @@ def weak_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> st
     Args:
         coordinates: Image location, an integer-valued 4-tuple. First two values correspond to top-left (x,y)
             location, last two to bottom-right (x,y) location. Coordinates are in pixels, not scalars.
-        reader: An easyocr.Reader object that handles reading from image. Loaded from ocr_reader.py.
+        reader: An easyocr.Reader object that handles reading text from image. Loaded from ocr_reader.py.
 
     Returns:
         string: Extracted text string.
@@ -214,6 +215,7 @@ def strong_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> 
     blackwhite_image = remove_white_and_gray(Image.open(OcrValues.OCR_IMAGE_PATH/'strong_new.png'))
     blackwhite_image.save(OcrValues.OCR_IMAGE_PATH/'strong_text.png')
     final = array(Image.open(OcrValues.OCR_IMAGE_PATH/'strong_text.png'))
+    #from numpy import repeat
     #for i in range(2):             # zooming of images, quite expensive to calculate.
     #    final = repeat(final, 3, axis=i)
     try:
@@ -234,19 +236,17 @@ def weak_substring_check(input_str: str, coords: tuple[float, float, float, floa
     function as text extractor: this does far less modifying of current image, but matches much better with certain 
     static/pre-typed strings than strong_image_ocr. 
     
-    Use cases:
-        -checking menu play button text,
-        
-        -when game begins i.e. locating 'upgrade' text. Will not check game ending, however, as this still has weird 
-            inconsistencies.
-
-        -finding the defeat screen 'bloons leaked' message.
+    Use cases:  
+    -checking menu play button text,  
+    -when game begins i.e. locating 'upgrade' text. Will not check game ending, however, as this still has weird 
+        inconsistencies.  
+    -finding the defeat screen 'bloons leaked' message.  
     
     Args:
         input_str: The substring that should be contained within ocr string.
         coords: Image location, an integer-valued 4-tuple. First two values correspond to top-left (x,y)
             location, last two to bottom-right (x,y) location.
-        reader: reader: An easyocr.Reader object that handles reading from image. Loaded from ocr_reader.py.
+        reader: reader: An easyocr.Reader object that handles reading text from image. Loaded from ocr_reader.py.
 
     Returns:
         A boolean value depending on if the substring matched ocr string or not.
@@ -254,6 +254,8 @@ def weak_substring_check(input_str: str, coords: tuple[float, float, float, floa
     (tl_x, tl_y) = kb_mouse.pixel_position((coords[0], coords[1]))
     (br_x, br_y) = kb_mouse.pixel_position((coords[2], coords[3]))
     text = weak_image_ocr((tl_x, tl_y, br_x, br_y), reader)
+    if BotVars.print_substring_ocrtext:
+        print("\nText: "+text.lower()+'\nInput: '+input_str.lower())
     if len(text) != 0 and text.lower().find(input_str.lower()) != -1:
         return True
     time.sleep(OcrValues.READ_FILE_FREQUENCY)
@@ -293,7 +295,7 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
     -checking 'sell' text when placing monkeys; high enough DELTA will match even with one letter mismatch when it 
         spells 'sel' instead,  
     -end screen 'next' text (again, simple short text but can still cause error in a single letter so high DELTA 
-        helps  
+        helps),
     -checking collection event 'Collect' text.
 
     Args:
@@ -315,13 +317,15 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
             match_str = OcrValues.OCR_UPGRADE_DATA[upg_match][0]
             delta_limit = OcrValues.OCR_UPGRADE_DATA[upg_match][1]
             d = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), match_str).quick_ratio()
-            #print('\nText: '+text.lower())       # TODO debug loggers here after debug setting implemented
-            #print("Match delta: "+str(d))
+            if BotVars.print_delta_ocrtext:
+                print('\nText: '+text.lower())
+                print("Match delta: "+str(d))
             if d >= delta_limit:
                 return True
         elif input_str != '':
             r = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), input_str.lower()).quick_ratio()
-            #print(input_str.lower()+'\n'+text.lower()+'\n'+str(r))
+            if BotVars.print_delta_ocrtext:
+                print('\nInput: '+input_str.lower()+'\nText: '+text.lower()+'\nDelta: '+str(r))
             if r >= OcrValues.DELTA:
                 return True
     time.sleep(OcrValues.READ_FILE_FREQUENCY)
@@ -337,14 +341,14 @@ def strong_substring_check(input_str: str, coords: tuple[float, float, float, fl
     rounds is more complex, so black background makes it easier - this was particularly problematic if round message
     is shorter than, say, 'round .../100' text of impoppable/chimps.
 
-    Use cases:
-        -checking current round text.
+    Use cases:  
+    -checking current round text.
 
     Args:
         input_str: The substring that should be contained within ocr string.
         coords: Image location, an integer-valued 4-tuple. First two values correspond to top-left (x,y)
             location, last two to bottom-right (x,y) location.
-        reader: An easyocr.Reader object that handles reading from image. Loaded from ocr_reader.py.
+        reader: An easyocr.Reader object that handles reading text from image. Loaded from ocr_reader.py.
 
     Returns:
         A boolean value depending on if the substring matched ocr string or not.
@@ -352,6 +356,8 @@ def strong_substring_check(input_str: str, coords: tuple[float, float, float, fl
     (tl_x, tl_y) = kb_mouse.pixel_position((coords[0], coords[1]))
     (br_x, br_y) = kb_mouse.pixel_position((coords[2], coords[3]))
     text = strong_image_ocr((tl_x, tl_y, br_x, br_y), reader)
+    if BotVars.print_substring_ocrtext:
+        print("\nText: "+text.lower()+'\nInput: '+input_str.lower())
     if len(text) != 0 and text.lower().find(input_str.lower()) != -1:
         return True
     time.sleep(OcrValues.READ_FILE_FREQUENCY)
