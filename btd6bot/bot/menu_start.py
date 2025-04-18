@@ -130,7 +130,9 @@ def _choose_hero(hero_name: str | None) -> None:
             _scroll_down_heroes()
             kb_mouse.click(MouseLocations.HEROES2[hero_name.lower()])
             Hero.current_plan_hero_name = hero_name
+    time.sleep(0.3)
     kb_mouse.click(MouseLocations.BUTTONS['hero_select'])
+    time.sleep(0.3)
     kb_mouse.click(MouseLocations.BUTTONS['exit_heroes'])
     print("Hero selected!")
 
@@ -199,6 +201,7 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
     Rounds.defeat_status = False
     AutoStart.called_begin = False
     PauseControl.PAUSE_LENGTH = 0
+    BotVars.paused = False
     try:
         p = pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json'
         with open(p) as f:
@@ -211,10 +214,14 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
         record_val: bool = gui_vars_dict["time_recording_status"]
         time_limit_val: int = gui_vars_dict["checking_time_limit"]
         gamesettings_val: bool = gui_vars_dict["check_gamesettings"]
+        deltaocr_val: bool = gui_vars_dict["delta_ocrtext"]
+        substringocr_val: bool = gui_vars_dict["substring_ocrtext"]
         BotVars.current_event_status = event_val
         BotVars.time_recording_status = record_val
         BotVars.checking_time_limit = time_limit_val
         BotVars.check_gamesettings = gamesettings_val
+        BotVars.print_delta_ocrtext = deltaocr_val
+        BotVars.print_substring_ocrtext = substringocr_val
     except ValueError:
         print("Unable to read at least one of the gui_vars.json keys. Defaulting to bot_vars initial values.")
 
