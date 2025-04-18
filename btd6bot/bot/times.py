@@ -49,16 +49,16 @@ def time_print(start: float, end: float, str: str) -> None:
 def pause_bot() -> None:
     """Pauses bot execution."""
     if BotVars.paused:
-        pause_start = time.time()
         kb_mouse.click((0.9994791666667, 0.0))
         kb_mouse.press_esc()
+        pause_start = time.time()
         print('>>> Bot paused')
         while BotVars.paused:
             time.sleep(0.05)
-        PauseControl.PAUSE_LENGTH += time.time() - pause_start
         time.sleep(0.25)
         kb_mouse.click((0.9994791666667, 0.0))
         kb_mouse.press_esc()
+        PauseControl.PAUSE_LENGTH += time.time() - pause_start
         print('Bot unpaused')
 
 def current_time() -> float:
