@@ -40,6 +40,14 @@ def _flush_times_temp() -> None:
     with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt', 'w') as f:
         print('times_temp.txt contents cleared.')
 
+def _read_timedata() -> dict[str, Any]:
+    with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as f:
+        return json.load(f)
+
+def _read_guivars() -> dict[str, Any]:
+    with open(pathlib.Path(__file__).parent/'Files'/'gui_vars.json') as varsfile:
+        return json.load(varsfile)["version"]
+
 def _update_time_data(plan_name: str) -> dict[str, Any]:
     """Adds saved times_temp.txt contents in a dictionary."""
     with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt') as f:
@@ -52,9 +60,10 @@ def _update_time_data(plan_name: str) -> dict[str, Any]:
         rounds_list.append(round_num)
         times_list.append(round_time)
     time_total = times_contents[-1]
-    with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as f:
-        current_json: dict[str, Any] = json.load(f)
+    current_json: dict[str, Any] = _read_timedata()
+    current_version: dict[str, Any] = _read_guivars()
     data_dict = {
+        "version": current_version,
         "rounds": rounds_list,
         "times": times_list,
         "time_total": time_total
