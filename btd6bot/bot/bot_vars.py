@@ -18,7 +18,8 @@ class BotVars:
         checking_time_limit (int, class attribute): A time limit for monkey placing and upgrading until they give up 
             trying. Utilized under monkey placing and upgrading methods in bot.monkeys module. Default value is 120.
     """
-    custom_resolution: bool = False # not implemented
+    custom_resolution: list[int] = [0, 0]
+    windowed: bool = False
     current_event_status: str = 'Off'
     time_recording_status: bool = False
     checking_time_limit: int = 300
