@@ -42,14 +42,15 @@ import time
 
 from PIL import Image
 import pyautogui
-from numpy import array
+from numpy import array, repeat
 
 from bot import kb_mouse
 from bot.bot_vars import BotVars
 
 if TYPE_CHECKING:
-    from PIL.ImageFile import ImageFile
     from easyocr import Reader  # type: ignore
+    from PIL.ImageFile import ImageFile
+    from typing import Any
 
 class OcrValues:
     """Wrapper class: constants required for optical character recognition tools.
@@ -80,6 +81,7 @@ class OcrValues:
     DELTA: float = 0.75
 
     OCR_IMAGE_PATH: pathlib.Path = pathlib.Path(__file__).parent.parent.parent/'Files'/'ocr temp'
+    _log_ocr_deltas: bool = False
 
     @staticmethod
     def _get_ocr_strings() -> dict[str, list[str, float]]:
@@ -139,8 +141,8 @@ def gray_shades(rgb_range: int = 1) -> list[tuple[int, int, int]]:
 WHITE = white_shades()
 GRAY = gray_shades()
 
-def remove_white_and_gray(image: ImageFile) -> ImageFile:
-    """Return an image with all of its colors except white and grey, replaced with black.
+def img_to_black_and_white(image: ImageFile) -> ImageFile:
+    """Return an image with non-white and non-grey shades replaced with black.
       
     This leaves white text with black background and makes ocr matching possibly more accurate. 
     Used in strong_image_ocr.
@@ -181,9 +183,12 @@ def weak_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> st
     """
     tl_x, tl_y, br_x, br_y = coordinates[0], coordinates[1], coordinates[2], coordinates[3]
     width, height = br_x - tl_x, br_y - tl_y
-    pyautogui.screenshot(imageFilename=OcrValues.OCR_IMAGE_PATH/'weak_new.png',
-                         region=(tl_x, tl_y, width, height))
-    img = array(Image.open(OcrValues.OCR_IMAGE_PATH/'weak_new.png'))
+    # uncomment and replace 2 lines below with these if you need images; images are created in Files/ocr_temp
+    #
+    # pyautogui.screenshot(imageFilename=OcrValues.OCR_IMAGE_PATH/'weak_new.png', region=(tl_x, tl_y, width, height))
+    # img = array(Image.open(OcrValues.OCR_IMAGE_PATH/'weak_new.png'))
+    ocr_img = pyautogui.screenshot(region=(tl_x, tl_y, width, height))
+    img = array(ocr_img)
     try:
         result = reader.readtext(img)
         string = ''
@@ -210,14 +215,19 @@ def strong_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> 
     """
     tl_x, tl_y, br_x, br_y = coordinates[0], coordinates[1], coordinates[2], coordinates[3]
     width, height = br_x - tl_x, br_y - tl_y
-    pyautogui.screenshot(imageFilename=OcrValues.OCR_IMAGE_PATH/'strong_new.png',
-                         region=(tl_x, tl_y, width, height))
-    blackwhite_image = remove_white_and_gray(Image.open(OcrValues.OCR_IMAGE_PATH/'strong_new.png'))
-    blackwhite_image.save(OcrValues.OCR_IMAGE_PATH/'strong_text.png')
-    final = array(Image.open(OcrValues.OCR_IMAGE_PATH/'strong_text.png'))
-    #from numpy import repeat
-    #for i in range(2):             # zooming of images, quite expensive to calculate.
-    #    final = repeat(final, 3, axis=i)
+    # uncomment and replace 3 lines below with these if you need images; images are created in Files/ocr_temp
+    # 
+    # pyautogui.screenshot(imageFilename=OcrValues.OCR_IMAGE_PATH/'strong_new.png', region=(tl_x, tl_y, width, height))
+    # blackwhite_image = img_to_black_and_white(Image.open(OcrValues.OCR_IMAGE_PATH/'strong_new.png'))
+    # blackwhite_image.save(OcrValues.OCR_IMAGE_PATH/'strong_text.png')
+    # final = array(Image.open(OcrValues.OCR_IMAGE_PATH/'strong_text.png'))
+    ocr_img = pyautogui.screenshot(region=(tl_x, tl_y, width, height))
+    blackwhite_image = img_to_black_and_white(ocr_img)
+    final = array(blackwhite_image)
+    if BotVars.windowed:
+        zoom_factor = 2
+        for i in range(2):             # zooming of images, quite expensive to calculate.
+            final = repeat(final, zoom_factor, axis=i)
     try:
         result = reader.readtext(final)
         string = ''
@@ -318,14 +328,29 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
             delta_limit = OcrValues.OCR_UPGRADE_DATA[upg_match][1]
             d = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), match_str).quick_ratio()
             if BotVars.print_delta_ocrtext:
-                print('\nText: '+text.lower())
-                print("Match delta: "+str(d))
+                print('\n-Text: '+text.lower())
+                print("-Match delta: "+str(d))
+                if OcrValues._log_ocr_deltas:   # use only with tools/adjust_deltas
+                    with open(
+                        pathlib.Path(__file__).parent.parent.parent.parent/'tools'/'adjust_deltas'/'ocr_deltas.json'
+                        ) as f:
+                        temp_dict: dict[str, Any] = json.load(f)
+                    if len(str(d)) <= 4:
+                        add_dict = {upg_match: [match_str, d]}
+                    else:
+                        add_dict = {upg_match: [match_str, round(d-0.005, 2)]}
+                    temp_dict.update(add_dict)
+                    with open(
+                        pathlib.Path(__file__).parent.parent.parent.parent/'tools'/'adjust_deltas'/'ocr_deltas.json',
+                        'w') as f:
+                        json.dump(temp_dict, f, indent=2)
+                    return True
             if d >= delta_limit:
                 return True
         elif input_str != '':
             r = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), input_str.lower()).quick_ratio()
             if BotVars.print_delta_ocrtext:
-                print('\nInput: '+input_str.lower()+'\nText: '+text.lower()+'\nDelta: '+str(r))
+                print('\n-Input: '+input_str.lower()+'\n-Text: '+text.lower()+'\n-Delta: '+str(r))
             if r >= OcrValues.DELTA:
                 return True
     time.sleep(OcrValues.READ_FILE_FREQUENCY)
