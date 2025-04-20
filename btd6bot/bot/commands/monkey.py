@@ -29,6 +29,7 @@ from pynput.keyboard import Key, KeyCode
 from bot import kb_mouse, times
 from bot.hotkeys import hotkeys
 import bot.ocr.ocr as ocr
+from bot.ocr.ocr import OcrValues
 from bot.ocr.ocr_reader import OCR_READER
 from bot.rounds import Rounds
 
@@ -629,6 +630,7 @@ class Monkey(_MonkeyConstants):
             cpos_x: If monkey's current x-coordinate position has changed, update it. Default value is None.
             cpos_y: If monkey's current y-coordinate position has changed, update it. Default value is None.
         """
+        times.pause_bot()
         paths = ['upgrade top', 'upgrade mid', 'upgrade bot'] 
         if cpos_x is not None:
             self._pos_x = cpos_x
@@ -767,6 +769,13 @@ class Monkey(_MonkeyConstants):
         placed = 0
         defeat_check = 1
         while not placed:
+            if OcrValues._log_ocr_deltas:
+                kb_mouse.click((0.5, 0))
+                kb_mouse.kb_input(self._get_hotkey())
+                kb_mouse.click((self._pos_x, self._pos_y), 1)
+                print(f'{self._name.capitalize()} placed.')
+                return
+            times.pause_bot()
             if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
                 defeat_check = 1
             if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
@@ -1351,6 +1360,7 @@ class Monkey(_MonkeyConstants):
         kb_mouse.kb_input(hotkeys["merge beast"])
         kb_mouse.click((x,y))
         kb_mouse.press_esc()
+        time.sleep(0.1)
         print(f"Beast merged.") 
 
     def center(self, x: float, y: float, cpos_x: float | None = None, cpos_y: float | None = None) -> None:
