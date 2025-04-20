@@ -21,6 +21,7 @@ from bot.commands.flow import AutoStart
 from bot.commands.hero import Hero
 from bot.bot_vars import BotVars
 import bot.hotkeys
+from bot.kb_mouse import ScreenRes
 from bot.menu_return import OcrLocations
 from bot.ocr.ocr import weak_substring_check
 from bot.ocr.ocr_reader import OCR_READER
@@ -200,22 +201,29 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
     Rounds.begin_round, Rounds.end_round = begin_r, end_r
     Rounds.defeat_status = False
     AutoStart.called_begin = False
-    PauseControl.PAUSE_LENGTH = 0
+    PauseControl.pause_length = 0
     BotVars.paused = False
     try:
-        p = pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json'
-        with open(p) as f:
+        with open(pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
     except json.decoder.JSONDecodeError:
         print('gui_vars.json not found or cannot be read. Defaulting to bot_vars default values.')
         return
     try:
+        customres_val: bool = gui_vars_dict["check_resolution"]
+        resolution_val: list[int] = list(map(int, gui_vars_dict["custom_resolution"].split('x')))
+        if customres_val:
+            ScreenRes.update_res(resolution_val[0], resolution_val[1])
+        else:
+            ScreenRes.set_baseres()
+        windowed_val: str = gui_vars_dict["windowed"]
         event_val: str = gui_vars_dict["current_event_status"]
         record_val: bool = gui_vars_dict["time_recording_status"]
         time_limit_val: int = gui_vars_dict["checking_time_limit"]
         gamesettings_val: bool = gui_vars_dict["check_gamesettings"]
         deltaocr_val: bool = gui_vars_dict["delta_ocrtext"]
         substringocr_val: bool = gui_vars_dict["substring_ocrtext"]
+        BotVars.windowed = windowed_val
         BotVars.current_event_status = event_val
         BotVars.time_recording_status = record_val
         BotVars.checking_time_limit = time_limit_val
@@ -241,6 +249,7 @@ def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, 
     Returns:
         Begin and end rounds.
     """
+    _update_external_variables(begin_round, end_round)
     print('Searching for main menu screen...')
     while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
         time.sleep(0.3)
@@ -251,6 +260,5 @@ def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, 
     _choose_map(map_name)
     _choose_diff(diff)
     _choose_mode(mode)
-    _update_external_variables(begin_round, end_round)
     print(f"~~~~{map_name}, {diff.lower()}, {mode.lower()}~~~~")
     return begin_round, end_round
