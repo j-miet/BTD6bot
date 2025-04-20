@@ -10,6 +10,7 @@ import time
 import tkinter as tk
 from tkinter import ttk
 
+import pyautogui
 import pynput
 from pynput.keyboard import Key, KeyCode
 
@@ -101,7 +102,7 @@ class MonitoringWindow:
                             "Make sure that:\n"
                             ">Game language is set as ENGLISH\n"
                             ">Game resolution has aspect ratio 16:9\n"
-                            ">Game is in fullscreen (windowed won't work)\n"
+                            ">Game is preferably in fullscreen (windowed might work)\n"
                             ">Bot hotkeys match to your in-game equivalents\n"
                             "------\n"
                             "~Press 'Run'/your 'start-stop' hotkey to start bot!\n"
@@ -110,8 +111,8 @@ class MonitoringWindow:
                             "~To pause/unpause bot, press your 'pause' hotkey.\n Bot can only be paused during maps "
                             "i.e. when it's not\n navigating menu screens, but pauses as soon as it\n becomes " 
                             "possible.\n"
-                            "~To exit entire program at any point, press your 'exit'\n hotkey.\n"
-                            "///////////////////////////////////////////////////////")
+                            "~To exit entire program at any point, press your 'exit'\n hotkey.\n"+
+                            55*"/"+"\n")
         self.textbox['state'] = 'disabled'
         # save current stdout stream to a variable, before redirecting it to textbox
         # could use sys.__stdout__ to return to original output stream; might implement this at some point.
@@ -201,16 +202,16 @@ class MonitoringWindow:
         while self.bot_thread.is_alive():
             if BotData.current_round == 0:
                 time.sleep(0.1)
-            elif BotVars.paused:
+            elif BotData.paused:
                 time.sleep(0.1)
             elif BotData.current_round < BotData.end_r+1:
                 current = times.current_time()-BotData.round_time
                 self.roundtime.set(f"{current:.2f}")
+                time.sleep(0.05)
             else:
                 time.sleep(3)
                 BotData.set_data()
                 self.roundtime.set("0.00")
-            time.sleep(0.01) 
         self.roundtime.set("-")
 
     def update_event_status_to_json(self) -> None:
@@ -237,13 +238,62 @@ class MonitoringWindow:
         roundtimer_thread = threading.Thread(target=self._update_round_timer, daemon=True)
         roundtimer_thread.start()
 
+    def res_check(self, customres: bool, resolution_val: list[int], windowed: bool, w: int, h: int) -> None:
+        with open(gui_paths.FILES_PATH/'ocr_upgrade_data.json') as f:
+            identifier: list[int | str] = json.load(f)["__identifier"]
+        issue_flag = 0
+        if customres:
+            if resolution_val != identifier[0:2]:
+                print("-"*55+"\n"
+                        ">Ocr data resolution differs from display resolution:\n"
+                        " Ocr resolution: ", identifier[0], identifier[1], "\n"
+                        " Display resolution: ", resolution_val[0], resolution_val[1])
+                issue_flag = 1
+        else:
+            if list((w, h)) != identifier[0:2]:
+                print("-"*55+"\n"
+                        ">Ocr data resolution differs from display resolution:\n"
+                        " Ocr resolution: ", identifier[0], identifier[1], "\n"
+                        " Display resolution: ", w, h)
+                issue_flag = 1
+        if identifier[2] == "fullscreen" and windowed == True:
+            print("-"*55+"\n"
+                    ">Ocr data supports fullscreen, but you use\n windowed mode.")
+            issue_flag = 1
+        elif identifier[2] == "windowed" and windowed == False:
+            print("-"*55+"\n"
+                    ">Ocr data supports windowed mode, but you use\n fullscreen mode.")
+            issue_flag = 1
+        if issue_flag == 1:
+            print(55*"-"+"\n"
+                    "-->> Issues detected; see above. <<--\n" \
+                    "These don't prevent bot from starting, but are very likely to cause problems with ocr text "
+                    "detection.\n"+
+                    27*" "+".\n"+
+                    27*" "+".\n"+
+                    27*" "+".\n")
+
     def run_bot(self) -> None:
         """Checks if replay mode is enabled/disabled and runs the sequence of plans listed in self.all_plans.
 
         Queue mode enabled/disabled check is already done before creating MonitorScreen object so queue check is not
         needed again.
         """
-        print('\n=====Bot running=====\n')
+        print('\n=====Bot running=====')
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+            gui_vars_dict: dict[str, Any] = json.load(f)
+        customres_val: bool = gui_vars_dict["check_resolution"]
+        resolution_val: list[int] = list(map(int, gui_vars_dict["custom_resolution"].split('x')))
+        windowed_val: bool = gui_vars_dict["windowed"]
+        w, h = pyautogui.size()
+        self.res_check(customres_val, resolution_val, windowed_val, w, h)
+        if customres_val:
+            print('[Custom Resolution] '+str(resolution_val[0])+'x'+str(resolution_val[1])+'\n'
+                    '[Windowed] '+str(windowed_val))
+        else:
+            w, h = pyautogui.size()
+            print('[Resolution] '+str(w)+'x'+str(h))
+        
         if self.replay_val == 'On':
             while True:
                 for plan_index in range(len(self.all_plans)):
