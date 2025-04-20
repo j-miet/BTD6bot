@@ -3,7 +3,7 @@
 -numpad keys 0-9: these will show as <96> for num0, <97> for num1, etc. up to <105> for num9.
 -following special/modifier keys:
   alt, ctrl, enter, shift, backspace, tab, insert, delete, home, end
-  page up, page down, directional keys (up, down, left, right), F keys (F1-F8)
+  page up, page down, directional keys (up, down, left, right), F keys (F1-F12)
   >these keys are displayed in 'Key.keyname' format.
 
 [How to set a hotkey]
