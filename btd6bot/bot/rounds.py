@@ -55,7 +55,7 @@ class Rounds:
         'defeat_home_button_first_round': (0.38, 0.75)
         }
     
-    DEFEAT_CHECK_FREQUENCY = 6
+    DEFEAT_CHECK_FREQUENCY = 9
 
     begin_round: int = 0
     end_round: int = 0
@@ -107,7 +107,6 @@ class Rounds:
             cycle: Current loop iteration cycle, must be less or equal to frequency value.
             frequency: Amount of cycles it takes between defeat checks.
         """
-        times.pause_bot()
         if isinstance(cycle, int) and cycle >= 1 and isinstance(frequency, int) and frequency >= cycle:
             if times.current_time() - current_time < BotVars.checking_time_limit:
                 if cycle == frequency:   # frequency of defeat checks: 2 = every second loop, N = every Nth loop.
@@ -257,6 +256,7 @@ class Rounds:
                 defeat_check += 1
             times.time_print(Rounds.current_round_begin_time, times.current_time(), f'Round {current_round-1}')
             print('===Current round:', current_round, '===')
+        times.pause_bot()
         Rounds.current_round_begin_time = times.current_time()
         BotData.set_data(round_time=Rounds.current_round_begin_time,
                             current_round=Rounds.begin_round,
