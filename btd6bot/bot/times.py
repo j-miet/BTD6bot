@@ -7,10 +7,11 @@ import pathlib
 import time
 
 from bot import kb_mouse
+from bot.bot_data import BotData
 from bot.bot_vars import BotVars
 
 class PauseControl:
-    PAUSE_LENGTH: float = 0
+    pause_length: float = 0
 
 def _record_time(time_str: str) -> None:
     """Appends a time string to a temporary text file."""
@@ -49,16 +50,17 @@ def time_print(start: float, end: float, str: str) -> None:
 def pause_bot() -> None:
     """Pauses bot execution."""
     if BotVars.paused:
+        pause_start = time.time()
         kb_mouse.click((0.9994791666667, 0.0))
         kb_mouse.press_esc()
-        pause_start = time.time()
+        BotData.update_pause(BotVars.paused)
         print('>>> Bot paused')
         while BotVars.paused:
-            time.sleep(0.05)
-        time.sleep(0.25)
+            time.sleep(0.1)
+        PauseControl.pause_length += time.time() - pause_start
         kb_mouse.click((0.9994791666667, 0.0))
         kb_mouse.press_esc()
-        PauseControl.PAUSE_LENGTH += time.time() - pause_start
+        BotData.update_pause(BotVars.paused)
         print('Bot unpaused')
 
 def current_time() -> float:
@@ -67,4 +69,4 @@ def current_time() -> float:
     Takes pauses in to account, meaning the returned value is  
     time.time() - total pause length for current bot loop.
     """
-    return time.time()-PauseControl.PAUSE_LENGTH
+    return time.time()-PauseControl.pause_length
