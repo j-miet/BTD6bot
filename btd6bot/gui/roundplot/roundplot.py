@@ -168,7 +168,10 @@ def remove_empty_rows(plan: list[str], first_r: int, round_labels: list[str]) ->
     new_labels = round_labels[:]
     for index in range(first_r, len(plan)):
         if plan[index].find(plan[index-1].split('== ')[0]) != -1:
-            new_labels.pop(new_labels.index(plan[index-1].split('== ')[1][:-1]))
+            try:
+                new_labels.pop(new_labels.index(plan[index-1].split('== ')[1][:-1]))
+            except IndexError:
+                ...
     return new_labels
 
 def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name: str) -> None:
