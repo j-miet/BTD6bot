@@ -10,19 +10,22 @@ from bot import kb_mouse, times
 from bot.hotkeys import hotkeys
 from bot.rounds import Rounds
 
-def ability(key: int, timer: float = 0) -> None:
+def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, delay: float = 0.1) -> None:
     """Presses the specified ability hotkey.
     
     Has an optional argument for timing abilities. Ability is then used after 'timer' amount of seconds have passed
     after the round start.
 
-    This function needs the current round start time to time abilities. Therefore, a separate variable named
-    'current_round_begin_time' is updated via a plan module and can be used here.
+    Can also target ability by giving the target location x and y coordinates.
     
     Args:
         key: Ability hotkey number, values in range 1-10.
         timer: Ability timer - ability is used after this amount of time has passed. Accepts float values. 
             Default value is 0, which means ability is used the moment 'ability' call is processed.
+        xy: Target coordinate, a tuple of floats. Default is None.
+        delay: Time waited before ability is clicked. Only reasonable use case is when reseting Obyn's trees: bananas 
+            have short animation during which they cannot be collected, so wait a second or so, then click on tree 
+            explosion location to collect them all. Default value is 0.1.
 
     Examples:
         Use ability number 2 immediately after command is processed.
@@ -35,6 +38,15 @@ def ability(key: int, timer: float = 0) -> None:
         already passed after command is processed, ability is used immediately.
         >>> ability(1, 5.5)
         Using ability 1 with timer 5.5... Ability used.
+
+        To target an ability, for example engineer overclock, add coordinates with xy argument.
+        >>>  
+            ability(2, 5, xy=(0.5, 0.5))
+        Targeting can be also used to quickly click mouse over Obyn's trees and collect the bananas. For this, 'delay'
+        argument is useful: it will wait for specified time before clicking. As bananas have short animation before they
+        can be collected, setting a delay of 1 second should collect them properly.
+        >>>
+            ability(2, 10, xy=(0.5, 0.5), delay=1)
     """
     times.pause_bot()
     if Rounds.defeat_status:
@@ -43,11 +55,17 @@ def ability(key: int, timer: float = 0) -> None:
     begin_time = Rounds.current_round_begin_time
     if timer == 0:
         kb_mouse.kb_input(hotkeys['ability '+str(key)])
+        if xy is not None:
+            time.sleep(delay)
+            kb_mouse.click(xy)
         print('Ability used.')
         return
     while times.current_time()-begin_time < timer:     
         time.sleep(0.01)    # small sleep timer to avoid constant processing of time.time
     kb_mouse.kb_input(hotkeys['ability '+str(key)])
+    if xy is not None:
+        time.sleep(delay)
+        kb_mouse.click(xy)
     print('Ability used.')
 
 def click(x: float, y: float, N: int = 1) -> None:
@@ -65,3 +83,7 @@ def click(x: float, y: float, N: int = 1) -> None:
     if Rounds.defeat_status:
         return
     kb_mouse.click((x, y), clicks=N)
+    if N > 1:
+        print(f"Clicked at ({x}, {y}) {N} times")
+    else:
+        print(f"Clicked at ({x}, {y})")
