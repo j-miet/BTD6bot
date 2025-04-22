@@ -190,7 +190,11 @@ class MainWindow:
 
         self.help_button= tk.Button(mainframe, text="Help", height=2, width=5, command=self.help_window, padx=20,
                                     pady=5)
-        self.help_button.grid(column=3, row=0, pady=10, sticky='nwe')
+        self.help_button.grid(column=2, row=0, padx=30, pady=10, sticky='nwe')
+
+        self.settings_button= tk.Button(mainframe, text="Settings", height=2, width=5,
+                                        command=self.settings_window, padx=20, pady=5)
+        self.settings_button.grid(column=3, row=0, pady=10, sticky='nwe')
 
         self.hotkey_button = tk.Button(mainframe, text="Set\nhotkeys", height=2, width=5, command=self.hotkey_window,
                                        padx=20, pady=5)
@@ -199,14 +203,6 @@ class MainWindow:
         self.queueoptions_button = tk.Button(mainframe, text="Queue mode\nmaplist", height=2, width=5, 
                                              command=self.queue_mode_window, padx=20, pady=5)
         self.queueoptions_button.grid(column=3, row=2, pady=10, sticky='wes') 
-
-        self.settings_button= tk.Button(mainframe, text="Settings", height=2, width=5,
-                                        command=self.settings_window, padx=20, pady=5)
-        self.settings_button.grid(column=2, row=0, padx=30, pady=10, sticky='nwe')
-
-        # TODO add editing of plan files inside gui
-        #self.edit_plans_button= tk.Button(mainframe, text="Edit Plans", height=2, width=5, command='', padx=20, pady=5)
-        #self.edit_plans_button.grid(column=2, row=1, padx=30, pady=10, sticky='nwe')
 
         self.collection_toggle = tk.Checkbutton(mainframe, text='Collection Event', anchor='e', 
                                                 variable=self.collection, offvalue='Off', onvalue='On', pady=10,
