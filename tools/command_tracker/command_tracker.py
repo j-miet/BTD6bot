@@ -195,8 +195,10 @@ def add_command(comment_str: str) -> None:
                    	"        \tbegin()/begin('normal')\n" 
                     "        \tchange_autostart()\n" 
                     "        \tend_round(20)\n" 
-                    "        \tability(1, 5)\n"
+                    "        \tability(1,5)\n"
                     "        \twait(3)\n"
+                    "	-l: coordinate location (x,y)\n"
+                    "    	\t-can be used with 'click' command, for example.\n"
 					"\n"
                 	"--typing anything else as first argument does nothing.\n")
             return
@@ -266,6 +268,9 @@ def add_command(comment_str: str) -> None:
                 return
             TrackerVals.coordinates_file.write('    '+''.join(cmd[1:])+"\n")
             print("-> "+''.join(cmd[1:]), end='')
+        case '-l':
+            TrackerVals.coordinates_file.write(f'     ({x}, {y})\n')
+            print(f"-> ({x}, {y})", end='')
         case _:
             print("--Nothing was added--")
             return
@@ -284,7 +289,7 @@ def run_tracker() -> None:
     print('-------------------------')
     print('Press right mouse to add commands text, "+" to change round, and f8 (or CTRL+C) to ' 
         'quit.')
-    print("[All right-click commands]: help, -m, -h, -u, -t, -s, -ucp, -tcp, -scp, -c")        
+    print("[All right-click commands]: help, -m, -h, -u, -t, -s, -ucp, -tcp, -scp, -c, -l")        
     with open(pathlib.Path(__file__).parent/'commands.txt', 'a') as TrackerVals.coordinates_file:
         TrackerVals.coordinates_file.write('if current_round == BEGIN:\n')
     print('Current round is ' + str(TrackerVals.ct_round_counter))
