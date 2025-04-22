@@ -2,6 +2,7 @@ from __future__ import annotations
 import time
 
 from bot import kb_mouse
+from bot.bot_data import BotData
 from bot.bot_vars import BotVars
 from bot.ocr.ocr import weak_substring_check, strong_delta_check
 from bot.ocr.ocr_reader import OCR_READER
@@ -81,3 +82,4 @@ def returned() -> None:
         CollectionEvent.collection_event_handler()
     while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
         time.sleep(0.3)
+    BotData.victory = True
