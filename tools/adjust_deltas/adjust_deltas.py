@@ -23,11 +23,10 @@ Notes:
 
 import sys
 import pathlib
-
-sys.path.append(str(pathlib.Path(__file__).parent.parent.parent/'btd6bot'))
-
 import json
 import time
+
+sys.path.append(str(pathlib.Path(__file__).parent.parent.parent/'btd6bot'))
 
 from bot import kb_mouse
 from bot.bot_vars import BotVars

@@ -4,7 +4,7 @@ import time
 
 from bot import kb_mouse, times
 from bot.bot_data import BotData
-from bot.commands.flow import AutoStart, change_autostart, begin
+from bot.commands.flow import AutoStart, change_autostart, forward
 from bot.bot_vars import BotVars
 import bot.menu_return
 from bot.ocr.ocr import weak_substring_check, strong_substring_check, strong_delta_check, get_pixelcolor
@@ -215,7 +215,7 @@ class Rounds:
                     time.sleep(0.25)
                     kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
                     bot.menu_return.returned()
-                    print('Plan completed.\n')
+                    print('Plan was unable to finish.\n')
                     return Rounds.end_round + 1
                 time.sleep(0.3)
             print('Defeat: returning to menu in...', end=' ')
@@ -224,7 +224,7 @@ class Rounds:
             kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
             time.sleep(0.5)
             kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
-            print('\nPlan completed.\n')
+            print('Plan was unable to finish.\n')
             return Rounds.end_round + 1
         
         current_round = prev_round + 1
@@ -237,8 +237,8 @@ class Rounds:
         elif mode.lower() == 'apopalypse':
             return Rounds.end_round
         else:
-            if not AutoStart.called_begin:
-                begin()
+            if not AutoStart.called_forward:
+                forward()
             total_time = times.current_time()
             defeat_check = 1
             while not strong_substring_check(str(current_round)+'/'+str(Rounds.end_round), Rounds.CURRENT_ROUND, 
@@ -251,7 +251,7 @@ class Rounds:
                     kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
                     time.sleep(0.5)
                     kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
-                    print("\nPlan completed.\n")
+                    print('Plan was unable to finish.\n')
                     return Rounds.end_round+1
                 defeat_check += 1
             times.time_print(Rounds.current_round_begin_time, times.current_time(), f'Round {current_round-1}')

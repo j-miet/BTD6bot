@@ -72,7 +72,6 @@ class MouseLocations:
     BUTTONS: dict[str, tuple[float, float]] = {
         'heroes' : (0.275, 0.8888888888889),
         'hero_select' : (0.5734375, 0.5592592592593),
-        'exit_heroes' : (0.0411458333333, 0.0518518518519),
 
         'menu_play' : (0.5, 0.8657407407407),
         'search_map' : (0.0395833333333, 0.1518518518519),
@@ -124,6 +123,7 @@ def _choose_hero(hero_name: str | None) -> None:
     else:
         print("Selecting", hero_name.capitalize(), "as hero... ", end='')
         kb_mouse.click(MouseLocations.BUTTONS['heroes'])
+        time.sleep(0.3)
         if hero_name.lower() in MouseLocations.HEROES:
             kb_mouse.click(MouseLocations.HEROES[hero_name.lower()])
             Hero.current_plan_hero_name = hero_name
@@ -134,7 +134,7 @@ def _choose_hero(hero_name: str | None) -> None:
     time.sleep(0.3)
     kb_mouse.click(MouseLocations.BUTTONS['hero_select'])
     time.sleep(0.3)
-    kb_mouse.click(MouseLocations.BUTTONS['exit_heroes'])
+    kb_mouse.press_esc()
     print("Hero selected!")
 
 def _choose_map(map_name: str) -> None:
@@ -145,12 +145,13 @@ def _choose_map(map_name: str) -> None:
     """
     search_map = pynput.keyboard.Controller()
     map_str = map_name.replace('_', ' ')
+    time.sleep(0.4)
     kb_mouse.click(MouseLocations.BUTTONS['menu_play'])
-    time.sleep(0.5)
+    time.sleep(0.4)
     kb_mouse.click(MouseLocations.BUTTONS['search_map'])
-    time.sleep(0.5)
+    time.sleep(0.4)
     kb_mouse.click(MouseLocations.BUTTONS['search_map_bar'])
-    time.sleep(0.5)
+    time.sleep(0.4)
     search_map.type(map_str)  # types map name to search bar.
     kb_mouse.click(MouseLocations.BUTTONS['choose_map'])
 
@@ -200,7 +201,7 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
     bot.hotkeys.hotkeys = bot.hotkeys.generate_hotkeys()
     Rounds.begin_round, Rounds.end_round = begin_r, end_r
     Rounds.defeat_status = False
-    AutoStart.called_begin = False
+    AutoStart.called_forward = False
     PauseControl.pause_length = 0
     BotVars.paused = False
     try:
@@ -253,7 +254,7 @@ def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, 
     print('Searching for main menu screen...')
     while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
         time.sleep(0.3)
-    print('Starting bot in...', end=' ')
+    print('Starting plan in...', end=' ')
     timing.counter(3)
     print('--> *Bot running*')
     _choose_hero(hero)
