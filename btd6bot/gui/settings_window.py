@@ -47,6 +47,7 @@ class SettingsWindow:
         self.resolution = tk.StringVar(value='Off')
         self.resolution_value = tk.StringVar(value=self.read_value("custom_resolution"))
         self.version = tk.StringVar(value=self.read_value("version"))
+        self.retries = tk.StringVar(value=self.read_value("retries"))
         self.record_time = tk.StringVar(value='Off')
         self.gamesettings = tk.StringVar(value='Off')
         self.time_limit = tk.StringVar(value=self.read_value("checking_time_limit"))
@@ -55,8 +56,7 @@ class SettingsWindow:
         self.windowed = tk.StringVar(value='Off')
 
         tk.Label(self.settings_window, 
-                 text='Settings are saved in/loaded from a file and carry over sessions\n'
-                    '# Text in boxes can be scrolled if there\'s more available #\n'
+                 text='# Text in boxes can be scrolled if there\'s more available #'
                 ).grid(column=1, row=0, columnspan=3)
         basic_text = tk.Label(self.settings_window, 
                               text='o-------o\n'
@@ -107,40 +107,56 @@ class SettingsWindow:
         self.version_entry = tk.Entry(self.settings_window, width=10)
         self.version_entry.grid(column=0, row=6, sticky='e', pady=(1,10), padx=(21,31))
         version_button = tk.Button(self.settings_window, text="Update version", anchor='w', padx=5,
-                                           command=self.set_version_value)
+                                    command=self.set_version_value)
         version_button.grid(column=1, row=6, sticky='w', pady=(1,10))
+
+        retry_label = tk.Label(self.settings_window, text='Retry attemps')
+        retry_label.grid(column=0, row=7, sticky='se', padx=(1,21), pady=(5,1))
+        retry_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.retries)
+        retry_current_value.grid(column=1, row=7, sticky='sw', padx=1, pady=(5,1))
+
+        self.retry_entry = tk.Entry(self.settings_window, width=10)
+        self.retry_entry.grid(column=0, row=8, sticky='e', pady=(1,10), padx=(21,31))
+        retry_button = tk.Button(self.settings_window, text="Update value", anchor='w', padx=5,
+                                    command=self.set_retries_value)
+        retry_button.grid(column=1, row=8, sticky='w', pady=(1,10))
+
+        retry_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=2)
+        retry_text.grid(column=0, row=9, columnspan=5, pady=5)
+        retry_text.insert('end', "Amount of attemps bot tries on on any plan before skipping it. If plan finishes "
+                            "succesfully, however, bot proceeds normally. Useful for getting black borders on "
+                            "harder maps\n:" 
+                            "-enable queue mode and set this value as, say 5, so that bot won't immediately skip over " 
+                            "a plan in case rng causes an defeat.\n"
+                            "-if bot succeeds, it will continue to next plan in queue."
+                            )        
+        retry_text['state'] = 'disabled'
 
         checksettings_toggle = tk.Checkbutton(self.settings_window, 
                                                 text="Update esc menu settings automatically", anchor='nw', 
                                                 onvalue='On', offvalue='Off', pady=5, padx=18, 
                                                 variable=self.gamesettings,
                                                 command=self.change_checksettings_status)
-        checksettings_toggle.grid(column=0, row=7, columnspan=3, sticky='nw')
+        checksettings_toggle.grid(column=0, row=10, columnspan=3, sticky='nw')
 
-        checksettings_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=3)
-        checksettings_text.grid(column=0, row=8, columnspan=5, pady=5)
-        checksettings_text.insert('end', "Checks if following are enabled and if not, enables them automatically: "
-                                        "drag & drop, disable nudge mode, auto start. Checking is done only once in "
-                                        "a session, after entering a map first time: thus, check status resets only if "
-                                        "you restart the entire program.")
+        checksettings_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=2)
+        checksettings_text.grid(column=0, row=11, columnspan=5, pady=5)
+        checksettings_text.insert('end', "Checks and automatically enables following settings in-game: drag & drop, "
+                                    "disable nudge mode, auto start.")
         checksettings_text['state'] = 'disabled'
 
         record_toggle = tk.Checkbutton(self.settings_window, text="Record round times and update plan version", 
                                        anchor='nw', onvalue='On', 
                                        offvalue='Off', pady=5, padx=18, variable=self.record_time,
                                        command=self.change_record_status)
-        record_toggle.grid(column=0, row=9, columnspan=3, sticky='nw')
+        record_toggle.grid(column=0, row=12, columnspan=3, sticky='nw')
 
         record_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=3)
-        record_text.grid(column=0, row=10, columnspan=5, pady=5)
-        record_text.insert('end', "Records all round times during plan execution and saves them time_data.json. "
-                            "Current version value is also stored. Used in:\n"
-                            "- to display a 2d time plot under \'Show Plot\',\n"
-                            "- to update version in info panel which confirms the plan \n"
-                            "  can be finished on current game version.\n"
-                            "Bot must finish all rounds without a single defeat and return to menu "
-                            "screen, otherwise no data is stored. Previous version & time data for "
-                            "current plan gets overwritten each time, making updating values easy." 
+        record_text.grid(column=0, row=13, columnspan=5, pady=5)
+        record_text.insert('end', "Records all round times during plan execution and updates them in time_data.json. "
+                            "Current version value is also stored. Data is only saved if plan finishes. "
+                            "Time data is used under \'Show Plot\' and version is used in plan info panel to "
+                            "confirm the plan can be finished on current game version." 
                             )        
         record_text['state'] = 'disabled'
         
@@ -148,24 +164,25 @@ class SettingsWindow:
                               text='o--------------------------------------o\n'
                                    '|  Advanced (for debugging/testing)  |\n'
                                    'o--------------------------------------o')
-        debug_text.grid(column=0, columnspan=2, row=11, sticky='w', padx=5, pady=(15, 1))
+        debug_text.grid(column=0, columnspan=2, row=14, sticky='w', padx=5, pady=(15, 1))
         
         time_limit_label = tk.Label(self.settings_window, text='Ocr time limit')
-        time_limit_label.grid(column=0, row=12, sticky='se', padx=(1,21), pady=(5,1))
+        time_limit_label.grid(column=0, row=15, sticky='se', padx=(1,21), pady=(5,1))
         time_limit_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.time_limit)
-        time_limit_current_value.grid(column=1, row=12, sticky='sw', padx=1, pady=(5,1))
+        time_limit_current_value.grid(column=1, row=15, sticky='sw', padx=1, pady=(5,1))
 
         self.time_limit_entry = tk.Entry(self.settings_window, width=10)
-        self.time_limit_entry.grid(column=0, row=13, sticky='e', pady=(1,10), padx=(21,31))
+        self.time_limit_entry.grid(column=0, row=16, sticky='e', pady=(1,10), padx=(21,31))
         time_limit_button = tk.Button(self.settings_window, text="Update time limit", anchor='w', padx=5,
                                            command=self.set_time_limit_value)
-        time_limit_button.grid(column=1, row=13, sticky='w', pady=(1,10))
+        time_limit_button.grid(column=1, row=16, sticky='w', pady=(1,10))
 
-        time_limit_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=3)
-        time_limit_text.grid(column=0, row=14, columnspan=5)
+        time_limit_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=2)
+        time_limit_text.grid(column=0, row=17, columnspan=5)
         time_limit_text.insert('end', "Time limit, in seconds, until bot gives up on trying to place/upgrade a monkey "
                                 "or search for the next round and returns to menu, halting current plan. Only needed "
-                                "if bot ocr gets stuck; a high value of 300 or greater is recommended for normal use.")
+                                "if fails to detect text and gets stuck. A high value of 300 or greater is recommended "
+                                "for normal use.")
         time_limit_text['state'] = 'disabled'
 
         delta_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
@@ -173,7 +190,7 @@ class SettingsWindow:
                                                 onvalue='On', offvalue='Off', pady=5, padx=18, 
                                                 variable=self.delta_ocrtext,
                                                 command=self.change_deltaocr_status)
-        delta_ocrtext_toggle.grid(column=0, row=15, columnspan=3, sticky='nw')
+        delta_ocrtext_toggle.grid(column=0, row=18, columnspan=3, sticky='nw')
 
         substring_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
                                                 text="Print ocr substring text values in monitoring window", 
@@ -181,7 +198,7 @@ class SettingsWindow:
                                                 onvalue='On', offvalue='Off', pady=5, padx=18, 
                                                 variable=self.substring_ocrtext,
                                                 command=self.change_substringocr_status)
-        substring_ocrtext_toggle.grid(column=0, row=16, columnspan=3, sticky='nw')
+        substring_ocrtext_toggle.grid(column=0, row=19, columnspan=3, sticky='nw')
 
         self.update_variables()
 
@@ -330,7 +347,7 @@ class SettingsWindow:
     def set_version_value(self) -> None:
         """Saves current version value to gui_vars.json.
         
-        Accepted time values are integer from 1 to 999.
+        Accepted values are integer from 1 to 999.
         """
         try:
             val = int(self.version_entry.get())
@@ -339,6 +356,23 @@ class SettingsWindow:
                     gui_vars_dict: dict[str, Any] = json.load(f)
                 gui_vars_dict["version"] = val
                 self.version.set(' '+str(gui_vars_dict["version"])+' ')
+                with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+                    json.dump(gui_vars_dict, f, indent=4)
+        except ValueError:
+            ...
+
+    def set_retries_value(self) -> None:
+        """Saves current retries value to gui_vars.json.
+        
+        Accepted values are integer from 1 to 99.
+        """
+        try:
+            val = int(self.retry_entry.get())
+            if 1 <= val <= 99:
+                with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+                    gui_vars_dict: dict[str, Any] = json.load(f)
+                gui_vars_dict["retries"] = val
+                self.retries.set(' '+str(gui_vars_dict["retries"])+' ')
                 with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
                     json.dump(gui_vars_dict, f, indent=4)
         except ValueError:
