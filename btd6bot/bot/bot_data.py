@@ -16,6 +16,7 @@ class BotData:
     begin_r: int = 0
     end_r: int = 0
     paused: bool = False
+    victory: bool = False
 
     @staticmethod
     def set_data(round_time: float = 0,
