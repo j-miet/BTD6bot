@@ -285,6 +285,7 @@ class MonitoringWindow:
         customres_val: bool = gui_vars_dict["check_resolution"]
         resolution_val: list[int] = list(map(int, gui_vars_dict["custom_resolution"].split('x')))
         windowed_val: bool = gui_vars_dict["windowed"]
+        retries_val: int = gui_vars_dict["retries"]
         w, h = pyautogui.size()
         self.res_check(customres_val, resolution_val, windowed_val, w, h)
         if customres_val:
@@ -297,17 +298,29 @@ class MonitoringWindow:
         if self.replay_val == 'On':
             while True:
                 for plan_index in range(len(self.all_plans)):
-                    self.execute(self.all_plans, plan_index)
-                print('>>>Replaying all maps in queue!\nStarting in... ')
+                    BotData.victory = False
+                    attempt_number = 1
+                    while attempt_number <= retries_val:
+                        self.execute(self.all_plans, plan_index)
+                        if BotData.victory:
+                            break
+                        attempt_number += 1
+                print('>>>Replaying all maps in queue.\nStarting in... ')
                 plan_index = 0
-                timing.counter(10)
+                timing.counter(5)
                 print()
         else:
             for plan_index in range(len(self.all_plans)):
-                self.execute(self.all_plans, plan_index)
-                self.monitor_run_button.configure(text='Run')
+                BotData.victory = False
+                attempt_number = 1
+                while attempt_number <= retries_val:
+                    self.execute(self.all_plans, plan_index)
+                    if BotData.victory:
+                        break
+                    attempt_number += 1
+            self.monitor_run_button.configure(text='Run')
             if len(self.all_plans) > 1:
-                print("All queued maps completed!\n")
+                print("All queued maps completed.\n")
     
     def execute(self, all_plans: list[str], index: int) -> None:
         """Updates monitoring box data before moving responsibility to set_plan module.
