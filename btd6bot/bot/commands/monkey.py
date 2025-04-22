@@ -294,7 +294,7 @@ class Monkey(_MonkeyConstants):
             # Primary
             case 'dart':
                 return hotkeys['dart monkey']
-            case 'boomer':
+            case 'boomer' | 'boomerang':
                 return hotkeys['boomerang']
             case 'bomb':
                 return hotkeys['bomb shooter']
@@ -309,7 +309,7 @@ class Monkey(_MonkeyConstants):
                 return hotkeys['sniper monkey']
             case 'sub':
                 return hotkeys['monkey sub']
-            case 'boat':
+            case 'boat' | 'buccaneer':
                 return hotkeys['monkey buccaneer']
             case 'ace':
                 return hotkeys['monkey ace']
@@ -326,7 +326,7 @@ class Monkey(_MonkeyConstants):
                 return hotkeys['super monkey']
             case 'ninja':
                 return hotkeys['ninja monkey']
-            case 'alch': 
+            case 'alch' | 'alchemist': 
                 return hotkeys['alchemist']
             case 'druid': 
                 return hotkeys['druid']
@@ -335,13 +335,13 @@ class Monkey(_MonkeyConstants):
             # Support
             case 'farm':
                 return hotkeys['banana farm']
-            case 'spike':
+            case 'spike' | 'spac':
                 return hotkeys['spike factory']
             case 'village': 
                 return hotkeys['monkey village']
-            case 'engineer':
+            case 'engineer' | 'engi':
                 return hotkeys['engineer monkey']
-            case 'beast': 
+            case 'beast' | 'handler': 
                 return hotkeys['beast handler']
         print("HOTKEY NOT FOUND")
         return "Error"
