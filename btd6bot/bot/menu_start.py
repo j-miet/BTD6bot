@@ -19,6 +19,7 @@ import pynput
 from bot import kb_mouse
 from bot.commands.flow import AutoStart
 from bot.commands.hero import Hero
+from bot.commands.monkey import Monkey
 from bot.bot_vars import BotVars
 import bot.hotkeys
 from bot.kb_mouse import ScreenRes
@@ -189,6 +190,10 @@ def _choose_mode(m: str) -> None:
         kb_mouse.click(MouseLocations.MODES['bottom_right'])
     kb_mouse.click(MouseLocations.SAVE_OVERRIDE)  # if a previous save exists, overwrite it.
 
+def _reset_global_targeting() -> None:
+    Monkey._wingmonkey = 0
+    Monkey._elite_sniper = 0
+
 def _update_external_variables(begin_r: int, end_r: int) -> None:
     """Initializes all external class-level variables used within bot package.
     
@@ -204,6 +209,7 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
     AutoStart.called_forward = False
     PauseControl.pause_length = 0
     BotVars.paused = False
+    _reset_global_targeting()
     try:
         with open(pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
@@ -234,6 +240,26 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
     except ValueError:
         print("Unable to read at least one of the gui_vars.json keys. Defaulting to bot_vars initial values.")
 
+def _start_plan() -> None:
+    """Resets counter if mouse moves during it."""
+    print('Starting plan in...', end=' ')
+    timer = 3
+    x, y = pyautogui.position()
+    while timer > 0:
+        for i in range(3, 0, -1):
+            if (x, y) != tuple(pyautogui.position()):
+                print("\nMouse moved, reseting timer!")
+                print('Starting plan in...', end=' ')
+                time.sleep(0.1)
+                timer = 3
+                x, y = pyautogui.position()
+                break
+            print(i, end=' ')
+            time.sleep(1)
+            timer -= 1
+    print()
+    print('--> *Bot running*')
+
 def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, hero: str) -> tuple[int, int]:
     """Sets up pre-game conditions for the plan by choosing correct hero, map, difficulty and game mode.
 
@@ -254,9 +280,7 @@ def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, 
     print('Searching for main menu screen...')
     while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
         time.sleep(0.3)
-    print('Starting plan in...', end=' ')
-    timing.counter(3)
-    print('--> *Bot running*')
+    _start_plan()
     _choose_hero(hero)
     _choose_map(map_name)
     _choose_diff(diff)
