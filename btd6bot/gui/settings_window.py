@@ -121,17 +121,6 @@ class SettingsWindow:
                                     command=self.set_retries_value)
         retry_button.grid(column=1, row=8, sticky='w', pady=(1,10))
 
-        retry_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=2)
-        retry_text.grid(column=0, row=9, columnspan=5, pady=5)
-        retry_text.insert('end', "Amount of attemps bot tries on on any plan before skipping it. If plan finishes "
-                            "succesfully, however, bot proceeds normally. Useful for getting black borders on "
-                            "harder maps\n:" 
-                            "-enable queue mode and set this value as, say 5, so that bot won't immediately skip over " 
-                            "a plan in case rng causes an defeat.\n"
-                            "-if bot succeeds, it will continue to next plan in queue."
-                            )        
-        retry_text['state'] = 'disabled'
-
         checksettings_toggle = tk.Checkbutton(self.settings_window, 
                                                 text="Update esc menu settings automatically", anchor='nw', 
                                                 onvalue='On', offvalue='Off', pady=5, padx=18, 
@@ -139,26 +128,11 @@ class SettingsWindow:
                                                 command=self.change_checksettings_status)
         checksettings_toggle.grid(column=0, row=10, columnspan=3, sticky='nw')
 
-        checksettings_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=2)
-        checksettings_text.grid(column=0, row=11, columnspan=5, pady=5)
-        checksettings_text.insert('end', "Checks and automatically enables following settings in-game: drag & drop, "
-                                    "disable nudge mode, auto start.")
-        checksettings_text['state'] = 'disabled'
-
         record_toggle = tk.Checkbutton(self.settings_window, text="Record round times and update plan version", 
                                        anchor='nw', onvalue='On', 
                                        offvalue='Off', pady=5, padx=18, variable=self.record_time,
                                        command=self.change_record_status)
         record_toggle.grid(column=0, row=12, columnspan=3, sticky='nw')
-
-        record_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=3)
-        record_text.grid(column=0, row=13, columnspan=5, pady=5)
-        record_text.insert('end', "Records all round times during plan execution and updates them in time_data.json. "
-                            "Current version value is also stored. Data is only saved if plan finishes. "
-                            "Time data is used under \'Show Plot\' and version is used in plan info panel to "
-                            "confirm the plan can be finished on current game version." 
-                            )        
-        record_text['state'] = 'disabled'
         
         debug_text = tk.Label(self.settings_window, 
                               text='o--------------------------------------o\n'
@@ -176,14 +150,6 @@ class SettingsWindow:
         time_limit_button = tk.Button(self.settings_window, text="Update time limit", anchor='w', padx=5,
                                            command=self.set_time_limit_value)
         time_limit_button.grid(column=1, row=16, sticky='w', pady=(1,10))
-
-        time_limit_text = tk.Text(self.settings_window, wrap=tk.WORD, width=62, height=2)
-        time_limit_text.grid(column=0, row=17, columnspan=5)
-        time_limit_text.insert('end', "Time limit, in seconds, until bot gives up on trying to place/upgrade a monkey "
-                                "or search for the next round and returns to menu, halting current plan. Only needed "
-                                "if fails to detect text and gets stuck. A high value of 300 or greater is recommended "
-                                "for normal use.")
-        time_limit_text['state'] = 'disabled'
 
         delta_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
                                                 text="Print ocr delta text values in monitoring window", anchor='nw', 
