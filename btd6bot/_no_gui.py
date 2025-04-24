@@ -35,15 +35,15 @@ def run() -> None:
           '|   Welcome to gui-free BTD6bot   |\n'
           '===================================\n'
           '/////////\n'
-          '*This one doesn\'t support collection event/queue/replay modes, and won\'t allow user to\n '
-          'change settings/hotkeys. However, current values of gui settings/hotkeys are shared, so if you want to\n' 
-          'adjust them, do that in gui then run this version after.\n'
+          '*This one doesn\'t support collection event/queue/replay modes. It won\'t allow user to\n '
+          'change settings/hotkeys, but current values from gui are shared, so if you want to\n' 
+          'adjust them, do that in gui then run this version after. Also, no pause or reset buttons exist.\n'
           '/////////\n'
           '--Commands--\n'
           'plans = list all available plans.\n'
           'run plan_name = run the plan plan_name <- replace this with an existing plan name.\n'
           '                  >Note that when you use \'run ...\' command first time after running this script, \n '
-          '                   the ocr reader is loaded into memory which takes several seconds.\n'
+          '                   the ocr reader is loaded into memory which might take a bit, just wait.\n'
           '                  >Example: run dark_castleEasyStandard\n'
           'exit = exit program. Alternatively use F11 key: this hotkey works while bot is running, in case you \n'
           '     need a quick exit.\n'
@@ -63,8 +63,8 @@ def run() -> None:
                           "1. if this is your first plan of the session, wait for the ocr reader to initialize\n"
                           "2. number countdowns don't work in non-gui version so expect their entire result to pop\n" 
                           "   at random.\n" 
-                          "(reason for above is that gui handles print flushing of bot differently so all print \n"
-                          " statements must have set flush=False)\n"
+                          "(reason for above is that all print statements are build around gui version and must "
+                          "have flush=False)\n"
                           "============================================")
                     set_plan.plan_setup(plan_name)
                 else:
