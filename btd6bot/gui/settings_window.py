@@ -51,13 +51,11 @@ class SettingsWindow:
         self.record_time = tk.StringVar(value='Off')
         self.gamesettings = tk.StringVar(value='Off')
         self.time_limit = tk.StringVar(value=self.read_value("checking_time_limit"))
+        self.ocr_frequency = tk.StringVar(value=self.read_value("ocr_frequency"))
         self.delta_ocrtext = tk.StringVar(value='Off')
         self.substring_ocrtext = tk.StringVar(value='Off')
         self.windowed = tk.StringVar(value='Off')
 
-        tk.Label(self.settings_window, 
-                 text='# Text in boxes can be scrolled if there\'s more available #'
-                ).grid(column=1, row=0, columnspan=3)
         basic_text = tk.Label(self.settings_window, 
                               text='o-------o\n'
                                    '|  Basic  |\n'
@@ -151,12 +149,24 @@ class SettingsWindow:
                                            command=self.set_time_limit_value)
         time_limit_button.grid(column=1, row=16, sticky='w', pady=(1,10))
 
+
+        ocr_frequency_label = tk.Label(self.settings_window, text='Ocr frequency')
+        ocr_frequency_label.grid(column=0, row=18, sticky='se', padx=(1,21), pady=(5,1))
+        ocr_frequency_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.ocr_frequency)
+        ocr_frequency_current_value.grid(column=1, row=18, sticky='sw', padx=1, pady=(5,1))
+
+        self.ocr_frequency_entry = tk.Entry(self.settings_window, width=10)
+        self.ocr_frequency_entry.grid(column=0, row=19, sticky='e', pady=(1,10), padx=(21,31))
+        ocr_frequency_button = tk.Button(self.settings_window, text="Update frequency value", anchor='w', padx=5,
+                                           command=self.set_ocr_frequency_value)
+        ocr_frequency_button.grid(column=1, columnspan=2, row=19, sticky='w', pady=(1,10))
+
         delta_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
                                                 text="Print ocr delta text values in monitoring window", anchor='nw', 
                                                 onvalue='On', offvalue='Off', pady=5, padx=18, 
                                                 variable=self.delta_ocrtext,
                                                 command=self.change_deltaocr_status)
-        delta_ocrtext_toggle.grid(column=0, row=18, columnspan=3, sticky='nw')
+        delta_ocrtext_toggle.grid(column=0, row=20, columnspan=3, sticky='nw')
 
         substring_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
                                                 text="Print ocr substring text values in monitoring window", 
@@ -164,7 +174,7 @@ class SettingsWindow:
                                                 onvalue='On', offvalue='Off', pady=5, padx=18, 
                                                 variable=self.substring_ocrtext,
                                                 command=self.change_substringocr_status)
-        substring_ocrtext_toggle.grid(column=0, row=19, columnspan=3, sticky='nw')
+        substring_ocrtext_toggle.grid(column=0, row=21, columnspan=3, sticky='nw')
 
         self.update_variables()
 
@@ -293,23 +303,6 @@ class SettingsWindow:
         except ValueError:
             ...
 
-    def set_time_limit_value(self) -> None:
-        """Saves current time limit value to gui_vars.json.
-        
-        Accepted time values are integer from 1 (a second) to 3600 (an hour).
-        """
-        try:
-            val = int(self.time_limit_entry.get())
-            if 0 < val <= 3600:
-                with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-                    gui_vars_dict: dict[str, Any] = json.load(f)
-                gui_vars_dict["checking_time_limit"] = val
-                self.time_limit.set(' '+str(gui_vars_dict["checking_time_limit"])+' ')
-                with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
-                    json.dump(gui_vars_dict, f, indent=4)
-        except ValueError:
-            ...
-
     def set_version_value(self) -> None:
         """Saves current version value to gui_vars.json.
         
@@ -339,6 +332,40 @@ class SettingsWindow:
                     gui_vars_dict: dict[str, Any] = json.load(f)
                 gui_vars_dict["retries"] = val
                 self.retries.set(' '+str(gui_vars_dict["retries"])+' ')
+                with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+                    json.dump(gui_vars_dict, f, indent=4)
+        except ValueError:
+            ...
+
+    def set_time_limit_value(self) -> None:
+        """Saves current time limit value to gui_vars.json.
+        
+        Accepted time values are integer from 1 (a second) to 3600 (an hour).
+        """
+        try:
+            val = int(self.time_limit_entry.get())
+            if 0 < val <= 3600:
+                with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+                    gui_vars_dict: dict[str, Any] = json.load(f)
+                gui_vars_dict["checking_time_limit"] = val
+                self.time_limit.set(' '+str(gui_vars_dict["checking_time_limit"])+' ')
+                with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+                    json.dump(gui_vars_dict, f, indent=4)
+        except ValueError:
+            ...
+
+    def set_ocr_frequency_value(self) -> None:
+        """Saves current ocr frequency value to gui_vars.json.
+        
+        Accepted frequency values are float numbers from 0 (no extra delay) to 5 (five second added delay).
+        """
+        try:
+            val = float(self.ocr_frequency_entry.get())
+            if 0 <= val <= 5:
+                with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+                    gui_vars_dict: dict[str, Any] = json.load(f)
+                gui_vars_dict["ocr_frequency"] = val
+                self.ocr_frequency.set(' '+str(gui_vars_dict["ocr_frequency"])+' ')
                 with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
                     json.dump(gui_vars_dict, f, indent=4)
         except ValueError:
