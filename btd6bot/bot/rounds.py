@@ -55,7 +55,7 @@ class Rounds:
         'defeat_home_button_first_round': (0.38, 0.75)
         }
     
-    DEFEAT_CHECK_FREQUENCY = 9
+    DEFEAT_CHECK_FREQUENCY = 12
 
     begin_round: int = 0
     end_round: int = 0
@@ -241,19 +241,29 @@ class Rounds:
                 forward()
             total_time = times.current_time()
             defeat_check = 1
-            while not strong_substring_check(str(current_round)+'/'+str(Rounds.end_round), Rounds.CURRENT_ROUND, 
-                                             OCR_READER):
-                times.pause_bot()
-                if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
-                    defeat_check = 1
-                if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
-                    timing.counter(3)
-                    kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
-                    time.sleep(0.5)
-                    kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
-                    print('Plan was unable to finish.\n')
-                    return Rounds.end_round+1
-                defeat_check += 1
+            while True:
+                round_value = strong_substring_check(str(current_round)+'/'+str(Rounds.end_round), 
+                                                     Rounds.CURRENT_ROUND, OCR_READER)
+                if not round_value[0]:
+                    times.pause_bot()
+                    if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
+                        defeat_check = 1
+                    if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
+                        timing.counter(3)
+                        kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
+                        time.sleep(0.5)
+                        kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
+                        print('Plan was unable to finish.\n')
+                        return Rounds.end_round+1
+                    if '/' in round_value[1]:
+                        try:
+                            if int(round_value[1].split('/')[0]) > current_round:
+                                break
+                        except ValueError:
+                            ...
+                    defeat_check += 1
+                else:
+                    break
             times.time_print(Rounds.current_round_begin_time, times.current_time(), f'Round {current_round-1}')
             print('===Current round:', current_round, '===')
         times.pause_bot()
