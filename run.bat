@@ -1,1 +1,1 @@
-python btd6bot/main.py
+python btd6bot
