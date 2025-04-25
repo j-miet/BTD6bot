@@ -18,7 +18,7 @@ concern with a slower program such as this bot.
 
 CPU-wise, ocr is quite resource-heavy if no pic is found. For example, if you start program, but put main menu screen 
 away, it tries to search word 'play' constantly. That's why an artificial pause is introduced with time.sleep, both to 
-start menu search but also in general, known as READ_FILE_FREQUENCY. But even with this, CPU usage will likely jump up 
+start menu search but also in general, known as read_file_frequency. But even with this, CPU usage will likely jump up 
 a lot. Easyocr suggests using GPU support as it will increase your ocr performance A LOT: this is because easyocr is 
 build around PyTorch library, which has CUDA support for modern (Nvidia) GPUs. However, I've designed this bot around 
 the CPU version of ocr, so it will work on any system capable of running BTD6. It's just that (as stated before) CPU 
@@ -40,7 +40,6 @@ import json
 import pathlib
 import time
 
-from PIL import Image
 import pyautogui
 from numpy import array, repeat
 
@@ -56,38 +55,37 @@ class OcrValues:
     """Wrapper class: constants required for optical character recognition tools.
 
     Attributes:
-        READ_FILE_FREQUENCY (float, class attribute):
+        OCR_IMAGE_PATH (pathlib.PATH, class attribute):
+            Folder location that stores temporary ocr images. Images are constantly overwritten as ocr process repeats 
+            screenshotting and reading text from screenshot image.
+        DELTA (float, class attribute):
+            Controls OCR string matching accuracy in strong_delta_check for general strings - upgrade string are 
+            handled separately. Delta value itself is included i.e. 0.8 means that all deltas on closed interval 
+            [0.8, 1] are valid.
+        OCR_UPGRADE_DATA (dict[str, list[str, float]], class attribute):
+            Contains all manual upgrade names and their respective deltas for strong_delta_check. Each key 
+            is a identifier for monkey and crosspath, with values being the ocr data. For example,
+            OCR_UPGRADE_DATA['dart 1-x-x'] would return something similar to ["sharp shots", 0.8].
+
+        read_file_frequency (float, class attribute):
             Text recognition check rate in both find_text and check_upg_text: lower number increases rate of checking, 
             but also increases CPU usage significantly. Frequency itself is just a pause timer in seconds so 1 equals 
             to ~1 check a second, but this doesh't include the other part of process like screenshotting, reading text 
             and comparing text. This means the actual frequence to checks ratio diminishes greatly with smaller value 
             i.e. 0.01 doesn't match to 100 checks per second.
 
-        DELTA (float, class attribute):
-            Controls OCR string matching accuracy in strong_delta_check for general strings - upgrade string are 
-            handled separately. Delta value itself is included i.e. 0.8 means that all deltas on closed interval 
-            [0.8, 1] are valid.
-
-        OCR_UPGRADE_DATA (dict[str, list[str, float]], class attribute):
-            Contains all manual upgrade names and their respective deltas for strong_delta_check. Each key 
-            is a identifier for monkey and crosspath, with values being the ocr data. For example,
-            OCR_UPGRADE_DATA['dart 1-x-x'] would return something similar to ["sharp shots", 0.8].
-
-        OCR_IMAGE_PATH (pathlib.PATH, class attribute):
-            Folder location that stores temporary ocr images. Images are constantly overwritten as ocr process repeats 
-            screenshotting and reading text from screenshot image.
     """
-    READ_FILE_FREQUENCY: float = 0.01
-    DELTA: float = 0.75
-
     OCR_IMAGE_PATH: pathlib.Path = pathlib.Path(__file__).parent.parent.parent/'Files'/'ocr temp'
-    _log_ocr_deltas: bool = False
+    DELTA: float = 0.75
 
     @staticmethod
     def _get_ocr_strings() -> dict[str, list[str, float]]:
         with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'ocr_upgrade_data.json') as f:
             return json.load(f)
     OCR_UPGRADE_DATA = _get_ocr_strings()
+
+    read_file_frequency: float = 0.01
+    _log_ocr_deltas: bool = False
 
 def get_pixelcolor(x: float, y: float) -> tuple[int, int, int]:
     """Returns rgb color tuple of a coordinate location.
@@ -268,7 +266,7 @@ def weak_substring_check(input_str: str, coords: tuple[float, float, float, floa
         print("\nText: "+text.lower()+'\nInput: '+input_str.lower())
     if len(text) != 0 and text.lower().find(input_str.lower()) != -1:
         return True
-    time.sleep(OcrValues.READ_FILE_FREQUENCY)
+    time.sleep(OcrValues.read_file_frequency)
     return False
 
 def strong_delta_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader, 
@@ -353,10 +351,11 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
                 print('\n-Input: '+input_str.lower()+'\n-Text: '+text.lower()+'\n-Delta: '+str(r))
             if r >= OcrValues.DELTA:
                 return True
-    time.sleep(OcrValues.READ_FILE_FREQUENCY)
+    time.sleep(OcrValues.read_file_frequency)
     return False
 
-def strong_substring_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader) -> bool:
+def strong_substring_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader
+                           ) -> tuple[bool, str]:
     """Attemps to find inputed string from screenshot ocr string by substring matching with black and white text box.
     
     Middle ground for weak_substring_check and strong_delta_check: uses strong_image_ocr to get black and white text
@@ -376,14 +375,16 @@ def strong_substring_check(input_str: str, coords: tuple[float, float, float, fl
         reader: An easyocr.Reader object that handles reading text from image. Loaded from ocr_reader.py.
 
     Returns:
-        A boolean value depending on if the substring matched ocr string or not.
+        A tuple of boolean value and found ocr string in lowercase. Boolean is True if text is found as substring in 
+            input, otherwise False.
     """
     (tl_x, tl_y) = kb_mouse.pixel_position((coords[0], coords[1]))
     (br_x, br_y) = kb_mouse.pixel_position((coords[2], coords[3]))
     text = strong_image_ocr((tl_x, tl_y, br_x, br_y), reader)
+    text_lower = text.lower()
     if BotVars.print_substring_ocrtext:
-        print("\nText: "+text.lower()+'\nInput: '+input_str.lower())
-    if len(text) != 0 and text.lower().find(input_str.lower()) != -1:
-        return True
-    time.sleep(OcrValues.READ_FILE_FREQUENCY)
-    return False
+        print("\nText: "+text_lower+'\nInput: '+input_str.lower())
+    if len(text) != 0 and text_lower.find(input_str.lower()) != -1:
+        return (True, text_lower)
+    time.sleep(OcrValues.read_file_frequency)
+    return (False, text_lower)
