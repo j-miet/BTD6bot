@@ -42,7 +42,6 @@ def commands_doctest() -> None:
     print()
 
     import doctest
-    BotVars.checking_time_limit = 10
     doctest.run_docstring_examples(Monkey, globals()); print('Monkey checked')
     doctest.run_docstring_examples(Monkey.upgrade, globals()); print('Monkey.upgrade checked')
     doctest.run_docstring_examples(Monkey.target, globals()); print('Monkey.target checked')
