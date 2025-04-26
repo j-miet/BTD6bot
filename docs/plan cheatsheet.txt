@@ -1,20 +1,25 @@
 [commands]
-Monkey(name, pos_x, pos_y)				-see [monkeys] below for name values. cpos_x,cpos_y have default value None.
-  .target(set_target, x, y, cpos_x, cpos_y)		-see [targeting] below for set_target values
-  .upgrade(set_upg, cpos_x, cpos_y)			-set_upg is always a list, even if only a single upgrade e.g. ['1-0-0']
-  .special(s, x, y, cpos_x, cpos_y)			-'s' has values 1, 2. Default is 1.
+Monkey(name, pos_x, pos_y)				    #see [monkeys] below for name values. cpos_x,cpos_y have default value None.
+  .target(set_target, x, y, cpos_x, cpos_y)	#see [targeting] below for set_target values
+  .upgrade(set_upg, cpos_x, cpos_y)			#set_upg is always a list, even if only a single upgrade e.g. ['1-0-0']
+  .special(s, x, y, cpos_x, cpos_y)			#'s' has values 1, 2. Default is 1.
   .sell()
+  .target_robo(direction, clicks, cpos_x, cpos_y)   #you have to manually track current targeting
+  .merge(x, y, cpos_x, cpos_y)                      #merge this beast with another beast on location (x,y)
+  .center(x, y, cpos_x, cpos_y)                     #set ace centered path on location (x,y)
 Hero(x_coordinate, y_coordinate)
-  .target(set_target, x, y, cpos_x, cpos_y)		-see [targeting] below for set_target values
+  .target(set_target, x, y, cpos_x, cpos_y)		    #see [targeting] below for set_target values
   .special(s, x, y, cpos_x, cpos_y)
   .sell()
-  .force_target()					-only use for this so far is to update bot targeting to Etienne lvl 12 Zone control
+  .force_target()					#only use for this so far is to update bot targeting to Etienne lvl 12 Zone control
+  .shop(target_x, target_y, cpos_x, cpos_y)
+  .spellbook(spells, cpos_x cpos_y)
 ability(r, ability_number, timer)
 wait(timer)
-click(x, y)						-just a single mouse click, meant to use for environment interractions like object removing/clicking stuff on map
-begin(speed)
+click(x, y)						            #just a single mouse click, use to interract with map objects
+forward(speed)                              #speed value is 1 or 2, depending on amount of clicks on forward button
 change_autostart()
-end_round(timer)                                        -only for plans with autostart disabled
+end_round(timer)                            #use only when autostart is disabled
 
 ------------------------------------------------------------------------------------------------
 
@@ -30,7 +35,7 @@ glue                      mortar              mermonkey
 
 ------------------------------------------------------------------------------------------------
 
-[heroes]		-you need to select hero in .py plan file. If no hero needed, type a single dash '-'
+[heroes]		-you need to select hero in .py plan file. If no hero needed, type a single dash '-' or leave empty
 Quincy
 Gwen
 Striker
@@ -62,7 +67,7 @@ sniper
 sub
 boat
 wizard
-super (no in-game hotkey implemented for robo monkey's second hand targeting, so it stays on 'last' always)
+super (for robo monkey's second had, use target_robo command)
 alch
 druid
 mermonkey
@@ -77,97 +82,122 @@ heli: "lock", "pursuit"
 
 ace: "circle", "infinite", "eight", "wingmonkey", "centered"
   >"centered" requires x-x-3+
-  >"wingmonkey" requires monkey knowledge
+  >"wingmonkey" requires monkey knowledge --> to enable this, use 'ace_wing' for first ace you place instead of just 'ace'
 
-mortar: cannot be targeted via 'target', use .special(1, x_pos, y_pos) instead
+sniper: "elite"
+  >requires x-5-x sniper. All snipers can use 'elite' after this.
+
+mortar: cannot be targeted via 'target', use .special(1, x, y) instead
 
 dartling: "locked" 
-  >after initial placement, you need to use .special(1, x_pos, y_pos)
+  >after initial placement, you need to use .special(1, x, y)
 
 spike: "normal", "far", "close", "smart"
   >requires x-x-2+
 
 ------------------------------------------------------------------------------------------------
 
-[all map names (map_name)]          [all difficulties (Difficulty)]          [game modes (Mode)]
-monkey meadow                                                  Easy                     Standard
-in the loop                                                  Medium                      Primary
-middle of the road                                             Hard                    Deflation
-tree stump                                                                              Military
-town center                                                                           Apopalypse
-one two tree                                                                             Reverse
-scrapyard                                                                                  Magic
-the cabin                                                                              Double_hp
-resort                                                                                  Halfcash
-tinkerton                                                                              Alternate
-skates                                                                                Impoppable
-lotus island                                                                              Chimps
-candy falls
-winter park
+[all difficulties (Difficulty)]          [game modes (Mode)]
+Easy                     			                Standard
+Medium                      			             Primary
+Hard                    			               Deflation
+                        			                Military
+                                                  Apopalypse
+                                                     Reverse
+                                                       Magic
+                                                   Double_hp
+                                                    Halfcash
+                                                   Alternate
+                                                  Impoppable
+                                                      Chimps
+
+[all map names (map_name)]	# for map images, use spaces instead of underscores
+(Beginner)
+monkey_meadow
+in_the_loop
+middle_of_the_road
+spa_pits
+tree_stump
+town_center
+one_two_tree
+scrapyard
+the_cabin
+resort
+tinkerton
+skates
+lotus_island
+candy_falls
+winter_park
 carved
-park path
-alpine run
-frozen over
+park_path
+alpine_run
+frozen_over
 cubism
-four circles
+four_circles
 hedge
-end of the road
+end_of_the_road
 logs
-sulfur springs
-luminous cove
-water park
+sulfur_springs
+
+(Intermediate)
+luminous_cove
+water_park
 polyphemus
-covered garden
+covered_garden
 quarry
-quiet street
-bloonarius prime
+quiet_street
+bloonarius_prime
 balance
 encrypted
 bazaar
-adora's temple
-spring spring
+adora's_temple
+spring_spring
 kartsndarts
-moon landing
+moon_landing
 haunted
 downstream
-firing range
+firing_range
 cracked
 streambed
 chutes
 rake
-spice islands
-castle revenge
-dark path
+spice_islands
+
+(Advanced)
+enchanted_glade
+last_resort
+ancient_portal
+castle_revenge
+dark_path
 erosion
-midnight mansion
-sunken columns
-x factor
+midnight_mansion
+sunken_columns
+x_factor
 mesa
 geared
 spillway   
 cargo
-pat's pond
+pat's_pond
 peninsula
-high finance
-another brick
-off the coast
+high_finance
+another_brick
+off_the_coast
 cornfield
 underground
-glacial trail
-dark dungeons
+
+(Expert)
+glacial_trail
+dark_dungeons
 sanctuary
 ravine
-flooded valley
+flooded_valley
 infernal
-bloody puddles
+bloody_puddles
 workshop
 quad
-dark castle
+dark_castle
 muddy puddles
 ouch
-ancient portal
-last resort
-enchanted glade
-spa pits
 
-Examples: middle_of_the_roadMediumApopalypse.py, quadHardDouble_hp.py, cubismEasyStandard 
+---
+Examples: middle_of_the_roadMediumApopalypse.py, quadHardDouble_hp.py, cubismEasyStandard.py
