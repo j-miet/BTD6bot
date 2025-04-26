@@ -100,10 +100,11 @@ class MonitoringWindow:
         self.textbox.grid(column=0, columnspan=2, row=0, rowspan=4, sticky='n')
         self.textbox.insert('end', "Welcome to BTD6bot!\n"
                             "Make sure that:\n"
-                            ">Game language is set as ENGLISH\n"
+                            ">Game language is set to ENGLISH\n"
                             ">Game resolution has aspect ratio 16:9\n"
                             ">Game is preferably in fullscreen (windowed might work)\n"
                             ">Bot hotkeys match to your in-game equivalents\n"
+                            ">Your Btd6 game window is on your main monitor"
                             "------\n"
                             "~Press 'Run'/your 'start-stop' hotkey to start bot!\n"
                             "~Press 'Stop'/'start-'stop' again to stop & RESET bot.\n If queue mode is enabled, "
@@ -295,7 +296,13 @@ class MonitoringWindow:
             w, h = pyautogui.size()
             print('[Resolution] '+str(w)+'x'+str(h))
         
-        if self.replay_val == 'On':
+        if gui_vars_dict["ocr_adjust_deltas"]:
+            print(".-------------------------.\n"
+                  "| Ocr adjust mode enabled |\n"
+                  ".-------------------------.\n")
+            set_plan.run_delta_adjust()
+            self.monitor_run_button.configure(text='Run')
+        elif self.replay_val == 'On':
             while True:
                 for plan_index in range(len(self.all_plans)):
                     BotData.victory = False
