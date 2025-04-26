@@ -71,7 +71,6 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 from matplotlib.widgets import Slider
 
-import gui.roundplot.calculate as calculate
 import gui.gui_paths as gui_paths
 from set_plan import get_rounds
 from utils import plan_data
@@ -201,19 +200,8 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
     winmanager.window.state('zoomed') # type: ignore
     fig.suptitle(f'Round commands and round times of current plan "{plan_name}".')
 
-    # TODO: Axis 'income and costs'
-    #costs = calculate.get_costs(plan_name, round_labels, rounds)
-    # incomes = calculate.get_incomes(round_labels, rounds)
-    #ax_money = fig.add_subplot(gs[0,0])
-    #ax_money.ticklabel_format(style='plain', useOffset=False)
-    #f = [t for t in all_labels]
-    #ax_money.set_xlabel('[WORK IN PROGRESS]')
-    #ax_money.set_ylabel(' ')
-    #ax_money.plot(all_labels, f, 'o--')
-
     # Axis 'round times'
     try:
-        # move this block starting here...
         with open(gui_paths.FILES_PATH/'time_data.json') as f:
             time_data = json.load(f)[plan_name]
         plan_rounds: list[str] = time_data["rounds"]
@@ -225,8 +213,6 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
             secs = int(t_str[1])
             t_in_seconds = mins*60+secs
             plan_times_in_seconds.append(t_in_seconds)
-        # ...and ending here, under calculate.py.
-        # Return the values plan_times_in_seconds & time_data["time_total"]
 
         ax_time = fig.add_subplot(2,1,1)
         ax_time.set_title(f'Round times - Total: {time_data["time_total"]}')
@@ -304,13 +290,13 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
     ax_rounds.axis((slider_min_val+0.08, slider_min_val+0.35, -1.0, 2.0))
     round_slider.valtext.set_visible(False) # hide slider value: as empty rounds are not displayed, shows wrong value.
 
-    def update(val: float) -> None:
-        #Updates rounds axis (=in this case, round text position) based on current slider position.
+    def _update(val: float) -> None:
+        # Updates rounds axis (=in this case, round text position) based on current slider position.
         pos = val
         ax_rounds.axis((pos+0.08, pos+0.35, -1.0, 2.0))
         fig.canvas.draw_idle()
 
-    round_slider.on_changed(update)
+    round_slider.on_changed(_update)
     plt.show()
 
 
