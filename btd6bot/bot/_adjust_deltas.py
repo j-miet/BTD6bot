@@ -221,7 +221,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
         guivars_dict: dict[str, Any] = json.load(guivars_f)
     guivars_dict["ocr_adjust_deltas"] = False   # automatically reset setting toggle after update
     with open(pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json', 'w') as guivars_f:
-        json.dump(guivars_dict, guivars_f, indent=2)
+        json.dump(guivars_dict, guivars_f, indent=4)
 
     os.remove(_TEMPFILE_PATH)   # delete .temp_upg_deltas.json
     print("-Ocr upgrade deltas updated.\n"
