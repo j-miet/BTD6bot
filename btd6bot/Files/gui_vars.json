@@ -10,5 +10,7 @@
     "ocr_frequency": 0.01,
     "checking_time_limit": 300,
     "delta_ocrtext": false,
-    "substring_ocrtext": false
+    "substring_ocrtext": false,
+    "ocr_adjust_deltas": false,
+    "adjust_args": "res=1920x1080 monkeys=all win=0 delta=4"
 }
