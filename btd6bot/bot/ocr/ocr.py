@@ -330,7 +330,7 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
                 print("-Match delta: "+str(d))
                 if OcrValues._log_ocr_deltas:   # use only with tools/adjust_deltas
                     with open(
-                        pathlib.Path(__file__).parent.parent.parent.parent/'tools'/'adjust_deltas'/'ocr_deltas.json'
+                        pathlib.Path(__file__).parent.parent.parent/'Files'/'.temp_upg_deltas.json'
                         ) as f:
                         temp_dict: dict[str, Any] = json.load(f)
                     if len(str(d)) <= 4:
@@ -339,7 +339,7 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
                         add_dict = {upg_match: [match_str, round(d-0.005, 2)]}
                     temp_dict.update(add_dict)
                     with open(
-                        pathlib.Path(__file__).parent.parent.parent.parent/'tools'/'adjust_deltas'/'ocr_deltas.json',
+                        pathlib.Path(__file__).parent.parent.parent/'Files'/'.temp_upg_deltas.json',
                         'w') as f:
                         json.dump(temp_dict, f, indent=2)
                     return True
