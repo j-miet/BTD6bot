@@ -55,38 +55,39 @@ class SettingsWindow:
         self.delta_ocrtext = tk.StringVar(value='Off')
         self.substring_ocrtext = tk.StringVar(value='Off')
         self.windowed = tk.StringVar(value='Off')
+        self.ocr_adjust = tk.StringVar(value='Off')
 
         basic_text = tk.Label(self.settings_window, 
                               text='o-------o\n'
                                    '|  Basic  |\n'
                                    'o-------o')
-        basic_text.grid(column=0, columnspan=2, row=1, sticky='w', padx=5)
+        basic_text.grid(column=0, columnspan=2, row=0, sticky='w', padx=5)
 
         resolution_toggle = tk.Checkbutton(self.settings_window, 
                                             text="Enable custom resolution", anchor='nw', 
                                             onvalue='On', offvalue='Off', pady=5, padx=18, 
                                             variable=self.resolution,
                                             command=self.change_resolution_status)
-        resolution_toggle.grid(column=0, row=2, columnspan=3, sticky='nw')
+        resolution_toggle.grid(column=0, row=1, columnspan=3, sticky='nw')
 
         resolution_label = tk.Label(self.settings_window, text='Current resolution')
-        resolution_label.grid(column=2, row=2, sticky='sw', padx=1, pady=(1,10))
+        resolution_label.grid(column=2, row=1, sticky='sw', padx=1, pady=(1,10))
         resolution_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.resolution_value)
-        resolution_current_value.grid(column=3, row=2, sticky='sw', padx=(1,35), pady=(1,10))
+        resolution_current_value.grid(column=3, columnspan=2, row=1, sticky='sw', padx=(1,35), pady=(1,10))
 
         self.resolution_width_entry = tk.Entry(self.settings_window, width=10)
-        self.resolution_width_entry.grid(column=0, row=3, sticky='e', pady=(1,10), padx=(5,31))
+        self.resolution_width_entry.grid(column=0, row=2, sticky='e', pady=(1,10), padx=(21,31))
         self.resolution_width_entry.insert(0, "width")
         self.resolution_width_entry.bind('<FocusIn>', lambda _: self._clear_entry())
         self.resolution_width_entry.config(fg='grey')
         self.resolution_height_entry = tk.Entry(self.settings_window, width=10)
-        self.resolution_height_entry.grid(column=1, row=3, sticky='w', pady=(1,10), padx=(1,1))
+        self.resolution_height_entry.grid(column=1, row=2, sticky='w', pady=(1,10), padx=(1,31))
         self.resolution_height_entry.insert(0, "height")
         self.resolution_height_entry.bind('<FocusIn>', lambda _: self._clear_entry())
         self.resolution_height_entry.config(fg='grey')
         resolution_button = tk.Button(self.settings_window, text="Update resolution", anchor='w', padx=5,
                                         command=self.set_resolution_value)
-        resolution_button.grid(column=2, row=3, sticky='w', pady=(1,10))
+        resolution_button.grid(column=2, columnspan=2, row=2, sticky='w', pady=(1,10))
 
         self.windowed_toggle = tk.Checkbutton(self.settings_window, 
                                             text="Windowed mode (BTD6 must be opened with -popupwindow "
@@ -95,78 +96,79 @@ class SettingsWindow:
                                             onvalue='On', offvalue='Off', pady=5, padx=18, 
                                             variable=self.windowed,
                                             command=self.change_windowed_status)
-        self.windowed_toggle.grid(column=0, row=4, columnspan=5, sticky='nw')
+        self.windowed_toggle.grid(column=0, row=3, columnspan=5, sticky='nw')
 
         version_label = tk.Label(self.settings_window, text='Game version')
-        version_label.grid(column=0, row=5, sticky='se', padx=(1,21), pady=(5,1))
+        version_label.grid(column=0, row=4, sticky='se', padx=(1,21), pady=(5,1))
         version_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.version)
-        version_current_value.grid(column=1, row=5, sticky='sw', padx=1, pady=(5,1))
+        version_current_value.grid(column=1, row=4, sticky='sw', padx=1, pady=(5,1))
 
         self.version_entry = tk.Entry(self.settings_window, width=10)
-        self.version_entry.grid(column=0, row=6, sticky='e', pady=(1,10), padx=(21,31))
+        self.version_entry.grid(column=0, row=5, sticky='e', pady=(1,10), padx=(21,31))
         version_button = tk.Button(self.settings_window, text="Update version", anchor='w', padx=5,
                                     command=self.set_version_value)
-        version_button.grid(column=1, row=6, sticky='w', pady=(1,10))
+        version_button.grid(column=1, row=5, sticky='w', pady=(1,10))
 
-        retry_label = tk.Label(self.settings_window, text='Retry attemps')
-        retry_label.grid(column=0, row=7, sticky='se', padx=(1,21), pady=(5,1))
+        retry_label = tk.Label(self.settings_window, text='Retries')
+        retry_label.grid(column=0, row=6, sticky='w', padx=(17,21), pady=(5,1))
         retry_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.retries)
-        retry_current_value.grid(column=1, row=7, sticky='sw', padx=1, pady=(5,1))
+        retry_current_value.grid(column=1, row=6, sticky='sw', padx=1, pady=(5,1))
 
         self.retry_entry = tk.Entry(self.settings_window, width=10)
-        self.retry_entry.grid(column=0, row=8, sticky='e', pady=(1,10), padx=(21,31))
+        self.retry_entry.grid(column=0, row=7, sticky='e', pady=(1,10), padx=(21,31))
         retry_button = tk.Button(self.settings_window, text="Update value", anchor='w', padx=5,
                                     command=self.set_retries_value)
-        retry_button.grid(column=1, row=8, sticky='w', pady=(1,10))
+        retry_button.grid(column=1, row=7, sticky='w', pady=(1,10))
 
         checksettings_toggle = tk.Checkbutton(self.settings_window, 
                                                 text="Update esc menu settings automatically", anchor='nw', 
                                                 onvalue='On', offvalue='Off', pady=5, padx=18, 
                                                 variable=self.gamesettings,
                                                 command=self.change_checksettings_status)
-        checksettings_toggle.grid(column=0, row=10, columnspan=3, sticky='nw')
+        checksettings_toggle.grid(column=0, row=8, columnspan=3, sticky='nw')
 
         record_toggle = tk.Checkbutton(self.settings_window, text="Record round times and update plan version", 
                                        anchor='nw', onvalue='On', 
                                        offvalue='Off', pady=5, padx=18, variable=self.record_time,
                                        command=self.change_record_status)
-        record_toggle.grid(column=0, row=12, columnspan=3, sticky='nw')
+        record_toggle.grid(column=0, row=9, columnspan=3, sticky='nw')
         
+
         debug_text = tk.Label(self.settings_window, 
-                              text='o--------------------------------------o\n'
-                                   '|  Advanced (for debugging/testing)  |\n'
-                                   'o--------------------------------------o')
-        debug_text.grid(column=0, columnspan=2, row=14, sticky='w', padx=5, pady=(15, 1))
+                              text='o------------o\n'
+                                   '|  Advanced  |\n'
+                                   'o------------o')
+        debug_text.grid(column=0, columnspan=2, row=10, sticky='w', padx=5, pady=(15, 1))
         
         time_limit_label = tk.Label(self.settings_window, text='Ocr time limit')
-        time_limit_label.grid(column=0, row=15, sticky='se', padx=(1,21), pady=(5,1))
+        time_limit_label.grid(column=0, row=11, sticky='se', padx=(1,21), pady=(5,1))
         time_limit_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.time_limit)
-        time_limit_current_value.grid(column=1, row=15, sticky='sw', padx=1, pady=(5,1))
+        time_limit_current_value.grid(column=1, row=11, sticky='sw', padx=1, pady=(5,1))
 
         self.time_limit_entry = tk.Entry(self.settings_window, width=10)
-        self.time_limit_entry.grid(column=0, row=16, sticky='e', pady=(1,10), padx=(21,31))
+        self.time_limit_entry.grid(column=0, row=12, sticky='e', pady=(1,10), padx=(21,31))
         time_limit_button = tk.Button(self.settings_window, text="Update time limit", anchor='w', padx=5,
                                            command=self.set_time_limit_value)
-        time_limit_button.grid(column=1, row=16, sticky='w', pady=(1,10))
+        time_limit_button.grid(column=1, row=12, sticky='w', pady=(1,10))
 
 
         ocr_frequency_label = tk.Label(self.settings_window, text='Ocr frequency')
-        ocr_frequency_label.grid(column=0, row=18, sticky='se', padx=(1,21), pady=(5,1))
+        ocr_frequency_label.grid(column=0, row=13, sticky='se', padx=(1,21), pady=(5,1))
         ocr_frequency_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.ocr_frequency)
-        ocr_frequency_current_value.grid(column=1, row=18, sticky='sw', padx=1, pady=(5,1))
+        ocr_frequency_current_value.grid(column=1, row=13, sticky='sw', padx=1, pady=(5,1))
 
         self.ocr_frequency_entry = tk.Entry(self.settings_window, width=10)
-        self.ocr_frequency_entry.grid(column=0, row=19, sticky='e', pady=(1,10), padx=(21,31))
+        self.ocr_frequency_entry.grid(column=0, row=14, sticky='e', pady=(1,10), padx=(21,31))
         ocr_frequency_button = tk.Button(self.settings_window, text="Update frequency value", anchor='w', padx=5,
                                            command=self.set_ocr_frequency_value)
-        ocr_frequency_button.grid(column=1, columnspan=2, row=19, sticky='w', pady=(1,10))
+        ocr_frequency_button.grid(column=1, columnspan=2, row=14, sticky='w', pady=(1,10))
 
         delta_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
                                                 text="Print ocr delta text values in monitoring window", anchor='nw', 
                                                 onvalue='On', offvalue='Off', pady=5, padx=18, 
                                                 variable=self.delta_ocrtext,
                                                 command=self.change_deltaocr_status)
-        delta_ocrtext_toggle.grid(column=0, row=20, columnspan=3, sticky='nw')
+        delta_ocrtext_toggle.grid(column=0, row=15, columnspan=3, sticky='nw')
 
         substring_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
                                                 text="Print ocr substring text values in monitoring window", 
@@ -174,7 +176,22 @@ class SettingsWindow:
                                                 onvalue='On', offvalue='Off', pady=5, padx=18, 
                                                 variable=self.substring_ocrtext,
                                                 command=self.change_substringocr_status)
-        substring_ocrtext_toggle.grid(column=0, row=21, columnspan=3, sticky='nw')
+        substring_ocrtext_toggle.grid(column=0, row=16, columnspan=3, sticky='nw')
+
+        ocr_autoadjust_toggle = tk.Checkbutton(self.settings_window, 
+                                               text="Auto-adjust ocr upgrade data the next time a plan is run", 
+                                                anchor='nw', onvalue='On', 
+                                                offvalue='Off', pady=5, padx=18, variable=self.ocr_adjust,
+                                                command=self.change_ocradjust_status)
+        ocr_autoadjust_toggle.grid(column=0, row=17, columnspan=3, sticky='nw')
+        self.ocr_autoadjust_entry = tk.Entry(self.settings_window, width=50)
+        self.ocr_autoadjust_entry.grid(column=0, columnspan=4, row=18, sticky='w', pady=(1,10), padx=(21,31))
+        self.ocr_autoadjust_button = tk.Button(self.settings_window, text="Set args", anchor='w', padx=5,
+                                           command=self.set_ocradjust_value)
+        self.ocr_autoadjust_button.grid(column=3, columnspan=2, row=18, sticky='w', pady=(1,10))
+        self.ocr_autoadjust_reset_button = tk.Button(self.settings_window, text="Reset args", anchor='w', padx=5,
+                                                command=self.reset_ocradjust_value)
+        self.ocr_autoadjust_reset_button.grid(column=4, row=18, sticky='w', padx=(1,20), pady=(1,10))
 
         self.update_variables()
 
@@ -199,7 +216,7 @@ class SettingsWindow:
             else:
                 self.windowed_toggle['state'] = 'disabled'
                 res = pyautogui.size()
-                self.resolution_value.set(' '+str(res[0])+' x '+str(res[1])+' ')
+                self.resolution_value.set(f' {res[0]} x {res[1]} ')
                 self.resolution_width_entry['state'] = 'disabled'
                 self.resolution_height_entry['state'] = 'disabled'
             if gui_vars_dict["windowed"]:
@@ -212,6 +229,19 @@ class SettingsWindow:
                 self.delta_ocrtext.set('On')
             if gui_vars_dict["substring_ocrtext"]:
                 self.substring_ocrtext.set('On')
+            if gui_vars_dict["ocr_adjust_deltas"]:
+                self.ocr_adjust.set('On')
+                self.ocr_autoadjust_entry['state'] = 'normal'
+                self.ocr_autoadjust_button['state'] = 'normal'
+                self.ocr_autoadjust_reset_button['state'] = 'normal'
+                self.ocr_autoadjust_entry.insert("end", gui_vars_dict["adjust_args"])
+            else:
+                self.ocr_autoadjust_button['state'] = 'disabled'
+                self.ocr_autoadjust_reset_button['state'] = 'disabled'
+                self.ocr_autoadjust_entry['state'] = 'normal'
+                self.ocr_autoadjust_entry.insert("end", gui_vars_dict["adjust_args"])
+                self.ocr_autoadjust_entry['state'] = 'disabled'
+
 
     def change_resolution_status(self) -> None:
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
@@ -267,7 +297,7 @@ class SettingsWindow:
             json.dump(gui_vars_dict, f, indent=4)
 
     def change_deltaocr_status(self) -> None:
-        """Changes ocr substring matching text display status based on toggle button value."""
+        """Changes ocr delta matching text display status based on toggle button value."""
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
         if self.delta_ocrtext.get() == 'On':
@@ -278,13 +308,30 @@ class SettingsWindow:
             json.dump(gui_vars_dict, f, indent=4)
 
     def change_substringocr_status(self) -> None:
-        """Changes ocr delta matching text display status based on toggle button value."""
+        """Changes ocr substring matching text display status based on toggle button value."""
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
         if self.substring_ocrtext.get() == 'On':
             gui_vars_dict["substring_ocrtext"] = True
         elif self.substring_ocrtext.get() == 'Off':
             gui_vars_dict["substring_ocrtext"] = False
+        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+            json.dump(gui_vars_dict, f, indent=4)
+
+    def change_ocradjust_status(self) -> None:
+        """Changes ocr upgrade data adjust status based on toggle button value."""
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+            gui_vars_dict: dict[str, Any] = json.load(f)
+        if self.ocr_adjust.get() == 'On':
+            self.ocr_autoadjust_entry['state'] = 'normal'
+            self.ocr_autoadjust_button['state'] = 'normal'
+            self.ocr_autoadjust_reset_button['state'] = 'normal'
+            gui_vars_dict["ocr_adjust_deltas"] = True
+        elif self.ocr_adjust.get() == 'Off':
+            self.ocr_autoadjust_entry['state'] = 'disabled'
+            self.ocr_autoadjust_button['state'] = 'disabled'
+            self.ocr_autoadjust_reset_button['state'] = 'disabled'
+            gui_vars_dict["ocr_adjust_deltas"] = False
         with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
             json.dump(gui_vars_dict, f, indent=4)
 
@@ -370,6 +417,28 @@ class SettingsWindow:
                     json.dump(gui_vars_dict, f, indent=4)
         except ValueError:
             ...
+
+    def set_ocradjust_value(self) -> None:
+        """Saves current ocr adjust data to gui_vars.json."""
+        val = self.ocr_autoadjust_entry.get()
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+            gui_vars_dict: dict[str, Any] = json.load(f)
+        gui_vars_dict["adjust_args"] = val
+        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+            json.dump(gui_vars_dict, f, indent=4)
+
+    def reset_ocradjust_value(self) -> None:
+        """Reset adjust arguments."""
+        res_raw = self.resolution_value.get().strip().split()
+        res = 'res='+res_raw[0]+'x'+res_raw[2]+' monkeys=all'
+        adjust_args = f'{res}'
+        if self.resolution.get() == 'On' and self.windowed.get() == 'On':
+            adjust_args += ' win=1'
+        else:
+            adjust_args += ' win=0'
+        adjust_args += ' delta=4'
+        self.ocr_autoadjust_entry.delete(0, "end")
+        self.ocr_autoadjust_entry.insert("end", adjust_args)
 
     def read_value(self, id_str: str) -> str:
         """Get current stored value from gui_vars.
