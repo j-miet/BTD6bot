@@ -1,24 +1,24 @@
 """
-[Plan Name] ravineHardChimps
-[Game Version] 48
 [Hero] Psi
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
 dart 0-3-0
-glue 2-2-4
-spike 3-0-3
-druid 1-3-0
-village 2-0-2
-alch 4-2-1
-wizard 5-2-0
-engineer 0-3-2
-bomb 4-2-0
 boomer 0-2-4
-mortar 0-0-4
+bomb 4-2-0
+glue 2-2-4
+
 sub 0-4-0
+mortar 0-0-4
+
+wizard 5-2-0
+alch 4-2-1
+druid 1-3-0
+
+spike 3-0-3
+village 2-0-2
+engineer 0-3-2
 _______________________________________
-Strategy: https://www.youtube.com/watch?v=9CoOJysEaTk
 """
 
 from._plan_imports import *
@@ -36,7 +36,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             dart2 = Monkey('dart', 0.5348958333333, 0.1759259259259)
             dart2.target('last')
             dart3 = Monkey('dart', 0.4484375, 0.9018518518519)
-            begin()
+            forward()
             click(0.5552083333333, 0.0935185185185, 23)
             dart3.upgrade(['0-1-0'])
             end_round()
@@ -149,7 +149,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             end_round()
         elif current_round == 40:
             wait(6)
-            druid1.target('strong') # only after moab is dead
+            druid1.target('strong')
             end_round()
         elif current_round == 41:
             spike2.upgrade(['1-0-2'])
@@ -258,7 +258,6 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             sub.upgrade(['0-1-0','0-2-0','0-3-0','0-4-0'])
             ability(4,14)
         elif current_round == 98:
-            mortar.special(1, 0.3692708333333, 0.0018518518519)
             mortar.special(1, 0.3682291666667, 0.0611111111111)
             ability(3)
             ability(1,14)
@@ -269,8 +268,8 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             sub2 = Monkey('sub', 0.5213541666667, 0.6)
             sub2.upgrade(['0-1-0','0-2-0','0-3-0'])
         elif current_round == 99:
-            ability(3,3)
-            ability(1,4)
+            ability(3,2)
+            ability(1,3.5)
             sub2.upgrade(['0-4-0'])
         elif current_round == 100:
             wizard.special(1, 0.4338541666667, 0.7259259259259)

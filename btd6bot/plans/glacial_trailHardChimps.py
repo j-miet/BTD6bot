@@ -1,23 +1,21 @@
 """
-[Plan Name] glacial_trailHardChimps
-[Game Version] 47
 [Hero] Sauda
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
 dart 5-2-0
-engineer 5-2-0
-druid 1-3-0
-mortar 0-2-3
-spike 2-0-5
-alch 4-2-0
-glue 0-2-4
 ice 5-2-0
-sub 0-4-0
-_______________________________________
-Strategy: https://www.youtube.com/watch?v=2OuH8JLDeBo
+glue 0-2-4
 
--Should be rng-free so black border is guaranteed.
+sub 0-4-0
+mortar 0-2-3
+
+alch 4-2-0
+druid 1-3-0
+
+spike 2-0-5
+engineer 5-2-0
+_______________________________________
 """
 
 from._plan_imports import *
@@ -41,9 +39,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             druid = Monkey('druid', 0.6135416666667, 0.9546296296296)
             druid.upgrade(['0-1-0'])
         elif current_round == 23:
-            druid.upgrade(['0-2-0'])
-        elif current_round == 24:
-            druid.upgrade(['0-3-0'])
+            druid.upgrade(['0-2-0', '0-3-0'])
         elif current_round == 25:
             druid.upgrade(['1-3-0'])
         elif current_round == 31:

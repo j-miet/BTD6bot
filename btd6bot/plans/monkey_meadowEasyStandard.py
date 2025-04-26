@@ -1,13 +1,12 @@
 """
-[Plan Name] monkey_meadowEasyStandard
-[Game Version] 45
 [Hero] Quincy
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
+sniper 2-0-4
+
 ninja 4-0-1
 alch 3-2-0
-sniper 2-0-4
 _______________________________________
 """
 

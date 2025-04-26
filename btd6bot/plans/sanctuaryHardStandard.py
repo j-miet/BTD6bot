@@ -1,17 +1,18 @@
 """
-[Plan Name] sanctuaryHardStandard
-[Game Version] 47
 [Hero] Psi
 [Monkey Knowledge] -
 ---------------------------------------------------------------
 ===Monkeys & upgrades required===
 dart 0-0-1
+boomer 4-0-2
+glue 5-2-0
+
 sniper 4-1-2
+
 alch 4-0-1
 mermonkey 2-0-4
+
 village 3-2-0
-glue 5-2-0
-boomer 4-0-2
 _______________________________________
 Derived from sanctuary_HardChimps. Some lives will be lost in early game.
 """

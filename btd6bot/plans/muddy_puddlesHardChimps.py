@@ -1,24 +1,21 @@
 """
-[Plan Name] muddy_puddlesHardChimps
-[Game Version] 48
 [Hero] Rosalia
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
-boat 0-0-2
-sniper 0-1-0
 boomer 0-0-0
-engineer 0-0-0
+
+sniper 0-1-0
 sub 2-0-3
-village 2-2-2
-alch 3-0-1
+boat 0-0-2
 ace 2-0-5
+
+alch 3-0-1
+village 2-2-2
+
+engineer 0-0-0
 _______________________________________
-Strategy: https://www.youtube.com/watch?v=6Zx9BcjA398
-
--Black-border viable. 
 """
-
 from._plan_imports import *
 
 def play(rounds: tuple[str, str, str, int, int, str]) -> None:
@@ -31,7 +28,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             change_autostart()
             boat = Monkey('boat', 0.325, 0.6259259259259)
             boat.target('strong')
-            begin()
+            forward()
             wait(9)
             boat.target('first')
             sniper = Monkey('sniper', 0.1609375, 0.1388888888889)
@@ -94,9 +91,9 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             boat.upgrade(['0-0-1'])
             end_round(6)
         elif current_round == 24:
-            begin('normal')
+            forward(1)
             boat.upgrade(['0-0-2'])
-            begin('normal')
+            forward(1)
             end_round(5)
         elif current_round == 25:
             end_round(9)
@@ -252,11 +249,11 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             hero.special(2, 0.490625, 0.2666666666667)
             end_round(3)
         elif current_round == 87:
-            ability(3,6)
-            ability(2,7)
+            ability(3,7)
+            ability(2,7.5)
             ability(1,7.5)
             wait(8)
-            hero.special(2, 0.6177083333333, 0.4074074074074)
+            hero.special(2, 0.6161458333333, 0.3537037037037)
             ace.center(0.6791666666667, 0.9990740740741)
             end_round()
         elif current_round == 88:

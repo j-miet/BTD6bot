@@ -1,16 +1,17 @@
 """
-[Plan Name] glacial_trailMediumStandard
-[Game Version] 47
 [Hero] Sauda
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
 dart 5-2-0
-engineer 4-2-0
-druid 1-3-0
+
 mortar 0-2-3
-spike 2-0-4
+
 alch 3-0-0
+druid 1-3-0
+
+spike 2-0-4
+engineer 4-2-0
 _______________________________________
 Derived from glacial_trailHardChimps.
 """

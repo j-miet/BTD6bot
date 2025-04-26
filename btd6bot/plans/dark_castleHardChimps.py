@@ -1,22 +1,18 @@
 """
-[Plan Name] dark_CastleHardChimps
-[Game Version] 48
 [Hero] Obyn
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys required===
 dart 0-0-0
-sub 0-0-0
-druid 0-1-5
-alch 4-2-1
-village 2-3-0
-spike 2-0-5
-_______________________________________
-Strategy: https://www.youtube.com/watch?v=JXWhHHX9vdk
 
-Made slight adjustments to run:
-1. bought a 1-0-3 spike before r40 to avoid Obyn's brambles & totem rng
-2. upgraded all druid to 1-0-3 before getting alch/village for better dps
+sub 0-0-0
+
+alch 4-2-1
+druid 0-1-5
+
+spike 2-0-5
+village 2-3-0
+_______________________________________
 """
 
 from._plan_imports import *

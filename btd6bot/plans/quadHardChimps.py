@@ -1,27 +1,26 @@
 """
-[Plan Name] quadHardChimps
-[Game Version] 48
 [Hero] Sauda
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
 dart 0-0-0
+boomer 0-2-4
+bomb 0-3-0
+tack 2-0-5
+ice 4-1-1
+glue 0-2-4
+
 sniper 1-1-0
-engineer 3-3-2
-spike 4-0-2
-village 3-0-2
+heli 0-2-3
+
 wizard 0-3-2
 alch 4-2-0
-tack 2-0-5
-glue 0-2-4
-ice 4-1-1
-boomer 0-2-4
-heli 0-2-3
-bomb 0-3-0
-_______________________________________
-Strategy: https://www.youtube.com/watch?v=OAAyTLp7VF4
 
-Can do black border: depends on rng a bit, but should be quite consistent.
+spike 4-0-2
+village 3-0-2
+engineer 3-3-2
+_______________________________________
+Depends on rng a bit, but should be quite consistent.
 Rounds 37-40, in particular 40, can leak randomly: the issue is with how quickly bot detects round change and times ability correctly, and sometimes ability is not required at all if wizard firewall is in right spot.
 Round 100 can also fail, unfortunately.
 """

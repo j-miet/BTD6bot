@@ -1,24 +1,21 @@
 """
-[Plan Name] infernalHardChimps
-[Game Version] 48
 [Hero] Quincy
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
-dart 0-0-0
-sniper 4-2-0
-sub 2-0-2
-alch 3-2-0
-super 0-5-2
-glue 0-2-4
+dart 0-0-2
+
+sniper 0-1-0
+sub 2-5-0
+heli 2-0-5
+
+alch 4-0-1
 mermonkey 2-0-4
-spike 1-4-0
+
+village 2-3-0
 _______________________________________
-Strategy: https://www.youtube.com/watch?v=vXuRW2ItaJI
-
--Very reliant on ability usage, but should have minimal rng nontheless.
-
-In original, round 99 absolutely requires anti-bloon ability. This has been replaced with a x-x-4 mermonkey which can stall fortified ddts long enough.
+-Apache prime for dps  
+-Pre-Emptive Strike for ddts, late game moab damage, and round 100.
 """
 
 from._plan_imports import *
@@ -30,118 +27,68 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
     while current_round < END+1:
         current_round = Rounds.round_check(current_round, map_start)
         if current_round == BEGIN:
-            hero = Hero(0.4359375, 0.6435185185185)
+            hero = Hero(0.4338541666667, 0.6453703703704)
         elif current_round == 7:
-            dart1 = Monkey('dart', 0.2515625, 0.2592592592593)
-            dart1.target('strong')
+            dart = Monkey('dart', 0.2505208333333, 0.2583333333333)
         elif current_round == 9:
-            sniper1 = Monkey('sniper', 0.6473958333333, 0.7925925925926)
-        elif current_round == 10:
-            sniper1.target('strong')
-        elif current_round == 11:
-            sub1 = Monkey('sub', 0.6078125, 0.2425925925926)
-            sub1.upgrade(['1-0-0'])
-        elif current_round == 13:
-            sub1.upgrade(['2-0-0'])
+            sniper = Monkey('sniper', 0.6463541666667, 0.7787037037037)
+            sniper.target('strong')
         elif current_round == 15:
-            sub1.upgrade(['2-0-1'])
-        elif current_round == 19:
-            sub1.upgrade(['2-0-2'])
+            ability(1,4.5)
+        elif current_round == 16:
+            heli = Monkey('heli', 0.8151041666667, 0.512037037037)    
+            heli.target('lock')
+            heli.special(1, 0.4411458333333, 0.5527777777778)
+        elif current_round == 20:
+            heli.upgrade(['1-0-0'])
         elif current_round == 21:
-            sniper1.upgrade(['1-0-0'])
-        elif current_round == 29:
-            super = Monkey('super', 0.434375, 0.3425925925926)
+            heli.upgrade(['2-0-0'])
+        elif current_round == 27:
+            heli.upgrade(['3-0-0'])
         elif current_round == 32:
-            super.upgrade(['0-1-0'])
+            sniper.upgrade(['0-1-0'])
+            sniper.target('first')
+        elif current_round == 34:
+            village = Monkey('village', 0.8223958333333, 0.6185185185185)
         elif current_round == 35:
-            alch1 = Monkey('alch', 0.4109375, 0.6861111111111)
+            village.upgrade(['0-1-0','0-2-0'])
         elif current_round == 36:
-            alch1.upgrade(['1-0-0','2-0-0','3-0-0'])
+            heli.upgrade(['3-0-1','3-0-2'])
         elif current_round == 37:
-            alch1.upgrade(['3-1-0','3-2-0'])
-        elif current_round == 39:
-            super.upgrade(['0-1-1'])
+            alch1 = Monkey('alch', 0.8317708333333, 0.4277777777778)
+            alch1.upgrade(['1-0-0','2-0-0'])
+        elif current_round == 38:
+            alch1.upgrade(['3-0-0'])
         elif current_round == 40:
-            ability(1, 3)
+            ability(1,2)
         elif current_round == 41:
-            super.upgrade(['0-2-1','0-2-2'])
+            village.upgrade(['1-2-0','2-2-0'])
         elif current_round == 47:
-            super.upgrade(['0-3-2'])
-        elif current_round == 48:
-            super.target_robo('left', 1)    # change second arm 'last' -> 'close'
-        elif current_round == 59:
-            ability(1, 4.5)
-        elif current_round == 62:
-            super.upgrade(['0-4-2'])
-        elif current_round == 63:
-            ability(1, 1)
-            ability(2, 6.5)
-            ability(3, 12.5)
-        elif current_round == 75:
-            ability(3, 14.5)
-        elif current_round == 76:
-            ability(2, 1)
-        elif current_round == 77:
-            ability(3, 17)
-        elif current_round == 78:
-            ability(2, 3.5)
-            ability(1, 20)
-            ability(2, 27)
+            ability(1,1.75)
+        elif current_round == 49:
+            ability(1,4.5)
+        elif current_round == 50:
+            ability(1,8)
+        elif current_round == 51:
+            heli.upgrade(['4-0-2'])
+        elif current_round == 53:
+            alch1.upgrade(['4-0-0','4-1-0','4-2-0'])
         elif current_round == 79:
-            ability(1, 9)
-            ability(3, 19)
-        elif current_round == 80:
-            ability(3, 15.5)
+            heli.upgrade(['5-0-2'])
         elif current_round == 81:
-            ability(3, 15.5)
-        elif current_round == 82:
-            ability(1, 7.5)
-            ability(2, 8.5)
-            ability(3, 18)
-        elif current_round == 83:
-            ability(1, 10)
-            ability(2, 13)
-        elif current_round == 84:
-            ability(1, 5.5)
-            ability(2, 11)
-            ability(3, 13)
-        elif current_round == 85:
-            super.target('last')
-            ability(3, 21)
-        elif current_round == 86:
-            super.target('first')
-            ability(1, 8)
-        elif current_round == 87:
-            super.target('last')
-            ability(3, 18.5)
-        elif current_round == 88:
-            super.target('first')
-            ability(1, 5.5)
-            ability(3, 18.5)
-        elif current_round == 89:
-            ability(1, 2)
-            super.upgrade(['0-5-2'])
-        elif current_round == 93:
-            sniper1.upgrade(['2-0-0','3-0-0','4-0-0','4-1-0','4-2-0'])
+            village.upgrade(['2-3-0'])
         elif current_round == 94:
-            glue1 = Monkey('glue', 0.0817708333333, 0.5277777777778)
-            glue1.upgrade(['0-0-1','0-0-2','0-0-3'])
-        elif current_round == 95:
-            glue1.upgrade(['0-0-4','0-1-4','0-2-4'])
-            glue1.target('strong')
-            ability(3, 15.5)
+            sub = Monkey('sub', 0.2723958333333, 0.7574074074074)
+            sub.upgrade(['0-1-0','0-2-0','0-3-0','0-4-0','0-5-0','1-5-0','2-5-0'])
+            dart.upgrade(['0-0-1','0-0-2'])
+        elif current_round == 96:
+            alch2 = Monkey('alch', 0.4536458333333, 0.6981481481481)
+            alch2.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','3-1-0','3-2-0'])
+            hero.target('strong')
         elif current_round == 97:
-            mermonkey = Monkey('mermonkey', 0.2453125, 0.1981481481481)
+            mermonkey = Monkey('mermonkey', 0.4359375, 0.3518518518519)
             mermonkey.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','1-0-4','2-0-4'])
-            mermonkey.special(1, 0.2942708333333, 0.3)
-        elif current_round == 98:
-            spike = Monkey('spike', 0.0598958333333, 0.6046296296296)
-            spike.upgrade(['0-1-0','0-2-0'])
-            ability(3,12)
-        elif current_round == 99:
-            spike.upgrade(['0-3-0','1-3-0'])
+            mermonkey.special(1, 0.3723958333333, 0.4555555555556)
         elif current_round == 100:
-            spike.upgrade(['1-4-0'])
-            ability(4, 10)
-            ability(1, 11)
-            ability(3, 18.5)
+            ability(3,2)
+            ability(1,10)
