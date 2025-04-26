@@ -1,1 +1,0 @@
-python -c "import adjust_deltas; adjust_deltas.run()"
