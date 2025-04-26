@@ -84,6 +84,10 @@ def _save_to_json(plan_name: str) -> None:
         json.dump(json_data, f, indent=4)
     print('Plot time data for', plan_name, 'updated.\n')
 
+def run_delta_adjust() -> None:
+    import bot._adjust_deltas
+    bot._adjust_deltas.run()
+
 def get_rounds(difficulty: str, gamemode: str) -> tuple[int, int]:
     """Returns begin and end rounds based on difficulty + game mode.
 
