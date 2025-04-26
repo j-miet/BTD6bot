@@ -1,1447 +1,1448 @@
 {
-    "__identifier": [
-      1920,
-      1080,
-      "fullscreen"
-    ],
-    "dart 1-x-x": [
-      "sharp shots",
-      0.91
-    ],
-    "dart 2-x-x": [
-      "razor sharp shots",
-      0.92
-    ],
-    "dart 3-x-x": [
-      "spike-o-pult",
-      0.84
-    ],
-    "dart 4-x-x": [
-      "juggernaut",
-      0.96
-    ],
-    "dart 5-x-x": [
-      "ultra-juggernaut",
-      0.8
-    ],
-    "dart x-1-x": [
-      "quick shots",
-      0.77
-    ],
-    "dart x-2-x": [
-      "very quick shots",
-      0.86
-    ],
-    "dart x-3-x": [
-      "triple shot",
-      0.82
-    ],
-    "dart x-4-x": [
-      "super monkey fan club",
-      0.78
-    ],
-    "dart x-5-x": [
-      "plasma monkey fan club",
-      0.86
-    ],
-    "dart x-x-1": [
-      "long range darts",
-      0.92
-    ],
-    "dart x-x-2": [
-      "enhanced eyesight",
-      0.92
-    ],
-    "dart x-x-3": [
-      "crossbow",
-      0.96
-    ],
-    "dart x-x-4": [
-      "sharp shooter",
-      0.92
-    ],
-    "dart x-x-5": [
-      "crossbow master",
-      0.92
-    ],
-    "boomer 1-x-x": [
-      "improved rangs",
-      0.92
-    ],
-    "boomer 2-x-x": [
-      "glaives",
-      0.96
-    ],
-    "boomer 3-x-x": [
-      "glaive ricochet",
-      0.92
-    ],
-    "boomer 4-x-x": [
-      "m.o.a.r glaives",
-      0.85
-    ],
-    "boomer 5-x-x": [
-      "glaive lord",
-      0.96
-    ],
-    "boomer x-1-x": [
-      "faster throwing",
-      0.76
-    ],
-    "boomer x-2-x": [
-      "faster rangs",
-      0.82
-    ],
-    "boomer x-3-x": [
-      "bionic boomerang",
-      0.86
-    ],
-    "boomer x-4-x": [
-      "turbo charge",
-      0.79
-    ],
-    "boomer x-5-x": [
-      "perma charge",
-      0.79
-    ],
-    "boomer x-x-1": [
-      "long range rangs",
-      0.89
-    ],
-    "boomer x-x-2": [
-      "red hot rangs",
-      0.92
-    ],
-    "boomer x-x-3": [
-      "kylie boomerang",
-      0.85
-    ],
-    "boomer x-x-4": [
-      "moab press",
-      0.86
-    ],
-    "boomer x-x-5": [
-      "moab domination",
-      0.85
-    ],
-    "bomb 1-x-x": [
-      "bigger bombs",
-      0.82
-    ],
-    "bomb 2-x-x": [
-      "heavy bombs",
-      0.81
-    ],
-    "bomb 3-x-x": [
-      "really big bombs",
-      0.79
-    ],
-    "bomb 4-x-x": [
-      "bloon impact",
-      0.91
-    ],
-    "bomb 5-x-x": [
-      "bloon crush",
-      0.91
-    ],
-    "bomb x-1-x": [
-      "faster reload",
-      0.84
-    ],
-    "bomb x-2-x": [
-      "missile launcher",
-      0.83
-    ],
-    "bomb x-3-x": [
-      "moab mauler",
-      0.91
-    ],
-    "bomb x-4-x": [
-      "moab assassin",
-      0.92
-    ],
-    "bomb x-5-x": [
-      "moab eliminator",
-      0.92
-    ],
-    "bomb x-x-1": [
-      "extra range",
-      0.91
-    ],
-    "bomb x-x-2": [
-      "frag bombs",
-      0.8
-    ],
-    "bomb x-x-3": [
-      "cluster bombs",
-      0.84
-    ],
-    "bomb x-x-4": [
-      "recursive cluster",
-      0.86
-    ],
-    "bomb x-x-5": [
-      "bomb blitz",
-      0.86
-    ],
-    "tack 1-x-x": [
-      "faster shooting",
-      0.92
-    ],
-    "tack 2-x-x": [
-      "even faster shooting",
-      0.93
-    ],
-    "tack 3-x-x": [
-      "hot shots",
-      0.96
-    ],
-    "tack 4-x-x": [
-      "ring of fire",
-      0.96
-    ],
-    "tack 5-x-x": [
-      "inferno ring",
-      0.91
-    ],
-    "tack x-1-x": [
-      "long range tacks",
-      0.92
-    ],
-    "tack x-2-x": [
-      "super range tacks",
-      0.92
-    ],
-    "tack x-3-x": [
-      "blade shooter",
-      0.84
-    ],
-    "tack x-4-x": [
-      "blade maelstrom",
-      0.85
-    ],
-    "tack x-5-x": [
-      "super maelstrom",
-      0.78
-    ],
-    "tack x-x-1": [
-      "more tacks",
-      0.96
-    ],
-    "tack x-x-2": [
-      "even more tacks",
-      0.92
-    ],
-    "tack x-x-3": [
-      "tack sprayer",
-      0.91
-    ],
-    "tack x-x-4": [
-      "overdrive",
-      0.96
-    ],
-    "tack x-x-5": [
-      "the tack zone",
-      0.92
-    ],
-    "ice 1-x-x": [
-      "permafrost",
-      0.76
-    ],
-    "ice 2-x-x": [
-      "cold snap",
-      0.84
-    ],
-    "ice 3-x-x": [
-      "ice shards",
-      0.96
-    ],
-    "ice 4-x-x": [
-      "embrittlement",
-      0.74
-    ],
-    "ice 5-x-x": [
-      "super brittle",
-      0.84
-    ],
-    "ice x-1-x": [
-      "enhanced freeze",
-      0.82
-    ],
-    "ice x-2-x": [
-      "deep freeze",
-      0.81
-    ],
-    "ice x-3-x": [
-      "arctic wind",
-      0.91
-    ],
-    "ice x-4-x": [
-      "snowstorm",
-      0.96
-    ],
-    "ice x-5-x": [
-      "absolute zero",
-      0.92
-    ],
-    "ice x-x-1": [
-      "larger radius",
-      0.92
-    ],
-    "ice x-x-2": [
-      "re-freeze",
-      0.96
-    ],
-    "ice x-x-3": [
-      "cryo cannon",
-      0.86
-    ],
-    "ice x-x-4": [
-      "icicles",
-      0.96
-    ],
-    "ice x-x-5": [
-      "icicle impale",
-      0.92
-    ],
-    "glue 1-x-x": [
-      "glue soak",
-      0.96
-    ],
-    "glue 2-x-x": [
-      "corrosive glue",
-      0.84
-    ],
-    "glue 3-x-x": [
-      "bloon dissolver",
-      0.92
-    ],
-    "glue 4-x-x": [
-      "bloon liquefier",
-      0.92
-    ],
-    "glue 5-x-x": [
-      "the bloon solver",
-      0.92
-    ],
-    "glue x-1-x": [
-      "bigger globs",
-      0.82
-    ],
-    "glue x-2-x": [
-      "glue splatter",
-      0.84
-    ],
-    "glue x-3-x": [
-      "glue hose",
-      0.96
-    ],
-    "glue x-4-x": [
-      "glue strike",
-      0.86
-    ],
-    "glue x-5-x": [
-      "glue storm",
-      0.96
-    ],
-    "glue x-x-1": [
-      "stickier glue",
-      0.84
-    ],
-    "glue x-x-2": [
-      "stronger glue",
-      0.87
-    ],
-    "glue x-x-3": [
-      "moab glue",
-      0.84
-    ],
-    "glue x-x-4": [
-      "relentless glue",
-      0.92
-    ],
-    "glue x-x-5": [
-      "super glue",
-      0.96
-    ],
-    "sniper 1-x-x": [
-      "full metal jacket",
-      0.92
-    ],
-    "sniper 2-x-x": [
-      "large calibre",
-      0.84
-    ],
-    "sniper 3-x-x": [
-      "deadly precision",
-      0.92
-    ],
-    "sniper 4-x-x": [
-      "maim moab",
-      0.73
-    ],
-    "sniper 5-x-x": [
-      "cripple moab",
-      0.91
-    ],
-    "sniper x-1-x": [
-      "night vision goggles",
-      0.93
-    ],
-    "sniper x-2-x": [
-      "shrapnel shot",
-      0.8
-    ],
-    "sniper x-3-x": [
-      "bouncing bullet",
-      0.92
-    ],
-    "sniper x-4-x": [
-      "supply drop",
-      0.91
-    ],
-    "sniper x-5-x": [
-      "elite sniper",
-      0.82
-    ],
-    "sniper x-x-1": [
-      "fast firing",
-      0.86
-    ],
-    "sniper x-x-2": [
-      "even faster firing",
-      0.9
-    ],
-    "sniper x-x-3": [
-      "semi-automatic",
-      0.96
-    ],
-    "sniper x-x-4": [
-      "full auto riffle",
-      0.89
-    ],
-    "sniper x-x-5": [
-      "elite defender",
-      0.77
-    ],
-    "sub 1-x-x": [
-      "longer range",
-      0.91
-    ],
-    "sub 2-x-x": [
-      "advanced intel",
-      0.92
-    ],
-    "sub 3-x-x": [
-      "submerge and support",
-      0.83
-    ],
-    "sub 4-x-x": [
-      "bloontonium reactor",
-      0.93
-    ],
-    "sub 5-x-x": [
-      "energizer",
-      0.96
-    ],
-    "sub x-1-x": [
-      "barbed darts",
-      0.82
-    ],
-    "sub x-2-x": [
-      "heat-tipped darts",
-      0.8
-    ],
-    "sub x-3-x": [
-      "ballistic missile",
-      0.92
-    ],
-    "sub x-4-x": [
-      "first strike capability",
-      0.84
-    ],
-    "sub x-5-x": [
-      "pre-emptive strike",
-      0.93
-    ],
-    "sub x-x-1": [
-      "twin guns",
-      0.96
-    ],
-    "sub x-x-2": [
-      "airburst darts",
-      0.84
-    ],
-    "sub x-x-3": [
-      "triple guns",
-      0.96
-    ],
-    "sub x-x-4": [
-      "armor piercing darts",
-      0.81
-    ],
-    "sub x-x-5": [
-      "sub commander",
-      0.92
-    ],
-    "boat 1-x-x": [
-      "faster shooting",
-      0.92
-    ],
-    "boat 2-x-x": [
-      "double shot",
-      0.81
-    ],
-    "boat 3-x-x": [
-      "destroyer",
-      0.96
-    ],
-    "boat 4-x-x": [
-      "aircraft carrier",
-      0.86
-    ],
-    "boat 5-x-x": [
-      "carrier flagship",
-      0.92
-    ],
-    "boat x-1-x": [
-      "grape shot",
-      0.86
-    ],
-    "boat x-2-x": [
-      "hot shot",
-      0.78
-    ],
-    "boat x-3-x": [
-      "cannon ship",
-      0.91
-    ],
-    "boat x-4-x": [
-      "monkey pirates",
-      0.84
-    ],
-    "boat x-5-x": [
-      "pirate lord",
-      0.96
-    ],
-    "boat x-x-1": [
-      "long range",
-      0.96
-    ],
-    "boat x-x-2": [
-      "crow's nest",
-      0.81
-    ],
-    "boat x-x-3": [
-      "merchantman",
-      0.74
-    ],
-    "boat x-x-4": [
-      "favored trades",
-      0.92
-    ],
-    "boat x-x-5": [
-      "trade empire",
-      0.82
-    ],
-    "ace 1-x-x": [
-      "rapid fire",
-      0.96
-    ],
-    "ace 2-x-x": [
-      "lots more darts",
-      0.92
-    ],
-    "ace 3-x-x": [
-      "fighter plane",
-      0.92
-    ],
-    "ace 4-x-x": [
-      "operation: dart storm",
-      0.86
-    ],
-    "ace 5-x-x": [
-      "sky shredder",
-      0.91
-    ],
-    "ace x-1-x": [
-      "exploding pineapple",
-      0.87
-    ],
-    "ace x-2-x": [
-      "spy plane",
-      0.96
-    ],
-    "ace x-3-x": [
-      "bomber ace",
-      0.76
-    ],
-    "ace x-4-x": [
-      "ground zero",
-      0.91
-    ],
-    "ace x-5-x": [
-      "tsar bomba",
-      0.9
-    ],
-    "ace x-x-1": [
-      "sharper darts",
-      0.92
-    ],
-    "ace x-x-2": [
-      "centered path",
-      0.92
-    ],
-    "ace x-x-3": [
-      "neva-miss targeting",
-      0.93
-    ],
-    "ace x-x-4": [
-      "spectre",
-      0.96
-    ],
-    "ace x-x-5": [
-      "flying fortress",
-      0.92
-    ],
-    "heli 1-x-x": [
-      "quad darts",
-      0.96
-    ],
-    "heli 2-x-x": [
-      "pursuit",
-      0.96
-    ],
-    "heli 3-x-x": [
-      "razor rotors",
-      0.91
-    ],
-    "heli 4-x-x": [
-      "apache dartship",
-      0.92
-    ],
-    "heli 5-x-x": [
-      "apache prime",
-      0.91
-    ],
-    "heli x-1-x": [
-      "bigger jets",
-      0.86
-    ],
-    "heli x-2-x": [
-      "ifr",
-      0.96
-    ],
-    "heli x-3-x": [
-      "downdraft",
-      0.84
-    ],
-    "heli x-4-x": [
-      "support chinook",
-      0.88
-    ],
-    "heli x-5-x": [
-      "special poperations",
-      0.93
-    ],
-    "heli x-x-1": [
-      "faster darts",
-      0.91
-    ],
-    "heli x-x-2": [
-      "faster firing",
-      0.92
-    ],
-    "heli x-x-3": [
-      "moab shove",
-      0.86
-    ],
-    "heli x-x-4": [
-      "comanche defense",
-      0.92
-    ],
-    "heli x-x-5": [
-      "comanche commander",
-      0.84
-    ],
-    "mortar 1-x-x": [
-      "bigger blast",
-      0.91
-    ],
-    "mortar 2-x-x": [
-      "bloon buster",
-      0.91
-    ],
-    "mortar 3-x-x": [
-      "shell shock",
-      0.91
-    ],
-    "mortar 4-x-x": [
-      "the big one",
-      0.86
-    ],
-    "mortar 5-x-x": [
-      "the biggest one",
-      0.85
-    ],
-    "mortar x-1-x": [
-      "faster reload",
-      0.84
-    ],
-    "mortar x-2-x": [
-      "rapid reload",
-      0.91
-    ],
-    "mortar x-3-x": [
-      "heavy shells",
-      0.82
-    ],
-    "mortar x-4-x": [
-      "artillery battery",
-      0.86
-    ],
-    "mortar x-5-x": [
-      "pop and awe",
-      0.91
-    ],
-    "mortar x-x-1": [
-      "increased accuracy",
-      0.93
-    ],
-    "mortar x-x-2": [
-      "burny stuff",
-      0.72
-    ],
-    "mortar x-x-3": [
-      "signal flare",
-      0.91
-    ],
-    "mortar x-x-4": [
-      "shattering shells",
-      0.92
-    ],
-    "mortar x-x-5": [
-      "blooncineration",
-      0.69
-    ],
-    "dartling 1-x-x": [
-      "focused firing",
-      0.92
-    ],
-    "dartling 2-x-x": [
-      "laser shock",
-      0.91
-    ],
-    "dartling 3-x-x": [
-      "laser cannon",
-      0.91
-    ],
-    "dartling 4-x-x": [
-      "plasma accelerator",
-      0.81
-    ],
-    "dartling 5-x-x": [
-      "ray of doom",
-      0.91
-    ],
-    "dartling x-1-x": [
-      "advanced targeting",
-      0.87
-    ],
-    "dartling x-2-x": [
-      "faster barrel spin",
-      0.76
-    ],
-    "dartling x-3-x": [
-      "hydra rocket pods",
-      0.89
-    ],
-    "dartling x-4-x": [
-      "rocket storm",
-      0.87
-    ],
-    "dartling x-5-x": [
-      "m.a.d",
-      0.86
-    ],
-    "dartling x-x-1": [
-      "faster swivel",
-      0.92
-    ],
-    "dartling x-x-2": [
-      "powerful darts",
-      0.84
-    ],
-    "dartling x-x-3": [
-      "buckshot",
-      0.83
-    ],
-    "dartling x-x-4": [
-      "bloon area denial system",
-      0.74
-    ],
-    "dartling x-x-5": [
-      "bloon exclusion zone",
-      0.74
-    ],
-    "wizard 1-x-x": [
-      "guided magic",
-      0.91
-    ],
-    "wizard 2-x-x": [
-      "arcane blast",
-      0.91
-    ],
-    "wizard 3-x-x": [
-      "arcane mastery",
-      0.92
-    ],
-    "wizard 4-x-x": [
-      "arcane spike",
-      0.91
-    ],
-    "wizard 5-x-x": [
-      "archmage",
-      0.96
-    ],
-    "wizard x-1-x": [
-      "fireball",
-      0.83
-    ],
-    "wizard x-2-x": [
-      "wall of fire",
-      0.91
-    ],
-    "wizard x-3-x": [
-      "dragon's breath",
-      0.78
-    ],
-    "wizard x-4-x": [
-      "summon phoenix",
-      0.81
-    ],
-    "wizard x-5-x": [
-      "wizard lord phoenix",
-      0.93
-    ],
-    "wizard x-x-1": [
-      "intense magic",
-      0.92
-    ],
-    "wizard x-x-2": [
-      "monkey sense",
-      0.82
-    ],
-    "wizard x-x-3": [
-      "shimmer",
-      0.96
-    ],
-    "wizard x-x-4": [
-      "necromancer: unpopped army",
-      0.76
-    ],
-    "wizard x-x-5": [
-      "prince of darkness",
-      0.93
-    ],
-    "super 1-x-x": [
-      "laser blasts",
-      0.91
-    ],
-    "super 2-x-x": [
-      "plasma blasts",
-      0.92
-    ],
-    "super 3-x-x": [
-      "sun avatar",
-      0.96
-    ],
-    "super 4-x-x": [
-      "sun temple",
-      0.96
-    ],
-    "super 5-x-x": [
-      "true sun god",
-      0.91
-    ],
-    "super x-1-x": [
-      "super range",
-      0.81
-    ],
-    "super x-2-x": [
-      "epic range",
-      0.96
-    ],
-    "super x-3-x": [
-      "robo monkey",
-      0.81
-    ],
-    "super x-4-x": [
-      "tech terror",
-      0.77
-    ],
-    "super x-5-x": [
-      "the anti-bloon",
-      0.81
-    ],
-    "super x-x-1": [
-      "knockback",
-      0.84
-    ],
-    "super x-x-2": [
-      "ultravision",
-      0.96
-    ],
-    "super x-x-3": [
-      "dark knight",
-      0.81
-    ],
-    "super x-x-4": [
-      "dark champion",
-      0.92
-    ],
-    "super x-x-5": [
-      "legend of the night",
-      0.93
-    ],
-    "ninja 1-x-x": [
-      "ninja discipline",
-      0.86
-    ],
-    "ninja 2-x-x": [
-      "sharp shurikens",
-      0.92
-    ],
-    "ninja 3-x-x": [
-      "double shot",
-      0.81
-    ],
-    "ninja 4-x-x": [
-      "bloonjitsu",
-      0.86
-    ],
-    "ninja 5-x-x": [
-      "grandmaster ninja",
-      0.72
-    ],
-    "ninja x-1-x": [
-      "distraction",
-      0.96
-    ],
-    "ninja x-2-x": [
-      "counter-espionage",
-      0.93
-    ],
-    "ninja x-3-x": [
-      "shinobi tactics",
-      0.82
-    ],
-    "ninja x-4-x": [
-      "bloon sabotage",
-      0.92
-    ],
-    "ninja x-5-x": [
-      "grand saboteur",
-      0.84
-    ],
-    "ninja x-x-1": [
-      "seeking shuriken",
-      0.92
-    ],
-    "ninja x-x-2": [
-      "caltrops",
-      0.96
-    ],
-    "ninja x-x-3": [
-      "flash bomb",
-      0.76
-    ],
-    "ninja x-x-4": [
-      "sticky bomb",
-      0.72
-    ],
-    "ninja x-x-5": [
-      "master bomber",
-      0.84
-    ],
-    "alch 1-x-x": [
-      "larger potions",
-      0.92
-    ],
-    "alch 2-x-x": [
-      "acidic mixture dip",
-      0.93
-    ],
-    "alch 3-x-x": [
-      "berserker brew",
-      0.84
-    ],
-    "alch 4-x-x": [
-      "stronger stimulant",
-      0.93
-    ],
-    "alch 5-x-x": [
-      "permanent brew",
-      0.92
-    ],
-    "alch x-1-x": [
-      "stronger acid",
-      0.92
-    ],
-    "alch x-2-x": [
-      "perishing potions",
-      0.84
-    ],
-    "alch x-3-x": [
-      "unstable concoction",
-      0.87
-    ],
-    "alch x-4-x": [
-      "transforming tonic",
-      0.93
-    ],
-    "alch x-5-x": [
-      "total transformation",
-      0.72
-    ],
-    "alch x-x-1": [
-      "faster throwing",
-      0.92
-    ],
-    "alch x-x-2": [
-      "acid pool",
-      0.96
-    ],
-    "alch x-x-3": [
-      "lead to gold",
-      0.91
-    ],
-    "alch x-x-4": [
-      "rubber to gold",
-      0.84
-    ],
-    "alch x-x-5": [
-      "bloon master alchemist",
-      0.71
-    ],
-    "druid 1-x-x": [
-      "hard thorns",
-      0.81
-    ],
-    "druid 2-x-x": [
-      "heart of thunder",
-      0.92
-    ],
-    "druid 3-x-x": [
-      "druid of the storm",
-      0.93
-    ],
-    "druid 4-x-x": [
-      "ball lightning",
-      0.92
-    ],
-    "druid 5-x-x": [
-      "superstorm",
-      0.81
-    ],
-    "druid x-1-x": [
-      "thorn swarm",
-      0.81
-    ],
-    "druid x-2-x": [
-      "heart of oak",
-      0.91
-    ],
-    "druid x-3-x": [
-      "druid of the jungle",
-      0.85
-    ],
-    "druid x-4-x": [
-      "jungle's bounty",
-      0.85
-    ],
-    "druid x-5-x": [
-      "spirit of the forest",
-      0.86
-    ],
-    "druid x-x-1": [
-      "druidic reach",
-      0.92
-    ],
-    "druid x-x-2": [
-      "heart of vengeance",
-      0.93
-    ],
-    "druid x-x-3": [
-      "druid of wrath",
-      0.92
-    ],
-    "druid x-x-4": [
-      "poplust",
-      0.96
-    ],
-    "druid x-x-5": [
-      "avatar of wrath",
-      0.92
-    ],
-    "mermonkey 1-x-x": [
-      "trident efficiency",
-      0.87
-    ],
-    "mermonkey 2-x-x": [
-      "trident swiftness",
-      0.86
-    ],
-    "mermonkey 3-x-x": [
-      "abyss dweller",
-      0.84
-    ],
-    "mermonkey 4-x-x": [
-      "abyssal warrior",
-      0.85
-    ],
-    "mermonkey 5-x-x": [
-      "lord of the abyss",
-      0.92
-    ],
-    "mermonkey x-1-x": [
-      "sharper prongs",
-      0.84
-    ],
-    "mermonkey x-2-x": [
-      "tidal chill",
-      0.82
-    ],
-    "mermonkey x-3-x": [
-      "riptide champion",
-      0.79
-    ],
-    "mermonkey x-4-x": [
-      "arctic knight",
-      0.92
-    ],
-    "mermonkey x-5-x": [
-      "popseidon",
-      0.96
-    ],
-    "mermonkey x-x-1": [
-      "echosense precision",
-      0.93
-    ],
-    "mermonkey x-x-2": [
-      "echosense network",
-      0.92
-    ],
-    "mermonkey x-x-3": [
-      "alluring melody",
-      0.92
-    ],
-    "mermonkey x-x-4": [
-      "symphonic resonance",
-      0.93
-    ],
-    "mermonkey x-x-5": [
-      "the final harmonic",
-      0.93
-    ],
-    "farm 1-x-x": [
-      "increased production",
-      0.93
-    ],
-    "farm 2-x-x": [
-      "greater production",
-      0.93
-    ],
-    "farm 3-x-x": [
-      "banana plantation",
-      0.86
-    ],
-    "farm 4-x-x": [
-      "banana research facility",
-      0.65
-    ],
-    "farm 5-x-x": [
-      "banana central",
-      0.92
-    ],
-    "farm x-1-x": [
-      "long life bananas",
-      0.92
-    ],
-    "farm x-2-x": [
-      "valuable bananas",
-      0.92
-    ],
-    "farm x-3-x": [
-      "monkey bank",
-      0.81
-    ],
-    "farm x-4-x": [
-      "imf loan",
-      0.96
-    ],
-    "farm x-5-x": [
-      "monkey-nomics",
-      0.84
-    ],
-    "farm x-x-1": [
-      "ez collect",
-      0.96
-    ],
-    "farm x-x-2": [
-      "banana salvage",
-      0.84
-    ],
-    "farm x-x-3": [
-      "marketplace",
-      0.96
-    ],
-    "farm x-x-4": [
-      "central market",
-      0.92
-    ],
-    "farm x-x-5": [
-      "monkey wall street",
-      0.79
-    ],
-    "spike 1-x-x": [
-      "bigger stacks",
-      0.92
-    ],
-    "spike 2-x-x": [
-      "white hot spikes",
-      0.92
-    ],
-    "spike 3-x-x": [
-      "spiked balls",
-      0.91
-    ],
-    "spike 4-x-x": [
-      "spiked mines",
-      0.91
-    ],
-    "spike 5-x-x": [
-      "super mines",
-      0.91
-    ],
-    "spike x-1-x": [
-      "faster production",
-      0.86
-    ],
-    "spike x-2-x": [
-      "even faster production",
-      0.89
-    ],
-    "spike x-3-x": [
-      "moab shredr",
-      0.86
-    ],
-    "spike x-4-x": [
-      "spike storm",
-      0.91
-    ],
-    "spike x-5-x": [
-      "carpet of spikes",
-      0.89
-    ],
-    "spike x-x-1": [
-      "long reach",
-      0.96
-    ],
-    "spike x-x-2": [
-      "smart spikes",
-      0.87
-    ],
-    "spike x-x-3": [
-      "long life spikes",
-      0.89
-    ],
-    "spike x-x-4": [
-      "deadly spikes",
-      0.92
-    ],
-    "spike x-x-5": [
-      "perma-spike",
-      0.96
-    ],
-    "village 1-x-x": [
-      "bigger radius",
-      0.92
-    ],
-    "village 2-x-x": [
-      "jungle drums",
-      0.91
-    ],
-    "village 3-x-x": [
-      "primary training",
-      0.92
-    ],
-    "village 4-x-x": [
-      "primary mentoring",
-      0.92
-    ],
-    "village 5-x-x": [
-      "primary expertise",
-      0.86
-    ],
-    "village x-1-x": [
-      "grow blocker",
-      0.82
-    ],
-    "village x-2-x": [
-      "radar scanner",
-      0.92
-    ],
-    "village x-3-x": [
-      "monkey intelligence bureau",
-      0.72
-    ],
-    "village x-4-x": [
-      "call to arms",
-      0.91
-    ],
-    "village x-5-x": [
-      "homeland defense",
-      0.89
-    ],
-    "village x-x-1": [
-      "monkey business",
-      0.85
-    ],
-    "village x-x-2": [
-      "monkey commerce",
-      0.78
-    ],
-    "village x-x-3": [
-      "monkey town",
-      0.81
-    ],
-    "village x-x-4": [
-      "monkey city",
-      0.81
-    ],
-    "village x-x-5": [
-      "monkeyopolis",
-      0.91
-    ],
-    "engineer 1-x-x": [
-      "sentry gun",
-      0.96
-    ],
-    "engineer 2-x-x": [
-      "faster engineering",
-      0.87
-    ],
-    "engineer 3-x-x": [
-      "sprockets",
-      0.96
-    ],
-    "engineer 4-x-x": [
-      "sentry expert",
-      0.92
-    ],
-    "engineer 5-x-x": [
-      "sentry champion",
-      0.85
-    ],
-    "engineer x-1-x": [
-      "larger service area",
-      0.77
-    ],
-    "engineer x-2-x": [
-      "deconstruction",
-      0.88
-    ],
-    "engineer x-3-x": [
-      "cleansing foam",
-      0.92
-    ],
-    "engineer x-4-x": [
-      "overclock",
-      0.96
-    ],
-    "engineer x-5-x": [
-      "ultraboost",
-      0.96
-    ],
-    "engineer x-x-1": [
-      "oversize nails",
-      0.92
-    ],
-    "engineer x-x-2": [
-      "pin",
-      0.96
-    ],
-    "engineer x-x-3": [
-      "double gun",
-      0.86
-    ],
-    "engineer x-x-4": [
-      "bloon trap",
-      0.96
-    ],
-    "engineer x-x-5": [
-      "xxxl trap",
-      0.96
-    ],
-    "beast 1-x-x": [
-      "piranha",
-      0.96
-    ],
-    "beast 2-x-x": [
-      "barracuda",
-      0.96
-    ],
-    "beast 3-x-x": [
-      "great white",
-      0.91
-    ],
-    "beast 4-x-x": [
-      "orca",
-      0.96
-    ],
-    "beast 5-x-x": [
-      "megalodon",
-      0.84
-    ],
-    "beast x-1-x": [
-      "microraptor",
-      0.96
-    ],
-    "beast x-2-x": [
-      "adasaurus",
-      0.96
-    ],
-    "beast x-3-x": [
-      "velociraptor",
-      0.96
-    ],
-    "beast x-4-x": [
-      "tyrannosaurus rex",
-      0.8
-    ],
-    "beast x-5-x": [
-      "giganotosaurus",
-      0.81
-    ],
-    "beast x-x-1": [
-      "gyrfalcon",
-      0.96
-    ],
-    "beast x-x-2": [
-      "horned owl",
-      0.8
-    ],
-    "beast x-x-3": [
-      "golden eagle",
-      0.82
-    ],
-    "beast x-x-4": [
-      "giant condor",
-      0.82
-    ],
-    "beast x-x-5": [
-      "pouakai",
-      0.96
-    ]
-  }
+  "__identifier": [
+    1920,
+    1080,
+    "fullscreen",
+    "delta=4"
+  ],
+  "dart 1-x-x": [
+    "sharp shots",
+    0.91
+  ],
+  "dart 2-x-x": [
+    "razor sharp shots",
+    0.92
+  ],
+  "dart 3-x-x": [
+    "spike-o-pult",
+    0.84
+  ],
+  "dart 4-x-x": [
+    "juggernaut",
+    0.96
+  ],
+  "dart 5-x-x": [
+    "ultra-juggernaut",
+    0.8
+  ],
+  "dart x-1-x": [
+    "quick shots",
+    0.77
+  ],
+  "dart x-2-x": [
+    "very quick shots",
+    0.86
+  ],
+  "dart x-3-x": [
+    "triple shot",
+    0.82
+  ],
+  "dart x-4-x": [
+    "super monkey fan club",
+    0.78
+  ],
+  "dart x-5-x": [
+    "plasma monkey fan club",
+    0.86
+  ],
+  "dart x-x-1": [
+    "long range darts",
+    0.92
+  ],
+  "dart x-x-2": [
+    "enhanced eyesight",
+    0.92
+  ],
+  "dart x-x-3": [
+    "crossbow",
+    0.96
+  ],
+  "dart x-x-4": [
+    "sharp shooter",
+    0.92
+  ],
+  "dart x-x-5": [
+    "crossbow master",
+    0.92
+  ],
+  "boomer 1-x-x": [
+    "improved rangs",
+    0.92
+  ],
+  "boomer 2-x-x": [
+    "glaives",
+    0.96
+  ],
+  "boomer 3-x-x": [
+    "glaive ricochet",
+    0.92
+  ],
+  "boomer 4-x-x": [
+    "m.o.a.r glaives",
+    0.85
+  ],
+  "boomer 5-x-x": [
+    "glaive lord",
+    0.96
+  ],
+  "boomer x-1-x": [
+    "faster throwing",
+    0.76
+  ],
+  "boomer x-2-x": [
+    "faster rangs",
+    0.82
+  ],
+  "boomer x-3-x": [
+    "bionic boomerang",
+    0.86
+  ],
+  "boomer x-4-x": [
+    "turbo charge",
+    0.79
+  ],
+  "boomer x-5-x": [
+    "perma charge",
+    0.79
+  ],
+  "boomer x-x-1": [
+    "long range rangs",
+    0.89
+  ],
+  "boomer x-x-2": [
+    "red hot rangs",
+    0.92
+  ],
+  "boomer x-x-3": [
+    "kylie boomerang",
+    0.85
+  ],
+  "boomer x-x-4": [
+    "moab press",
+    0.86
+  ],
+  "boomer x-x-5": [
+    "moab domination",
+    0.85
+  ],
+  "bomb 1-x-x": [
+    "bigger bombs",
+    0.82
+  ],
+  "bomb 2-x-x": [
+    "heavy bombs",
+    0.81
+  ],
+  "bomb 3-x-x": [
+    "really big bombs",
+    0.79
+  ],
+  "bomb 4-x-x": [
+    "bloon impact",
+    0.91
+  ],
+  "bomb 5-x-x": [
+    "bloon crush",
+    0.91
+  ],
+  "bomb x-1-x": [
+    "faster reload",
+    0.84
+  ],
+  "bomb x-2-x": [
+    "missile launcher",
+    0.83
+  ],
+  "bomb x-3-x": [
+    "moab mauler",
+    0.91
+  ],
+  "bomb x-4-x": [
+    "moab assassin",
+    0.92
+  ],
+  "bomb x-5-x": [
+    "moab eliminator",
+    0.92
+  ],
+  "bomb x-x-1": [
+    "extra range",
+    0.91
+  ],
+  "bomb x-x-2": [
+    "frag bombs",
+    0.8
+  ],
+  "bomb x-x-3": [
+    "cluster bombs",
+    0.84
+  ],
+  "bomb x-x-4": [
+    "recursive cluster",
+    0.86
+  ],
+  "bomb x-x-5": [
+    "bomb blitz",
+    0.86
+  ],
+  "tack 1-x-x": [
+    "faster shooting",
+    0.92
+  ],
+  "tack 2-x-x": [
+    "even faster shooting",
+    0.93
+  ],
+  "tack 3-x-x": [
+    "hot shots",
+    0.96
+  ],
+  "tack 4-x-x": [
+    "ring of fire",
+    0.96
+  ],
+  "tack 5-x-x": [
+    "inferno ring",
+    0.91
+  ],
+  "tack x-1-x": [
+    "long range tacks",
+    0.92
+  ],
+  "tack x-2-x": [
+    "super range tacks",
+    0.92
+  ],
+  "tack x-3-x": [
+    "blade shooter",
+    0.84
+  ],
+  "tack x-4-x": [
+    "blade maelstrom",
+    0.85
+  ],
+  "tack x-5-x": [
+    "super maelstrom",
+    0.78
+  ],
+  "tack x-x-1": [
+    "more tacks",
+    0.96
+  ],
+  "tack x-x-2": [
+    "even more tacks",
+    0.92
+  ],
+  "tack x-x-3": [
+    "tack sprayer",
+    0.91
+  ],
+  "tack x-x-4": [
+    "overdrive",
+    0.96
+  ],
+  "tack x-x-5": [
+    "the tack zone",
+    0.92
+  ],
+  "ice 1-x-x": [
+    "permafrost",
+    0.76
+  ],
+  "ice 2-x-x": [
+    "cold snap",
+    0.84
+  ],
+  "ice 3-x-x": [
+    "ice shards",
+    0.96
+  ],
+  "ice 4-x-x": [
+    "embrittlement",
+    0.74
+  ],
+  "ice 5-x-x": [
+    "super brittle",
+    0.84
+  ],
+  "ice x-1-x": [
+    "enhanced freeze",
+    0.82
+  ],
+  "ice x-2-x": [
+    "deep freeze",
+    0.81
+  ],
+  "ice x-3-x": [
+    "arctic wind",
+    0.91
+  ],
+  "ice x-4-x": [
+    "snowstorm",
+    0.96
+  ],
+  "ice x-5-x": [
+    "absolute zero",
+    0.92
+  ],
+  "ice x-x-1": [
+    "larger radius",
+    0.92
+  ],
+  "ice x-x-2": [
+    "re-freeze",
+    0.96
+  ],
+  "ice x-x-3": [
+    "cryo cannon",
+    0.86
+  ],
+  "ice x-x-4": [
+    "icicles",
+    0.96
+  ],
+  "ice x-x-5": [
+    "icicle impale",
+    0.92
+  ],
+  "glue 1-x-x": [
+    "glue soak",
+    0.96
+  ],
+  "glue 2-x-x": [
+    "corrosive glue",
+    0.84
+  ],
+  "glue 3-x-x": [
+    "bloon dissolver",
+    0.92
+  ],
+  "glue 4-x-x": [
+    "bloon liquefier",
+    0.92
+  ],
+  "glue 5-x-x": [
+    "the bloon solver",
+    0.92
+  ],
+  "glue x-1-x": [
+    "bigger globs",
+    0.82
+  ],
+  "glue x-2-x": [
+    "glue splatter",
+    0.84
+  ],
+  "glue x-3-x": [
+    "glue hose",
+    0.96
+  ],
+  "glue x-4-x": [
+    "glue strike",
+    0.86
+  ],
+  "glue x-5-x": [
+    "glue storm",
+    0.96
+  ],
+  "glue x-x-1": [
+    "stickier glue",
+    0.84
+  ],
+  "glue x-x-2": [
+    "stronger glue",
+    0.87
+  ],
+  "glue x-x-3": [
+    "moab glue",
+    0.84
+  ],
+  "glue x-x-4": [
+    "relentless glue",
+    0.92
+  ],
+  "glue x-x-5": [
+    "super glue",
+    0.96
+  ],
+  "sniper 1-x-x": [
+    "full metal jacket",
+    0.92
+  ],
+  "sniper 2-x-x": [
+    "large calibre",
+    0.84
+  ],
+  "sniper 3-x-x": [
+    "deadly precision",
+    0.92
+  ],
+  "sniper 4-x-x": [
+    "maim moab",
+    0.73
+  ],
+  "sniper 5-x-x": [
+    "cripple moab",
+    0.91
+  ],
+  "sniper x-1-x": [
+    "night vision goggles",
+    0.93
+  ],
+  "sniper x-2-x": [
+    "shrapnel shot",
+    0.8
+  ],
+  "sniper x-3-x": [
+    "bouncing bullet",
+    0.92
+  ],
+  "sniper x-4-x": [
+    "supply drop",
+    0.91
+  ],
+  "sniper x-5-x": [
+    "elite sniper",
+    0.82
+  ],
+  "sniper x-x-1": [
+    "fast firing",
+    0.86
+  ],
+  "sniper x-x-2": [
+    "even faster firing",
+    0.9
+  ],
+  "sniper x-x-3": [
+    "semi-automatic",
+    0.96
+  ],
+  "sniper x-x-4": [
+    "full auto riffle",
+    0.89
+  ],
+  "sniper x-x-5": [
+    "elite defender",
+    0.77
+  ],
+  "sub 1-x-x": [
+    "longer range",
+    0.91
+  ],
+  "sub 2-x-x": [
+    "advanced intel",
+    0.92
+  ],
+  "sub 3-x-x": [
+    "submerge and support",
+    0.83
+  ],
+  "sub 4-x-x": [
+    "bloontonium reactor",
+    0.93
+  ],
+  "sub 5-x-x": [
+    "energizer",
+    0.96
+  ],
+  "sub x-1-x": [
+    "barbed darts",
+    0.82
+  ],
+  "sub x-2-x": [
+    "heat-tipped darts",
+    0.8
+  ],
+  "sub x-3-x": [
+    "ballistic missile",
+    0.92
+  ],
+  "sub x-4-x": [
+    "first strike capability",
+    0.84
+  ],
+  "sub x-5-x": [
+    "pre-emptive strike",
+    0.93
+  ],
+  "sub x-x-1": [
+    "twin guns",
+    0.96
+  ],
+  "sub x-x-2": [
+    "airburst darts",
+    0.84
+  ],
+  "sub x-x-3": [
+    "triple guns",
+    0.96
+  ],
+  "sub x-x-4": [
+    "armor piercing darts",
+    0.81
+  ],
+  "sub x-x-5": [
+    "sub commander",
+    0.92
+  ],
+  "boat 1-x-x": [
+    "faster shooting",
+    0.92
+  ],
+  "boat 2-x-x": [
+    "double shot",
+    0.81
+  ],
+  "boat 3-x-x": [
+    "destroyer",
+    0.96
+  ],
+  "boat 4-x-x": [
+    "aircraft carrier",
+    0.86
+  ],
+  "boat 5-x-x": [
+    "carrier flagship",
+    0.92
+  ],
+  "boat x-1-x": [
+    "grape shot",
+    0.86
+  ],
+  "boat x-2-x": [
+    "hot shot",
+    0.78
+  ],
+  "boat x-3-x": [
+    "cannon ship",
+    0.91
+  ],
+  "boat x-4-x": [
+    "monkey pirates",
+    0.84
+  ],
+  "boat x-5-x": [
+    "pirate lord",
+    0.96
+  ],
+  "boat x-x-1": [
+    "long range",
+    0.96
+  ],
+  "boat x-x-2": [
+    "crow's nest",
+    0.81
+  ],
+  "boat x-x-3": [
+    "merchantman",
+    0.74
+  ],
+  "boat x-x-4": [
+    "favored trades",
+    0.92
+  ],
+  "boat x-x-5": [
+    "trade empire",
+    0.82
+  ],
+  "ace 1-x-x": [
+    "rapid fire",
+    0.96
+  ],
+  "ace 2-x-x": [
+    "lots more darts",
+    0.92
+  ],
+  "ace 3-x-x": [
+    "fighter plane",
+    0.92
+  ],
+  "ace 4-x-x": [
+    "operation: dart storm",
+    0.86
+  ],
+  "ace 5-x-x": [
+    "sky shredder",
+    0.91
+  ],
+  "ace x-1-x": [
+    "exploding pineapple",
+    0.87
+  ],
+  "ace x-2-x": [
+    "spy plane",
+    0.96
+  ],
+  "ace x-3-x": [
+    "bomber ace",
+    0.76
+  ],
+  "ace x-4-x": [
+    "ground zero",
+    0.91
+  ],
+  "ace x-5-x": [
+    "tsar bomba",
+    0.9
+  ],
+  "ace x-x-1": [
+    "sharper darts",
+    0.92
+  ],
+  "ace x-x-2": [
+    "centered path",
+    0.92
+  ],
+  "ace x-x-3": [
+    "neva-miss targeting",
+    0.93
+  ],
+  "ace x-x-4": [
+    "spectre",
+    0.96
+  ],
+  "ace x-x-5": [
+    "flying fortress",
+    0.92
+  ],
+  "heli 1-x-x": [
+    "quad darts",
+    0.96
+  ],
+  "heli 2-x-x": [
+    "pursuit",
+    0.96
+  ],
+  "heli 3-x-x": [
+    "razor rotors",
+    0.91
+  ],
+  "heli 4-x-x": [
+    "apache dartship",
+    0.92
+  ],
+  "heli 5-x-x": [
+    "apache prime",
+    0.91
+  ],
+  "heli x-1-x": [
+    "bigger jets",
+    0.86
+  ],
+  "heli x-2-x": [
+    "ifr",
+    0.96
+  ],
+  "heli x-3-x": [
+    "downdraft",
+    0.84
+  ],
+  "heli x-4-x": [
+    "support chinook",
+    0.88
+  ],
+  "heli x-5-x": [
+    "special poperations",
+    0.93
+  ],
+  "heli x-x-1": [
+    "faster darts",
+    0.91
+  ],
+  "heli x-x-2": [
+    "faster firing",
+    0.92
+  ],
+  "heli x-x-3": [
+    "moab shove",
+    0.86
+  ],
+  "heli x-x-4": [
+    "comanche defense",
+    0.92
+  ],
+  "heli x-x-5": [
+    "comanche commander",
+    0.84
+  ],
+  "mortar 1-x-x": [
+    "bigger blast",
+    0.91
+  ],
+  "mortar 2-x-x": [
+    "bloon buster",
+    0.91
+  ],
+  "mortar 3-x-x": [
+    "shell shock",
+    0.91
+  ],
+  "mortar 4-x-x": [
+    "the big one",
+    0.86
+  ],
+  "mortar 5-x-x": [
+    "the biggest one",
+    0.85
+  ],
+  "mortar x-1-x": [
+    "faster reload",
+    0.84
+  ],
+  "mortar x-2-x": [
+    "rapid reload",
+    0.91
+  ],
+  "mortar x-3-x": [
+    "heavy shells",
+    0.82
+  ],
+  "mortar x-4-x": [
+    "artillery battery",
+    0.86
+  ],
+  "mortar x-5-x": [
+    "pop and awe",
+    0.91
+  ],
+  "mortar x-x-1": [
+    "increased accuracy",
+    0.93
+  ],
+  "mortar x-x-2": [
+    "burny stuff",
+    0.72
+  ],
+  "mortar x-x-3": [
+    "signal flare",
+    0.91
+  ],
+  "mortar x-x-4": [
+    "shattering shells",
+    0.92
+  ],
+  "mortar x-x-5": [
+    "blooncineration",
+    0.69
+  ],
+  "dartling 1-x-x": [
+    "focused firing",
+    0.92
+  ],
+  "dartling 2-x-x": [
+    "laser shock",
+    0.91
+  ],
+  "dartling 3-x-x": [
+    "laser cannon",
+    0.91
+  ],
+  "dartling 4-x-x": [
+    "plasma accelerator",
+    0.81
+  ],
+  "dartling 5-x-x": [
+    "ray of doom",
+    0.91
+  ],
+  "dartling x-1-x": [
+    "advanced targeting",
+    0.87
+  ],
+  "dartling x-2-x": [
+    "faster barrel spin",
+    0.76
+  ],
+  "dartling x-3-x": [
+    "hydra rocket pods",
+    0.89
+  ],
+  "dartling x-4-x": [
+    "rocket storm",
+    0.87
+  ],
+  "dartling x-5-x": [
+    "m.a.d",
+    0.86
+  ],
+  "dartling x-x-1": [
+    "faster swivel",
+    0.92
+  ],
+  "dartling x-x-2": [
+    "powerful darts",
+    0.84
+  ],
+  "dartling x-x-3": [
+    "buckshot",
+    0.83
+  ],
+  "dartling x-x-4": [
+    "bloon area denial system",
+    0.74
+  ],
+  "dartling x-x-5": [
+    "bloon exclusion zone",
+    0.74
+  ],
+  "wizard 1-x-x": [
+    "guided magic",
+    0.91
+  ],
+  "wizard 2-x-x": [
+    "arcane blast",
+    0.91
+  ],
+  "wizard 3-x-x": [
+    "arcane mastery",
+    0.92
+  ],
+  "wizard 4-x-x": [
+    "arcane spike",
+    0.91
+  ],
+  "wizard 5-x-x": [
+    "archmage",
+    0.96
+  ],
+  "wizard x-1-x": [
+    "fireball",
+    0.83
+  ],
+  "wizard x-2-x": [
+    "wall of fire",
+    0.91
+  ],
+  "wizard x-3-x": [
+    "dragon's breath",
+    0.78
+  ],
+  "wizard x-4-x": [
+    "summon phoenix",
+    0.81
+  ],
+  "wizard x-5-x": [
+    "wizard lord phoenix",
+    0.93
+  ],
+  "wizard x-x-1": [
+    "intense magic",
+    0.92
+  ],
+  "wizard x-x-2": [
+    "monkey sense",
+    0.82
+  ],
+  "wizard x-x-3": [
+    "shimmer",
+    0.96
+  ],
+  "wizard x-x-4": [
+    "necromancer: unpopped army",
+    0.76
+  ],
+  "wizard x-x-5": [
+    "prince of darkness",
+    0.93
+  ],
+  "super 1-x-x": [
+    "laser blasts",
+    0.91
+  ],
+  "super 2-x-x": [
+    "plasma blasts",
+    0.92
+  ],
+  "super 3-x-x": [
+    "sun avatar",
+    0.96
+  ],
+  "super 4-x-x": [
+    "sun temple",
+    0.96
+  ],
+  "super 5-x-x": [
+    "true sun god",
+    0.91
+  ],
+  "super x-1-x": [
+    "super range",
+    0.81
+  ],
+  "super x-2-x": [
+    "epic range",
+    0.96
+  ],
+  "super x-3-x": [
+    "robo monkey",
+    0.81
+  ],
+  "super x-4-x": [
+    "tech terror",
+    0.77
+  ],
+  "super x-5-x": [
+    "the anti-bloon",
+    0.81
+  ],
+  "super x-x-1": [
+    "knockback",
+    0.84
+  ],
+  "super x-x-2": [
+    "ultravision",
+    0.96
+  ],
+  "super x-x-3": [
+    "dark knight",
+    0.81
+  ],
+  "super x-x-4": [
+    "dark champion",
+    0.92
+  ],
+  "super x-x-5": [
+    "legend of the night",
+    0.93
+  ],
+  "ninja 1-x-x": [
+    "ninja discipline",
+    0.86
+  ],
+  "ninja 2-x-x": [
+    "sharp shurikens",
+    0.92
+  ],
+  "ninja 3-x-x": [
+    "double shot",
+    0.81
+  ],
+  "ninja 4-x-x": [
+    "bloonjitsu",
+    0.86
+  ],
+  "ninja 5-x-x": [
+    "grandmaster ninja",
+    0.72
+  ],
+  "ninja x-1-x": [
+    "distraction",
+    0.96
+  ],
+  "ninja x-2-x": [
+    "counter-espionage",
+    0.93
+  ],
+  "ninja x-3-x": [
+    "shinobi tactics",
+    0.82
+  ],
+  "ninja x-4-x": [
+    "bloon sabotage",
+    0.92
+  ],
+  "ninja x-5-x": [
+    "grand saboteur",
+    0.84
+  ],
+  "ninja x-x-1": [
+    "seeking shuriken",
+    0.92
+  ],
+  "ninja x-x-2": [
+    "caltrops",
+    0.96
+  ],
+  "ninja x-x-3": [
+    "flash bomb",
+    0.76
+  ],
+  "ninja x-x-4": [
+    "sticky bomb",
+    0.72
+  ],
+  "ninja x-x-5": [
+    "master bomber",
+    0.84
+  ],
+  "alch 1-x-x": [
+    "larger potions",
+    0.92
+  ],
+  "alch 2-x-x": [
+    "acidic mixture dip",
+    0.93
+  ],
+  "alch 3-x-x": [
+    "berserker brew",
+    0.84
+  ],
+  "alch 4-x-x": [
+    "stronger stimulant",
+    0.93
+  ],
+  "alch 5-x-x": [
+    "permanent brew",
+    0.92
+  ],
+  "alch x-1-x": [
+    "stronger acid",
+    0.92
+  ],
+  "alch x-2-x": [
+    "perishing potions",
+    0.84
+  ],
+  "alch x-3-x": [
+    "unstable concoction",
+    0.87
+  ],
+  "alch x-4-x": [
+    "transforming tonic",
+    0.93
+  ],
+  "alch x-5-x": [
+    "total transformation",
+    0.72
+  ],
+  "alch x-x-1": [
+    "faster throwing",
+    0.92
+  ],
+  "alch x-x-2": [
+    "acid pool",
+    0.96
+  ],
+  "alch x-x-3": [
+    "lead to gold",
+    0.91
+  ],
+  "alch x-x-4": [
+    "rubber to gold",
+    0.84
+  ],
+  "alch x-x-5": [
+    "bloon master alchemist",
+    0.71
+  ],
+  "druid 1-x-x": [
+    "hard thorns",
+    0.81
+  ],
+  "druid 2-x-x": [
+    "heart of thunder",
+    0.92
+  ],
+  "druid 3-x-x": [
+    "druid of the storm",
+    0.93
+  ],
+  "druid 4-x-x": [
+    "ball lightning",
+    0.92
+  ],
+  "druid 5-x-x": [
+    "superstorm",
+    0.81
+  ],
+  "druid x-1-x": [
+    "thorn swarm",
+    0.81
+  ],
+  "druid x-2-x": [
+    "heart of oak",
+    0.91
+  ],
+  "druid x-3-x": [
+    "druid of the jungle",
+    0.85
+  ],
+  "druid x-4-x": [
+    "jungle's bounty",
+    0.85
+  ],
+  "druid x-5-x": [
+    "spirit of the forest",
+    0.86
+  ],
+  "druid x-x-1": [
+    "druidic reach",
+    0.92
+  ],
+  "druid x-x-2": [
+    "heart of vengeance",
+    0.93
+  ],
+  "druid x-x-3": [
+    "druid of wrath",
+    0.92
+  ],
+  "druid x-x-4": [
+    "poplust",
+    0.96
+  ],
+  "druid x-x-5": [
+    "avatar of wrath",
+    0.92
+  ],
+  "mermonkey 1-x-x": [
+    "trident efficiency",
+    0.87
+  ],
+  "mermonkey 2-x-x": [
+    "trident swiftness",
+    0.86
+  ],
+  "mermonkey 3-x-x": [
+    "abyss dweller",
+    0.84
+  ],
+  "mermonkey 4-x-x": [
+    "abyssal warrior",
+    0.85
+  ],
+  "mermonkey 5-x-x": [
+    "lord of the abyss",
+    0.92
+  ],
+  "mermonkey x-1-x": [
+    "sharper prongs",
+    0.84
+  ],
+  "mermonkey x-2-x": [
+    "tidal chill",
+    0.82
+  ],
+  "mermonkey x-3-x": [
+    "riptide champion",
+    0.79
+  ],
+  "mermonkey x-4-x": [
+    "arctic knight",
+    0.92
+  ],
+  "mermonkey x-5-x": [
+    "popseidon",
+    0.96
+  ],
+  "mermonkey x-x-1": [
+    "echosense precision",
+    0.93
+  ],
+  "mermonkey x-x-2": [
+    "echosense network",
+    0.92
+  ],
+  "mermonkey x-x-3": [
+    "alluring melody",
+    0.92
+  ],
+  "mermonkey x-x-4": [
+    "symphonic resonance",
+    0.93
+  ],
+  "mermonkey x-x-5": [
+    "the final harmonic",
+    0.93
+  ],
+  "farm 1-x-x": [
+    "increased production",
+    0.93
+  ],
+  "farm 2-x-x": [
+    "greater production",
+    0.93
+  ],
+  "farm 3-x-x": [
+    "banana plantation",
+    0.86
+  ],
+  "farm 4-x-x": [
+    "banana research facility",
+    0.65
+  ],
+  "farm 5-x-x": [
+    "banana central",
+    0.92
+  ],
+  "farm x-1-x": [
+    "long life bananas",
+    0.92
+  ],
+  "farm x-2-x": [
+    "valuable bananas",
+    0.92
+  ],
+  "farm x-3-x": [
+    "monkey bank",
+    0.81
+  ],
+  "farm x-4-x": [
+    "imf loan",
+    0.96
+  ],
+  "farm x-5-x": [
+    "monkey-nomics",
+    0.84
+  ],
+  "farm x-x-1": [
+    "ez collect",
+    0.96
+  ],
+  "farm x-x-2": [
+    "banana salvage",
+    0.84
+  ],
+  "farm x-x-3": [
+    "marketplace",
+    0.96
+  ],
+  "farm x-x-4": [
+    "central market",
+    0.92
+  ],
+  "farm x-x-5": [
+    "monkey wall street",
+    0.79
+  ],
+  "spike 1-x-x": [
+    "bigger stacks",
+    0.92
+  ],
+  "spike 2-x-x": [
+    "white hot spikes",
+    0.92
+  ],
+  "spike 3-x-x": [
+    "spiked balls",
+    0.91
+  ],
+  "spike 4-x-x": [
+    "spiked mines",
+    0.91
+  ],
+  "spike 5-x-x": [
+    "super mines",
+    0.91
+  ],
+  "spike x-1-x": [
+    "faster production",
+    0.86
+  ],
+  "spike x-2-x": [
+    "even faster production",
+    0.89
+  ],
+  "spike x-3-x": [
+    "moab shredr",
+    0.86
+  ],
+  "spike x-4-x": [
+    "spike storm",
+    0.91
+  ],
+  "spike x-5-x": [
+    "carpet of spikes",
+    0.89
+  ],
+  "spike x-x-1": [
+    "long reach",
+    0.96
+  ],
+  "spike x-x-2": [
+    "smart spikes",
+    0.87
+  ],
+  "spike x-x-3": [
+    "long life spikes",
+    0.89
+  ],
+  "spike x-x-4": [
+    "deadly spikes",
+    0.92
+  ],
+  "spike x-x-5": [
+    "perma-spike",
+    0.96
+  ],
+  "village 1-x-x": [
+    "bigger radius",
+    0.92
+  ],
+  "village 2-x-x": [
+    "jungle drums",
+    0.91
+  ],
+  "village 3-x-x": [
+    "primary training",
+    0.92
+  ],
+  "village 4-x-x": [
+    "primary mentoring",
+    0.92
+  ],
+  "village 5-x-x": [
+    "primary expertise",
+    0.86
+  ],
+  "village x-1-x": [
+    "grow blocker",
+    0.82
+  ],
+  "village x-2-x": [
+    "radar scanner",
+    0.92
+  ],
+  "village x-3-x": [
+    "monkey intelligence bureau",
+    0.72
+  ],
+  "village x-4-x": [
+    "call to arms",
+    0.91
+  ],
+  "village x-5-x": [
+    "homeland defense",
+    0.89
+  ],
+  "village x-x-1": [
+    "monkey business",
+    0.85
+  ],
+  "village x-x-2": [
+    "monkey commerce",
+    0.78
+  ],
+  "village x-x-3": [
+    "monkey town",
+    0.81
+  ],
+  "village x-x-4": [
+    "monkey city",
+    0.81
+  ],
+  "village x-x-5": [
+    "monkeyopolis",
+    0.91
+  ],
+  "engineer 1-x-x": [
+    "sentry gun",
+    0.96
+  ],
+  "engineer 2-x-x": [
+    "faster engineering",
+    0.87
+  ],
+  "engineer 3-x-x": [
+    "sprockets",
+    0.96
+  ],
+  "engineer 4-x-x": [
+    "sentry expert",
+    0.92
+  ],
+  "engineer 5-x-x": [
+    "sentry champion",
+    0.85
+  ],
+  "engineer x-1-x": [
+    "larger service area",
+    0.77
+  ],
+  "engineer x-2-x": [
+    "deconstruction",
+    0.88
+  ],
+  "engineer x-3-x": [
+    "cleansing foam",
+    0.92
+  ],
+  "engineer x-4-x": [
+    "overclock",
+    0.96
+  ],
+  "engineer x-5-x": [
+    "ultraboost",
+    0.96
+  ],
+  "engineer x-x-1": [
+    "oversize nails",
+    0.92
+  ],
+  "engineer x-x-2": [
+    "pin",
+    0.96
+  ],
+  "engineer x-x-3": [
+    "double gun",
+    0.86
+  ],
+  "engineer x-x-4": [
+    "bloon trap",
+    0.96
+  ],
+  "engineer x-x-5": [
+    "xxxl trap",
+    0.96
+  ],
+  "beast 1-x-x": [
+    "piranha",
+    0.96
+  ],
+  "beast 2-x-x": [
+    "barracuda",
+    0.96
+  ],
+  "beast 3-x-x": [
+    "great white",
+    0.91
+  ],
+  "beast 4-x-x": [
+    "orca",
+    0.96
+  ],
+  "beast x-1-x": [
+    "microraptor",
+    0.96
+  ],
+  "beast x-2-x": [
+    "adasaurus",
+    0.96
+  ],
+  "beast x-3-x": [
+    "velociraptor",
+    0.96
+  ],
+  "beast x-4-x": [
+    "tyrannosaurus rex",
+    0.8
+  ],
+  "beast x-x-1": [
+    "gyrfalcon",
+    0.96
+  ],
+  "beast x-x-2": [
+    "horned owl",
+    0.8
+  ],
+  "beast x-x-3": [
+    "golden eagle",
+    0.82
+  ],
+  "beast x-x-4": [
+    "giant condor",
+    0.82
+  ],
+  "beast 5-x-x": [
+    "megalodon",
+    0.84
+  ],
+  "beast x-5-x": [
+    "giganotosaurus",
+    0.81
+  ],
+  "beast x-x-5": [
+    "pouakai",
+    0.96
+  ]
+}
