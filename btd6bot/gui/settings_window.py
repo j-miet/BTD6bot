@@ -85,9 +85,9 @@ class SettingsWindow:
         self.resolution_height_entry.insert(0, "height")
         self.resolution_height_entry.bind('<FocusIn>', lambda _: self._clear_entry())
         self.resolution_height_entry.config(fg='grey')
-        resolution_button = tk.Button(self.settings_window, text="Update resolution", anchor='w', padx=5,
+        self.resolution_button = tk.Button(self.settings_window, text="Update resolution", anchor='w', padx=5,
                                         command=self.set_resolution_value)
-        resolution_button.grid(column=2, columnspan=2, row=2, sticky='w', pady=(1,10))
+        self.resolution_button.grid(column=2, columnspan=2, row=2, sticky='w', pady=(1,10))
 
         self.windowed_toggle = tk.Checkbutton(self.settings_window, 
                                             text="Windowed mode (BTD6 must be opened with -popupwindow "
@@ -213,12 +213,14 @@ class SettingsWindow:
                 self.resolution_value.set(self.read_value("custom_resolution"))
                 self.resolution_width_entry['state'] = 'normal'
                 self.resolution_height_entry['state'] = 'normal'
+                self.resolution_button['state'] = 'normal'
             else:
                 self.windowed_toggle['state'] = 'disabled'
                 res = pyautogui.size()
                 self.resolution_value.set(f' {res[0]} x {res[1]} ')
                 self.resolution_width_entry['state'] = 'disabled'
                 self.resolution_height_entry['state'] = 'disabled'
+                self.resolution_button['state'] = 'disabled'
             if gui_vars_dict["windowed"]:
                 self.windowed.set('On')
             if gui_vars_dict["check_gamesettings"]:
@@ -254,6 +256,7 @@ class SettingsWindow:
             self.resolution_value.set(self.read_value("custom_resolution"))
             self.resolution_width_entry['state'] = 'normal'
             self.resolution_height_entry['state'] = 'normal'
+            self.resolution_button['state'] = 'normal'
         elif self.resolution.get() == 'Off':
             self.windowed_toggle['state'] = 'disabled'
             gui_vars_dict["check_resolution"] = False
@@ -262,6 +265,7 @@ class SettingsWindow:
             self.resolution_value.set(' '+str(res[0])+' x '+str(res[1])+' ')
             self.resolution_width_entry['state'] = 'disabled'
             self.resolution_height_entry['state'] = 'disabled'
+            self.resolution_button['state'] = 'disabled'
         with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
             json.dump(gui_vars_dict, f, indent=4)
 
@@ -430,13 +434,13 @@ class SettingsWindow:
     def reset_ocradjust_value(self) -> None:
         """Reset adjust arguments."""
         res_raw = self.resolution_value.get().strip().split()
-        res = 'res='+res_raw[0]+'x'+res_raw[2]+' monkeys=all'
+        res = 'res='+res_raw[0]+'x'+res_raw[2]
         adjust_args = f'{res}'
         if self.resolution.get() == 'On' and self.windowed.get() == 'On':
             adjust_args += ' win=1'
         else:
             adjust_args += ' win=0'
-        adjust_args += ' delta=4'
+        adjust_args += ' monkeys=all delta=4'
         self.ocr_autoadjust_entry.delete(0, "end")
         self.ocr_autoadjust_entry.insert("end", adjust_args)
 
