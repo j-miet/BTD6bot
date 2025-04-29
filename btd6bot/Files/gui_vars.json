@@ -4,13 +4,13 @@
     "custom_resolution": "1600 x 900",
     "windowed": false,
     "version": 48,
-    "retries": 1,
+    "retries": 5,
     "check_gamesettings": true,
-    "time_recording_status": true,
+    "time_recording_status": false,
     "ocr_frequency": 0.01,
     "checking_time_limit": 300,
     "delta_ocrtext": false,
     "substring_ocrtext": false,
     "ocr_adjust_deltas": false,
-    "adjust_args": "res=1920x1080 monkeys=all win=0 delta=4"
+    "adjust_args": "res=1920x1080 win=0 monkeys=all delta=4"
 }
