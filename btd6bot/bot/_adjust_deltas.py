@@ -150,7 +150,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
     print("Searching for main menu screen...")
     while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
         time.sleep(0.5)
-    print("-Updating values will take ~10 minutes.\n"
+    print("-Updating values will take a while.\n"
             "-Do not touch mouse or keyboard during this process.")
     print("Starting in... ", end='')
     timing.counter(8)

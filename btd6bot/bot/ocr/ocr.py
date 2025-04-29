@@ -79,7 +79,7 @@ class OcrValues:
     DELTA: float = 0.75
 
     @staticmethod
-    def _get_ocr_strings() -> dict[str, list[str, float]]:
+    def _get_ocr_strings() -> dict[str, list[str | float]]:
         with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'ocr_upgrade_data.json') as f:
             return json.load(f)
     OCR_UPGRADE_DATA = _get_ocr_strings()

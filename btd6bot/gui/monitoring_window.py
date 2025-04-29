@@ -101,10 +101,10 @@ class MonitoringWindow:
         self.textbox.insert('end', "Welcome to BTD6bot!\n"
                             "Make sure that:\n"
                             ">Game language is set to ENGLISH\n"
-                            ">Game resolution has aspect ratio 16:9\n"
-                            ">Game is preferably in fullscreen (windowed might work)\n"
-                            ">Bot hotkeys match to your in-game equivalents\n"
-                            ">Your Btd6 game window is on your main monitor"
+                            ">Resolution has aspect ratio of ~16:9\n"
+                            ">Game is preferably fullscreen (but windowed works too)\n"
+                            ">Bot hotkeys match with your in-game equivalents\n"
+                            ">Your Btd6 game window is on your main monitor\n"
                             "------\n"
                             "~Press 'Run'/your 'start-stop' hotkey to start bot!\n"
                             "~Press 'Stop'/'start-'stop' again to stop & RESET bot.\n If queue mode is enabled, "
@@ -112,7 +112,8 @@ class MonitoringWindow:
                             "~To pause/unpause bot, press your 'pause' hotkey.\n Bot can only be paused during maps "
                             "i.e. when it's not\n navigating menu screens, but pauses as soon as it\n becomes " 
                             "possible.\n"
-                            "~To exit entire program at any point, press your 'exit'\n hotkey.\n"+
+                            "~To close entire program at any point, press your\n"
+                            " 'exit' hotkey.\n"+
                             55*"/"+"\n")
         self.textbox['state'] = 'disabled'
         # save current stdout stream to a variable, before redirecting it to textbox
@@ -288,7 +289,8 @@ class MonitoringWindow:
         windowed_val: bool = gui_vars_dict["windowed"]
         retries_val: int = gui_vars_dict["retries"]
         w, h = pyautogui.size()
-        self.res_check(customres_val, resolution_val, windowed_val, w, h)
+        if not gui_vars_dict["ocr_adjust_deltas"]:
+            self.res_check(customres_val, resolution_val, windowed_val, w, h)
         if customres_val:
             print('[Custom Resolution] '+str(resolution_val[0])+'x'+str(resolution_val[1])+'\n'
                     '[Windowed] '+str(windowed_val))
