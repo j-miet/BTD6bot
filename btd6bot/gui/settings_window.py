@@ -29,9 +29,16 @@ class SettingsWindow:
         ocrtext (tk.StringVar): Enable/disable print of ocr text values.
         resolution_width_entry (tk.Entry): Width value for display resolution.
         resolution_height_entry (tk.Entry): Height value for display resolution.
+        resolution_button (tk.Button): Apply current width and height entry values.
         windowed_toggle (tk.Checkbutton): Toggle windowed mode on/off.
         version_entry (tk.Entry): Entry box for game version.
+        retry_entry: (tk.Entry): Entry box for retries value.
         time_limit_entry (tk.Entry): Entry box for ocr time limit value.
+        ocr_frequency_entry (tk.Entry): Entry for ocr frequency.
+        ocr_autoadjust_entry (tk.Entry): Entry field for ocr upgrade data adjusting parameters.
+        ocr_autoadjust_button (tk.Button): Apply adjusting parameters.
+        ocr_autoadjust_reset_button (tk.Button): Reset adjusting parameters entry field without applying the values; 
+            use autoadjust button afterwards to do this.
     """
 
     def __init__(self) -> None:
@@ -74,6 +81,10 @@ class SettingsWindow:
         resolution_label.grid(column=2, row=1, sticky='sw', padx=1, pady=(1,10))
         resolution_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.resolution_value)
         resolution_current_value.grid(column=3, columnspan=2, row=1, sticky='sw', padx=(1,35), pady=(1,10))
+        res_reminder = tk.Text(self.settings_window, wrap=tk.WORD, width=10, height=5, relief='sunken')
+        res_reminder.grid(column=4, row=1, rowspan=3, sticky='nw', padx=1, pady=(1,10))
+        res_reminder.insert("end", '[Reminder] Aspect ratio should be ~16:9')
+        res_reminder['state'] = 'disabled'
 
         self.resolution_width_entry = tk.Entry(self.settings_window, width=10)
         self.resolution_width_entry.grid(column=0, row=2, sticky='e', pady=(1,10), padx=(21,31))
@@ -96,7 +107,7 @@ class SettingsWindow:
                                             onvalue='On', offvalue='Off', pady=5, padx=18, 
                                             variable=self.windowed,
                                             command=self.change_windowed_status)
-        self.windowed_toggle.grid(column=0, row=3, columnspan=5, sticky='nw')
+        self.windowed_toggle.grid(column=0, row=3, columnspan=4, sticky='nw')
 
         version_label = tk.Label(self.settings_window, text='Game version')
         version_label.grid(column=0, row=4, sticky='se', padx=(1,21), pady=(5,1))
@@ -244,7 +255,6 @@ class SettingsWindow:
                 self.ocr_autoadjust_entry.insert("end", gui_vars_dict["adjust_args"])
                 self.ocr_autoadjust_entry['state'] = 'disabled'
 
-
     def change_resolution_status(self) -> None:
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
@@ -342,15 +352,18 @@ class SettingsWindow:
     def set_resolution_value(self) -> None:
         try:
             width = self.resolution_width_entry.get()
+            w = int(width)
             height = self.resolution_height_entry.get()
-            if int(width) >= 0 and int(height) >= 0:
-                val = width+' x '+height
-                with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-                    gui_vars_dict: dict[str, Any] = json.load(f)
-                gui_vars_dict["custom_resolution"] = val
-                self.resolution_value.set(' '+val+' ')
-                with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
-                    json.dump(gui_vars_dict, f, indent=4)
+            h = int(height)
+            native = pyautogui.size()
+            if 1 <= w < native[0] and 1 <= h < native[1]:
+                    val = width+' x '+height
+                    with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+                        gui_vars_dict: dict[str, Any] = json.load(f)
+                    gui_vars_dict["custom_resolution"] = val
+                    self.resolution_value.set(' '+val+' ')
+                    with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+                        json.dump(gui_vars_dict, f, indent=4)
         except ValueError:
             ...
 
