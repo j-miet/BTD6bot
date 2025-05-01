@@ -156,9 +156,10 @@ def add_command(comment_str: str) -> None:
                     "       \t[Note] upgrade list must not contain spaces!\n\n"
                     "	-t: change targeting on monkey/hero\n"
                     "    	\targs:\n"
-                    "	  	\tvar_name, target_str, x, y\n"
+                    "	  	\tvar_name, target_str. Optional pos argument 'p' to add mouse location as target x,y\n"
                     "    	\texample:\n"
-                    "    	 \t\t-t dart_name strong, 0.1, 0.5 => dart_name.target('strong')\n\n"
+                    "    	 \t\t-t dart_name strong => dart_name.target('strong')\n"
+                    "    	 \t\t-t dart_name strong p => dart_name.target('strong', x=0.1, y=0.1)\n\n"
                     "	-trobo: change targeting on monkey/hero\n"
                     "    	\targs:\n"
                     "	  	\tvar_name, direction, clicks\n"
@@ -180,10 +181,10 @@ def add_command(comment_str: str) -> None:
                     "       \t[Note] upgrade list must not contain spaces!\n\n"
                     "	-tcp: change targeting on monkey/hero by first updating its current position\n"
                     "    	\targs:\n"
-                    "	 	\tvar_name, target_str, x, y, cpos_x, cpos_y\n"
+                    "	 	\tvar_name, target_str, x, y.\n"
                     "    	\texample:\n"
-                   	"    	 \t\t-tcp dart_name first 0.1 0.2 0.5 0.6\n"
-                    "			=> dart_name.target('first', x=0.1, y=0.2, cpos_x=0.5, cpos_y=0.6)\n\n"
+                   	"    	 \t\t-tcp dart_name first 0.5 0.6 (assuming mouse location is (0.1, 0.1))\n"
+                    "			=> dart_name.target('first', x=0.5, y=0.6, cpos_x=0.1, cpos_y=0.1)\n\n"
                     "	-scp: use special ability of monkey/hero by first updating its current position\n"
                     "    	\targs:\n"
                     "  		\tvar_name, x, y, cpos_x, cpos_y\n"
@@ -224,8 +225,12 @@ def add_command(comment_str: str) -> None:
             if len(cmd[1:]) < 2:
                 print("Need 2: var_name, target_str")
                 return
-            TrackerVals.coordinates_file.write('    '+cmd[1]+".target('"+cmd[2]+"')\n")
-            print("-> "+cmd[1]+".target('"+cmd[2]+"')", end='')
+            if len(cmd[1:]) == 3 and cmd[3] == 'p':
+                TrackerVals.coordinates_file.write('    '+cmd[1]+".target('"+cmd[2]+"', x="+x+", y="+y+")\n")
+                print("-> "+cmd[1]+".target('"+cmd[2]+"', x="+x+", y="+y+")", end='')
+            else:
+                TrackerVals.coordinates_file.write('    '+cmd[1]+".target('"+cmd[2]+"')\n")
+                print("-> "+cmd[1]+".target('"+cmd[2]+"')", end='')
         case '-trobo':
             if len(cmd[1:]) < 2:
                 print("Need 3 args: var_name, direction, clicks")
@@ -259,9 +264,9 @@ def add_command(comment_str: str) -> None:
                 print("Need 4 args: var_name, special, x, y")
                 return
             TrackerVals.coordinates_file.write(
-                '    '+cmd[1]+".special("+cmd[2]+"', x="+cmd[3]+", y="+cmd[4]+", cpos_x="+x+", cpos_y="+y+")\n")
+                '    '+cmd[1]+".special("+cmd[2]+", x="+cmd[3]+", y="+cmd[4]+", cpos_x="+x+", cpos_y="+y+")\n")
             print(
-                "-> "+cmd[1]+".special("+cmd[2]+"', x="+cmd[3]+", y="+cmd[4]+", cpos_x="+x+", cpos_y="+y+")", end='')
+                "-> "+cmd[1]+".special("+cmd[2]+", x="+cmd[3]+", y="+cmd[4]+", cpos_x="+x+", cpos_y="+y+")", end='')
         case '-c':
             if len(cmd[1:]) < 1:
                 print("Need 1 arg: text_str")
@@ -296,7 +301,6 @@ def run_tracker() -> None:
 
     # updates file during program runtime by opening it in append mode. 
     # Also writes down coordinates + optional user # comments in file commands.txt
-    # don't write to file manually during this script's runtime! But you can open it on side and see how it updates, though!
     while True:
         time.sleep(0.2)
         TrackerVals.coordinates_file = open(pathlib.Path(__file__).parent/'commands.txt', 'a')
