@@ -23,9 +23,9 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
         timer: Ability timer - ability is used after this amount of time has passed. Accepts float values. 
             Default value is 0, which means ability is used the moment 'ability' call is processed.
         xy: Target coordinate, a tuple of floats. Default is None.
-        delay: Time waited before ability is clicked. Only reasonable use case is when reseting Obyn's trees: bananas 
-            have short animation during which they cannot be collected, so wait a second or so, then click on tree 
-            explosion location to collect them all. Default value is 0.1.
+        delay: Time waited before location xy is clicked again. Only reasonable use case is when reseting Obyn's trees: 
+            bananas have short animation during which they cannot be collected, so wait a second or so, then click on 
+            tree explosion location to collect them all. Default value is 0.1.
 
     Examples:
         Use ability number 2 immediately after command is processed.
