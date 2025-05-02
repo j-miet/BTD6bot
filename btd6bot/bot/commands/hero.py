@@ -243,8 +243,8 @@ class Hero(Monkey):
         """Force targeting priority of a hero without checks.
         
         Currently, its only use is to set Etienne's Zone Control status for bot: bot doesn't know when Etienne 
-        hits lvl 12 and won't update targeting priority to match in-game value. So user must call this command 
-        inside the round block where Etienne reaches lvl 12 - otherwise some unintended behaviour could occur
+        hits lvl 11 and won't update targeting priority to match in-game value. So user must call this command 
+        inside the round block where Etienne reaches lvl 11 - otherwise some unintended behaviour could occur
         should user want to change targeting later.
         """
         if self._hero_name == 'etienne':
@@ -314,7 +314,7 @@ class Hero(Monkey):
 
             *IMPORTANT* if you use 'ETIENNE' as hero:
             You need to *manually* update targeting status of 'zone' (i.e. Zone Control) after Etienne hits level 12. 
-            Currently, bot has no way to track hero xp, and when etienne hits lvl 12, he will automatically change
+            Currently, bot has no way to track hero xp, and when etienne hits lvl 11, he will automatically change
             in-game targeting to Zone Control. But bot has no idea this has happened so it has either 'first' or 'd&q' 
             set as targeting priority. Now, if you never intend to change targeting, it doesn't really matter, but say 
             you wanted to change 'zone' back to 'first', but bot has currently status 'first': well, bot "does nothing" 
