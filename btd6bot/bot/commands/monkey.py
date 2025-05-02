@@ -1092,12 +1092,16 @@ class Monkey(_MonkeyConstants):
         #time.sleep(0.3)
         print(f'{self._name.capitalize()} special {s} used.')
 
-    def sell(self) -> None:
+    def sell(self, cpos_x: float | None = None, cpos_y: float | None = None) -> None:
         """Sells this monkey.
 
         Doesn't actually delete the bot monkey object so please don't refer to it afterwards - unless you've created a 
         new monkey and stored it in same variable.
         
+        Args:
+            cpos_x: If monkey's current x-coordinate position has changed, update it. Default value is None.
+            cpos_y: If monkey's current y-coordinate position has changed, update it. Default value is None.
+
         Examples
         --
         >>> wizard = Monkey('wizard', 0.1, 0.85)
@@ -1123,9 +1127,15 @@ class Monkey(_MonkeyConstants):
         times.pause_bot()
         if Rounds.defeat_status:
             return
+        if cpos_x is not None:
+            self._pos_x = cpos_x
+        if cpos_y is not None:
+            self._pos_y = cpos_y
         kb_mouse.click((self._pos_x, self._pos_y))
         time.sleep(0.3)
         kb_mouse.kb_input(hotkeys['sell'])
+        if self._name == 'sniper' and self._upgrade_path[2] == 5:
+            Monkey._elite_sniper = 0
         print(f'{self._name.capitalize()} sold!')
 
     def target(self, set_target: str,
