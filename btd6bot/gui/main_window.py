@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 import json
 import os
+import shutil
 import signal
 import sys
 import threading
@@ -228,6 +229,19 @@ class MainWindow:
                                       state='active', padx=10, pady=0)
         self.start_button.grid(column=3, row=5, sticky='e')
     
+        self._delete_readme_html()
+        self._autoupdate_readme()
+
+    def _delete_readme_html(self) -> None:
+        if os.path.exists(gui_paths.FILES_PATH/'helpwindow'/'README.html'):
+            os.remove(gui_paths.FILES_PATH/'helpwindow'/'README.html')
+
+    def _autoupdate_readme(self) -> None:
+        try:
+            shutil.copy(gui_paths.ROOT.parent/'README.md', gui_paths.FILES_PATH/'helpwindow'/'README.md')
+        except FileNotFoundError:
+            print("Could not update Files/helpwindow/README.md")
+
     def get_maps(self) -> list[str]:
         """Get all map names.
 
@@ -558,6 +572,7 @@ class MainWindow:
         """
         while True:
             while not current_help.winfo_exists():
+                self._delete_readme_html()
                 self.help_button.configure(state='active')
                 if self.queue.get() == 'On':
                     self.start_button.configure(state='disabled')
