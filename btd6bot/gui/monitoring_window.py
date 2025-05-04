@@ -153,7 +153,7 @@ class MonitoringWindow:
         try:
             photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(self.all_plans[0])+'.png'))
             self.monitor_mapscreen = ttk.Label(self.monitoringwindow, image=photo, compound='top', anchor='nw', 
-                                               padding="0 15 0 0", justify='left')
+                                               justify='left')
             self.monitor_mapscreen.image = photo # type: ignore
             self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
         except tk.TclError:
