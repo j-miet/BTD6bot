@@ -157,6 +157,14 @@ class Hero(Monkey):
         else:
             return None
 
+    def _prepare_hero_menu(self) -> None:
+        """Sets custom panel, like Geraldo shop or Corvus spellbook, in order to access them."""
+        if self._hero_name in {'geraldo', 'corvus'}:
+            kb_mouse.click((self._pos_x, self._pos_y))
+            time.sleep(0.3)
+            self.special(1)
+            kb_mouse.press_esc()
+
     def _basic_hero_target(self) -> str | None:
         """Defines default hero targeting behaviour.
 
@@ -171,14 +179,6 @@ class Hero(Monkey):
             case _:
                 return 'first'
             
-    def _prepare_hero_menu(self) -> None:
-        """Sets custom panel, like Geraldo shop or Corvus spellbook, in order to access them."""
-        if self._hero_name in {'geraldo', 'corvus'}:
-            kb_mouse.click((self._pos_x, self._pos_y))
-            time.sleep(0.3)
-            self.special(1)
-            kb_mouse.press_esc()
-
     def _change_hero_target(self, target: str,
                            x: float | None = None,  # currently no hero has a targeting mode requiring coordinates.
                            y: float | None = None,
