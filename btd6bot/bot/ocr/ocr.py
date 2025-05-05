@@ -63,10 +63,10 @@ class OcrValues:
             handled separately. Delta value itself is included i.e. 0.8 means that all deltas on closed interval 
             [0.8, 1] are valid.
         OCR_UPGRADE_DATA (dict[str, list[str, float]], class attribute):
-            Contains all manual upgrade names and their respective deltas for strong_delta_check. Each key 
+            Contains all upgrade names and their respective deltas for strong_delta_check. Each key 
             is a identifier for monkey and crosspath, with values being the ocr data. For example,
             OCR_UPGRADE_DATA['dart 1-x-x'] would return something similar to ["sharp shots", 0.8].
-
+                       
         read_file_frequency (float, class attribute):
             Text recognition check rate in both find_text and check_upg_text: lower number increases rate of checking, 
             but also increases CPU usage significantly. Frequency itself is just a pause timer in seconds so 1 equals 
@@ -79,10 +79,16 @@ class OcrValues:
     DELTA: float = 0.75
 
     @staticmethod
-    def _get_ocr_strings() -> dict[str, list[str | float]]:
-        with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'ocr_upgrade_data.json') as f:
-            return json.load(f)
-    OCR_UPGRADE_DATA = _get_ocr_strings()
+    def _get_current_upgradedata() -> dict[str, list[str | float]]:
+        with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'upgrades_current.json') as f:
+            return json.load(f)    
+    OCR_UPGRADEDATA = _get_current_upgradedata()
+
+    @staticmethod
+    def _get_base_upgradedata() -> dict[str, list[str | float]]:
+        with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'_ocr_upgradedata.json') as f:
+            return json.load(f)   
+    _OCR_UPG_BASEDATA = _get_base_upgradedata() 
 
     read_file_frequency: float = 0.01
     _log_ocr_deltas: bool = False
@@ -322,13 +328,16 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
     text = strong_image_ocr((tl_x, tl_y, br_x, br_y), reader)
     if len(text) != 0:
         if input_str == '_upgrade_':
-            match_str = OcrValues.OCR_UPGRADE_DATA[upg_match][0]
-            delta_limit = OcrValues.OCR_UPGRADE_DATA[upg_match][1]
+            if OcrValues._log_ocr_deltas:
+                match_str = OcrValues._OCR_UPG_BASEDATA[upg_match][0]
+            else:
+                match_str = OcrValues.OCR_UPGRADEDATA[upg_match][0]
+                delta_limit = OcrValues.OCR_UPGRADEDATA[upg_match][1]
             d = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), match_str).quick_ratio()
             if BotVars.print_delta_ocrtext:
                 print('\n-Text: '+text.lower())
                 print("-Match delta: "+str(d))
-                if OcrValues._log_ocr_deltas:   # use only with tools/adjust_deltas
+                if OcrValues._log_ocr_deltas:
                     with open(
                         pathlib.Path(__file__).parent.parent.parent/'Files'/'.temp_upg_deltas.json'
                         ) as f:
