@@ -898,7 +898,8 @@ class Monkey(_MonkeyConstants):
                         upg_match):
                         upgraded = 1
                 if upgraded:
-                    print('Upgraded.')
+                    if not OcrValues._log_ocr_deltas:
+                        print('Upgraded.')
                     self._upgrade_path = upg
                     return
 
@@ -1136,7 +1137,8 @@ class Monkey(_MonkeyConstants):
         kb_mouse.kb_input(hotkeys['sell'])
         if self._name == 'sniper' and self._upgrade_path[2] == 5:
             Monkey._elite_sniper = 0
-        print(f'{self._name.capitalize()} sold!')
+        if not OcrValues._log_ocr_deltas:
+            print(f'{self._name.capitalize()} sold!')
 
     def target(self, set_target: str,
                x: float | None = None,
@@ -1525,6 +1527,7 @@ class Monkey(_MonkeyConstants):
             self._update_panel_position(cpos_x)
         kb_mouse.kb_input(hotkeys["merge beast"])
         kb_mouse.click((x,y))
+        time.sleep(0.5)
         kb_mouse.press_esc()
         time.sleep(0.1)
         print(f"Beast merged.") 
