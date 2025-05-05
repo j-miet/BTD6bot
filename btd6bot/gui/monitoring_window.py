@@ -4,6 +4,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import json
+import os
 import sys
 import threading
 import time
@@ -150,21 +151,39 @@ class MonitoringWindow:
                                         )
         style = ttk.Style()
         style.configure('Style.TButton', font='TkFixedFont')
-        try:
-            photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(self.all_plans[0])+'.png'))
-            self.monitor_mapscreen = ttk.Label(self.monitoringwindow, image=photo, compound='top', anchor='nw', 
-                                               justify='left')
-            self.monitor_mapscreen.image = photo # type: ignore
-            self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
-        except tk.TclError:
-            self.monitor_mapscreen = ttk.Label(self.monitoringwindow, compound='top', anchor='nw',
-                                              style='Style.TButton', justify='left')
-            self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
-            self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
+
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+            guivars_adjust: dict[str, Any] = json.load(f)["ocr_adjust_deltas"]
+        if guivars_adjust:
+            try:
+                photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'spa pits.png')
+                self.monitor_mapscreen = ttk.Label(self.monitoringwindow, image=photo, compound='top', anchor='nw', 
+                                                justify='left')
+                self.monitor_mapscreen.image = photo # type: ignore
+                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+            except tk.TclError:
+                self.monitor_mapscreen = ttk.Label(self.monitoringwindow, compound='top', anchor='nw',
+                                                style='Style.TButton', justify='left')
+                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+                self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
+        else:
+            try:
+                photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(self.all_plans[0])+'.png'))
+                self.monitor_mapscreen = ttk.Label(self.monitoringwindow, image=photo, compound='top', anchor='nw', 
+                                                justify='left')
+                self.monitor_mapscreen.image = photo # type: ignore
+                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+            except tk.TclError:
+                self.monitor_mapscreen = ttk.Label(self.monitoringwindow, compound='top', anchor='nw',
+                                                style='Style.TButton', justify='left')
+                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+                self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
 
         self.monitor_infobox_current = tk.Label(self.monitoringwindow, width=20, height=5, 
                                                 text='Current\n'+plan_data.info_display(self.all_plans[0]), anchor='nw',
                                                 relief='sunken', justify='left', wraplength=330, padx=10, pady=10)
+        if guivars_adjust:
+            self.monitor_infobox_current['text'] = 'Current\n'+plan_data.info_display('spa_pitsEasySandbox')
         self.monitor_infobox_current.grid(column=4, row=2, sticky='nw')
 
         self.monitor_infobox_next = tk.Label(self.monitoringwindow, width=20, height=5, text='-'*12, anchor='nw',
@@ -241,7 +260,7 @@ class MonitoringWindow:
         roundtimer_thread.start()
 
     def res_check(self, customres: bool, resolution_val: list[int], windowed: bool, w: int, h: int) -> None:
-        with open(gui_paths.FILES_PATH/'ocr_upgrade_data.json') as f:
+        with open(gui_paths.FILES_PATH/'upgrades_current.json') as f:
             identifier: list[int | str] = json.load(f)["__identifier"]
         issue_flag = 0
         if customres:
@@ -299,11 +318,23 @@ class MonitoringWindow:
             print('[Resolution] '+str(w)+'x'+str(h))
         
         if gui_vars_dict["ocr_adjust_deltas"]:
+            try:
+                new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'spa pits.png')
+                self.monitor_mapscreen['text'] = ''
+                self.monitor_mapscreen.configure(image=new_image)
+                self.monitor_mapscreen.image = new_image # type: ignore
+            except tk.TclError:
+                self.monitor_mapscreen.configure(image='')
+                self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
+            self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display('spa_pitsEasySandbox'))
             print(".-------------------------.\n"
                   "| Ocr adjust mode enabled |\n"
                   ".-------------------------.\n")
             set_plan.run_delta_adjust()
             self.monitor_run_button.configure(text='Run')
+        elif not gui_vars_dict["ocr_adjust_deltas"]:
+            if os.path.exists(gui_paths.FILES_PATH/'.temp_upg_deltas.json'):
+                os.remove(gui_paths.FILES_PATH/'.temp_upg_deltas.json')
         elif self.replay_val == 'On':
             while True:
                 for plan_index in range(len(self.all_plans)):
