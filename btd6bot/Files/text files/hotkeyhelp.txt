@@ -11,9 +11,9 @@
 -Press 'Set Hotkey' button below hotkey box. When button is grayed out, press any supported key.
 -You should now see the right side of '=' change on that row you chose.
 ## Remember to scroll the hotkey panel down to access rest of the hotkeys ##
+## Some keys might not get displayed correctly, but should still work ##
 
-[Other]
--Some keys might not get displayed correctly, but should still work.
+[Hotkey explanations]
 -Most hotkey meanings should be easy to interpret but here's a breakdown:
  'dart monkey',..., 'beast handler' are monkeys + 'hero' stands, unsuprisingly, for hero.                       
  'upgrade ...' are for the corresponding upgrade paths.  
