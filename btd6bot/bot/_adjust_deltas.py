@@ -4,7 +4,6 @@ from typing import Any
 import pathlib
 import json
 import os
-import shutil
 import time
 
 from bot import kb_mouse
@@ -124,8 +123,37 @@ def _check_ocr(m: str,
     bot.sell()
 
 def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool = False) -> None:
+    # check if upgrade_current.json dictionary has all required keys and values.
+    # If not, use _ocr_upgradedata.json base values instead. This also means all monkeys are adjusted,
+    # even if list of checked monkeys was a sublist.
+    base_dict: dict[str, Any] = {}
+    current_dict: dict[str, Any] = {}
+    with open(pathlib.Path(__file__).parent.parent/'Files'/'_ocr_upgradedata.json') as base:
+        base_dict = json.load(base)
+    with open(pathlib.Path(__file__).parent.parent/'Files'/'upgrades_current.json') as current:
+        current_dict = json.load(current)
+    base_keys = base_dict.keys()
+    current_keys = current_dict.keys()
+    baseval_flag = 0
+    for key in base_keys:
+        if key not in current_keys:
+            print("Current upgrades file has missing keys.\nALL monkeys will be adjusted.\n///")
+            with open(_TEMPFILE_PATH, 'w') as tempf:
+                json.dump(base_dict, tempf, indent=2)
+            baseval_flag = 1
+            break
+        elif current_dict[key][0] != base_dict[key][0]:
+            print("Mismatch in one or more current upgrade names.\nALL monkeys will be adjusted.\n///")
+            with open(_TEMPFILE_PATH, 'w') as tempf:
+                json.dump(base_dict, tempf, indent=2)
+            baseval_flag = 1
+            break
+    if not baseval_flag:
+        with open(_TEMPFILE_PATH, 'w') as tempf:
+            json.dump(current_dict, tempf, indent=2)
+        
     monkeys: list[str] = []
-    if check_monkeys == ['all']:
+    if check_monkeys == ['all'] or baseval_flag:
         monkeys = list(_MonkeyConstants._MONKEY_NAMES[:])
         monkeys.remove('hero')
     else:
@@ -135,25 +163,20 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
     if monkeys == []:
         return
     
-    if BotVars.windowed == True:
-        win = "windowed"
-    else:
-        win = "fullscreen"
-    with open(_TEMPFILE_PATH, 'w') as f:
-        json.dump({"__identifier": [ScreenRes.width, ScreenRes.height, win, f"delta={delta_adjust}"]}, f, indent=2)
-    
     BotVars.check_gamesettings = True
     BotVars.print_delta_ocrtext = True
     BotVars.checking_time_limit = 10
     OcrValues._log_ocr_deltas = True
 
-    print("Searching for main menu screen...")
+    print("\nSearching for main menu screen...", end='')
     while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
         time.sleep(0.5)
+    print(" <Menu detected>\n")
     print("-Updating values will take a while.\n"
-            "-Do not touch mouse or keyboard during this process.")
+            "-Do not use mouse or keyboard during this process.")
     print("Starting in... ", end='')
-    timing.counter(8)
+    timing.counter(5)
+    print("\n--Begin--")
 
     _choose_map('spa pits')
     _choose_diff('EASY')
@@ -168,26 +191,34 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
         kb_mouse.click((0.5036458333333, 0.7064814814815))
         time.sleep(0.5)
     print("\n###")
+    kb_mouse.click((0.5036458333333, 0.7064814814815))
+    time.sleep(1)
 
+    # left upgrade panel
     for m in monkeys:
+        print(f"=={m}==")
         _check_ocr(m, *_get_positions(m, 'left'))
     left_deltas: dict[str, Any] = {}
     with open(_TEMPFILE_PATH) as f:
-        left_deltas = json.load(f) # left upgrade panel
+        left_deltas = json.load(f)
 
+    # right upgrade panel
     for m in monkeys:
+        print(f"=={m}==")
         _check_ocr(m, *_get_positions(m, 'right'))
     right_deltas: dict[str, Any] = {}
     with open(_TEMPFILE_PATH) as f:
-        right_deltas: dict[str, Any] = json.load(f)  # right upgrade panel
+        right_deltas: dict[str, Any] = json.load(f)
 
+    # final deltas i.e. pick the smaller of left and right value
     delta_dict: dict[str, Any] = left_deltas.copy()
     for key in left_deltas.keys():
         minval = min(left_deltas[key][1], right_deltas[key][1])
         delta_dict[key][1] = minval
     with open(_TEMPFILE_PATH, 'w') as f:
-        json.dump(delta_dict, f, indent=2)  # final deltas
+        json.dump(delta_dict, f, indent=2)
 
+    # adjusted final deltas
     if delta_adjust > 0:
         adjust_val = delta_adjust*0.01
         print("---------------------------------------------------\n"
@@ -200,32 +231,39 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
                     adjusted_dict[key][1] = round(adjusted_dict[key][1] - adjust_val, 2)
                     break
         with open(_TEMPFILE_PATH, 'w') as f:
-            json.dump(adjusted_dict, f, indent=2)  # adjusted final deltas
+            json.dump(adjusted_dict, f, indent=2)
 
-    # update identifier
+    # update identifier key
     with open(_TEMPFILE_PATH) as f:
         upg_dict: dict[str, Any] = json.load(f)
-    upg_dict["__identifier"] = [1920, 1080, "fullscreen", f"delta={delta_adjust}"]
+    if BotVars.windowed == True:
+        win = "windowed"
+    else:
+        win = "fullscreen"
+    upg_dict["__identifier"] = [ScreenRes.width, ScreenRes.height, win, f"delta={delta_adjust}"]
     with open(_TEMPFILE_PATH, 'w') as f:
         json.dump(upg_dict, f, indent=2)
 
-    # create copy of current upgrade data
-    shutil.copy2(pathlib.Path(__file__).parent.parent/'Files'/'ocr_upgrade_data.json',
-                 pathlib.Path(__file__).parent.parent/'Files'/'ocr_upgrade_data -previous.json')
-
-    # override existing upgrade data
-    with open(pathlib.Path(__file__).parent.parent/'Files'/'ocr_upgrade_data.json', 'w') as f:
+    with open(pathlib.Path(__file__).parent.parent/'Files'/'upgrades_current.json', 'w') as f:
         json.dump(upg_dict, f, indent=2)
+    print("-Deltas updated in upgrades_current.json")
+    warning_flag = 1
+    for monkey_vals in upg_dict.keys():
+        if monkey_vals != "__identifier" and upg_dict[monkey_vals][1] <= 0.5:
+            if warning_flag:
+                print("#!# Following deltas are unusually low #!#")
+                warning_flag = 0
+            print(f"{monkey_vals}, {upg_dict[monkey_vals][0]}: {upg_dict[monkey_vals][1]}")
 
+    # automatically reset toggle value from settings after updating
     with open(pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json') as guivars_f:
         guivars_dict: dict[str, Any] = json.load(guivars_f)
-    guivars_dict["ocr_adjust_deltas"] = False   # automatically reset setting toggle after update
+    guivars_dict["ocr_adjust_deltas"] = False
     with open(pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json', 'w') as guivars_f:
         json.dump(guivars_dict, guivars_f, indent=4)
+    print("-Auto-adjust set to False.\n")
 
-    os.remove(_TEMPFILE_PATH)   # delete .temp_upg_deltas.json
-    print("-Ocr upgrade deltas updated.\n"
-          "-Auto-adjust set to False.\n")
+    os.remove(_TEMPFILE_PATH)   # delete temp file .temp_upg_deltas.json
     time.sleep(2)
     kb_mouse.press_esc()
     time.sleep(1)
@@ -233,7 +271,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
 
     while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
         time.sleep(0.5)
-    print("Done!")
+    print("Adjusting process complete!")
 
 def run() -> None:
     with open(pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json') as f:
@@ -261,6 +299,6 @@ def run() -> None:
             f"Resolution: {res_vals[0]}x{res_vals[1]}\n"
             f"Windowed: {BotVars.windowed}\n"
             f"Monkeys: {monkey_list}\n"
-            f"Delta: {delta}\n"
+            f"Delta: {delta}\n\n"
             "=>Bot will next enter 'spa pits' map in sandbox mode.")
     _adjust_upg_deltas(monkey_list, delta)
