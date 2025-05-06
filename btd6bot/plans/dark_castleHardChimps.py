@@ -111,7 +111,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
 			spike.upgrade(['2-0-5'])
 		elif current_round == 95:
 			alch3 = Monkey('alch', 0.7869791666667, 0.5851851851852)
-			alch3.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-1-0','4-2-0'])
+			alch3.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-0-1'])
 		elif current_round == 96:
 			alch4 = Monkey('alch', 0.4859375, 0.3277777777778)
 			alch4.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-0-1'])
