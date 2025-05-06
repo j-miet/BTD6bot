@@ -53,28 +53,27 @@ class CollectionEvent:
         current event status is read from BotVars.current_event_status.
         """
         print('\nChecking if collection event screen appears...')
-        time.sleep(5)
-        collected_something = False
-        while strong_delta_check('collect', CollectionEvent.COLLECTION_COLLECT, OCR_READER):
-            collected_something = True
-            print('Clicking all insta pop-ups location...')
-            kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_event'], 2)
-            time.sleep(3)
-            kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_two_left'], 2)
-            time.sleep(1)
-            kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_two_right'], 2)
-            time.sleep(1)
-            kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_three_left'], 2)
-            time.sleep(1)
-            kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_three_middle'], 2)
-            time.sleep(1)
-            kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_three_right'], 2)
-            time.sleep(1)
-            kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_continue'])
-            time.sleep(5)
-        if collected_something:
-            kb_mouse.press_esc()
-        print('Collection of event collectables handled.')
+        start = time.time()
+        while time.time()-start <= 5:
+            if strong_delta_check('collect', CollectionEvent.COLLECTION_COLLECT, OCR_READER):
+                print('Clicking all insta pop-ups location...')
+                kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_event'], 2)
+                time.sleep(3)
+                kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_two_left'], 2)
+                time.sleep(1)
+                kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_two_right'], 2)
+                time.sleep(1)
+                kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_three_left'], 2)
+                time.sleep(1)
+                kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_three_middle'], 2)
+                time.sleep(1)
+                kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_three_right'], 2)
+                time.sleep(1)
+                kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_continue'])
+                time.sleep(3)
+                kb_mouse.press_esc()
+                print('Collection of event collectables handled.')
+                return
 
 def returned() -> None:
     """Verifies that bot has returned to main menu and checks for collection event status."""
