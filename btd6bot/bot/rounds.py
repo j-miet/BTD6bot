@@ -241,11 +241,16 @@ class Rounds:
                 forward()
             total_time = times.current_time()
             defeat_check = 1
+            levelup_check = 1
             while True:
                 round_value = strong_substring_check(str(current_round)+'/'+str(Rounds.end_round), 
                                                      Rounds.CURRENT_ROUND, OCR_READER)
                 if not round_value[0]:
                     times.pause_bot()
+                    if levelup_check == 20:
+                        kb_mouse.click((0.9994791666667, 0))
+                        levelup_check = 0
+                    levelup_check += 1
                     if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
                         defeat_check = 1
                     if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):

@@ -871,7 +871,12 @@ class Monkey(_MonkeyConstants):
         total_time = times.current_time()
         upgraded = 0
         defeat_check = 1
+        levelup_check = 1
         while not upgraded:
+            if levelup_check == 20:
+                kb_mouse.click((0.9994791666667, 0))
+                levelup_check = 0
+            levelup_check += 1
             if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
                 defeat_check = 1
             if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
@@ -923,6 +928,7 @@ class Monkey(_MonkeyConstants):
         total_time = times.current_time()
         placed = 0
         defeat_check = 1
+        levelup_check = 1
         while not placed:
             if OcrValues._log_ocr_deltas or not self._placement_check:
                 kb_mouse.click((0.5, 0))
@@ -931,6 +937,10 @@ class Monkey(_MonkeyConstants):
                 print(f'{self._name.capitalize()} placed.')
                 return
             times.pause_bot()
+            if levelup_check == 20:
+                kb_mouse.click((0.9994791666667, 0))
+                levelup_check = 0
+            levelup_check += 1
             if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
                 defeat_check = 1
             if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
