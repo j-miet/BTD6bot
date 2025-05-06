@@ -332,10 +332,9 @@ class MonitoringWindow:
                   ".-------------------------.\n")
             set_plan.run_delta_adjust()
             self.monitor_run_button.configure(text='Run')
-        elif not gui_vars_dict["ocr_adjust_deltas"]:
-            if os.path.exists(gui_paths.FILES_PATH/'.temp_upg_deltas.json'):
-                os.remove(gui_paths.FILES_PATH/'.temp_upg_deltas.json')
-        elif self.replay_val == 'On':
+        if os.path.exists(gui_paths.FILES_PATH/'.temp_upg_deltas.json'):
+            os.remove(gui_paths.FILES_PATH/'.temp_upg_deltas.json')
+        if self.replay_val == 'On':
             while True:
                 for plan_index in range(len(self.all_plans)):
                     BotData.victory = False
