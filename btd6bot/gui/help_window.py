@@ -3,6 +3,7 @@
 from __future__ import annotations
 import tkinter as tk
 
+import markdown
 from tkinterweb import HtmlFrame
 
 import gui.gui_paths as gui_paths
@@ -40,10 +41,9 @@ class HelpWindow:
             newf.write(updated)
         
     def _update_markdown_to_html(self) -> None:
-        import markdown
         with open(gui_paths.FILES_PATH/'helpwindow'/'README.md') as f:
             text = f.read()
-        html = markdown.markdown(text)
+        html = markdown.markdown(text, extensions=['tables'])
         with open(gui_paths.FILES_PATH/'helpwindow'/'README.html', 'w') as outf:
             outf.write(html)
 
