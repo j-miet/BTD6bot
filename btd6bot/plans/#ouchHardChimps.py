@@ -18,6 +18,8 @@ mermonkey 2-0-4
 village 2-3-2
 engi 0-4-0
 _______________________________________
+Following rounds have annoying rng involved and can ruin black borders: 15, 21, 23, 40, 81.
+There are probably others too, but these are the common ones.
 """
 
 from._plan_imports import *
@@ -34,7 +36,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             dart2 = Monkey('dart', 0.590625, 0.3027777777778)
             dart3 = Monkey('dart', 0.496875, 0.6101851851852)
             forward()
-            wait(6)
+            wait(7)
             forward(1)
             dart1.upgrade(['0-0-1'])
             end_round()
@@ -70,14 +72,15 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 14:
             sniper2 = Monkey('sniper', 0.8380208333333, 0.7175925925926)
             sniper2.target('strong')
-            wait(6)
-            sniper2.target('first')
-            end_round()
+            end_round(6)
         elif current_round == 15:
-            ability(1,6.5)
+            ability(1,4)
             wizard1 = Monkey('wizard', 0.4536458333333, 0.3824074074074)
+            wait(1)
+            sniper2.target('first')
+            wait(3)
             sniper2.target('strong')
-            end_round(3)
+            end_round()
         elif current_round == 16:
             wizard1.upgrade(['1-0-0'])
             end_round(6)
@@ -96,11 +99,17 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             sniper2.target('strong')
             end_round(2)
         elif current_round == 21:
+            ability(1,1)
+            wait(1)
             sniper2.target('first')
-            end_round(10)
+            wait(2)
+            sniper2.target('strong')
+            end_round(3)
         elif current_round == 22:
             ability(1)
-            wait(7)
+            wait(1)
+            sniper2.target('first')
+            wait(2)
             sniper2.target('strong')
             end_round()
         elif current_round == 23:
@@ -112,7 +121,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             ability(1)
             end_round(9)
         elif current_round == 26:
-            ability(1,5)
+            ability(1,4)
             end_round(4)
         elif current_round == 27:
             wizard1.upgrade(['3-0-0','3-0-1','3-0-2'])
@@ -128,7 +137,10 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             village1.upgrade(['0-0-1'])
             druid_l = Monkey('druid', 0.3489583333333, 0.5601851851852)
         elif current_round == 35:
+            change_autostart()
             druid_l.upgrade(['1-0-0','2-0-0'])
+            change_autostart()
+            end_round(3)
         elif current_round == 37:
             ability(1)
             village1.upgrade(['0-0-2'])
@@ -141,7 +153,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             forward(1)
             druid3 = Monkey('druid', 0.3828125, 0.4675925925926)
         elif current_round == 40:
-            ability(1,4.25)
+            ability(1,4.35)
             forward(1)
         elif current_round == 41:
             village2 = Monkey('village', 0.4223958333333, 0.5490740740741)
@@ -202,10 +214,11 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             hero.special(1, 0.5609375, 0.6601851851852)
         elif current_round == 81:
             wait(8)
-            click(0.3140625, 0.6583333333333)
-            ability(2,14, xy=(0.3140625, 0.6583333333333), delay=1)
+            move_cursor(0.3140625, 0.6583333333333)
+            ability(1,11)
+            ability(2,13.5, xy=(0.3140625, 0.6583333333333), delay=1)
         elif current_round == 82:
-            ability(1,13.5)
+            ability(1,13)
         elif current_round == 83:
             druid5.upgrade(['0-1-5'])
         elif current_round == 85:
@@ -222,11 +235,14 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 93:
             ability(3, xy=(0.4770833333333, 0.4842592592593))
         elif current_round == 94:
+            change_autostart()
             ability(3, 5, xy=(0.4770833333333, 0.4842592592593))
             ninja1 = Monkey('ninja', 0.3875, 0.7083333333333)
             ninja1.upgrade(['0-1-0','0-2-0','0-3-0','0-4-0'])
             ice1 = Monkey('ice', 0.2927083333333, 0.4416666666667)
             ice1.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-1-0'])
+            change_autostart()
+            end_round(3)
         elif current_round == 95:
             ability(3,10, xy=(0.4770833333333, 0.4842592592593))
             ability(4,12)
