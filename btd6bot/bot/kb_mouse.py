@@ -79,6 +79,8 @@ def move_cursor(xy: tuple[float, float], set_duration: float = 0.0) -> None:
     
     Args:
         xy: Scalar coordinate tuple of location coordinates.
+        set_duration: How long it takes to drag mouse to target position. Default is 0 to move instantly.
+            If value is 1 for example, dragging speed is automatically scaled to take 1 second.
     """
     x, y = pixel_position((xy[0], xy[1]))
     pyautogui.moveTo(x, y, duration=set_duration)
