@@ -1,6 +1,6 @@
 # BTD6bot
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring_finish.PNG)
+![](docs/github/images/monitoring/monitoring_finish.PNG)
 
 
 ``BTD6bot`` is a program for automating **Bloons Tower Defense 6** game.  
@@ -100,7 +100,7 @@ Now, download *BTD6bot*:
 
 Click the green [<> Code] button at the top of github page.
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/github_codebutton.PNG)
+![](docs/github/images/github_codebutton.PNG)
 
 Then either
 
@@ -136,7 +136,7 @@ And that&#39;s it! You&#39;re good to go and should be able to start BTD6bot. To
 
 
 # <u>First-time setup</u>
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/main.PNG) |
+| ![](docs/github/images/main/main.PNG) |
 |:--:|
 | *Main window default view*|
 
@@ -173,21 +173,21 @@ done, close hotkeys window.
 
     - If you use fullscreen/windowed fullscreen, **don&#39;t** enable custom resolution.
 
-        ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/disable_custom.PNG)
+        ![](docs/github/images/settings/disable_custom.PNG)
 
     - If you use custom resolution, set width & height values, then update values.
         - Toggle windowed mode on if you wish to use it. It&#39;s recommended to use fullscreen, though.
 
         **If windowed mode is enabled, run BTD6 with ``-popupwindow`` launch argument.**
 
-        ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/custom_windowed.PNG)
+        ![](docs/github/images/settings/custom_windowed.PNG)
 
 3. Enable ocr auto-adjusting, make sure it has correct res and win values. Res is your current resolution, win stands
 for fullscreen (``win=0``) or windowed (``win=1``).  
 Finally, ``monkeys=all`` and ``delta=4`` values should be automatically set.  
 Easiest way is to just press ``Reset args`` button once, then press ``Set args`` button after.
 
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/auto_adjust.PNG)
+    ![](docs/github/images/settings/auto_adjust.PNG)
 
     Now, close settings window. In main window, press **Initialize bot**, then **Open bot window** to open monitoring
     window.
@@ -220,7 +220,7 @@ Click the gear symbol and open hotkeys menu.
 
 Now, update your game hotkeys for bot. Press &#39;Set hotkeys&#39; button in gui. Following window opens:
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/hotkeys/hotkeys.PNG) |
+| ![](docs/github/images/hotkeys/hotkeys.PNG) |
 |:--:|
 | *Hotkey window*|
 
@@ -259,7 +259,7 @@ After you&#39;ve updated all the keys, close the hotkey window.
 
 Next, open settings window by pressing &#39;Settings&#39; button.
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/settings.PNG) |
+| ![](docs/github/images/settings/settings.PNG) |
 |:--:|
 | *Settings window*|
 
@@ -289,7 +289,7 @@ option off, you should see your current resolution next to &#39;Current resoluti
 
     For example, if your monitor is ``1920x1080``, you see following 
 
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/disable_custom.PNG)
+    ![](docs/github/images/settings/disable_custom.PNG)
 
     [**Note**] For bot, fullscreen and windowed fullscreen mean the same thing so always use this option if you wish to
     use maximum supported resolution.
@@ -301,18 +301,18 @@ Custom value is stored in a file and will be loaded back if you disable and re-e
     Example: if you have ``1920x1080`` as native res and set a custom res ``1600x900``, then toggling setting on and off
     would display following resolutions:
 
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/difference.PNG)
+    ![](docs/github/images/settings/difference.PNG)
 
     With custom resolutions, you can enable *windowed mode*.
     
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/windowed.PNG)
+    ![](docs/github/images/settings/windowed.PNG)
     
     If you use windowed mode in btd6 normally, it adds the bar on top of game window. Bot, however, assumes this bar
     doesn&#39;t exist and requires game to be opened with ``-popupwindow`` option.  
     If you have Btd6 steam version, go to steam library, right click on Bloons TD 6, then simply add the argument like
     shown below
 
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/launchoption.PNG)
+    ![](docs/github/images/settings/launchoption.PNG)
 
     Using windowed mode can decrease the text quality for ocr, though. If you use significantly smaller resolution with
     windowed mode, bot could have issues with verifying text inputs.  
@@ -321,7 +321,7 @@ Custom value is stored in a file and will be loaded back if you disable and re-e
 Lastly, enable the &#39;Auto-adjust ocr upgrade data the next time a plan is run&#39; option. 
 For 1920x1080 with fullscreen enabled, it looks like this:
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/auto_adjust.PNG)
+![](docs/github/images/settings/auto_adjust.PNG)
 
 
 It should include following parts, each separated by space:
@@ -342,11 +342,11 @@ Then just press &#39;Set args&#39; and you&#39;re done! You may now close the se
 For last part, you need to enter the monitoring window. Click the &#39;Initialize bot&#39; button, located at bottom
 right of main window:
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/init_button.PNG)
+![](docs/github/images/main/init_button.PNG)
 
 Following load message appears
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/load_msg.PNG)
+![](docs/github/images/main/load_msg.PNG)
 
 Program needs to load the ocr model into your temporary memory (RAM) each time you initialize bot and is therefor only
 required once per runtime loop. If you close the entire program and reopen it, the model must be loaded again.
@@ -354,11 +354,11 @@ required once per runtime loop. If you close the entire program and reopen it, t
 After the message disappears, model has been loaded and initialize button should now display &#39;Open bot window&#39;
 instead.
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/openbotwin_button.PNG)
+![](docs/github/images/main/openbotwin_button.PNG)
 
 Click the button to open monitoring window.
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring.PNG) |
+| ![](docs/github/images/monitoring/monitoring.PNG) |
 |:--:|
 | *Monitoring window*|
 
@@ -439,7 +439,7 @@ project:
 
 ---
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring_adjustbegin.PNG) |
+| ![](docs/github/images/monitoring/monitoring_adjustbegin.PNG) |
 |:--:|
 | *After 'Run' button is pressed and menu play button is detected on main monitor, bot sets a countdown from 5 to 0, then begins the auto-adjusting process*|
 
@@ -472,7 +472,7 @@ adjusting may begin.
     manually.
 
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring_adjustend.PNG) |
+| ![](docs/github/images/monitoring/monitoring_adjustend.PNG) |
 |:--:|
 | *Adjusting process complete*|
 
@@ -482,11 +482,11 @@ your bot is ready to run!
 To run your first plan, it&#39;s recommended to pick something simple. Close the monitoring window and select either
 ``[monkey meadow, easy-standard]`` or ``[dark castle, easy-standard]`` in main window:
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/monkeymeadow.PNG)
+![](docs/github/images/main/monkeymeadow.PNG)
 
 or
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/darkcastle.PNG)
+![](docs/github/images/main/darkcastle.PNG)
 
 Make sure you have the required hero, all monkeys and their upgrade paths unlocked. For upgrade paths:
 
@@ -517,7 +517,7 @@ doing
 
 ## Main
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/main_modified.PNG) |
+| ![](docs/github/images/main/main_modified.PNG) |
 |:--:|
 | *Main window, with ocr already initialized. Currently selected plan is bloody_puddlesHardChimps, collection event and replay modes enabled.*|
 
@@ -560,7 +560,7 @@ i.e. selected map + strategy combination. Info is stored in each plan file and c
 
 ## Help
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/help/help.PNG) |
+| ![](docs/github/images/help/help.PNG) |
 |:--:|
 | *Help window, expanded to fullscreen. It displays the same README.md contents, but links don&#39;t work*|
 
@@ -584,7 +584,7 @@ or reopening the Main window, this file gets deleted again!
 
 ## Queue
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/queue/queue.PNG) |
+| ![](docs/github/images/queue/queue.PNG) |
 |:--:|
 | *Queue window with dark_dungeonsHardChimps plan inserted in queue. When a plan is selected, its info panel is displayed.*|
 
@@ -597,7 +597,7 @@ hotkeys: 'a' for add, 'r' for remove.
 
 ## Hotkeys
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/hotkeys/hotkeys.PNG) |
+| ![](docs/github/images/hotkeys/hotkeys.PNG) |
 |:--:|
 | *Hotkey window.*|
 
@@ -617,7 +617,7 @@ hotkeys: 'a' for add, 'r' for remove.
 
 ## Settings
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/settings.PNG) |
+| ![](docs/github/images/settings/settings.PNG) |
 |:--:|
 | *Settings window*|
 
@@ -654,7 +654,7 @@ which was already used in [First-time setup](#first-time-setup).
 
     Here's a beautiful visual explanation:
 
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/3440x1440example.png)
+    ![](docs/github/images/settings/3440x1440example.png)
     
     
     In general, for any resolution, check the following:
@@ -736,7 +736,7 @@ on trying, these texts must be as precisely readable as possible. For upgrades, 
 
 ## Monitoring
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring.PNG) |
+| ![](docs/github/images/monitoring/monitoring.PNG) |
 |:--:|
 | *Monitoring window, with plan dark_castleEasyStandard selected, no extra modes enabled.*|
 
