@@ -215,7 +215,7 @@ class Rounds:
                     time.sleep(0.25)
                     kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
                     bot.menu_return.returned()
-                    print('Plan was unable to finish.\n')
+                    print('\nPlan was unable to finish.\n')
                     return Rounds.end_round + 1
                 time.sleep(0.3)
             print('Defeat: returning to menu in...', end=' ')
@@ -224,7 +224,7 @@ class Rounds:
             kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
             time.sleep(0.5)
             kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
-            print('Plan was unable to finish.\n')
+            print('\nPlan was unable to finish.\n')
             return Rounds.end_round + 1
         
         current_round = prev_round + 1
@@ -258,7 +258,7 @@ class Rounds:
                         kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
                         time.sleep(0.5)
                         kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
-                        print('Plan was unable to finish.\n')
+                        print('\nPlan was unable to finish.\n')
                         return Rounds.end_round+1
                     if '/' in round_value[1]:
                         try:

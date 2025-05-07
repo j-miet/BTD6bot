@@ -283,9 +283,9 @@ def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, 
     while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
         time.sleep(0.3)
     _start_plan()
+    #print(f"\n~~~~{map_name}, {diff.lower()}, {mode.lower()}~~~~")
     _choose_hero(hero)
     _choose_map(map_name)
     _choose_diff(diff)
     _choose_mode(mode)
-    print(f"~~~~{map_name}, {diff.lower()}, {mode.lower()}~~~~")
     return begin_round, end_round
