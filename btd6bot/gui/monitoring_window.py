@@ -4,13 +4,16 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import json
+import os
 import sys
 import threading
 import time
 import tkinter as tk
 from tkinter import ttk
 
+import pyautogui
 import pynput
+from pynput.keyboard import Key, KeyCode
 
 import gui.gui_tools as gui_tools
 import set_plan as set_plan
@@ -18,11 +21,12 @@ from utils import plan_data
 from utils import timing
 import gui.gui_paths as gui_paths
 
+from bot import times, hotkeys
 from bot.bot_data import BotData
+from bot.bot_vars import BotVars
 
 if TYPE_CHECKING:
     from typing import Any, TextIO
-    from pynput.keyboard import Key, KeyCode
 
 class MonitoringWindow:
     """Creates a monitoring window that handles both starting/stopping of the bot and displaying bot text output.
@@ -61,7 +65,16 @@ class MonitoringWindow:
             created so that MainWindow can start tracking its existence and won't throw an error. After 'Run' button is 
             pressed, stop_or_run method is called and target of this thread is set to run_bot method instead.
     """
-    START_STOP_HOTKEY = pynput.keyboard.Key.f9
+    with open(gui_paths.GUIHOTKEYS_PATH) as gui_hotkeys:
+        hotkey_vals = gui_hotkeys.readlines()
+        try:
+            PAUSE_HOTKEY = hotkeys.PYNPUT_KEYS[hotkey_vals[0].split('= ')[1].strip()]
+        except KeyError:
+            PAUSE_HOTKEY = hotkey_vals[0].split('= ')[1].strip()
+        try:
+            START_STOP_HOTKEY = hotkeys.PYNPUT_KEYS[hotkey_vals[1].split('= ')[1].strip()]
+        except KeyError:
+            START_STOP_HOTKEY = hotkey_vals[1].split('= ')[1].strip()
 
     current_bot_thread: threading.Thread
 
@@ -87,24 +100,22 @@ class MonitoringWindow:
         self.textbox = tk.Text(self.monitoringwindow, width=55, height=25, state='normal', wrap=tk.WORD)
         self.textbox.grid(column=0, columnspan=2, row=0, rowspan=4, sticky='n')
         self.textbox.insert('end', "Welcome to BTD6bot!\n"
-                            "Make sure that game:\n"
-                            ">Game language is set as ENGLISH\n"
-                            ">Game resolution has aspect ratio 16:9\n"
-                            ">Game is in fullscreen (windowed won't work)\n"
-                            ">Bot hotkeys match to your in-game equivalents\n"
-                            ">You have the following settings in 'Esc' menu in-game:\n"
-                            " -Autostart = ON\n"
-                            " -Drag & Drop = ON\n"
-                            " -Disable nudge mode = ON\n"
+                            "Make sure that:\n"
+                            ">Game language is set to ENGLISH\n"
+                            ">Resolution has aspect ratio of ~16:9\n"
+                            ">Game is preferably fullscreen (but windowed works too)\n"
+                            ">Bot hotkeys match with your in-game equivalents\n"
+                            ">Your Btd6 game window is on your main monitor\n"
                             "------\n"
-                            "~Press 'Run'/F9 to start bot!\n"
-                            "~Press 'Stop'/F9 to stop & RESET bot.\n If queue mode is enabled, your map queue will\n" 
-                            " also reset, meaning that bot starts from the first\n"
-                            " map again.\n"
-                            "~To shut down entire program at any point, press F11.\n"
-                            "#currently, there's no way to 'pause' the bot - you\n"
-                            " either let it finish or reset it back to start.\n"
-                            "///////////////////////////////////////////////////////")
+                            "~Press 'Run'/your 'start-stop' hotkey to start bot!\n"
+                            "~Press 'Stop'/'start-'stop' again to stop & RESET bot.\n If queue mode is enabled, "
+                            "your map queue will also\n reset, meaning bot starts from the first map again.\n"
+                            "~To pause/unpause bot, press your 'pause' hotkey.\n Bot can only be paused during maps "
+                            "i.e. when it's not\n navigating menu screens, but pauses as soon as it\n becomes " 
+                            "possible.\n"
+                            "~To close entire program at any point, press your\n"
+                            " 'exit' hotkey.\n"+
+                            55*"/"+"\n")
         self.textbox['state'] = 'disabled'
         # save current stdout stream to a variable, before redirecting it to textbox
         # could use sys.__stdout__ to return to original output stream; might implement this at some point.
@@ -140,21 +151,39 @@ class MonitoringWindow:
                                         )
         style = ttk.Style()
         style.configure('Style.TButton', font='TkFixedFont')
-        try:
-            photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(self.all_plans[0])+'.png'))
-            self.monitor_mapscreen = ttk.Label(self.monitoringwindow, image=photo, compound='top', anchor='nw', 
-                                               padding="0 15 0 0", justify='left')
-            self.monitor_mapscreen.image = photo # type: ignore
-            self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
-        except tk.TclError:
-            self.monitor_mapscreen = ttk.Label(self.monitoringwindow, compound='top', anchor='nw',
-                                              style='Style.TButton', justify='left')
-            self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
-            self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
+
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+            guivars_adjust: dict[str, Any] = json.load(f)["ocr_adjust_deltas"]
+        if guivars_adjust:
+            try:
+                photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'spa pits.png')
+                self.monitor_mapscreen = ttk.Label(self.monitoringwindow, image=photo, compound='top', anchor='nw', 
+                                                justify='left')
+                self.monitor_mapscreen.image = photo # type: ignore
+                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+            except tk.TclError:
+                self.monitor_mapscreen = ttk.Label(self.monitoringwindow, compound='top', anchor='nw',
+                                                style='Style.TButton', justify='left')
+                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+                self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
+        else:
+            try:
+                photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(self.all_plans[0])+'.png'))
+                self.monitor_mapscreen = ttk.Label(self.monitoringwindow, image=photo, compound='top', anchor='nw', 
+                                                justify='left')
+                self.monitor_mapscreen.image = photo # type: ignore
+                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+            except tk.TclError:
+                self.monitor_mapscreen = ttk.Label(self.monitoringwindow, compound='top', anchor='nw',
+                                                style='Style.TButton', justify='left')
+                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+                self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
 
         self.monitor_infobox_current = tk.Label(self.monitoringwindow, width=20, height=5, 
                                                 text='Current\n'+plan_data.info_display(self.all_plans[0]), anchor='nw',
                                                 relief='sunken', justify='left', wraplength=330, padx=10, pady=10)
+        if guivars_adjust:
+            self.monitor_infobox_current['text'] = 'Current\n'+plan_data.info_display('spa_pitsEasySandbox')
         self.monitor_infobox_current.grid(column=4, row=2, sticky='nw')
 
         self.monitor_infobox_next = tk.Label(self.monitoringwindow, width=20, height=5, text='-'*12, anchor='nw',
@@ -187,28 +216,24 @@ class MonitoringWindow:
         self.bot_hk_listener.daemon = True
         self.bot_hk_listener.start()  
 
-    def update_round_timer(self) -> None:
-        """Update round timer value during rounds.
-        
-        Requires data from bot.bot_data.BotData class to function.
-        """
-        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-            gui_vars_dict = json.load(f)
-        if gui_vars_dict["get_botdata"] == True:
-            BotData.set_data()
-            self.roundtime.set("0.00")
-            while self.bot_thread.is_alive():
-                if BotData.current_round == 0:
-                    time.sleep(0.1)
-                elif BotData.current_round < BotData.end_r+1:
-                    current = time.time()-BotData.round_time
-                    self.roundtime.set(f"{current:.2f}")
-                else:
-                    time.sleep(3)
-                    BotData.set_data()
-                    self.roundtime.set("0.00")
-                time.sleep(0.01) 
-            self.roundtime.set("-")
+    def _update_round_timer(self) -> None:
+        """Update round timer value during rounds."""
+        BotData.set_data()
+        self.roundtime.set("0.00")
+        while self.bot_thread.is_alive():
+            if BotData.current_round == 0:
+                time.sleep(0.1)
+            elif BotData.paused:
+                time.sleep(0.1)
+            elif BotData.current_round < BotData.end_r+1:
+                current = times.current_time()-BotData.round_time
+                self.roundtime.set(f"{current:.2f}")
+                time.sleep(0.05)
+            else:
+                time.sleep(3)
+                BotData.set_data()
+                self.roundtime.set("0.00")
+        self.roundtime.set("-")
 
     def update_event_status_to_json(self) -> None:
         """Updates collection event status to gui_vars.json."""
@@ -231,8 +256,55 @@ class MonitoringWindow:
         MonitoringWindow.current_bot_thread = self.get_bot_thread()
         self.bot_thread.start()
         self.monitor_run_button.configure(text='Stop')
-        roundtimer_thread = threading.Thread(target=self.update_round_timer, daemon=True)
+        roundtimer_thread = threading.Thread(target=self._update_round_timer, daemon=True)
         roundtimer_thread.start()
+
+    def res_check(self, customres: bool, resolution_val: list[int], windowed: bool, w: int, h: int) -> None:
+        with open(gui_paths.FILES_PATH/'upgrades_current.json') as f:
+            identifier: list[int | str] = json.load(f)["__identifier"]
+        issue_flag = 0
+        if customres:
+            if resolution_val != identifier[0:2]:
+                print("-"*55+"\n"
+                        ">Ocr data resolution differs from display resolution:\n"
+                        " Ocr resolution: ", identifier[0], identifier[1], "\n"
+                        " Display resolution: ", resolution_val[0], resolution_val[1])
+                issue_flag = 1
+        else:
+            if list((w, h)) != identifier[0:2]:
+                print("-"*55+"\n"
+                        ">Ocr data resolution differs from display resolution:\n"
+                        " Ocr resolution: ", identifier[0], identifier[1], "\n"
+                        " Display resolution: ", w, h)
+                issue_flag = 1
+        if identifier[2] == "fullscreen" and windowed == True:
+            print("-"*55+"\n"
+                    ">Ocr data supports fullscreen, but you use\n windowed mode.")
+            issue_flag = 1
+        elif identifier[2] == "windowed" and windowed == False:
+            print("-"*55+"\n"
+                    ">Ocr data supports windowed mode, but you use\n fullscreen mode.")
+            issue_flag = 1
+        if issue_flag == 1:
+            print(55*"-"+"\n"
+                    "-->> Issues detected; see above. <<--\n" \
+                    "These don't prevent bot from starting, but are very likely to cause problems with ocr text "
+                    "detection.\n"+
+                    27*" "+".\n"+
+                    27*" "+".\n"+
+                    27*" "+".\n")
+
+    def plantest_print(self, plan: str, attempt: int, attempt_limit: int) -> None:
+        if 1 <= attempt <= attempt_limit:
+            if attempt_limit == 1:
+                print('~~~~'+plan_data.return_map(plan)+', '+
+                    plan_data.return_strategy(plan).split('-')[0].lower()+', '+
+                    plan_data.return_strategy(plan).split('-')[1].lower()+'~~~~')
+            else:
+                print('~~~~'+plan_data.return_map(plan)+', '+
+                    plan_data.return_strategy(plan).split('-')[0].lower()+', '+
+                    plan_data.return_strategy(plan).split('-')[1].lower()+
+                    f' [Attempt {attempt}/{attempt_limit}]~~~~')
 
     def run_bot(self) -> None:
         """Checks if replay mode is enabled/disabled and runs the sequence of plans listed in self.all_plans.
@@ -240,21 +312,67 @@ class MonitoringWindow:
         Queue mode enabled/disabled check is already done before creating MonitorScreen object so queue check is not
         needed again.
         """
-        print('\n=====Bot running=====\n')
+        print('\n=====Bot running=====')
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+            gui_vars_dict: dict[str, Any] = json.load(f)
+        customres_val: bool = gui_vars_dict["check_resolution"]
+        resolution_val: list[int] = list(map(int, gui_vars_dict["custom_resolution"].split('x')))
+        windowed_val: bool = gui_vars_dict["windowed"]
+        retries_val: int = gui_vars_dict["retries"]
+        w, h = pyautogui.size()
+        if not gui_vars_dict["ocr_adjust_deltas"]:
+            self.res_check(customres_val, resolution_val, windowed_val, w, h)
+        if customres_val:
+            print('[Custom Resolution] '+str(resolution_val[0])+'x'+str(resolution_val[1])+'\n'
+                    '[Windowed] '+str(windowed_val)+'\n')
+        else:
+            w, h = pyautogui.size()
+            print('[Resolution] '+str(w)+'x'+str(h)+'\n')
+        if gui_vars_dict["ocr_adjust_deltas"]:
+            try:
+                new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'spa pits.png')
+                self.monitor_mapscreen['text'] = ''
+                self.monitor_mapscreen.configure(image=new_image)
+                self.monitor_mapscreen.image = new_image # type: ignore
+            except tk.TclError:
+                self.monitor_mapscreen.configure(image='')
+                self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
+            self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display('spa_pitsEasySandbox'))
+            print(".-------------------------.\n"
+                  "| Ocr adjust mode enabled |\n"
+                  ".-------------------------.\n")
+            set_plan.run_delta_adjust()
+            self.monitor_run_button.configure(text='Run')
+        if os.path.exists(gui_paths.FILES_PATH/'.temp_upg_deltas.json'):
+            os.remove(gui_paths.FILES_PATH/'.temp_upg_deltas.json')
         if self.replay_val == 'On':
             while True:
                 for plan_index in range(len(self.all_plans)):
-                    self.execute(self.all_plans, plan_index)
-                print('>>>Replaying all maps in queue!\nStarting in... ')
+                    BotData.victory = False
+                    attempt_number = 1
+                    while attempt_number <= retries_val:
+                        self.plantest_print(self.all_plans[plan_index], attempt_number, retries_val)
+                        self.execute(self.all_plans, plan_index)
+                        if BotData.victory:
+                            break
+                        attempt_number += 1
+                print('>>>Replaying all maps in queue.\nStarting in... ')
                 plan_index = 0
-                timing.counter(10)
+                timing.counter(5)
                 print()
         else:
             for plan_index in range(len(self.all_plans)):
-                self.execute(self.all_plans, plan_index)
-                self.monitor_run_button.configure(text='Run')
+                BotData.victory = False
+                attempt_number = 1
+                while attempt_number <= retries_val:
+                    self.plantest_print(self.all_plans[plan_index], attempt_number, retries_val)
+                    self.execute(self.all_plans, plan_index)
+                    if BotData.victory:
+                        break
+                    attempt_number += 1
+            self.monitor_run_button.configure(text='Run')
             if len(self.all_plans) > 1:
-                print("All queued maps completed!\n")
+                print("All queued maps completed.\n")
     
     def execute(self, all_plans: list[str], index: int) -> None:
         """Updates monitoring box data before moving responsibility to set_plan module.
@@ -314,8 +432,12 @@ class MonitoringWindow:
             key: Latest keyboard key the user has pressed. 
         """
         if self.monitoringwindow.winfo_exists():
-            if key == MonitoringWindow.START_STOP_HOTKEY:
+            if (key == MonitoringWindow.START_STOP_HOTKEY or 
+                (isinstance(key, KeyCode) and key.char == MonitoringWindow.START_STOP_HOTKEY)):
                 self.stop_or_run()
                 time.sleep(1)
+            elif (key == MonitoringWindow.PAUSE_HOTKEY or
+                (isinstance(key, KeyCode) and key.char == MonitoringWindow.PAUSE_HOTKEY)):
+                BotVars.paused = not BotVars.paused
         else:
             self.bot_hk_listener.stop()

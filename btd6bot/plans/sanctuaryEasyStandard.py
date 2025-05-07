@@ -1,13 +1,12 @@
 """
-[Plan Name] sanctuaryEasyStandard
-[Game Version] 47
 [Hero] Psi
 [Monkey Knowledge] -
 ---------------------------------------------------------------
 ===Monkeys & upgrades required===
 dart 0-0-1
-sniper 3-1-2
 boomer 4-0-2
+
+sniper 3-1-2
 _______________________________________
 Derived from sanctuary_HardChimps.
 """
@@ -37,9 +36,8 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             hero.target('strong')
         elif current_round == 17:
             boomerang = Monkey('boomer', 0.5, 0.2546296296296)
-            boomerang.upgrade(['1-0-0', '1-0-1'])
         elif current_round == 18:
-            boomerang.upgrade(['2-0-1'], cpos_x=0.425, cpos_y=0.275)
+            boomerang.upgrade(['1-0-0', '1-0-1', '2-0-1'], cpos_x=0.425, cpos_y=0.275)
         elif current_round == 20:
             sniper1.upgrade(['0-0-1'], cpos_x=0.40625, cpos_y=0.0564814814815)
         elif current_round == 21:

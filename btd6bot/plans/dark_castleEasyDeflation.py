@@ -1,12 +1,12 @@
 """
-[Plan Name] dark_castleEasyDeflation
-[Game Version] 47
 [Hero] Gwen
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
 ace 2-0-3
+
 alch 4-2-0
+
 village 2-2-0
 _______________________________________
 """
@@ -25,8 +25,8 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             village.upgrade(['1-0-0', '2-0-0', '2-1-0', '2-2-0'])
             ace1 = Monkey('ace', 0.3828125, 0.1972222222222)
             ace1.upgrade(['1-0-0', '2-0-0', '2-0-1', '2-0-2', '2-0-3'])
-            begin()
+            forward()
             ninja = Monkey('ninja', 0.3963541666667, 0.4148148148148)
             ninja.upgrade(['1-0-0', '2-0-0', '3-0-0', '4-0-0', '4-0-1', '4-0-2'])
             alch = Monkey('alch', 0.4257291666667, 0.2709259259259)
-            alch.upgrade(['1-0-0', '2-0-0', '3-0-0', '4-0-0', '4-1-0', '4-2-0'])
+            alch.upgrade(['1-0-0', '2-0-0', '3-0-0', '4-0-0', '4-0-1'])

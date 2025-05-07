@@ -29,16 +29,24 @@ if TYPE_CHECKING:
     from typing import Any
     from types import ModuleType
 
-def _check_if_temp_valid(begin_r: int, end_r: int) -> bool:
+def _check_if_temp_valid() -> bool:
     """Check if times_temp has all round data + total time rows."""
     with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt') as f:
         lines = f.readlines()
-    return True if len(lines) == end_r-begin_r+2 else False
+    return True if len(lines) >= 2 and ',' not in lines[-1] else False
 
 def _flush_times_temp() -> None:
     """Flushes existing contents of Files//times_temp.txt to allow new plan time data to be saved."""
     with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt', 'w') as f:
         print('times_temp.txt contents cleared.')
+
+def _read_timedata() -> dict[str, Any]:
+    with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as f:
+        return json.load(f)
+
+def _read_guivars() -> dict[str, Any]:
+    with open(pathlib.Path(__file__).parent/'Files'/'gui_vars.json') as varsfile:
+        return json.load(varsfile)["version"]
 
 def _update_time_data(plan_name: str) -> dict[str, Any]:
     """Adds saved times_temp.txt contents in a dictionary."""
@@ -52,9 +60,10 @@ def _update_time_data(plan_name: str) -> dict[str, Any]:
         rounds_list.append(round_num)
         times_list.append(round_time)
     time_total = times_contents[-1]
-    with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as f:
-        current_json: dict[str, Any] = json.load(f)
+    current_json: dict[str, Any] = _read_timedata()
+    current_version: dict[str, Any] = _read_guivars()
     data_dict = {
+        "version": current_version,
         "rounds": rounds_list,
         "times": times_list,
         "time_total": time_total
@@ -74,6 +83,10 @@ def _save_to_json(plan_name: str) -> None:
     with open(pathlib.Path(__file__).parent/'Files'/'time_data.json', 'w') as f:
         json.dump(json_data, f, indent=4)
     print('Plot time data for', plan_name, 'updated.\n')
+
+def run_delta_adjust() -> None:
+    import bot._adjust_deltas
+    bot._adjust_deltas.run()
 
 def get_rounds(difficulty: str, gamemode: str) -> tuple[int, int]:
     """Returns begin and end rounds based on difficulty + game mode.
@@ -166,7 +179,7 @@ def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str,
             _flush_times_temp()
         plan_module.play(info)
         if gui_vars["time_recording_status"]:
-            if _check_if_temp_valid(info[3], info[4]):
+            if _check_if_temp_valid():
                 _save_to_json(plan_name)
             else:
                 print("Plan could not be finished, no time data saved.")

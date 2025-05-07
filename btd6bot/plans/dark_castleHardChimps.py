@@ -1,22 +1,18 @@
 """
-[Plan Name] dark_CastleHardChimps
-[Game Version] 48
 [Hero] Obyn
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys required===
 dart 0-0-0
-sub 0-0-0
-druid 0-1-5
-alch 4-2-1
-village 2-3-0
-spike 2-0-5
-_______________________________________
-Strategy: https://www.youtube.com/watch?v=JXWhHHX9vdk
 
-Made slight adjustments to run:
-1. bought a 1-0-3 spike before r40 to avoid Obyn's brambles & totem rng
-2. upgraded all druid to 1-0-3 before getting alch/village for better dps
+sub 0-0-0
+
+alch 4-2-1
+druid 0-1-5
+
+spike 2-0-5
+village 2-3-0
+_______________________________________
 """
 
 from._plan_imports import *
@@ -115,7 +111,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
 			spike.upgrade(['2-0-5'])
 		elif current_round == 95:
 			alch3 = Monkey('alch', 0.7869791666667, 0.5851851851852)
-			alch3.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-1-0','4-2-0'])
+			alch3.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-0-1'])
 		elif current_round == 96:
 			alch4 = Monkey('alch', 0.4859375, 0.3277777777778)
 			alch4.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-0-1'])

@@ -8,7 +8,7 @@ Examples of this module can be found in 'plans' folder and picking any .py plan 
 
 import time
 
-from bot import kb_mouse
+from bot import kb_mouse, times
 from bot.commands.monkey import Monkey
 from bot.hotkeys import hotkeys
 from bot.rounds import Rounds
@@ -64,6 +64,8 @@ class Hero(Monkey):
         target: Change targeting priority of this hero.  
         special: Use special of this monkey (inherited from Monkey).  
         sell: Sell this monkey (inherited from Monkey).
+        shop: Geraldo's shop items.
+        spellbook: Corvus's spells.
 
         See also:
           ability.ability for ability usage.
@@ -103,7 +105,7 @@ class Hero(Monkey):
         (0.0932291666667, 0.6101851851852),
         (0.1432291666667, 0.6101851851852),
         (0.1901041666667, 0.6101851851852)
-        )
+    )
     HERO_RIGHT_MENU = (
         (0.6817708333333, 0.175),
         (0.7307291666667, 0.175),
@@ -155,6 +157,14 @@ class Hero(Monkey):
         else:
             return None
 
+    def _prepare_hero_menu(self) -> None:
+        """Sets custom panel, like Geraldo shop or Corvus spellbook, in order to access them."""
+        if self._hero_name in {'geraldo', 'corvus'}:
+            kb_mouse.click((self._pos_x, self._pos_y))
+            time.sleep(0.3)
+            self.special(1)
+            kb_mouse.press_esc()
+
     def _basic_hero_target(self) -> str | None:
         """Defines default hero targeting behaviour.
 
@@ -169,14 +179,6 @@ class Hero(Monkey):
             case _:
                 return 'first'
             
-    def _prepare_hero_menu(self) -> None:
-        """Sets custom panel, like Geraldo shop or Corvus spellbook, in order to access them."""
-        if self._hero_name in {'geraldo', 'corvus'}:
-            kb_mouse.click((self._pos_x, self._pos_y))
-            time.sleep(0.3)
-            self.special(1)
-            kb_mouse.press_esc()
-
     def _change_hero_target(self, target: str,
                            x: float | None = None,  # currently no hero has a targeting mode requiring coordinates.
                            y: float | None = None,
@@ -241,8 +243,8 @@ class Hero(Monkey):
         """Force targeting priority of a hero without checks.
         
         Currently, its only use is to set Etienne's Zone Control status for bot: bot doesn't know when Etienne 
-        hits lvl 12 and won't update targeting priority to match in-game value. So user must call this command 
-        inside the round block where Etienne reaches lvl 12 - otherwise some unintended behaviour could occur
+        hits lvl 11 and won't update targeting priority to match in-game value. So user must call this command 
+        inside the round block where Etienne reaches lvl 11 - otherwise some unintended behaviour could occur
         should user want to change targeting later.
         """
         if self._hero_name == 'etienne':
@@ -312,7 +314,7 @@ class Hero(Monkey):
 
             *IMPORTANT* if you use 'ETIENNE' as hero:
             You need to *manually* update targeting status of 'zone' (i.e. Zone Control) after Etienne hits level 12. 
-            Currently, bot has no way to track hero xp, and when etienne hits lvl 12, he will automatically change
+            Currently, bot has no way to track hero xp, and when etienne hits lvl 11, he will automatically change
             in-game targeting to Zone Control. But bot has no idea this has happened so it has either 'first' or 'd&q' 
             set as targeting priority. Now, if you never intend to change targeting, it doesn't really matter, but say 
             you wanted to change 'zone' back to 'first', but bot has currently status 'first': well, bot "does nothing" 
@@ -339,6 +341,7 @@ class Hero(Monkey):
 
             Do not use this force_target in any other situation.            
         """
+        times.pause_bot()
         if Rounds.defeat_status:
             return
         val = self._change_hero_target(set_target.lower(), x, y, cpos_x, cpos_y)
@@ -380,6 +383,7 @@ class Hero(Monkey):
             cpos_x: Updated current x-coordinate position.
             cpos_y: Updated current y-coordinate position.
         """
+        times.pause_bot()
         if Rounds.defeat_status:
             return
         elif self._hero_name == 'geraldo':
@@ -428,6 +432,7 @@ class Hero(Monkey):
             cpos_x: Updated current x-coordinate position.
             cpos_y: Updated current y-coordinate position.
         """
+        times.pause_bot()
         if Rounds.defeat_status:
             return
         elif self._hero_name == 'corvus':

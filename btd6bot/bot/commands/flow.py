@@ -28,50 +28,53 @@ class AutoStart:
             True. But if any plan modifies this using flow.change_autostart, it's set to False. And if value if False, 
             then after loading into a game, bot will automatically revert this to True, even if it's immediately set to 
             False again by plan itself: otherwise, other plans would keep the False state and be unable to execute.
-        called_begin (bool, class attribute): Whether begin() was called during first round. Default is False, which 
-            means bot will automatically call it after first round block ends.
+        called_forward (bool, class attribute): Whether forward() was called during first round. Default is False, 
+            which means bot will automatically call it after first round block ends.
     """
     AUTOSTART_TOGGLE: tuple[float, float] = (0.69, 0.284)
 
     autostart_status: bool = True
-    called_begin = False
+    called_forward = False
 
 
-def wait(timer: int = 0) -> None:
+def wait(timer: float | int = 0) -> None:
     """Pause everything for specified amount of time.
-    
+
     Used in plans to buffer commands and avoid on executing them before certain time has passed.
 
     Args:
-        timer: Wait timer, an integer. Default value is 0.
+        timer: Wait timer, can be integer or float. Integer counts down, float will just display the waiting time. 
+            Default value is 0.
     """    
     print('Waiting... ', end='')
     timing.counter(timer)
     print(' -> Continuing.')
 
-def begin(speed: str='fast') -> None:
+def forward(speed: int=2) -> None:
     """Clicks the start button.
-    
-    Default value is 'fast' which double clicks the button, setting fast speed. This means, for fast settings, you only 
-    need to just type begin() - no need to write begin('fast').
-     
-    For normal game speed which clicks only once, you give value 'normal' i.e. begin('normal').
 
-    In Deflation game mode, the game start automatically in normal speed. If you wish to set it on fast, you type 
-    'normal'.
+    Default value is 2, which double clicks the button, setting fast speed. This means, for fast settings, you only 
+    need to just type forward() - but forward(2) does work, too.
+     
+    For normal start speed or switching current speed, you click only once and therefore type forward(1).
+
+    In Deflation game mode, the game start automatically in normal speed. If you wish to set it on fast, you use 
+    forward(1) the first time.
 
     Args:
-        speed: Default value is 'fast' for fast-forward. If normal speed is needed, 'normal'. For deflation plans, you 
-            use 'normal' if you need fast-forward.
+        speed: Default value is 2 for fast-forward. Use value 1 for a single click. Other values do nothing.
     """
-    if speed.lower() == 'normal':
+    if speed == 1:
         kb_mouse.kb_input(Key.space)
         time.sleep(0.2)
-    elif speed == 'fast':
+    elif speed == 2:
         kb_mouse.kb_input(Key.space)
         time.sleep(0.2)
         kb_mouse.kb_input(Key.space)
-    AutoStart.called_begin = True
+    else:
+        print("Speed value must be either 1 or 2.")
+        return
+    AutoStart.called_forward = True
 
 def change_autostart() -> None:
     """Change current autostart setting.
@@ -102,19 +105,16 @@ def change_autostart() -> None:
 
 def end_round(time_limit: int = 0) -> None:
     """Used for single clicking the start button to start next round when automatic start is disabled.
-    
-    Somes specific plans require that disable_autostart is called. Bot cannot detect when round end without
+
+    Somes specific plans require that change_autostart is called. Bot cannot detect when round end without
     autostart so you need to manually insert calls for end_round and optionally give them a max time limit after which 
     it will force start next round.
 
-    How to use correctly: you need begin() block inside first round to start bot, but you also need an end_round
-    command as final command to force bot onto the next round. Then for every round after *except final one*,
-    you need to set end_round as final command inside round block (remember to specify time!); this makes harder
-    Chimps plan files considerably longer on average than other plans. You should check some Expert Chimps
-    plans inside 'plans' folder for comparison, and to understand how they use it in practise.
+    You should check some Expert Chimps plans inside 'plans' folder for comparison, and to understand how they use it 
+    in practise.
 
     Args:
-        time_limit: How long is waited before start button is clicked. Measured in seconds so an integer value. 
+        time_limit: Waiting period before start button is clicked. Measured in seconds. 
     """
     if time_limit >= 2:
         print('Next round in... ', end='')

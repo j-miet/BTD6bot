@@ -1,17 +1,18 @@
 """
-[Plan Name] sanctuaryMediumStandard
-[Game Version] 47
 [Hero] Psi
 [Monkey Knowledge] -
 ---------------------------------------------------------------
 ===Monkeys & upgrades required===
 dart 0-0-1
+boomer 4-0-2
+glue 4-2-0
+
 sniper 3-1-2
+
 alch 4-0-1
 mermonkey 2-0-4
+
 village 3-2-0
-glue 4-2-0
-boomer 4-0-2
 _______________________________________
 Derived from sanctuary_HardChimps.
 """
@@ -26,9 +27,9 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         current_round = Rounds.round_check(current_round, map_start, rounds[2])
         if current_round == BEGIN:
             sniper_bot1 = Monkey('sniper', 0.6453125, 0.762037037037)
-            sniper_bot2.target('strong')
         elif current_round == 2:
             sniper_bot2 = Monkey('sniper', 0.7171875, 0.8462962962963)
+            sniper_bot2.target('strong')
         elif current_round == 4:
             sniper_bot3 = Monkey('sniper', 0.7671875, 0.9)
         elif current_round == 7:

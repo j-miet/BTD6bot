@@ -43,3 +43,4 @@ ability 8 = 8
 ability 9 = 9
 ability 10 = 0
 merge beast = <103>
+centered path = <104>

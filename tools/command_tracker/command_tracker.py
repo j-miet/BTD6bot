@@ -113,9 +113,14 @@ def begin_round() -> int:
     """
     while True:
         try:
-            start = input("Please input starting round (1-100), or 'exit' to quit: ")
+            start = input("Please input starting round (1-100).\n" \
+                          "Other commands: 'delete' = delete commands.txt contents, 'exit' = exit script.\n"
+                          "-> ")
             if start == 'exit':
                 os.kill(os.getpid(), signal.SIGTERM)
+            elif start == 'delete':
+                with open(pathlib.Path(__file__).parent/'commands.txt', 'w') as f:
+                    print("commands.txt contents deleted.")
             elif int(start) in range(1, 101):
                 return int(start)
             else:
@@ -151,9 +156,10 @@ def add_command(comment_str: str) -> None:
                     "       \t[Note] upgrade list must not contain spaces!\n\n"
                     "	-t: change targeting on monkey/hero\n"
                     "    	\targs:\n"
-                    "	  	\tvar_name, target_str, x, y\n"
+                    "	  	\tvar_name, target_str. Optional pos argument 'p' to add mouse location as target x,y\n"
                     "    	\texample:\n"
-                    "    	 \t\t-t dart_name strong, 0.1, 0.5 => dart_name.target('strong')\n\n"
+                    "    	 \t\t-t dart_name strong => dart_name.target('strong')\n"
+                    "    	 \t\t-t dart_name strong p => dart_name.target('strong', x=0.1, y=0.1)\n\n"
                     "	-trobo: change targeting on monkey/hero\n"
                     "    	\targs:\n"
                     "	  	\tvar_name, direction, clicks\n"
@@ -175,10 +181,10 @@ def add_command(comment_str: str) -> None:
                     "       \t[Note] upgrade list must not contain spaces!\n\n"
                     "	-tcp: change targeting on monkey/hero by first updating its current position\n"
                     "    	\targs:\n"
-                    "	 	\tvar_name, target_str, x, y, cpos_x, cpos_y\n"
+                    "	 	\tvar_name, target_str, x, y.\n"
                     "    	\texample:\n"
-                   	"    	 \t\t-tcp dart_name first 0.1 0.2 0.5 0.6\n"
-                    "			=> dart_name.target('first', x=0.1, y=0.2, cpos_x=0.5, cpos_y=0.6)\n\n"
+                   	"    	 \t\t-tcp dart_name first 0.5 0.6 (assuming mouse location is (0.1, 0.1))\n"
+                    "			=> dart_name.target('first', x=0.5, y=0.6, cpos_x=0.1, cpos_y=0.1)\n\n"
                     "	-scp: use special ability of monkey/hero by first updating its current position\n"
                     "    	\targs:\n"
                     "  		\tvar_name, x, y, cpos_x, cpos_y\n"
@@ -190,8 +196,10 @@ def add_command(comment_str: str) -> None:
                    	"        \tbegin()/begin('normal')\n" 
                     "        \tchange_autostart()\n" 
                     "        \tend_round(20)\n" 
-                    "        \tability(1, 5)\n"
+                    "        \tability(1,5)\n"
                     "        \twait(3)\n"
+                    "	-l: coordinate location (x,y)\n"
+                    "    	\t-can be used with 'click' command, for example.\n"
 					"\n"
                 	"--typing anything else as first argument does nothing.\n")
             return
@@ -217,8 +225,12 @@ def add_command(comment_str: str) -> None:
             if len(cmd[1:]) < 2:
                 print("Need 2: var_name, target_str")
                 return
-            TrackerVals.coordinates_file.write('    '+cmd[1]+".target('"+cmd[2]+"')\n")
-            print("-> "+cmd[1]+".target('"+cmd[2]+"')", end='')
+            if len(cmd[1:]) == 3 and cmd[3] == 'p':
+                TrackerVals.coordinates_file.write('    '+cmd[1]+".target('"+cmd[2]+"', x="+x+", y="+y+")\n")
+                print("-> "+cmd[1]+".target('"+cmd[2]+"', x="+x+", y="+y+")", end='')
+            else:
+                TrackerVals.coordinates_file.write('    '+cmd[1]+".target('"+cmd[2]+"')\n")
+                print("-> "+cmd[1]+".target('"+cmd[2]+"')", end='')
         case '-trobo':
             if len(cmd[1:]) < 2:
                 print("Need 3 args: var_name, direction, clicks")
@@ -252,15 +264,18 @@ def add_command(comment_str: str) -> None:
                 print("Need 4 args: var_name, special, x, y")
                 return
             TrackerVals.coordinates_file.write(
-                '    '+cmd[1]+".special("+cmd[2]+"', x="+cmd[3]+", y="+cmd[4]+", cpos_x="+x+", cpos_y="+y+")\n")
+                '    '+cmd[1]+".special("+cmd[2]+", x="+cmd[3]+", y="+cmd[4]+", cpos_x="+x+", cpos_y="+y+")\n")
             print(
-                "-> "+cmd[1]+".special("+cmd[2]+"', x="+cmd[3]+", y="+cmd[4]+", cpos_x="+x+", cpos_y="+y+")", end='')
+                "-> "+cmd[1]+".special("+cmd[2]+", x="+cmd[3]+", y="+cmd[4]+", cpos_x="+x+", cpos_y="+y+")", end='')
         case '-c':
             if len(cmd[1:]) < 1:
                 print("Need 1 arg: text_str")
                 return
             TrackerVals.coordinates_file.write('    '+''.join(cmd[1:])+"\n")
             print("-> "+''.join(cmd[1:]), end='')
+        case '-l':
+            TrackerVals.coordinates_file.write(f'     ({x}, {y})\n')
+            print(f"-> ({x}, {y})", end='')
         case _:
             print("--Nothing was added--")
             return
@@ -268,7 +283,6 @@ def add_command(comment_str: str) -> None:
 
 def run_tracker() -> None:
     TrackerVals.ct_round_counter = begin_round()
-    first_round = TrackerVals.ct_round_counter
     # creates two Listener thread objects. First listens to mouse clicks and second to keyboard inputs
     m_listener = pynput.mouse.Listener(on_click = mouse_tracker)
     m_listener.start()
@@ -280,14 +294,13 @@ def run_tracker() -> None:
     print('-------------------------')
     print('Press right mouse to add commands text, "+" to change round, and f8 (or CTRL+C) to ' 
         'quit.')
-    print("[All right-click commands]: help, -m, -h, -u, -t, -s, -ucp, -tcp, -scp, -c")        
+    print("[All right-click commands]: help, -m, -h, -u, -t, -s, -ucp, -tcp, -scp, -c, -l")        
     with open(pathlib.Path(__file__).parent/'commands.txt', 'a') as TrackerVals.coordinates_file:
         TrackerVals.coordinates_file.write('if current_round == BEGIN:\n')
     print('Current round is ' + str(TrackerVals.ct_round_counter))
 
     # updates file during program runtime by opening it in append mode. 
     # Also writes down coordinates + optional user # comments in file commands.txt
-    # don't write to file manually during this script's runtime! But you can open it on side and see how it updates, though!
     while True:
         time.sleep(0.2)
         TrackerVals.coordinates_file = open(pathlib.Path(__file__).parent/'commands.txt', 'a')

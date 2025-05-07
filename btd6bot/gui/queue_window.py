@@ -1,7 +1,11 @@
 """Contains QueueModeWindow class."""
 
 from __future__ import annotations
+import json
+from typing import Any
+
 import tkinter as tk
+from tkinter import ttk
 
 import gui.gui_paths as gui_paths
 from utils import plan_data
@@ -14,6 +18,7 @@ class QueueModeWindow:
     Attributes:
         queue_optionwindow (tk.Toplevel): Toplevel object that creates a new window where other elements can be 
             inserted.
+        current_plan (str): Plan name string.
         myplans (tk.Listbox): Holds all user-selected plans.
         myplanslabel (tk.Label): Label displaying text above mymaps.
         delbutton (tk.Button): Button handling the removing of user-selected plans.
@@ -26,23 +31,27 @@ class QueueModeWindow:
         """Initialize queue mode window."""
         self.queue_optionwindow = tk.Toplevel()
         self.queue_optionwindow.title("Queue map list")
-        self.queue_optionwindow.geometry('550x400+100+550')
-        self.queue_optionwindow.minsize(550,400)
-        self.queue_optionwindow.maxsize(550,400)
+        self.queue_optionwindow.geometry('910x400+100+550')
+        self.queue_optionwindow.minsize(910,400)
+        self.queue_optionwindow.maxsize(910,400)
 
-        self.myplans = tk.Listbox(self.queue_optionwindow, width=40, height=20)
-        self.myplans.grid(column=0, row=1, padx=11)
+        self.current_plan = ''
         self.myplanslabel = tk.Label(self.queue_optionwindow, text='Current queue')
         self.myplanslabel.grid(column=0, row=0)
+        self.myplans = tk.Listbox(self.queue_optionwindow, width=40, height=20)
+        self.myplans.grid(column=0, row=1, padx=11)
+        self.myplans.bind("<<ListboxSelect>>", lambda _: self.update_planinfo())
 
         self.delbutton = tk.Button(self.queue_optionwindow, text='Remove (r)', command=self.remove_plan, width=10)
         self.delbutton.grid(column=0, row=2)
         self.queue_optionwindow.bind("r", lambda _: self.remove_plan())
 
-        self.allplans = tk.Listbox(self.queue_optionwindow, width=40, height=20)
-        self.allplans.grid(column=2, row=1, padx=11)
+    
         self.allplanslabel = tk.Label(self.queue_optionwindow, text='All plans')
         self.allplanslabel.grid(column=2, row=0)
+        self.allplans = tk.Listbox(self.queue_optionwindow, width=40, height=20)
+        self.allplans.grid(column=2, row=1, padx=11)
+        self.allplans.bind("<<ListboxSelect>>", lambda _: self.update_planinfo())
 
         self.addbutton = tk.Button(self.queue_optionwindow, text='Add (a)', command=self.add_plan, width=10)
         self.addbutton.grid(column=2, row=2)
@@ -54,8 +63,65 @@ class QueueModeWindow:
         self.down = tk.Button(self.queue_optionwindow, text=u'\u2193' , width=1, height=5, command=self.move_down)
         self.down.grid(column=1, row=1, sticky='s')
 
+        info_window_scroll = ttk.Scrollbar(self.queue_optionwindow, orient='vertical')
+        info_window_scroll.grid(column=4, row=1, rowspan=1, sticky="ns")
+
+        self.infolabel = tk.Label(self.queue_optionwindow, text='Plan info')
+        self.infolabel.grid(column=3, row=0)
+        self.info_window = tk.Text(self.queue_optionwindow, height=18, width=45, yscrollcommand=info_window_scroll.set, 
+                                   font=("Times New Roman", 11), wrap=tk.WORD, relief='sunken', padx=11)
+        self.info_window.grid(column=3, row=1, sticky='ns')
+        self.info_window['state'] = 'disabled'
+        info_window_scroll.configure(command=self.info_window.yview)
+
         self.read_queue_list()
         self.read_allplans_list()
+
+    def update_planinfo(self) -> None:
+        """Updates plan info panel based on selected name."""
+        index_my = self.myplans.curselection() # type: ignore
+        index_all = self.allplans.curselection() # type: ignore
+        if index_my:
+            self.current_plan = self.myplans.get(index_my[0])
+            self.show_planinfo()
+        elif index_all:
+            self.current_plan = self.allplans.get(index_all[0])
+            self.show_planinfo()
+
+    def show_planinfo(self) -> None:
+        """Displays optional info screen.
+        
+        Info texts are defined at the beginning of each plan file in 'plans' folder.
+        If no valid info string is found, displays a blank screen.
+        """
+        original = self.current_plan
+        with open(gui_paths.PLANS_PATH/(self.current_plan+'.py')) as file_read:
+            infolist = file_read.readlines()
+        try:
+            if infolist[0] == '\"\"\"\n':
+                info_comment_end = infolist[1:].index('\"\"\"\n')
+                try:
+                    with open(gui_paths.FILES_PATH/'time_data.json') as timedata_read:
+                        current_version: dict[str, Any] = json.load(timedata_read)[original]["version"]
+                except KeyError:
+                    current_version = '-'
+                core_text = ['[Plan Name] '+original+'\n','[Game Version] '+str(current_version)+'\n']
+                core_text.extend(infolist[1:info_comment_end+1])
+                readtext = ''.join(core_text)
+                self.info_window['state'] = 'normal'
+                self.info_window.delete(1.0, tk.END)
+                self.info_window.insert('end', readtext)
+                self.info_window['state'] = 'disabled'
+            else:
+                self.info_window['state'] = 'normal'
+                self.info_window.delete(1.0, tk.END)
+                self.info_window.insert('end', '')
+                self.info_window['state'] = 'disabled'
+        except IndexError:    
+            self.info_window['state'] = 'normal'
+            self.info_window.delete(1.0, tk.END)
+            self.info_window.insert('end', '')
+            self.info_window['state'] = 'disabled'
 
     def move_up(self) -> None:
         """Handles moving currently selected row up."""

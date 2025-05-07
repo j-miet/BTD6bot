@@ -17,30 +17,40 @@ def test_flush_times_temp(capsys):
 
 def test_update_time_data(mocker):
     time_data = "1,0:12\n2,0:05\n3,0:30\n0:47"
+    version = 10
 
-    mock_open = mocker.patch("set_plan.open", mocker.mock_open(read_data = time_data))
-    mock_json_load = mocker.patch("set_plan.json.load")
-    mock_json_load.return_value = {
-        "logsEasyStandard": {"rounds": ["1", "2", "3", "4", "5"],
-                              "times": ["0:08", "0:12", "0:02", "0:22", "0:15"],
-                              "time_total": "0:59"},
-        "quadHardImpoppable": {"rounds": ["10", "11", "12", "13", "14"],
+    mock_temptime = mocker.patch("set_plan.open", mocker.mock_open(read_data = time_data))
+    mock_timedata = mocker.patch("set_plan._read_timedata")
+    mock_timedata.return_value = {
+        "logsEasyStandard": {"version": 1,
+                                "rounds": ["1", "2", "3", "4", "5"],
+                                "times": ["0:08", "0:12", "0:02", "0:22", "0:15"],
+                                "time_total": "0:59"},
+        "quadHardImpoppable": {"version": 48,
+                                "rounds": ["10", "11", "12", "13", "14"],
                                 "times": ["0:24", "0:32", "0:42", "0:12", "0:11"],
                                 "time_total": "2:01"}
     }
+    mock_guivars = mocker.patch("set_plan._read_guivars")
+    mock_guivars.return_value = version
 
     assert set_plan._update_time_data("monkey_meadowMediumMilitary") == {
-        "logsEasyStandard": {"rounds": ["1", "2", "3", "4", "5"],
-                              "times": ["0:08", "0:12", "0:02", "0:22", "0:15"],
-                              "time_total": "0:59"},
-        "quadHardImpoppable": {"rounds": ["10", "11", "12", "13", "14"],
+        "logsEasyStandard": {"version": 1,
+                                "rounds": ["1", "2", "3", "4", "5"],
+                                "times": ["0:08", "0:12", "0:02", "0:22", "0:15"],
+                                "time_total": "0:59"},
+        "quadHardImpoppable": {"version": 48,
+                                "rounds": ["10", "11", "12", "13", "14"],
                                 "times": ["0:24", "0:32", "0:42", "0:12", "0:11"],
                                 "time_total": "2:01"},
-        "monkey_meadowMediumMilitary": {"rounds": ["1", "2", "3"],
-                    "times": ["0:12", "0:05", "0:30"],
-                    "time_total": "0:47"}
+        "monkey_meadowMediumMilitary": {"version": version,
+                                        "rounds": ["1", "2", "3"],
+                                        "times": ["0:12", "0:05", "0:30"],
+                                        "time_total": "0:47"}
     }
-    assert mock_open.call_count == 2
+    assert mock_temptime.call_count == 1
+    assert mock_timedata.call_count == 1
+    assert mock_guivars.call_count == 1
 
 def test_save_to_json(mocker, capsys):
     mock_open = mocker.patch("set_plan.open", mocker.mock_open())
@@ -170,7 +180,7 @@ def test_plan_run(mocker):
     mock_json_load.return_value = dict({"time_recording_status": True})
 
     mock_flush_times_temp = mocker.patch("set_plan._flush_times_temp") 
-    mocker.patch("set_plan._save_to_json", lambda t: 1) # override _save_to_json call; no need to test it here.
+    mocker.patch("set_plan._save_to_json", lambda _: 1) # override _save_to_json call; no need to test it here.
 
     mock_name = "test_planEasyStandard"
     mock_module= mocker.patch("set_plan.importlib.import_module") # this must be patched last!
@@ -178,7 +188,7 @@ def test_plan_run(mocker):
 
     set_plan.plan_run(mock_name, mock_module, moc_info)
 
-    mock_open.assert_called_once()
+    mock_open.assert_called()
     mock_json_load.assert_called_once()
     mock_flush_times_temp.assert_called_once() # if _flush_times_temp is called, then so is _save_to_json.
 

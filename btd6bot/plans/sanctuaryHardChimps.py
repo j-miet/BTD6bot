@@ -1,25 +1,20 @@
 """
-[Plan Name] sanctuaryHardChimps
-[Game Version] 48
 [Hero] Psi
 [Monkey Knowledge] -
 ---------------------------------------------------------------
 ===Monkeys & upgrades required===
 dart 0-0-1
+boomer 5-0-2
+glue 5-2-0
+
 sniper 4-2-2
+
 alch 4-0-1
 mermonkey 2-0-5
+
 village 3-2-0
-glue 5-2-0
-boomer 5-0-2
 _______________________________________
-Strategy: https://www.youtube.com/watch?v=5lw5KgJhaf4
-
--Can do black border. Has some rng, but you should be able to finish in one go after a few attempts.
-
--Has plenty of adjustments compared to original as it would not work consistently for black border.
-
--Updated for version 48; the pierce nerf to 4-x-x boomerang hurts and makes saving for 5-x-x glue a lot more rng-dependent. To make it easier, upgrading sniper to 3-2-0 sniper before 63 and to 4-2-0 during it + some extra ability uses, seems to increase consistency a lot. Some extra ability uses have been added for late game rounds to avoid random leaks.
+-Has some rng, but you should be able to succeed within a few attempts.
 """
 
 from._plan_imports import *
@@ -35,7 +30,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             dart_mid = Monkey('dart', 0.5364583333333, 0.2583333333333)
             dart_right = Monkey('dart', 0.7442708333333, 0.1083333333333)
             dart_left = Monkey('dart', 0.1661458333333, 0.3509259259259)
-            begin()
+            forward()
             dart_mid.upgrade(['0-0-1'], 0.46, 0.27)
             end_round()
         elif current_round == 7:
@@ -252,7 +247,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             ability(2, 10.5)
             alch2 = Monkey('alch', 0.490625, 0.1037037037037)
             alch2.upgrade(['1-0-0', '2-0-0', '3-0-0', '4-0-0', '4-0-1'])
-            end_round(6)
+            end_round(10)
         elif current_round == 99:
             sniper3 = Monkey('sniper', 0.7838541666667, 0.3796296296296)
             sniper3.upgrade(['1-0-0', '2-0-0', '3-0-0', '3-1-0', '3-2-0'])

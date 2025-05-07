@@ -1,16 +1,17 @@
 """
-[Plan Name] infernalMediumApopalypse
-[Game Version] 47
 [Hero] Psi
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
-sub 2-0-4
-bomb 2-0-4
-alch 3-0-0
 dart 0-0-2
+bomb 2-0-4
+
 sniper 0-2-2
+sub 2-0-4
+
+alch 3-0-0
 druid 1-3-0
+
 village 0-2-0
 _______________________________________
 Apopalypse round rng might fail you. Should work after a few tries, though.
@@ -27,7 +28,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         if current_round == BEGIN:
             sub1 = Monkey('sub', 0.2723958333333, 0.7490740740741)
             sub2 = Monkey('sub', 0.6197916666667, 0.2509259259259)
-            begin('normal') # begin('normal') presses start button once because of apopalypse autostart.
+            forward(1)
             sub2.upgrade(['0-0-1'])
             sub1.upgrade(['0-0-1'])
             druid1 = Monkey('druid', 0.8333333333333, 0.637962962963)

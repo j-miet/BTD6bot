@@ -5,8 +5,6 @@ class BotData:
 
     For example, monitoring window round timer requires this data.
 
-    Data is only stored if bot_vars.BotVars class attribute get_botdata is set as True.
-
     Attributes:
         round_time (float, class attribute): Current round begin time.
         current_round (int, class attribute): Current round.
@@ -17,6 +15,8 @@ class BotData:
     current_round: int = 0
     begin_r: int = 0
     end_r: int = 0
+    paused: bool = False
+    victory: bool = False
 
     @staticmethod
     def set_data(round_time: float = 0,
@@ -37,3 +37,7 @@ class BotData:
         BotData.current_round = current_round
         BotData.begin_r = begin_round
         BotData.end_r = end_round
+
+    @staticmethod
+    def update_pause(pause_flag: bool) -> None:
+        BotData.paused = pause_flag

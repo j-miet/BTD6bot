@@ -1,12 +1,11 @@
 """
-[Plan Name] dark_castleEasyStandard
-[Game Version] 47
 [Hero] Obyn
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
-ninja 4-0-2
 sub 2-0-4
+
+ninja 4-0-2
 alch 3-0-0
 _______________________________________
 """

@@ -23,6 +23,8 @@ HELP_PATH = TEXT_FILES_PATH/'help.txt'
 """Readme text path."""
 HOTKEYS_PATH = TEXT_FILES_PATH/'hotkeys.txt'
 """Hotkeys data path."""
+GUIHOTKEYS_PATH = TEXT_FILES_PATH/'guihotkeys.txt'
+"""Gui hotkeys data path."""
 HOTKEY_HELP_PATH = TEXT_FILES_PATH/'hotkeyhelp.txt'
 """Hotkey help text path."""
 PLANS_PATH = ROOT/'plans'

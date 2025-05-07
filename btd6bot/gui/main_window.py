@@ -3,7 +3,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+import json
 import os
+import shutil
 import signal
 import sys
 import threading
@@ -12,7 +14,9 @@ import tkinter as tk
 from tkinter import ttk
 
 import pynput
+from pynput.keyboard import Key, KeyCode
 
+from bot import hotkeys
 import gui.gui_tools as gui_tools
 from gui.help_window import HelpWindow
 from gui.hotkey_window import HotkeyWindow
@@ -25,7 +29,6 @@ from utils import plan_data
 
 if TYPE_CHECKING:
     from typing import Any, TextIO
-    from pynput.keyboard import Key, KeyCode
 
 class MainWindow:
     """GUI main window.
@@ -79,7 +82,12 @@ class MainWindow:
         MAP_IMAGES = os.listdir(gui_paths.MAP_IMAGES_PATH)
     except FileNotFoundError:
         ...
-    EXIT_HOTKEY = pynput.keyboard.Key.f11
+
+    with open(gui_paths.GUIHOTKEYS_PATH) as gui_hotkeys:
+        try:
+            EXIT_HOTKEY = hotkeys.PYNPUT_KEYS[gui_hotkeys.readlines()[2].split('= ')[1].strip()]
+        except IndexError:
+            EXIT_HOTKEY = gui_hotkeys.readlines()[2].split('= ')[2].strip()
 
     @staticmethod
     def exit(key: Key | KeyCode | None) -> None:
@@ -91,7 +99,7 @@ class MainWindow:
         Args:
             key: Latest keyboard key the user has pressed.       
         """
-        if key == MainWindow.EXIT_HOTKEY: 
+        if key == MainWindow.EXIT_HOTKEY or (isinstance(key, KeyCode) and key.char == MainWindow.EXIT_HOTKEY): 
             os.kill(os.getpid(), signal.SIGTERM)
 
     # listener thread object sends keyboard inputs to exit function
@@ -183,7 +191,11 @@ class MainWindow:
 
         self.help_button= tk.Button(mainframe, text="Help", height=2, width=5, command=self.help_window, padx=20,
                                     pady=5)
-        self.help_button.grid(column=3, row=0, pady=10, sticky='nwe')
+        self.help_button.grid(column=2, row=0, padx=30, pady=10, sticky='nwe')
+
+        self.settings_button= tk.Button(mainframe, text="Settings", height=2, width=5,
+                                        command=self.settings_window, padx=20, pady=5)
+        self.settings_button.grid(column=3, row=0, pady=10, sticky='nwe')
 
         self.hotkey_button = tk.Button(mainframe, text="Set\nhotkeys", height=2, width=5, command=self.hotkey_window,
                                        padx=20, pady=5)
@@ -192,14 +204,6 @@ class MainWindow:
         self.queueoptions_button = tk.Button(mainframe, text="Queue mode\nmaplist", height=2, width=5, 
                                              command=self.queue_mode_window, padx=20, pady=5)
         self.queueoptions_button.grid(column=3, row=2, pady=10, sticky='wes') 
-
-        self.settings_button= tk.Button(mainframe, text="Settings", height=2, width=5,
-                                        command=self.settings_window, padx=20, pady=5)
-        self.settings_button.grid(column=2, row=0, padx=30, pady=10, sticky='nwe')
-
-        # TODO add editing of plan files inside gui
-        #self.edit_plans_button= tk.Button(mainframe, text="Edit Plans", height=2, width=5, command='', padx=20, pady=5)
-        #self.edit_plans_button.grid(column=2, row=1, padx=30, pady=10, sticky='nwe')
 
         self.collection_toggle = tk.Checkbutton(mainframe, text='Collection Event', anchor='e', 
                                                 variable=self.collection, offvalue='Off', onvalue='On', pady=10,
@@ -225,6 +229,19 @@ class MainWindow:
                                       state='active', padx=10, pady=0)
         self.start_button.grid(column=3, row=5, sticky='e')
     
+        self._delete_readme_html()
+        self._autoupdate_readme()
+
+    def _delete_readme_html(self) -> None:
+        if os.path.exists(gui_paths.FILES_PATH/'helpwindow'/'README.html'):
+            os.remove(gui_paths.FILES_PATH/'helpwindow'/'README.html')
+
+    def _autoupdate_readme(self) -> None:
+        try:
+            shutil.copy(gui_paths.ROOT.parent/'README.md', gui_paths.FILES_PATH/'helpwindow'/'README.md')
+        except FileNotFoundError:
+            print("Could not update Files/helpwindow/README.md")
+
     def get_maps(self) -> list[str]:
         """Get all map names.
 
@@ -298,20 +315,24 @@ class MainWindow:
         try:
             if infolist[0] == '\"\"\"\n':
                 info_comment_end = infolist[1:].index('\"\"\"\n')
-                readtext = ''.join(infolist[1:info_comment_end+1])
-                self.current_info = readtext
+                try:
+                    with open(gui_paths.FILES_PATH/'time_data.json') as timedata_read:
+                        current_version: dict[str, Any] = json.load(timedata_read)[original]["version"]
+                except KeyError:
+                    current_version = '-'
+                core_text = ['[Plan Name] '+original+'\n','[Game Version] '+str(current_version)+'\n']
+                core_text.extend(infolist[1:info_comment_end+1])
+                readtext = ''.join(core_text)
                 self.info_window['state'] = 'normal'
                 self.info_window.delete(1.0, tk.END)
-                self.info_window.insert('end', self.current_info)
+                self.info_window.insert('end', readtext)
                 self.info_window['state'] = 'disabled'
             else:
-                self.current_info = ''
                 self.info_window['state'] = 'normal'
                 self.info_window.delete(1.0, tk.END)
                 self.info_window.insert('end', '')
                 self.info_window['state'] = 'disabled'
         except IndexError:    
-            self.current_info = ''
             self.info_window['state'] = 'normal'
             self.info_window.delete(1.0, tk.END)
             self.info_window.insert('end', '')
@@ -551,6 +572,7 @@ class MainWindow:
         """
         while True:
             while not current_help.winfo_exists():
+                self._delete_readme_html()
                 self.help_button.configure(state='active')
                 if self.queue.get() == 'On':
                     self.start_button.configure(state='disabled')
