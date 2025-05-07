@@ -294,6 +294,18 @@ class MonitoringWindow:
                     27*" "+".\n"+
                     27*" "+".\n")
 
+    def plantest_print(self, plan: str, attempt: int, attempt_limit: int) -> None:
+        if 1 <= attempt <= attempt_limit:
+            if attempt_limit == 1:
+                print('~~~~'+plan_data.return_map(plan)+', '+
+                    plan_data.return_strategy(plan).split('-')[0].lower()+', '+
+                    plan_data.return_strategy(plan).split('-')[1].lower()+'~~~~')
+            else:
+                print('~~~~'+plan_data.return_map(plan)+', '+
+                    plan_data.return_strategy(plan).split('-')[0].lower()+', '+
+                    plan_data.return_strategy(plan).split('-')[1].lower()+
+                    f' [Attempt {attempt}/{attempt_limit}]~~~~')
+
     def run_bot(self) -> None:
         """Checks if replay mode is enabled/disabled and runs the sequence of plans listed in self.all_plans.
 
@@ -312,11 +324,10 @@ class MonitoringWindow:
             self.res_check(customres_val, resolution_val, windowed_val, w, h)
         if customres_val:
             print('[Custom Resolution] '+str(resolution_val[0])+'x'+str(resolution_val[1])+'\n'
-                    '[Windowed] '+str(windowed_val))
+                    '[Windowed] '+str(windowed_val)+'\n')
         else:
             w, h = pyautogui.size()
-            print('[Resolution] '+str(w)+'x'+str(h))
-        
+            print('[Resolution] '+str(w)+'x'+str(h)+'\n')
         if gui_vars_dict["ocr_adjust_deltas"]:
             try:
                 new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'spa pits.png')
@@ -340,6 +351,7 @@ class MonitoringWindow:
                     BotData.victory = False
                     attempt_number = 1
                     while attempt_number <= retries_val:
+                        self.plantest_print(self.all_plans[plan_index], attempt_number, retries_val)
                         self.execute(self.all_plans, plan_index)
                         if BotData.victory:
                             break
@@ -353,6 +365,7 @@ class MonitoringWindow:
                 BotData.victory = False
                 attempt_number = 1
                 while attempt_number <= retries_val:
+                    self.plantest_print(self.all_plans[plan_index], attempt_number, retries_val)
                     self.execute(self.all_plans, plan_index)
                     if BotData.victory:
                         break
