@@ -3,7 +3,7 @@
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
-ice 0-3-1
+ice 0-4-1
 
 sniper 1-2-0
 sub 0-2-1
@@ -44,6 +44,8 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             boat.upgrade(['1-0-2'])
         elif current_round == 21:
             boat.upgrade(['2-0-2'])
+        elif current_round == 23:
+            ability(1,2)
         elif current_round == 27:
             sub1.upgrade(['0-2-1'])
         elif current_round == 31:
@@ -75,6 +77,9 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 61:
             ability(1,2)
             boat.upgrade(['5-0-2'])
+            sub1.target('strong')
+        elif current_round == 63:
+            ability(1,11)
         elif current_round == 75:
             mermonkey.upgrade(['5-0-2'])
         elif current_round == 78:
@@ -108,7 +113,10 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 97:
             ability(2,4.5)
         elif current_round == 98:
-            ability(1,5)
+            ability(1,4)
             ninja.upgrade(['1-0-5'])
+            ice1.upgrade(['0-4-1'])
+        elif current_round == 99:
+            ability(3,2.5)
         elif current_round == 100:
             ability(1,7)
