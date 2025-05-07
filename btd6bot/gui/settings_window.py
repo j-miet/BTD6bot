@@ -83,7 +83,7 @@ class SettingsWindow:
         resolution_current_value.grid(column=3, columnspan=2, row=1, sticky='sw', padx=(1,35), pady=(1,10))
         res_reminder = tk.Text(self.settings_window, wrap=tk.WORD, width=10, height=5, relief='sunken')
         res_reminder.grid(column=4, row=1, rowspan=3, sticky='nw', padx=1, pady=(1,10))
-        res_reminder.insert("end", '[Reminder] Aspect ratio should be ~16:9')
+        res_reminder.insert("end", '[Reminder] Aspect ratio should be 16:9')
         res_reminder['state'] = 'disabled'
 
         self.resolution_width_entry = tk.Entry(self.settings_window, width=10)
