@@ -558,7 +558,7 @@ class MainWindow:
     def help_window(self) -> None:
         """Open help window which operates on its own thread."""
         self.help_button.configure(state='disabled')
-        self.start_button.configure(state='disabled')
+        #self.start_button.configure(state='disabled')
         helpwindow = HelpWindow()
         helpwindowthread = threading.Thread(target=self.is_helpwindow, args=[helpwindow.get_helpwindow()])
         helpwindowthread.daemon = True
@@ -584,7 +584,7 @@ class MainWindow:
                 elif self.reader_init:
                     self.start_button.configure(state='active')
                 return
-            self.start_button.configure(state='disabled')
+            #self.start_button.configure(state='disabled')
             time.sleep(0.01)
      
     def settings_window(self) -> None:

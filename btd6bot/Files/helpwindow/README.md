@@ -1,12 +1,12 @@
 # BTD6bot
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring_finish.PNG)
+![](docs/github/images/monitoring/monitoring_finish.PNG)
 
 
 ``BTD6bot`` is a program for automating **Bloons Tower Defense 6** game.  
 It includes a simple graphical user interface (**gui**): not impressive visually, but easy to use.
 
-**Supports only <u>single player game modes</u> accessed under the main menu &#39;Play&#39; button.** 
+**Supports only <u>single player game modes</u> accessed under the main menu &#39;Play&#39; button.**  
 Support for multiplayer/competitive modes such as races, bosses, contested territory, boss rush, etc. will not be 
 added.
 
@@ -23,9 +23,9 @@ Tested only on Windows operating systems**
 
 **-- Warning --**  
 ***Be aware that automation/botting is againts Ninja Kiwi&#39;s [Terms of Service](https://ninjakiwi.com/terms) and
-imposes the risk of flagging your account for cheating, or worst case, getting it banned. I&#39;m not certain how
-Ninja Kiwi could enforce this in single player environment, though. But if you&#39;re concerned, you can always run
-the bot offline. <u>You have been warned</u>.***
+imposes the risk of flagging your account for cheating, or worst case, getting it banned.  
+I&#39;m not certain how Ninja Kiwi could enforce this in single player environment, though. But if you&#39;re concerned,
+you can always run the bot offline. <u>You have been warned</u>.***
 
 
 ## Table of contents
@@ -76,28 +76,31 @@ but easy to use. Here are some of the properties:
 finishes. 
 
     - Note that commands are Python code, so plan files are fully written in Python
- (= they are .py files). In particular, monkeys and heroes are class objects because this makes implementing new 
- features for them much easier. Commands are not very hard to write, but using them effortlessly can take time.
+ (= they are .py files).  
+ In particular, monkeys and heroes are class objects because this makes implementing new 
+ features for them much easier.  
+ Commands are not very hard to write, but using them effortlessly can take time.
     - A plan template is provided which can then be copied and modified. Furthermore, the *command_tracker* tool is 
     specifically designed for plan creation.
 
     See [Creating a new plan file](#Creating_a_new_plan_file) section for more info.
 
 - Extensive bot library with build-in gui support, which can also operate independently. Uses optical character reading
-(ocr) and kb+mouse to update bot state. While library code is thoroughly documented, it still benefits from a short
-guide. [Update the bot](#update-the-bot) section is entirely devoted to this topic and provides the baseline for
+(ocr) and kb+mouse to update bot state.  
+While library code is thoroughly documented, it still benefits from a short
+guide. [Update the bot](#update-the-bot) section is devoted to this topic and provides the baseline for
 adding new content.
 
 # <u>Installation</u>
 First you need to install [Python](https://www.python.org/downloads/).  
-Most of bot functions were programmed in Python versions 3.12 and 3.13 so **Python 3.12+** is recommended.
+Most of bot functions were programmed in Python versions 3.12 and 3.13 so **Python 3.12+** is recommended.  
 It is likely to work on some earlier versions of Python 3, but this has not been tested.
 
 Now, download *BTD6bot*:
 
 Click the green [<> Code] button at the top of github page.
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/github_codebutton.PNG)
+![](docs/github/images/github_codebutton.PNG)
 
 Then either
 
@@ -133,13 +136,13 @@ And that&#39;s it! You&#39;re good to go and should be able to start BTD6bot. To
 
 
 # <u>First-time setup</u>
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/main.png) |
+| ![](docs/github/images/main/main.PNG) |
 |:--:|
 | *Main window default view*|
 
 If you managed to run BTD6bot, then the window similar to above should have opened.
-There&#39;s plenty of stuff in here, but for now focus is on getting the bot to work properly. <u>Following steps must
-be done in order to make bot work properly for each user</u>:  
+There&#39;s plenty of stuff in here, but for now focus is on getting the bot to work properly.  
+<u>Following steps must be done in order to make bot work properly for each user</u>:  
 
     1. Update bot hotkeys
     2. Settings: update resolution and enable ocr auto-adjust
@@ -148,7 +151,12 @@ be done in order to make bot work properly for each user</u>:
 **Below is a quick tutorial of first-time setup. After it begins the full tutorial, which is detailed and quite long.**
 
 [**Quick vs Full tutorial**]  
-**If quick summary seems difficult to understand, or you think you got something wrong, just switch into full tutorial: <u>It&#39;s highly recommended you read through it at least once</u>. Getting the bot to run properly is the hard part (which is not that hard). Afterwards, you&#39;re free to experiment with all the gui settings and can repeat first-time setup steps should something break irrevocably.**
+**If quick summary seems difficult to understand, or you think you got something wrong, just switch into full tutorial:   
+<u>It&#39;s highly recommended you read through it at least once</u>.**
+
+**Getting the bot to run properly is the hard part (which is not that hard).  
+Afterwards, you&#39;re free to experiment with all the gui settings and if needed, can repeat first-time setup steps
+should something break irrevocably.**
 
 
 ## Quick tutorial:
@@ -156,37 +164,50 @@ be done in order to make bot work properly for each user</u>:
 *1920x1080 monitor is used below; your values can look different*  
 *1600x900 is used as custom resolution* 
 
-1. Set hotkeys in **Set hotkeys** window; gui hotkeys are not mandatory, but very much recommended. After you&#39;re done, close hotkeys window.
+1. Set hotkeys in **Set hotkeys** window; gui hotkeys are not mandatory, but very much recommended. After you&#39;re
+done, close hotkeys window.
 2. Open **Settings** window and set resolution. 
 
-    **Select a resolution with aspect ratio of 16:9, or one that can be reduced to 16:9 by using windowed mode. For latter, read [this](#using-windowed-mode-for-resolutions-with-varying-aspect-ratios)**. 
+    **Select a resolution with aspect ratio of 16:9, or one that can be reduced to 16:9 by using windowed mode.
+    For latter, read [this](#using-windowed-mode-for-resolutions-with-varying-aspect-ratios)**. 
+
     - If you use fullscreen/windowed fullscreen, **don&#39;t** enable custom resolution.
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/disable_custom.png)
+
+        ![](docs/github/images/settings/disable_custom.PNG)
 
     - If you use custom resolution, set width & height values, then update values.
         - Toggle windowed mode on if you wish to use it. It&#39;s recommended to use fullscreen, though.
 
         **If windowed mode is enabled, run BTD6 with ``-popupwindow`` launch argument.**
 
-        ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/custom_windowed.PNG)
+        ![](docs/github/images/settings/custom_windowed.PNG)
 
-3. Enable ocr auto-adjusting, make sure it has correct res and win values. Res is your current resolution, win stands for fullscreen (``win=0``) or windowed (``win=1``). Finally, ``monkeys=all`` and ``delta=4`` values should be
-automatically set.  
+3. Enable ocr auto-adjusting, make sure it has correct res and win values. Res is your current resolution, win stands
+for fullscreen (``win=0``) or windowed (``win=1``).  
+Finally, ``monkeys=all`` and ``delta=4`` values should be automatically set.  
 Easiest way is to just press ``Reset args`` button once, then press ``Set args`` button after.
 
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/auto_adjust.PNG)
+    ![](docs/github/images/settings/auto_adjust.PNG)
 
-    Now, close settings window. In main window, press **Initialize bot**, then **Open bot window** to open monitoring window.
+    Now, close settings window. In main window, press **Initialize bot**, then **Open bot window** to open monitoring
+    window.
     
     Have your BTD6 game opened on main
-    monitor, placed in main menu screen. Now, run the bot and let it finish auto-adjusting. This process can take a while. After adjusting process is finished, bot should be able to detect in-game upgrade texts properly based on your current resolution settings.
+    monitor, placed in main menu screen. Now, run the bot and let it finish auto-adjusting. This process can take a 
+    while.  
+    After adjusting process is finished, bot should be able to detect in-game upgrade texts properly based on your
+    current resolution settings.
 
 
-    **<u>Know that any time you change resolution or windowed mode, you need to toggle the adjust setting on in settings and run this process again!</u>**.
+    **<u>Know that any time you change resolution or windowed mode, you need to toggle the adjust setting on in settings
+    and run this process again!</u>**.
 
-    Finally, test if bot work by running a simple plan: close current monitoring window instance, then select either *dark_castleEasyStandard* or *monkey_meadowEasyStandard*.
+    Finally, test if bot work by running a simple plan: close current monitoring window instance, then select either
+    *dark_castleEasyStandard* or *monkey_meadowEasyStandard*.
 
-    Then press ``Open bot window`` again to open fresh monitoring window and press ``Run``. Don&#39;t use keyboard or mouse while bot is running. If bot can finish a plan and returns to main menu with ``Plan completed`` message, everything&#39;s working!
+    Then press ``Open bot window`` again to open fresh monitoring window and press ``Run``. Don&#39;t use keyboard or
+    mouse while bot is running.  
+    If bot can finish a plan and returns to main menu with "*Plan completed*" message, everything&#39;s working!
 
 ---
 ## Full tutorial
@@ -199,7 +220,7 @@ Click the gear symbol and open hotkeys menu.
 
 Now, update your game hotkeys for bot. Press &#39;Set hotkeys&#39; button in gui. Following window opens:
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/hotkeys/hotkeys.png) |
+| ![](docs/github/images/hotkeys/hotkeys.PNG) |
 |:--:|
 | *Hotkey window*|
 
@@ -217,11 +238,11 @@ You should quickly read the &#39;Instructions&#39; but here&#39;s the important 
 - Some keys like § might get displayed weirdly but should still work
 - Custom gui hotkeys:
     - &#39;pause&#39; queues up a pause flag. When bot hits it, it will press esc to pause game and also pauses bot. To
-    unpause, press this button again. Do not close the esc menu manually! Pausing only works in maps and does nothing 
-    when bot navigates menu screens
+    unpause, press this button again.  
+    Do not close the esc menu manually! Pausing only works in maps and does nothing when bot navigates menu screens
     - &#39;start-stop&#39; this start/stops the current bot loop. Stop will also reset the loop which means you need to
-    start bot from main menu again. And if you decide to run multiple plans in row, it will also reset this queue back
-    to first plan.
+    start bot from main menu again.  
+    And if you decide to run multiple plans in row, it will also reset this queue back to first plan.
     - &#39;exit&#39; stops BTD6bot entirely: it terminates current bot loop and closes all existing gui windows. Set
     this on a keybind that you don&#39;t press accidentally.
 
@@ -238,7 +259,7 @@ After you&#39;ve updated all the keys, close the hotkey window.
 
 Next, open settings window by pressing &#39;Settings&#39; button.
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/settings.png) |
+| ![](docs/github/images/settings/settings.PNG) |
 |:--:|
 | *Settings window*|
 
@@ -250,12 +271,14 @@ For now, only 3 settings are needed:
 
 First the important part: **the base layout of Bloons is made for resolutions with aspect ratio of 16:9 or very close 
 to it**.
-For this reason, bot is also programmed around this requirement. Resolutions clearly differing from this are unlikely 
+For this reason, bot is also programmed around this requirement.  
+Resolutions clearly differing from this are unlikely 
 to work. The reason is that game will extend existing borders or even change the general ui layout 
 (like text locations) for some aspect ratios.
   
 Now, despite this, **it might be possible to run different resolutions, for example ultrawide resolutions, as long as
-they don&#39;t change the relative positions of ui**. For such cases, you will probably need to do some tricks with
+they don&#39;t change the relative positions of ui**.   
+For such cases, you will probably need to do some tricks with
 windowed mode enabled, even if you plan to play in fullscreen. 
 Check [this part](#using-windowed-mode-for-resolutions-with-varying-aspect-ratios) for more detailed explanation.
 
@@ -266,37 +289,39 @@ option off, you should see your current resolution next to &#39;Current resoluti
 
     For example, if your monitor is ``1920x1080``, you see following 
 
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/disable_custom.png)
+    ![](docs/github/images/settings/disable_custom.PNG)
 
     [**Note**] For bot, fullscreen and windowed fullscreen mean the same thing so always use this option if you wish to
     use maximum supported resolution.
 
 - *custom resolution*: type width and height in their respective entry boxes, then click the &#39;Update resolution&#39;
-button. Custom value is stored in a file and will be loaded back if you disable and re-enable this setting. 
+button.  
+Custom value is stored in a file and will be loaded back if you disable and re-enable this setting. 
 
     Example: if you have ``1920x1080`` as native res and set a custom res ``1600x900``, then toggling setting on and off
     would display following resolutions:
 
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/difference.png)
+    ![](docs/github/images/settings/difference.PNG)
 
     With custom resolutions, you can enable *windowed mode*.
     
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/windowed.png)
+    ![](docs/github/images/settings/windowed.PNG)
     
     If you use windowed mode in btd6 normally, it adds the bar on top of game window. Bot, however, assumes this bar
-    doesn&#39;t exist and requires game to be opened with ``-popupwindow`` option. If you have Btd6 steam version, go
-    to steam library, right click on Bloons TD 6, then simply add the argument like shown below
+    doesn&#39;t exist and requires game to be opened with ``-popupwindow`` option.  
+    If you have Btd6 steam version, go to steam library, right click on Bloons TD 6, then simply add the argument like
+    shown below
 
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/launchoption.png)
+    ![](docs/github/images/settings/launchoption.PNG)
 
     Using windowed mode can decrease the text quality for ocr, though. If you use significantly smaller resolution with
-    windowed mode, bot could have issues with verifying text inputs. If windowed causes issues, just use fullscreen
-    instead.
+    windowed mode, bot could have issues with verifying text inputs.  
+    If windowed causes issues, just use fullscreen instead.
 
 Lastly, enable the &#39;Auto-adjust ocr upgrade data the next time a plan is run&#39; option. 
 For 1920x1080 with fullscreen enabled, it looks like this:
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/auto_adjust.PNG)
+![](docs/github/images/settings/auto_adjust.PNG)
 
 
 It should include following parts, each separated by space:
@@ -317,11 +342,11 @@ Then just press &#39;Set args&#39; and you&#39;re done! You may now close the se
 For last part, you need to enter the monitoring window. Click the &#39;Initialize bot&#39; button, located at bottom
 right of main window:
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/init_button.PNG)
+![](docs/github/images/main/init_button.PNG)
 
 Following load message appears
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/load_msg.png)
+![](docs/github/images/main/load_msg.PNG)
 
 Program needs to load the ocr model into your temporary memory (RAM) each time you initialize bot and is therefor only
 required once per runtime loop. If you close the entire program and reopen it, the model must be loaded again.
@@ -329,11 +354,11 @@ required once per runtime loop. If you close the entire program and reopen it, t
 After the message disappears, model has been loaded and initialize button should now display &#39;Open bot window&#39;
 instead.
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/openbotwin_button.PNG)
+![](docs/github/images/main/openbotwin_button.PNG)
 
 Click the button to open monitoring window.
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring.PNG) |
+| ![](docs/github/images/monitoring/monitoring.PNG) |
 |:--:|
 | *Monitoring window*|
 
@@ -414,7 +439,7 @@ project:
 
 ---
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring_adjustbegin.PNG) |
+| ![](docs/github/images/monitoring/monitoring_adjustbegin.PNG) |
 |:--:|
 | *After 'Run' button is pressed and menu play button is detected on main monitor, bot sets a countdown from 5 to 0, then begins the auto-adjusting process*|
 
@@ -447,7 +472,7 @@ adjusting may begin.
     manually.
 
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring_adjustend.PNG) |
+| ![](docs/github/images/monitoring/monitoring_adjustend.PNG) |
 |:--:|
 | *Adjusting process complete*|
 
@@ -457,11 +482,11 @@ your bot is ready to run!
 To run your first plan, it&#39;s recommended to pick something simple. Close the monitoring window and select either
 ``[monkey meadow, easy-standard]`` or ``[dark castle, easy-standard]`` in main window:
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/monkeymeadow.PNG)
+![](docs/github/images/main/monkeymeadow.PNG)
 
 or
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/darkcastle.PNG)
+![](docs/github/images/main/darkcastle.PNG)
 
 Make sure you have the required hero, all monkeys and their upgrade paths unlocked. For upgrade paths:
 
@@ -492,7 +517,7 @@ doing
 
 ## Main
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/main_modified.PNG) |
+| ![](docs/github/images/main/main_modified.PNG) |
 |:--:|
 | *Main window, with ocr already initialized. Currently selected plan is bloody_puddlesHardChimps, collection event and replay modes enabled.*|
 
@@ -524,18 +549,18 @@ i.e. selected map + strategy combination. Info is stored in each plan file and c
     
     For example, if you wanted monkey meadow, x factor and #ouch map images, files should be named  
 
-    - ``monkey meadow.png``
+    - ``monkey meadow.PNG``
 
-    - ``x factor.png``
+    - ``x factor.PNG``
     
-    - ``#ouch.png``
+    - ``#ouch.PNG``
 
     Map images can be downloaded from https://www.bloonswiki.com/List_of_maps_in_BTD6
     
 
 ## Help
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/help/help.PNG) |
+| ![](docs/github/images/help/help.PNG) |
 |:--:|
 | *Help window, expanded to fullscreen. It displays the same README.md contents, but links don&#39;t work*|
 
@@ -559,7 +584,7 @@ or reopening the Main window, this file gets deleted again!
 
 ## Queue
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/queue/queue.PNG) |
+| ![](docs/github/images/queue/queue.PNG) |
 |:--:|
 | *Queue window with dark_dungeonsHardChimps plan inserted in queue. When a plan is selected, its info panel is displayed.*|
 
@@ -572,7 +597,7 @@ hotkeys: 'a' for add, 'r' for remove.
 
 ## Hotkeys
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/hotkeys/hotkeys.PNG) |
+| ![](docs/github/images/hotkeys/hotkeys.PNG) |
 |:--:|
 | *Hotkey window.*|
 
@@ -592,7 +617,7 @@ hotkeys: 'a' for add, 'r' for remove.
 
 ## Settings
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/settings.PNG) |
+| ![](docs/github/images/settings/settings.PNG) |
 |:--:|
 | *Settings window*|
 
@@ -626,6 +651,10 @@ which was already used in [First-time setup](#first-time-setup).
     - enable custom resolution and set it as 2560x1440
     - enable windowed mode
     - And of course, remember to readjust ocr deltas for new resolution, as always!
+
+    Here's a beautiful visual explanation:
+
+    ![](docs/github/images/settings/3440x1440example.png)
     
     
     In general, for any resolution, check the following:
@@ -707,7 +736,7 @@ on trying, these texts must be as precisely readable as possible. For upgrades, 
 
 ## Monitoring
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring.PNG) |
+| ![](docs/github/images/monitoring/monitoring.PNG) |
 |:--:|
 | *Monitoring window, with plan dark_castleEasyStandard selected, no extra modes enabled.*|
 
@@ -747,11 +776,11 @@ timings when new plans are created.
     
     For example, if you wanted monkey meadow, x factor and #ouch map images, files should be named  
 
-    - ``monkey meadow.png``
+    - ``monkey meadow.PNG``
 
-    - ``x factor.png``
+    - ``x factor.PNG``
     
-    - ``#ouch.png``
+    - ``#ouch.PNG``
 
     Map images can be downloaded from https://www.bloonswiki.com/List_of_maps_in_BTD6
 
@@ -1014,13 +1043,15 @@ For now, you can ignore cpos_x and cpos_y arguments; they are only needed for ma
 and Sanctuary. There are also other important topics you should be aware of; all of them are explained later in 
 [Advanced](#advanced) section.
 
+For practical examples, check any plan file in ``btd6bot/plans`` folder.
+
 **Monkeys**
 -
 
 | Command (with arguments)      | Description | Examples |
 |-|-|-|
-| Monkey(name, pos_x, pos_y) | Places a monkey ``name`` at location (``x``,``y``). **To access commands, store it in a variable with recognizable name**. | <pre>dart = Monkey('dart', 0.5, 0.5) <br>heli1 = Monkey('heli', 0.1, 0)</pre>
-| target(set_target, x, y, cpos_x, cpos_y) | Change monkey targeting to ``set_target``. For non-targetable monkeys, simply enter the target string. <br>For target options with target coordinate (x, y), pass ``x`` and ``y`` values. | <pre>dart.target('strong')<br>heli1.target('lock', 0.1, 0.15)</pre>
+| Monkey(name, pos_x, pos_y) | Places a monkey ``name`` at location (``x``,``y``). **To access commands, store it in a variable with recognizable name**. <br>All supported monkeys can be found [here](#monkey-names). | <pre>dart = Monkey('dart', 0.5, 0.5) <br>heli1 = Monkey('heli', 0.1, 0)</pre>
+| target(set_target, x, y, cpos_x, cpos_y) | Change monkey targeting to ``set_target``. For non-targetable monkeys, simply enter the target string. <br>For target options with target coordinate (x, y), pass ``x`` and ``y`` values.<br>All possible targeting options are listed [here](#targeting). | <pre>dart.target('strong')<br>heli1.target('lock', 0.1, 0.15)</pre>
 | upgrade(set_upg, cpos_x, cpos_y) | Upgrade a monkey. Upgrades are given as a list of strings ``set_upg`` of form 't-m-b' where t=top, m=middle, b=bottom<br> path i.e. they follow the usual path standard. Multiple upgrade can thus be queued in one call. <br>Make sure path is valid: cannot do ``['0-0-1','0-0-3']``. | <pre>dart.upgrade(['1-0-0']) <br>dart.upgrade(['2-0-0-','2-1-0','3-1-0']) </pre>
 | special(s, x, y, cpos_x, cpos_y) | Use special ability 1 or 2. Thus, ``s`` is either ``1`` or ``2``. If targetable special, give also ``x`` and ``y`` for target location. <br>Is required for moving mortar and dartling location. Special 2 is rarer: some uses would be beast handler second <br>crosspath beast location and (for heroes) Rosalia replace location. | <pre>heli.special(1, 0.1, 0.1) <br>mortar.special(1, 0.1, 0.1) <br>dartling.special(1, 0.5, 0.785) <br>sniper.special(1) <br>beast.special(2)</pre>
 | sell(cpos_x, cpos_y) | Sells current monkey. On code level, object still exists so please don&#39;t refer to it afterwards, unless you&#39;ve inserted<br> another non-sold monkey in same variable. | <pre>dart.sell()</pre>
@@ -1033,7 +1064,7 @@ and Sanctuary. There are also other important topics you should be aware of; all
 
 | Command (with arguments) | Description | Examples |
 |-|-|-|
-| Hero(pos_x, pos_y) | Places a hero at location (``x``,``y``). **To access commands, store it in a variable with recognizable name** | <pre>hero = Hero(0.5, 0.5)</pre>
+| Hero(pos_x, pos_y) | Places a hero at location (``x``,``y``). **To access commands, store it in a variable with recognizable name**. <br>All available heroes are listed [here](#heroes-1). | <pre>hero = Hero(0.5, 0.5)</pre>
 | target<br> special<br>sell | Works exactly the same as with Monkey, see the table above. | <pre>hero.target('last')<br>hero.special(2, 0.1, 0.1)<br>hero.sell()</pre>
 | force_target() | Currently, only use is to update internal targeting flag for bot when ``Etienne`` hits level ``11``: because bot is unable to <br>track hero xp, it cannot auto-update divide & conquer to zone control.If you use ``Etienne`` and plan to change his <br>targeting after lvl 11, you must call this command at the beginning of the round he reaches this milestone; otherwise <br>bot and game have different targeting value which could cause issues. | <pre>hero.force_target() </pre>
 | shop(item, target_x, target_y, cpos_x, cpos_y) | Use Geraldo&#39;s shop ``item`` at location (``target_x``, ``target_y``). Item is given as an integer 1-16: first item being top left, <br>last being bottom right, order of items is left to right, top to bottom. This means first row is items 1-4, second 5-8, <br>third 9-12, fourth 13-16 | <pre>hero.shop(10, 0.5, 0.5)</pre>
@@ -1236,7 +1267,12 @@ this value. Therefore, when trying set dartling/heli to ``locked``/``lock`` resp
 
 # <u>Updating the bot</u>
 
-This section covers how the bot is structured and helps with adding new content for BTD6bot.
+This section covers how to add new content for ``BTD6bot``. 
+
+Some Python knowledge is required. 
+You should also use a code editor like VS Code for optimal experience.
+
+---
 
 btd6bot source folder looks like this:
 
@@ -1256,10 +1292,10 @@ heroes.
 
 - Maps don&#39;t require any changes because bot selects a map using the plan file: if a new map called ``bloons map`` 
 was added and you wanted to create a plan for it on *hard, standard* then simply name the plan file 
-``bloons_mapHardStandard``.
+``bloons_mapHardStandard.py``.
 
 - For major changes, like new additions to ui, some big changes in bot code could be required. However, because changes
- like these are too vague to be descripted under set rules, they are not covered here and each must be handled 
+ like these are too vague to be descripted under set rules, they are not covered here and each case must be handled 
  individually.
 
 Bot and files directory can be summed shortly:
@@ -1474,7 +1510,7 @@ This in in fact the only mandatory step for adding heroes. However, if hero uses
         - For **benjamin**, no case would be required: all it does currently is to print text ``???`` if user tries to 
         change targeting. 
         
-        - For Etienne however, system matches to new target value ``target``, then jumps into if-elif block to see 
+        - For **Etienne** however, system matches to new target value ``target``, then jumps into if-elif block to see 
         ``current`` targeting setting and presses target change/reverse keys desired amount of times: in this particular
         case, only a single key press is required which is already the default value.
 
