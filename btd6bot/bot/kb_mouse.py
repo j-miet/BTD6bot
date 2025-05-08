@@ -37,11 +37,13 @@ class ScreenRes:
         ScreenRes.width, ScreenRes.height = ScreenRes.BASE_RES
 
 
-def pixel_position(xy: tuple[float | None, float | None]) -> tuple[int, int]:
+def pixel_position(xy: tuple[float | None, float | None], ignore_windowed: bool = False) -> tuple[int, int]:
     """Reverts coordinate scalars back to pixel coordinates of user's display resolution.
 
     Args:
         xy: Scalar coordinates as a tuple.
+        ignore_windowed: Ignores windowed mode coordinate scaling. Default is False. Currently only use case for True is
+            to click map search bar top left if ultrawide resolution is used.
         
     Returns:
         Pixel coordinates as a tuple. If scalar coordinates are not floats, return (-1, -1).
@@ -49,7 +51,9 @@ def pixel_position(xy: tuple[float | None, float | None]) -> tuple[int, int]:
     if (isinstance(xy[0], float) or isinstance(xy[0], int)) and (isinstance(xy[1], float) or isinstance(xy[1], int)):
         x: int
         y: int
-        if BotVars.windowed:
+        if ignore_windowed:
+            x, y = round(ScreenRes.BASE_RES[0]*xy[0]), round(ScreenRes.BASE_RES[1]*xy[1])
+        elif BotVars.windowed:
             x = round(ScreenRes.width*xy[0] + (ScreenRes.BASE_RES[0] - ScreenRes.width)/2)
             y = round(ScreenRes.height*xy[1] + (ScreenRes.BASE_RES[1] - ScreenRes.height)/2)
         else:
@@ -58,18 +62,20 @@ def pixel_position(xy: tuple[float | None, float | None]) -> tuple[int, int]:
     print('Error with converting scalars to pixels.')
     return -1, -1   # this was added to satisfy mypy type hints.
 
-def click(pos: tuple[float | None, float | None], clicks: int=1) -> None:
+def click(pos: tuple[float | None, float | None], clicks: int=1, ignore_windowed: bool = False) -> None:
     """Left-clicks mouse at a desired coordinate. Converts scalar coordinates to pixel coordinates to find position.
 
     Args:
         pos: Mouse position, in scalar coordinates.
         clicks: Amount of clicks performed. Default value is 1.
+        ignore_windowed: Ignores windowed mode coordinate scaling. Default is False. Currently only use case for True is
+            to click map search bar top left if ultrawide resolution is used.
     """
     if isinstance(clicks, int) and clicks >= 1:
         for _ in range(clicks):
             time.sleep(0.1)
             old_X, old_Y = pyautogui.position()
-            new_X, new_Y = pixel_position((pos[0], pos[1]))
+            new_X, new_Y = pixel_position((pos[0], pos[1]), ignore_windowed)
             pyautogui.moveTo(new_X, new_Y)
             pyautogui.click(new_X, new_Y)
             pyautogui.moveTo(old_X, old_Y)

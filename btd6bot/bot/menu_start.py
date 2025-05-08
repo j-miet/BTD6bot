@@ -138,23 +138,51 @@ def _choose_hero(hero_name: str | None) -> None:
     kb_mouse.press_esc()
     print("Hero selected!")
 
-def _choose_map(map_name: str) -> None:
+def _choose_map(map_name: str) -> bool:
     """Chooses correct map by first clicking the map search bar and then typing the map name.
     
     Args:
         map_name: Map name.
+
+    Returns:
+        A boolean indicating if map selection was succesful. If False value is returned, it allows for bot to return
+            to main menu screen.
     """
     search_map = pynput.keyboard.Controller()
     map_str = map_name.replace('_', ' ')
     time.sleep(0.4)
     kb_mouse.click(MouseLocations.BUTTONS['menu_play'])
+    start = time.time()
+    search_found = 0
     time.sleep(0.4)
     kb_mouse.click(MouseLocations.BUTTONS['search_map'])
+    if BotVars.windowed:
+        while time.time()-start <= 3:
+            if weak_substring_check('search', (0.4140625, 0.0203703703704, 0.4651041666667, 0.0537037037037),
+                                    OCR_READER):
+                search_found = 1
+                break
+            else:
+                time.sleep(0.3)
+        if not search_found:
+            search_found = 0
+            kb_mouse.click(MouseLocations.BUTTONS['search_map'], ignore_windowed=True)
+            start = time.time()
+            while time.time()-start <= 3:
+                if weak_substring_check('search', (0.4140625, 0.0203703703704, 0.4651041666667, 0.0537037037037), 
+                                        OCR_READER):
+                    search_found = 1
+                    break
+                else:
+                    time.sleep(0.3)
+            if not search_found:
+                return False        
     time.sleep(0.4)
     kb_mouse.click(MouseLocations.BUTTONS['search_map_bar'])
     time.sleep(0.4)
     search_map.type(map_str)  # types map name to search bar.
     kb_mouse.click(MouseLocations.BUTTONS['choose_map'])
+    return True
 
 def _choose_diff(d: str) -> None:
     """Chooses correct difficulty setting.
@@ -285,7 +313,8 @@ def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, 
     _start_plan()
     #print(f"\n~~~~{map_name}, {diff.lower()}, {mode.lower()}~~~~")
     _choose_hero(hero)
-    _choose_map(map_name)
+    if not _choose_map(map_name):
+        return -1, -1
     _choose_diff(diff)
     _choose_mode(mode)
     return begin_round, end_round

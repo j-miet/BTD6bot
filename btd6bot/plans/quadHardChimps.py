@@ -214,6 +214,8 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             bomb.upgrade(['0-1-0', '0-2-0', '0-3-0'])
             bomb.target('strong')
         elif current_round == 100:
+            druid = Monkey('druid', 0.3807291666667, 0.2796296296296)
+            druid.upgrade(['0-0-1','0-0-2','0-0-3'])
             heli.special(1, 0.6057291666667, 0.3527777777778)
             ability(1, 6)
             ability(2, 7.5)
