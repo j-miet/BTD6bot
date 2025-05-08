@@ -82,7 +82,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             dart.upgrade(['0-0-1','0-0-2'])
         elif current_round == 96:
             alch2 = Monkey('alch', 0.4536458333333, 0.6981481481481)
-            alch2.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-1-0','3-2-0'])
+            alch2.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-1-0','4-2-0'])
             hero.target('strong')
         elif current_round == 97:
             mermonkey = Monkey('mermonkey', 0.4359375, 0.3518518518519)
