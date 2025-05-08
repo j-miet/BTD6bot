@@ -37,8 +37,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             ability(1,4.5)
         elif current_round == 16:
             heli = Monkey('heli', 0.8151041666667, 0.512037037037)    
-            heli.target('lock')
-            heli.special(1, 0.4411458333333, 0.5527777777778)
+            heli.target('lock', 0.4411458333333, 0.5527777777778)
         elif current_round == 20:
             heli.upgrade(['1-0-0'])
         elif current_round == 21:
@@ -83,7 +82,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             dart.upgrade(['0-0-1','0-0-2'])
         elif current_round == 96:
             alch2 = Monkey('alch', 0.4536458333333, 0.6981481481481)
-            alch2.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','3-1-0','3-2-0'])
+            alch2.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-1-0','3-2-0'])
             hero.target('strong')
         elif current_round == 97:
             mermonkey = Monkey('mermonkey', 0.4359375, 0.3518518518519)
