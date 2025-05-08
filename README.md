@@ -10,9 +10,12 @@ It includes a simple graphical user interface (**gui**): not impressive visually
 Support for multiplayer/competitive modes such as races, bosses, contested territory, boss rush, etc. will not be 
 added.
 
-Bot is recommended to run on resolutions with **16:9** aspect ratio, with **fullscreen enabled**. 
-However, you can probably run it on any resolution where in-game actions are centered in a 16:9 screen.  
-For example, with ``3440x1440``, the actual game screen is ``2560x1440`` which has exactly 16:9 ratio.
+Bot should be run on resolutions with **16:9** aspect ratio, with **fullscreen enabled**. 
+However, it does support *windowed mode* and you can probably run it on any resolution where in-game actions are 
+centered in a 16:9 area with some tricks which are explained later.
+For example, with ``3440x1440``, the actual game screen area is ``2560x1440`` which has exactly 16:9 ratio.  
+
+**If you have any questions or problems you can&39;t figure out, feel free to create a new issue on github.** 
 
 ---
 **[Update status]  
@@ -24,7 +27,7 @@ Tested only on Windows operating systems**
 **-- Warning --**  
 ***Be aware that automation/botting is againts Ninja Kiwi&#39;s [Terms of Service](https://ninjakiwi.com/terms) and
 imposes the risk of flagging your account for cheating, or worst case, getting it banned.  
-I&#39;m not certain how Ninja Kiwi could enforce this in single player environment, though. But if you&#39;re concerned,
+I&#39;m not certain how they could enforce this in single player environment, though. But if you&#39;re concerned,
 you can always run the bot offline. <u>You have been warned</u>.***
 
 
@@ -93,8 +96,8 @@ adding new content.
 
 # <u>Installation</u>
 First you need to install [Python](https://www.python.org/downloads/).  
-Most of bot functions were programmed in Python versions 3.12 and 3.13 so **Python 3.12+** is recommended.  
-It is likely to work on some earlier versions of Python 3, but this has not been tested.
+Most of bot was programmed in Python versions 3.12 and 3.13 so **Python 3.12+** is recommended.  
+It is likely to work on earlier versions of Python 3, but this has not been tested.
 
 Now, download *BTD6bot*:
 
@@ -121,7 +124,8 @@ Next, the external dependencies. Install the following third party packages:
 
 Install them by going to your BTD6bot folder, then run ``reqs.bat``. 
 
-If this isn&#39;t working: run cmd, change your current directory to where you installed BTD6bot, then type
+If this isn&#39;t working: run cmd, change your current directory to ``<your path>/btd6bot`` where you installed
+BTD6bot, then type
 ``
 pip install -r requirements.txt
 ``
@@ -132,7 +136,7 @@ above 1.7.8 cause a fatal error when any gui hotkeys are used.
 And that&#39;s it! You&#39;re good to go and should be able to start BTD6bot. To test this, try one of the following:
 
 - Open your BTD6bot folder, then run the ``run.bat`` file
-- Open cmd, set current directory to BTD6bot install folder, then type ``py btd6bot ``
+- Open cmd, set current directory to ``<your path>/btd6bot`` then type ``py btd6bot ``
 
 
 # <u>First-time setup</u>
@@ -162,25 +166,32 @@ should something break irrevocably.**
 ## Quick tutorial:
 
 *1920x1080 monitor is used below; your values can look different*  
-*1600x900 is used as custom resolution* 
+*1600x900 is used as custom resolution example* 
 
 1. Set hotkeys in **Set hotkeys** window; gui hotkeys are not mandatory, but very much recommended. After you&#39;re
 done, close hotkeys window.
 2. Open **Settings** window and set resolution. 
 
-    **Select a resolution with aspect ratio of 16:9, or one that can be reduced to 16:9 by using windowed mode.
-    For latter, read [this](#using-windowed-mode-for-resolutions-with-varying-aspect-ratios)**. 
+    **Select a resolution with aspect ratio of 16:9 AND prefer fullscreen**.
 
-    - If you use fullscreen/windowed fullscreen, **don&#39;t** enable custom resolution.
+    *However, it might be possible to use larger aspect ratios if you use fullscreen in-game, but set bot to use custom resolution and windowed mode in order to limit the area the bot sees; check [this](#using-windowed-mode-for-resolutions-with-varying-aspect-ratios) for more info*. 
+
+    - If you use fullscreen/windowed fullscreen, **don&#39;t** enable custom resolution, or use windowed mode. Just leave it untoggled.
 
         ![](docs/github/images/settings/disable_custom.PNG)
 
     - If you use custom resolution, set width & height values, then update values.
-        - Toggle windowed mode on if you wish to use it. It&#39;s recommended to use fullscreen, though.
-
-        **If windowed mode is enabled, run BTD6 with ``-popupwindow`` launch argument.**
+        - Toggle windowed mode on if you wish to use it. **It&#39;s recommended to always use fullscreen**, and use
+        windowed mode only for *aspect ratios differing from 16:9*, as mentioned before.
 
         ![](docs/github/images/settings/custom_windowed.PNG)
+
+        **If windowed mode is enabled, you must run Btd6 with ``-popupwindow`` launch argument.** E.g. if you use Steam
+        version:  
+        library -> bloons td 6 -> right-click -> properties, then set the following
+
+        ![](docs/github/images/settings/launchoption.PNG)
+
 
 3. Enable ocr auto-adjusting, make sure it has correct res and win values. Res is your current resolution, win stands
 for fullscreen (``win=0``) or windowed (``win=1``).  
@@ -189,12 +200,12 @@ Easiest way is to just press ``Reset args`` button once, then press ``Set args``
 
     ![](docs/github/images/settings/auto_adjust.PNG)
 
-    Now, close settings window. In main window, press **Initialize bot**, then **Open bot window** to open monitoring
-    window.
+    Now, close settings window. In main window, press **Initialize bot**, wait a bit for initialization, then press
+    **Open bot window** to open monitoring window.
     
-    Have your BTD6 game opened on main
-    monitor, placed in main menu screen. Now, run the bot and let it finish auto-adjusting. This process can take a 
-    while.  
+    Have your Btd6 game opened on main
+    monitor, placed in main menu screen with ``Play`` button visible. Now, run the bot and let it finish auto-adjusting.
+    This process can take a while.  
     After adjusting process is finished, bot should be able to detect in-game upgrade texts properly based on your
     current resolution settings.
 
@@ -458,9 +469,9 @@ adjusting may begin.
  2. goes over all the upgrades of listed monkeys, read their upgrade texts, check how closely they match to actual
     texts and save the obtained delta value. Because monkeys=all, it checks all monkeys.
  3. after it checks all listed monkeys once, it will check them again! This time it places them on opposite side of map.
-    Why? Well, if you&#39;re never noticed, depending on which side of middle section you place a monkey (left or right),
-    the monkey panel opens on the opposite side of screen. Different sides can produce slighly different inputs so bot
-    will analyze both sides and save all the deltas.
+    Why? Well, if you&#39;re never noticed, depending on which side of middle section you place a monkey 
+    (left or right), the monkey panel opens on the opposite side of screen. Different sides can produce slighly
+    different inputs so bot will analyze both sides and save all the deltas.
  4. After both sides are checked, both compares deltas of left and right side, selects the smaller value and save it as
     final delta.
  5. To finish things, all delta values are adjusted with equal amount. Default value is 4 i.e. delta=4: this adjust
@@ -570,7 +581,8 @@ version. However, it should have exact same contents as web version so you can u
 
 - It has dark mode always enabled.
 
-- Comes with one major issue: **none of the links work**. Reference links simply point nowhere in document, web links display some random mess so don&#39;t try to use them either.
+- Comes with one major issue: **none of the links work**. Reference links simply point nowhere in document, web links
+display some random mess so don&#39;t try to use them either.
 
 Also something worth to mention: the offline readme is actually an html document translated from the README markdown
 file. Annoyingly, the Python library used for this conversion requires absolutely file paths in order to display all
@@ -631,24 +643,27 @@ which was already used in [First-time setup](#first-time-setup).
     Change resolution the bot uses to determine relative mouse clicking/ocr text locations. Must match with used in-game
     resolution which should approximately have 16:9 aspect ratio.
 - **Windowed mode**: 
-    If Btd6 is run in windowed mode. Btd6 must be launced with -popupwindow lauch option and window cannot be moved from
-    its initial position. 
+    If Btd6 is run in windowed mode. Btd6 must be launced with ``-popupwindow`` launch option and window cannot be moved
+    from its initial position. 
     
     Windowed mode can face issues with ocr accuracy, though. If resolution is considerably smaller, text reading errors
     become more common and can hinder upgrading of monkeys.
 
+    Therefore, **it&#39;s always recommended you use fullscreen if possible.**
+
     #### <u>*Using windowed mode for resolutions with varying aspect ratios*</u>
-    As stated under &#39;Enable custom resolution&#39;, resolutions should have aspect ratios of 16:9 or very close to
-    it.
+    As stated under &#39;Enable custom resolution&#39;, resolutions should have aspect ratio of 16:9. But, it is possible to leave in-game resolution to your native resolution, but still use custom resolution + windowed mode to reduce the actual screen area.
 
     Because windowed mode normally leaves empty space around, you could limit the readable area to the middle of screen.
-    A good example would be 3440x1440 resolution: it adds extra borders during maps which is 440 pixels each side. This
-    means the actual screen area is 3440-440*2=2560 which has aspect ratio of 16:9 with height of 1440! In fact, this
-    should also work for menu screens because play and hero select button are in correct position relative to everything
-    else.
+    A good example would be ``3440x1440`` resolution: it adds extra borders during maps which is 440 pixels each side. This
+    means the actual screen area is 3440-440*2=2560 which has aspect ratio of 16:9 with height of 1440!  
+    In fact, this should also work for menu screens because play and hero select button are in correct position relative
+    to everything else. Only actually problematic case would be the map search button which falls outside the middle
+    area, but there&#39;s a built-in checking system which should be able to locate this button no matter the resolution
+    setting.  
     So if you have a 3440x1440 monitor and wish to play on this resolution, go to gui settings:
 
-    - enable custom resolution and set it as 2560x1440
+    - enable custom resolution and set it as ``2560x1440``
     - enable windowed mode
     - And of course, remember to readjust ocr deltas for new resolution, as always!
 
@@ -668,7 +683,7 @@ which was already used in [First-time setup](#first-time-setup).
     - (optional) if required, you could repeat this for y-resolution as well, but I believe it&#39;s very rare you&#39;d
     need this. One example would be 1280x800 - test this in-game and see how it adds a wider bar on top and bottom of
     the screen.
-    - Then readjust ocr values and you&#39;re good to go.
+    - Then readjust ocr values like usual and you should be good to go.
 
 
 - **Game version**: 
