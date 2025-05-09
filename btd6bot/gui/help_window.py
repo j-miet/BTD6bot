@@ -26,7 +26,7 @@ class HelpWindow:
         self.helpwindow.rowconfigure(0, weight=1)
         self.helpwindow.geometry("+50+50")
 
-        self._update_imagepaths("docs/github/", "file:/"+str(gui_paths.FILES_PATH).replace('\\', '/')+"/helpwindow/")
+        self._update_imagepaths("docs", "file:/"+str(gui_paths.FILES_PATH).replace('\\', '/')+"/helpwindow/")
         self._update_markdown_to_html()
 
         self.helpframe = HtmlFrame(self.helpwindow, dark_theme_enabled=True)

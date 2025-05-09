@@ -41,6 +41,7 @@ class TrackerVals:
     ct_x0 = -1.0    # need to be floats so mypy type testing won't complain after scalar_position inserts float values.
     ct_y0 = -1.0
 
+ACCURACY = 13
 WIDTH, HEIGHT = pyautogui.size()
 
 def scalar_position(real_x: int, real_y: int) -> tuple[float, float]:
@@ -53,8 +54,8 @@ def scalar_position(real_x: int, real_y: int) -> tuple[float, float]:
     Returns:
         scalar_x, scalar_y: Coordinates in scalar form.
     """
-    accuracy = 13
-    scalar_x, scalar_y = round(real_x / WIDTH, accuracy), round(real_y / HEIGHT, accuracy)
+    ACCURACY = 13
+    scalar_x, scalar_y = round(real_x / WIDTH, ACCURACY), round(real_y / HEIGHT, ACCURACY)
     return scalar_x, scalar_y
 
 def flush_input() -> None:
