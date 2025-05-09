@@ -1,6 +1,6 @@
 # BTD6bot
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring_finish.PNG)
+![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/monitoring/monitoring_finish.PNG)
 
 
 ``BTD6bot`` is a program for automating **Bloons Tower Defense 6** game.  
@@ -10,12 +10,7 @@ It includes a simple graphical user interface (**gui**): not impressive visually
 Support for multiplayer/competitive modes such as races, bosses, contested territory, boss rush, etc. will not be 
 added.
 
-Bot should be run on resolutions with **16:9** aspect ratio, with **fullscreen enabled**. 
-However, it does support *windowed mode* and you can probably run it on any resolution where in-game actions are 
-centered in a 16:9 area with some tricks which are explained later.
-For example, with ``3440x1440``, the actual game screen area is ``2560x1440`` which has exactly 16:9 ratio.  
-
-**If you have any questions or problems you can&39;t figure out, feel free to create a new issue on github.** 
+**If you have any questions/suggestion/bugs to report, feel free to create a new issue on Github.** 
 
 ---
 **[Update status]  
@@ -75,6 +70,13 @@ but easy to use. Here are some of the properties:
  
     For gui images and in-depth look on all features, see [GUI windows](#gui-windows) section.
  
+- Support for various resolutions settings:
+
+    - **16:9** aspect ratio + **fullscreen/windowed fullscreen** (*recommended*)
+    - **16:9** aspect ratio + **windowed mode**. Btd6 must be run with ``-popupwindow`` launch argument to remove windowed border. This sets game window in the middle of screen, leaving empty space to sides. Window cannot be moved  (*works, but decreasing window size too much could reduce bot&#39;s text reading accuracy*)
+    - aspect ratio **greater than 16:9** + **fullscreen**, but game events must occur in an area with **16:9** aspect ratio.
+    For example, with ``3440x1440``, the actual game screen area is ``2560x1440`` which has exactly 16:9 ratio (*should work, but similarly to windowed mode, could face some accuracy issues*)
+
 - Support for creating custom plans files. Plans include all the commands bot performs on each round until a map 
 finishes. 
 
@@ -96,21 +98,21 @@ adding new content.
 
 # <u>Installation</u>
 First you need to install [Python](https://www.python.org/downloads/).  
-Most of bot was programmed in Python versions 3.12 and 3.13 so **Python 3.12+** is recommended.  
+Most of bot was programmed in Python versions 3.12.5 and 3.13.2 so **Python 3.12+** is recommended.  
 It is likely to work on earlier versions of Python 3, but this has not been tested.
 
-Now, download *BTD6bot*:
+Then, download *BTD6bot*:
 
 Click the green [<> Code] button at the top of github page.
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/github_codebutton.PNG)
+![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/github_codebutton.PNG)
 
 Then either
 
-- clone this repo to your local repository, or
+- clone this repo to your local machine, or
 - click &#39;Download ZIP&#39; and extract the contents
 
-Next, the external dependencies. Install the following third party packages:
+Next, external dependencies. Install the following third party packages:
 
     easyocr==1.7.2
     markdown==3.8
@@ -122,9 +124,9 @@ Next, the external dependencies. Install the following third party packages:
     pyperclip==1.9.0
     tkinterweb==4.3.1
 
-Install them by going to your BTD6bot folder, then run ``reqs.bat``. 
+An easy way to do this is to open your BTD6bot folder, then run ``reqs.bat``. 
 
-If this isn&#39;t working: run cmd, change your current directory to ``<your path>/btd6bot`` where you installed
+If this isn&#39;t working: open command terminal, change your current directory to ``<your path>/btd6bot`` where you installed
 BTD6bot, then type
 ``
 pip install -r requirements.txt
@@ -133,16 +135,15 @@ pip install -r requirements.txt
 [Note] Exact version as listed above might not be required, but are always recommended. For pynput however, versions
 above 1.7.8 cause a fatal error when any gui hotkeys are used.
 
-And that&#39;s it! You&#39;re good to go and should be able to start BTD6bot. To test this, try one of the following:
-
-- Open your BTD6bot folder, then run the ``run.bat`` file
-- Open cmd, set current directory to ``<your path>/btd6bot`` then type ``py btd6bot ``
-
-
 # <u>First-time setup</u>
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/main.PNG) |
+| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/main/main.PNG) |
 |:--:|
 | *Main window default view*|
+
+To run ``BTD6bot``, try <u>one</u> of the following:
+
+- Open your BTD6bot folder, then run the ``run.bat`` file
+- Open command terminal, set current directory to ``<your path>/btd6bot`` then type ``py btd6bot `
 
 If you managed to run BTD6bot, then the window similar to above should have opened.
 There&#39;s plenty of stuff in here, but for now focus is on getting the bot to work properly.  
@@ -165,40 +166,48 @@ should something break irrevocably.**
 
 ## Quick tutorial:
 
-*1920x1080 monitor is used below; your values can look different*  
+*1920x1080 monitor is used below; your values may look different*  
 *1600x900 is used as custom resolution example* 
 
 1. Set hotkeys in **Set hotkeys** window; gui hotkeys are not mandatory, but very much recommended. After you&#39;re
 done, close hotkeys window.
 2. Open **Settings** window and set resolution. 
 
-    **Select a resolution with aspect ratio of 16:9 AND prefer fullscreen**.
-
-    *However, it might be possible to use larger aspect ratios if you use fullscreen in-game, but set bot to use custom resolution and windowed mode in order to limit the area the bot sees; check [this](#using-windowed-mode-for-resolutions-with-varying-aspect-ratios) for more info*. 
+    **Select a resolution with aspect ratio of 16:9 AND prefer fullscreen (*)**.
 
     - If you use fullscreen/windowed fullscreen, **don&#39;t** enable custom resolution, or use windowed mode. Just leave it untoggled.
 
-        ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/disable_custom.PNG)
+        ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/settings/disable_custom.PNG)
 
     - If you use custom resolution, set width & height values, then update values.
         - Toggle windowed mode on if you wish to use it. **It&#39;s recommended to always use fullscreen**, and use
         windowed mode only for *aspect ratios differing from 16:9*, as mentioned before.
 
-        ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/custom_windowed.PNG)
+        ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/settings/custom_windowed.PNG)
 
         **If windowed mode is enabled, you must run Btd6 with ``-popupwindow`` launch argument.** E.g. if you use Steam
         version:  
         library -> bloons td 6 -> right-click -> properties, then set the following
 
-        ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/launchoption.PNG)
+        ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/settings/launchoption.PNG)
+
+    - **Aspect ratio greater than 16:9** might be compatible, if you use **fullscreen in-game**, but set bot to use **custom resolution and windowed mode** in order to limit the area the bot sees; check [Ultrawide resolutions](#using-windowed-mode-for-resolutions-with-varying-aspect-ratios) for more info*. 
 
 
 3. Enable ocr auto-adjusting, make sure it has correct res and win values. Res is your current resolution, win stands
 for fullscreen (``win=0``) or windowed (``win=1``).  
 Finally, ``monkeys=all`` and ``delta=4`` values should be automatically set.  
-Easiest way is to just press ``Reset args`` button once, then press ``Set args`` button after.
+Easiest way is to just press ``Reset args`` button once.
+Now, press ``Set args`` button to save args.  
+Your argument prompt should look similar to this:
 
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/auto_adjust.PNG)
+    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/settings/auto_adjust.PNG)
+
+    ***Why adjusting is needed**: monkey upgrading process is based on reading upgrade path names from screen and matching these to static values. Different resolutions change the reading accuracy so bot will automatically adjust each upgrade path individually to minimize matching errors.*
+
+    ***<u>Know that any time you change resolution or windowed mode, you need to re-enable auto-adjust setting
+    and run this process again!</u>***.  
+    &nbsp;
 
     Now, close settings window. In main window, press **Initialize bot**, wait a bit for initialization, then press
     **Open bot window** to open monitoring window.
@@ -209,12 +218,10 @@ Easiest way is to just press ``Reset args`` button once, then press ``Set args``
     After adjusting process is finished, bot should be able to detect in-game upgrade texts properly based on your
     current resolution settings.
 
-
-    **<u>Know that any time you change resolution or windowed mode, you need to toggle the adjust setting on in settings
-    and run this process again!</u>**.
-
-    Finally, test if bot work by running a simple plan: close current monitoring window instance, then select either
-    *dark_castleEasyStandard* or *monkey_meadowEasyStandard*.
+    <u>Finally, test if bot works by running a simple plan</u>: 
+    
+    Close current monitoring window instance, then select either
+    ``dark_castleEasyStandard`` or ``monkey_meadowEasyStandard``.
 
     Then press ``Open bot window`` again to open fresh monitoring window and press ``Run``. Don&#39;t use keyboard or
     mouse while bot is running.  
@@ -231,7 +238,7 @@ Click the gear symbol and open hotkeys menu.
 
 Now, update your game hotkeys for bot. Press &#39;Set hotkeys&#39; button in gui. Following window opens:
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/hotkeys/hotkeys.PNG) |
+| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/hotkeys/hotkeys.PNG) |
 |:--:|
 | *Hotkey window*|
 
@@ -270,7 +277,7 @@ After you&#39;ve updated all the keys, close the hotkey window.
 
 Next, open settings window by pressing &#39;Settings&#39; button.
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/settings.PNG) |
+| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/settings/settings.PNG) |
 |:--:|
 | *Settings window*|
 
@@ -291,7 +298,7 @@ Now, despite this, **it might be possible to run different resolutions, for exam
 they don&#39;t change the relative positions of ui**.   
 For such cases, you will probably need to do some tricks with
 windowed mode enabled, even if you plan to play in fullscreen. 
-Check [this part](#using-windowed-mode-for-resolutions-with-varying-aspect-ratios) for more detailed explanation.
+Check [Ultrawide resolutions](#ultrawide-resolutions) for more detailed explanation.
 
 Assuming you&#39;ve decided which resolution to use, you have two choices:
 
@@ -300,7 +307,7 @@ option off, you should see your current resolution next to &#39;Current resoluti
 
     For example, if your monitor is ``1920x1080``, you see following 
 
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/disable_custom.PNG)
+    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/settings/disable_custom.PNG)
 
     [**Note**] For bot, fullscreen and windowed fullscreen mean the same thing so always use this option if you wish to
     use maximum supported resolution.
@@ -312,18 +319,18 @@ Custom value is stored in a file and will be loaded back if you disable and re-e
     Example: if you have ``1920x1080`` as native res and set a custom res ``1600x900``, then toggling setting on and off
     would display following resolutions:
 
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/difference.PNG)
+    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/settings/difference.PNG)
 
     With custom resolutions, you can enable *windowed mode*.
     
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/windowed.PNG)
+    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/settings/windowed.PNG)
     
     If you use windowed mode in btd6 normally, it adds the bar on top of game window. Bot, however, assumes this bar
     doesn&#39;t exist and requires game to be opened with ``-popupwindow`` option.  
     If you have Btd6 steam version, go to steam library, right click on Bloons TD 6, then simply add the argument like
     shown below
 
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/launchoption.PNG)
+    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/settings/launchoption.PNG)
 
     Using windowed mode can decrease the text quality for ocr, though. If you use significantly smaller resolution with
     windowed mode, bot could have issues with verifying text inputs.  
@@ -332,7 +339,7 @@ Custom value is stored in a file and will be loaded back if you disable and re-e
 Lastly, enable the &#39;Auto-adjust ocr upgrade data the next time a plan is run&#39; option. 
 For 1920x1080 with fullscreen enabled, it looks like this:
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/auto_adjust.PNG)
+![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/settings/auto_adjust.PNG)
 
 
 It should include following parts, each separated by space:
@@ -353,11 +360,11 @@ Then just press &#39;Set args&#39; and you&#39;re done! You may now close the se
 For last part, you need to enter the monitoring window. Click the &#39;Initialize bot&#39; button, located at bottom
 right of main window:
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/init_button.PNG)
+![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/main/init_button.PNG)
 
 Following load message appears
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/load_msg.PNG)
+![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/main/load_msg.PNG)
 
 Program needs to load the ocr model into your temporary memory (RAM) each time you initialize bot and is therefor only
 required once per runtime loop. If you close the entire program and reopen it, the model must be loaded again.
@@ -365,11 +372,11 @@ required once per runtime loop. If you close the entire program and reopen it, t
 After the message disappears, model has been loaded and initialize button should now display &#39;Open bot window&#39;
 instead.
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/openbotwin_button.PNG)
+![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/main/openbotwin_button.PNG)
 
 Click the button to open monitoring window.
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring.PNG) |
+| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/monitoring/monitoring.PNG) |
 |:--:|
 | *Monitoring window*|
 
@@ -442,15 +449,15 @@ Another thing you might be thinking of: Why not just use the cash value instead 
 cash value, wait until cash is there, then upgrade a monkey. Well, this would actually be just fine to do, but for this
 project:
 
- - cash values proved to be often inaccurate, especially on maps where 
-   background had other elements like snow. With upgrade texts, background is 
-   always the same.
- - upgrade costs would need to be updated in a separate file after each update. 
-   This is not really a big deal, but adds one extra layer of active maintenance.
-
+- cash values proved to be often inaccurate, especially on maps where 
+background had other elements like snow. With upgrade texts, background is 
+always the same.
+- upgrade costs would need to be updated in a separate file after each update. 
+This is not really a big deal, but adds one extra layer of active maintenance.
+- Upgrading would need to performs additional checks for discounted prices e.g. monkey in range of 0-0-1+ village.
 ---
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring_adjustbegin.PNG) |
+| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/monitoring/monitoring_adjustbegin.PNG) |
 |:--:|
 | *After 'Run' button is pressed and menu play button is detected on main monitor, bot sets a countdown from 5 to 0, then begins the auto-adjusting process*|
 
@@ -483,7 +490,7 @@ adjusting may begin.
     manually.
 
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring_adjustend.PNG) |
+| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/monitoring/monitoring_adjustend.PNG) |
 |:--:|
 | *Adjusting process complete*|
 
@@ -493,11 +500,11 @@ your bot is ready to run!
 To run your first plan, it&#39;s recommended to pick something simple. Close the monitoring window and select either
 ``[monkey meadow, easy-standard]`` or ``[dark castle, easy-standard]`` in main window:
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/monkeymeadow.PNG)
+![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/main/monkeymeadow.PNG)
 
 or
 
-![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/darkcastle.PNG)
+![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/main/darkcastle.PNG)
 
 Make sure you have the required hero, all monkeys and their upgrade paths unlocked. For upgrade paths:
 
@@ -514,6 +521,45 @@ If you&#39;re able to finish a plan and bot can return to main menu automaticall
 **----- Full tutorial ends here -----**
 -
 
+# <u>Ultrawide resolutions</u>
+
+As stated under &#39;Enable custom resolution&#39;, resolutions should have aspect ratio of 16:9. But, it is possible to leave in-game resolution to your **native fullscreen resolution**, but still use **custom resolution + windowed mode** to reduce the visible screen area.
+
+When you run ``Btd6bot`` with windowed mode, it uses the logic descripted in following image
+
+![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/settings/ultrawide.PNG)
+
+Because windowed mode normally leaves empty space around, you could limit the readable area to the middle of screen.
+A good example would be ``3440x1440`` resolution: it adds extra borders during maps which is 440 pixels each side. This
+means the actual screen area is 3440-440*2=2560 which has aspect ratio of 16:9 with height of 1440!  
+In fact, this should also work for menu screens because play and hero select button are in correct position relative
+to everything else. Only actually problematic case would be the map search button which falls outside the middle
+area, but there&#39;s a built-in checking system which should be able to locate this button no matter the resolution
+setting.  
+So if you have a ``3440x1440`` monitor and wish to play on this resolution, go to gui settings:
+
+- enable custom resolution and set it as ``2560x1440``
+- enable windowed mode
+
+    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/settings/3440x1440_settings.PNG)
+
+- And of course, remember to readjust ocr deltas for new resolution, as always!
+
+
+Here's an elegant visual explanation:
+
+![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/settings/3440x1440example.PNG)
+
+
+In general, for any resolution, check the following:
+
+- run BTD6 and open any map on your desired resolution
+- find out the pixel resolution of actual game screen without the borders.
+- now check if the resulting resolution has close to identical aspect ratio 16:9. In above example, it was 2560/1440 = 16/9 which is exactly right.
+- (*optional*) if required, you could repeat this for y-resolution as well. But the problem should the extra width, not height, so this probably not needed.
+One quite forced, but still an example, would be 1280x800 - if you use this in-game, you notice how it adds a wider bar on top and bottom of
+the screen.
+- Then **auto-adjust ocr values** like usual and you should be good to go.
 
 # <u>GUI windows</u>
 This section goes over all the gui windows and gives detailed explanations on each.
@@ -528,7 +574,7 @@ doing
 
 ## Main
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/main/main_modified.PNG) |
+| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/main/main_modified.PNG) |
 |:--:|
 | *Main window, with ocr already initialized. Currently selected plan is bloody_puddlesHardChimps, collection event and replay modes enabled.*|
 
@@ -571,7 +617,7 @@ i.e. selected map + strategy combination. Info is stored in each plan file and c
 
 ## Help
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/help/help.PNG) |
+| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/help/help.PNG) |
 |:--:|
 | *Help window, expanded to fullscreen. It displays the same README.md contents, but links don&#39;t work*|
 
@@ -596,7 +642,7 @@ or reopening the Main window, this file gets deleted again!
 
 ## Queue
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/queue/queue.PNG) |
+| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/queue/queue.PNG) |
 |:--:|
 | *Queue window with dark_dungeonsHardChimps plan inserted in queue. When a plan is selected, its info panel is displayed.*|
 
@@ -609,7 +655,7 @@ hotkeys: 'a' for add, 'r' for remove.
 
 ## Hotkeys
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/hotkeys/hotkeys.PNG) |
+| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/hotkeys/hotkeys.PNG) |
 |:--:|
 | *Hotkey window.*|
 
@@ -629,62 +675,29 @@ hotkeys: 'a' for add, 'r' for remove.
 
 ## Settings
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/settings.PNG) |
+| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/settings/settings.PNG) |
 |:--:|
 | *Settings window*|
 
-- Includes basic and advanced settings. Advanced settings are mostly for internal testing, except the auto-adjust option
-which was already used in [First-time setup](#first-time-setup).
+- Includes basic and advanced settings. Advanced settings are mostly for internal testing, except the auto-adjust option,
+which was already introduced when setting up the bot first time.
 
 <u>Explanations</u>  
 **(Basic)**
 
 - **Enable custom resolution**: 
     Change resolution the bot uses to determine relative mouse clicking/ocr text locations. Must match with used in-game
-    resolution which should approximately have 16:9 aspect ratio.
+    resolution which should have ``16:9`` aspect ratio.
 - **Windowed mode**: 
     If Btd6 is run in windowed mode. Btd6 must be launced with ``-popupwindow`` launch option and window cannot be moved
     from its initial position. 
     
     Windowed mode can face issues with ocr accuracy, though. If resolution is considerably smaller, text reading errors
-    become more common and can hinder upgrading of monkeys.
+    become more common.
 
     Therefore, **it&#39;s always recommended you use fullscreen if possible.**
 
-    #### <u>*Using windowed mode for resolutions with varying aspect ratios*</u>
-    As stated under &#39;Enable custom resolution&#39;, resolutions should have aspect ratio of 16:9. But, it is possible to leave in-game resolution to your native resolution, but still use custom resolution + windowed mode to reduce the actual screen area.
-
-    Because windowed mode normally leaves empty space around, you could limit the readable area to the middle of screen.
-    A good example would be ``3440x1440`` resolution: it adds extra borders during maps which is 440 pixels each side. This
-    means the actual screen area is 3440-440*2=2560 which has aspect ratio of 16:9 with height of 1440!  
-    In fact, this should also work for menu screens because play and hero select button are in correct position relative
-    to everything else. Only actually problematic case would be the map search button which falls outside the middle
-    area, but there&#39;s a built-in checking system which should be able to locate this button no matter the resolution
-    setting.  
-    So if you have a 3440x1440 monitor and wish to play on this resolution, go to gui settings:
-
-    - enable custom resolution and set it as ``2560x1440``
-    - enable windowed mode
-    - And of course, remember to readjust ocr deltas for new resolution, as always!
-
-    Here's a beautiful visual explanation:
-
-    ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/settings/3440x1440example.png)
-    
-    
-    In general, for any resolution, check the following:
-
-    - run BTD6 and open any map on your desired resolution
-    - find out how much space do the unused areas on left and right side take. These should have equal size: in above
-    example, it was 440 on each side so 880 combined.
-    - then substract this total unused space from your x-resolution e.g. in above example this was 3440-880.
-    - now check if the resulting resolution has close to identical aspect ratio 16:9. Again, in above example,
-    3440-880=2560 -> 2560/1440 = 16/9 which is exactly right.
-    - (optional) if required, you could repeat this for y-resolution as well, but I believe it&#39;s very rare you&#39;d
-    need this. One example would be 1280x800 - test this in-game and see how it adds a wider bar on top and bottom of
-    the screen.
-    - Then readjust ocr values like usual and you should be good to go.
-
+    However, windowed mode should be for [ultrawide resolutions or those with greater than 16:9 aspect ratio](#ultrawide-resolutions).
 
 - **Game version**: 
     Current major game patch version. If version is 48, 48.1, 48.2 etc. just use 48. This value is used to update plan
@@ -751,7 +764,7 @@ on trying, these texts must be as precisely readable as possible. For upgrades, 
 
 ## Monitoring
 
-| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow/images/monitoring/monitoring.PNG) |
+| ![](file:/c:/Hobbies/IT/Programming/Python/Projects/btd6bot/btd6bot/Files/helpwindow//images/monitoring/monitoring.PNG) |
 |:--:|
 | *Monitoring window, with plan dark_castleEasyStandard selected, no extra modes enabled.*|
 
