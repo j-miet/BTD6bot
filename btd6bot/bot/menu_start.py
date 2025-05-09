@@ -231,12 +231,13 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
         begin_r: First round.
         end_r: Final round.
     """
+    OcrValues._log_ocr_deltas = False
     bot.hotkeys.hotkeys = bot.hotkeys.generate_hotkeys()
     Rounds.begin_round, Rounds.end_round = begin_r, end_r
     Rounds.defeat_status = False
     AutoStart.called_forward = False
     PauseControl.pause_length = 0
-    BotVars.paused = False
+    BotVars.paused = False 
     _reset_global_targeting()
     try:
         with open(pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json') as f:

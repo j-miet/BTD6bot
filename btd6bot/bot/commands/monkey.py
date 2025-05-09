@@ -791,11 +791,15 @@ class Monkey(_MonkeyConstants):
         if cpos_x is not None:
             self._pos_y = cpos_y
         kb_mouse.click((self._pos_x, self._pos_y))
+        if cpos_x is not None:
+            self._update_panel_position(cpos_x)
         counter = 0
         if self._panel_pos == 'right':
             while not ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER):
                 if counter == 3:
                     kb_mouse.click((self._pos_x, self._pos_y))
+                    if cpos_x is not None:
+                        self._update_panel_position(cpos_x)
                     counter = 0
                 time.sleep(0.1)
                 counter += 1
@@ -803,11 +807,11 @@ class Monkey(_MonkeyConstants):
             while not ocr.strong_delta_check('Sell', Monkey._LEFT_PANEL_SELL_LOCATION, OCR_READER):
                 if counter == 3:
                     kb_mouse.click((self._pos_x, self._pos_y))
+                    if cpos_x is not None:
+                        self._update_panel_position(cpos_x)
                     counter = 0
                 time.sleep(0.1)
                 counter += 1
-        if cpos_x is not None:
-            self._update_panel_position(cpos_x)
         for upg in upgrade_list:
             u = self._upgrade_path
             print(f'Upgrading {u} {self._name.capitalize()} to {upg}...', end=' ')
@@ -901,27 +905,25 @@ class Monkey(_MonkeyConstants):
             kb_mouse.kb_input(hotkeys[button])
             if self._name == 'super' and re.search("^4-[0-2]-0$|^4-0-[0-2]$|^5-[0-2]-0$|^5-0-[0-2]$", upg) != None:
                 kb_mouse.kb_input(Key.enter)    # if upgrade is Sun Temple/True Sun God, press Enter to confirm it
-            start = times.current_time()
-            while (times.current_time()-start < 0.75):
-                if self._panel_pos == 'right':
-                    if ocr.strong_delta_check(
-                        '_upgrade_', 
-                        (current_r[0], current_r[1], current_r[2], current_r[3]),
-                        OCR_READER,
-                        upg_match):
-                        upgraded = 1
-                elif self._panel_pos == 'left':
-                    if ocr.strong_delta_check(
-                        '_upgrade_', 
-                        (current_l[0], current_l[1], current_l[2], current_l[3]),
-                        OCR_READER, 
-                        upg_match):
-                        upgraded = 1
-                if upgraded:
-                    if not OcrValues._log_ocr_deltas:
-                        print('Upgraded.')
-                    self._upgrade_path = upg
-                    return
+            if self._panel_pos == 'right':
+                if ocr.strong_delta_check(
+                    '_upgrade_', 
+                    (current_r[0], current_r[1], current_r[2], current_r[3]),
+                    OCR_READER,
+                    upg_match):
+                    upgraded = 1
+            elif self._panel_pos == 'left':
+                if ocr.strong_delta_check(
+                    '_upgrade_', 
+                    (current_l[0], current_l[1], current_l[2], current_l[3]),
+                    OCR_READER, 
+                    upg_match):
+                    upgraded = 1
+            if upgraded:
+                if not OcrValues._log_ocr_deltas:
+                    print('Upgraded.')
+                self._upgrade_path = upg
+                return
 
     def _place(self) -> None:
         """Places a monkey to an in-game location.
