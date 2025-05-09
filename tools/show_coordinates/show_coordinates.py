@@ -11,6 +11,8 @@ import pyautogui
 import pynput
 import pyperclip
 
+ACCURACY = 13
+
 def scalar_position(real_x: float, real_y: float) -> tuple[float, float]:
     """Pixel coordinates to decimals. Can change accuracy of output and choose desired screen resolution.
 
@@ -21,9 +23,9 @@ def scalar_position(real_x: float, real_y: float) -> tuple[float, float]:
     Returns:
         scalar_x, scalar_y: Converted scalar coordinates as a tuple.
     """
-    accuracy = 13
+    ACCURACY= 13
     res_x, res_y = pyautogui.size()
-    scalar_x, scalar_y = round(real_x / res_x, accuracy), round(real_y / res_y, accuracy)
+    scalar_x, scalar_y = round(real_x / res_x, ACCURACY), round(real_y / res_y, ACCURACY)
     return scalar_x, scalar_y
 
 def coordinates(pixel_just: int, scalar_just: int) -> None:
