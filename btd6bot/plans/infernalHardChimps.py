@@ -86,7 +86,9 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             hero.target('strong')
         elif current_round == 97:
             mermonkey = Monkey('mermonkey', 0.4359375, 0.3518518518519)
-            mermonkey.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','1-0-4','2-0-4'])
+            mermonkey.upgrade(['0-0-1','0-0-2','0-0-3'])
+        elif current_round == 98:
+            mermonkey.upgrade(['0-0-4','1-0-4','2-0-4'])
             mermonkey.special(1, 0.3723958333333, 0.4555555555556)
         elif current_round == 100:
             ability(3,2)
