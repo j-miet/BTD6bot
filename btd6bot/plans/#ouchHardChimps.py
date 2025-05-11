@@ -18,8 +18,6 @@ mermonkey 2-0-4
 village 2-3-2
 engi 0-4-0
 _______________________________________
-Following rounds have annoying rng involved and can ruin black borders: 15, 21, 23, 40, 81.
-There are probably others too, but these are the common ones.
 """
 
 from._plan_imports import *
@@ -258,7 +256,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             hero.special(1, 0.3244791666667, 0.7185185185185)
         elif current_round == 99:
             ability(4,2)
+            ability(3,3, xy=(0.4770833333333, 0.4842592592593))
         elif current_round == 100:
             ability(2)
-            wait(1.75)
-            ability(3, xy=(0.4770833333333, 0.4842592592593))
+            ability(1,6)
