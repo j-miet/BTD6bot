@@ -793,9 +793,14 @@ class Monkey(_MonkeyConstants):
         kb_mouse.click((self._pos_x, self._pos_y))
         if cpos_x is not None:
             self._update_panel_position(cpos_x)
+        start = time.time()
         counter = 0
         if self._panel_pos == 'right':
             while not ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER):
+                if time.time()-start > 10:
+                    Rounds.defeat_status = True
+                    print("Failed to find the upgradeable monkey.")
+                    return
                 if counter == 3:
                     kb_mouse.click((self._pos_x, self._pos_y))
                     if cpos_x is not None:
@@ -805,6 +810,10 @@ class Monkey(_MonkeyConstants):
                 counter += 1
         elif self._panel_pos == 'left':
             while not ocr.strong_delta_check('Sell', Monkey._LEFT_PANEL_SELL_LOCATION, OCR_READER):
+                if time.time()-start > 10:
+                    Rounds.defeat_status = True
+                    print("Failed to find the upgradeable monkey.")
+                    return
                 if counter == 3:
                     kb_mouse.click((self._pos_x, self._pos_y))
                     if cpos_x is not None:
@@ -884,8 +893,6 @@ class Monkey(_MonkeyConstants):
             upg_match = self._name+' x-'+str(int(c_path[2])+1)+'-x'
         elif upg_path == 2:
             upg_match = self._name+' x-x-'+str(int(c_path[4])+1)
-        else:
-            upg_match = '' # not possible, and should stay that way.
 
         total_time = times.current_time()
         upgraded = 0
@@ -900,6 +907,7 @@ class Monkey(_MonkeyConstants):
                 defeat_check = 1
             if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
                 print(f'**Failed to upgrade {self._name.capitalize()}**')
+                kb_mouse.press_esc()    # close the upgrade panel if still open
                 return
             defeat_check += 1
             kb_mouse.kb_input(hotkeys[button])
@@ -966,6 +974,7 @@ class Monkey(_MonkeyConstants):
             defeat_check += 1
             kb_mouse.kb_input(self._get_hotkey())
             kb_mouse.click((self._pos_x, self._pos_y), 2)
+            time.sleep(0.2)
             if self._panel_pos == 'right':
                 if ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER):
                     placed = 1
@@ -975,7 +984,6 @@ class Monkey(_MonkeyConstants):
             else:
                 if self._update_panel_position(self._pos_x):
                     placed = 1
-            time.sleep(0.1)
             if placed:
                 kb_mouse.press_esc()
                 if Monkey._wingmonkey == 0 and self._name == 'ace_wing':
