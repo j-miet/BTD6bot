@@ -50,6 +50,15 @@ class MonitoringWindow:
         queue_val (str): String with On/Off value for queue mode button.
         collection (str): String with On/Off value to both display collection event status and update corresponding 
             value to gui_vars.json.
+        current_plans (list[str]): List of currently unfinished plans. When bot is run, all_plans contents are copied
+            into this. Then after finishing a plan, it gets removed from this list. Here finishing means plan was either
+            completed succesfully, or failed to finish within given amount of retries.  
+            Eventually, current_plans becomes an empty list. If queue mode is not on (i.e. only a single plan), bot can
+            run the plan again. If queue mode is enabled, bot cannot be run again until a new monitoring window is
+            opened an queue is refreshed. If replay mode is on, bot will automatically reset queue and go again no
+            matter if there's a single or multiple plans.
+        plans_status (list[str]): Stores status of completed plans. If queue mode is enabled, its contents are used for
+            not only displaying succesfully finished plans, but also any unsuccesful attempts.
         monitoringwindow (tk.Toplevel): Window where other gui elements can be inserted.
         textbox (tk.Text): Text object that is responsible of displaying all text output during bot runtime.
         old_stdout (TextIO | Any): Original standard output stream. Program will return to it if MonitoringWindow is 
@@ -90,6 +99,8 @@ class MonitoringWindow:
         self.replay_val = replay
         self.queue_val = queue
         self.collection_val = collection
+        self.current_plans: list[str] = []
+        self.plans_status: list[str] = []
 
         self.monitoringwindow = tk.Toplevel()
         self.monitoringwindow.title("Bot Monitoring Window")
@@ -105,11 +116,12 @@ class MonitoringWindow:
                             ">Resolution has aspect ratio of ~16:9\n"
                             ">Game is preferably fullscreen (but windowed works too)\n"
                             ">Bot hotkeys match with your in-game equivalents\n"
-                            ">Your Btd6 game window is on your main monitor\n"
+                            ">Your Btd6 game window is on your main monitor and has\n"
+                            " main menu screen opened\n"
                             "------\n"
                             "~Press 'Run'/your 'start-stop' hotkey to start bot!\n"
-                            "~Press 'Stop'/'start-'stop' again to stop & RESET bot.\n If queue mode is enabled, "
-                            "your map queue will also\n reset, meaning bot starts from the first map again.\n"
+                            "~Press 'Stop'/'start-'stop' again to stop and reset\n current plan."
+                            " In order to play plan again, return to\n main menu screen, then press 'Run' again.\n"
                             "~To pause/unpause bot, press your 'pause' hotkey.\n Bot can only be paused during maps "
                             "i.e. when it's not\n navigating menu screens, but pauses as soon as it\n becomes " 
                             "possible.\n"
@@ -189,6 +201,8 @@ class MonitoringWindow:
         self.monitor_infobox_next = tk.Label(self.monitoringwindow, width=20, height=5, text='-'*12, anchor='nw',
                                              relief='sunken', justify='left', padx=10, pady=10)
         self.monitor_infobox_next.grid(column=4, row=3, sticky='nw')
+        if len(self.all_plans) > 1:
+            self.monitor_infobox_next.config(text='Next\n'+plan_data.info_display(self.all_plans[1]))
 
         monitor_collection_text = tk.Label(self.monitoringwindow, text='Collection event: '+str(self.collection_val),
                                            relief='sunken',padx=10, pady=10)
@@ -347,44 +361,73 @@ class MonitoringWindow:
             os.remove(gui_paths.FILES_PATH/'.temp_upg_deltas.json')
         if self.replay_val == 'On':
             while True:
-                for plan_index in range(len(self.all_plans)):
+                if self.current_plans == []:
+                    self.current_plans = self.all_plans[:]
+                while self.current_plans != []:
                     BotData.victory = False
                     attempt_number = 1
                     while attempt_number <= retries_val:
-                        self.plantest_print(self.all_plans[plan_index], attempt_number, retries_val)
-                        self.execute(self.all_plans, plan_index)
+                        self.plantest_print(self.current_plans[0], attempt_number, retries_val)
+                        self.execute(self.current_plans, 0)
                         if BotData.victory:
                             break
                         attempt_number += 1
-                print('>>>Replaying all maps in queue.\nStarting in... ')
-                plan_index = 0
-                timing.counter(5)
-                print()
+                    if BotData.victory:
+                        self.plans_status.append(
+                            f"{self.current_plans[0]} -- success [Attempt {attempt_number}/{retries_val}]")
+                    else:
+                        self.plans_status.append(f"{self.current_plans[0]} -- failed")
+                    self.current_plans.pop(0)
+                if self.queue_val == 'On':
+                    print("Plan queue finished.\n")
+                    print("Status:")
+                    for name in self.plans_status:
+                        print(name)
+                    print('>>>Replaying all plans in queue.\nStarting in... ')
+                    timing.counter(3)
+                else:
+                    print("Replaying the selected plan.\nStarting in...")
+                    timing.counter(3)
+                self.plans_status = []
         else:
-            for plan_index in range(len(self.all_plans)):
+            if self.current_plans == []:
+                self.current_plans = self.all_plans[:]
+            while self.current_plans != []:
                 BotData.victory = False
                 attempt_number = 1
                 while attempt_number <= retries_val:
-                    self.plantest_print(self.all_plans[plan_index], attempt_number, retries_val)
-                    self.execute(self.all_plans, plan_index)
+                    self.plantest_print(self.current_plans[0], attempt_number, retries_val)
+                    self.execute(self.current_plans, 0)
                     if BotData.victory:
                         break
                     attempt_number += 1
+                if BotData.victory:
+                    self.plans_status.append(
+                        f"{self.current_plans[0]} -- success [Attempt {attempt_number}/{retries_val}]")
+                else:
+                    self.plans_status.append(f"{self.current_plans[0]} -- failed")
+                self.current_plans.pop(0)
             self.monitor_run_button.configure(text='Run')
-            if len(self.all_plans) > 1:
-                print("All queued maps completed.\n")
+            if self.queue_val == 'On':
+                print("Plan queue finished.\n")
+                print("Status:")
+                for name in self.plans_status:
+                    print(name)
+                self.monitor_run_button.configure(text='Repeat queue')
+            self.plans_status = []
     
-    def execute(self, all_plans: list[str], index: int) -> None:
+    def execute(self, plans_list: list[str], index: int) -> None:
         """Updates monitoring box data before moving responsibility to set_plan module.
 
         Args:
-            all_plans: List of all plan strings. 
-            index: Integer value for finding desired plan from all_plans.
+            plans_list: List of plan strings. 
+            index: Integer value for finding desired plan from plans_list. If default gui configuration is used and
+                this function is called via run_bot, then plans_list is list of remaining plans and index is always 0.
         """
-        current = all_plans[index]
+        current = plans_list[index]
         try:
-            next = all_plans[index+1]
-            self.monitor_infobox_next.configure(text='Next:\n'+plan_data.info_display(next))
+            next = plans_list[index+1]
+            self.monitor_infobox_next.configure(text='Next\n'+plan_data.info_display(next))
         except IndexError:
             self.monitor_infobox_next.configure(text='-'*12) 
         try:
