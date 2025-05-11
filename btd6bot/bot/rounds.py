@@ -88,6 +88,17 @@ class Rounds:
             Rounds.escsettings_checked = True
 
     @staticmethod
+    def _defeat_return() -> None:
+        print('Defeat: returning to menu in...', end=' ')
+        timing.counter(3)
+        kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
+        time.sleep(0.5)
+        kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
+        bot.menu_return.returned(False)
+        Rounds.escsettings_checked = False
+        print('\nPlan failed.\n')
+
+    @staticmethod
     def defeat_check(current_time: float, cycle: int, frequency: int) -> bool:
         """Checks and updates current defeat status.
         
@@ -141,15 +152,20 @@ class Rounds:
             final_round: Final round number.
         """
         while not strong_delta_check('Next', Rounds.NEXT_TEXT, OCR_READER):
-            kb_mouse.click((0.999, 0.01))    # click away if round 100 insta pop-up.
-            time.sleep(1)
+            if weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
+                BotData.set_data(current_round=Rounds.end_round+1)
+                Rounds._defeat_return()
+                return
+            else:
+                kb_mouse.click((0.999, 0.01))    # click away if round 100 insta pop-up.
+                time.sleep(1)
         BotData.set_data(current_round=Rounds.end_round+1)
         final_round_end = times.current_time()
         times.time_print(final_round_start, final_round_end, f'Round {final_round}')
         time.sleep(0.5)
         times.time_print(total_start, final_round_end, 'Total')
 
-        print('Exiting map in...', end=' ')
+        print('\nExiting map in...', end=' ')
         timing.counter(3)
         kb_mouse.click(Rounds.BUTTONS['next_button'])
         time.sleep(0.5)
@@ -158,6 +174,7 @@ class Rounds:
         # for some reason, in apopalypse, the home button is placed slighty more to the right than usual.
         kb_mouse.click(Rounds.BUTTONS['home_button2'])
         bot.menu_return.returned()
+        print('\nPlan completed.\n')
 
     @staticmethod
     def start() -> None:
@@ -208,29 +225,19 @@ class Rounds:
             return Rounds.end_round + 1
         current_round: int
         if Rounds.defeat_status:
+            kb_mouse.press_esc()
             BotData.set_data(current_round=Rounds.end_round+1)
             wait_start = times.current_time()
             while not weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
-                if times.current_time()-wait_start > 5:
-                    print("Defeat: no defeat screen found, returning via espace menu.")
-                    kb_mouse.press_esc()
+                if times.current_time()-wait_start > 3:
+                    print("Defeat: no defeat screen found, returning via escape menu.")
                     time.sleep(1)
                     kb_mouse.click(Rounds.BUTTONS['home_button2'])
                     time.sleep(0.25)
-                    kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
-                    time.sleep(0.25)
-                    kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
-                    bot.menu_return.returned()
-                    print('\nPlan was unable to finish.\n')
+                    Rounds._defeat_return()
                     return Rounds.end_round + 1
                 time.sleep(0.3)
-            print('Defeat: returning to menu in...', end=' ')
-            Rounds.defeat_status = False
-            timing.counter(3)
-            kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
-            time.sleep(0.5)
-            kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
-            print('\nPlan was unable to finish.\n')
+            Rounds._defeat_return()
             return Rounds.end_round + 1
         
         current_round = prev_round + 1
@@ -238,7 +245,6 @@ class Rounds:
             Rounds.start()
         elif current_round == Rounds.end_round+1:
             Rounds.return_menu(Rounds.current_round_begin_time, map_start, Rounds.end_round)
-            print('\nPlan completed.\n')
             return current_round
         elif mode.lower() == 'apopalypse':
             return Rounds.end_round
@@ -260,11 +266,7 @@ class Rounds:
                     if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
                         defeat_check = 1
                     if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
-                        timing.counter(3)
-                        kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
-                        time.sleep(0.5)
-                        kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
-                        print('\nPlan was unable to finish.\n')
+                        Rounds._defeat_return()
                         return Rounds.end_round+1
                     if '/' in round_value[1]:
                         try:
@@ -276,7 +278,7 @@ class Rounds:
                 else:
                     break
             times.time_print(Rounds.current_round_begin_time, times.current_time(), f'Round {current_round-1}')
-            print('===Current round:', current_round, '===')
+            print('=== Current round:', current_round, '===')
         times.pause_bot()
         Rounds.current_round_begin_time = times.current_time()
         BotData.set_data(round_time=Rounds.current_round_begin_time,
