@@ -386,6 +386,12 @@ class MonitoringWindow:
                 if self.queue_val == 'On':
                     print("Plan queue finished.")
                     print("Results:")
+                    success: int = 0
+                    total = len(self.plans_status)
+                    for name in self.plans_status:
+                        if 'success [' in name:
+                            success += 1
+                    print(f">Success rate: {((success/total)*100):.2f}%")
                     for name in self.plans_status:
                         print(name)
                     print('>>>Replaying all plans in queue.\nStarting in... ')
