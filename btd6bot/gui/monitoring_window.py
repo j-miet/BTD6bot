@@ -356,7 +356,10 @@ class MonitoringWindow:
                   "| Ocr adjust mode enabled |\n"
                   ".-------------------------.\n")
             set_plan.run_delta_adjust()
+            print("You may now close the monitoring window.")
             self.monitor_run_button.configure(text='Run')
+            self.monitor_run_button['state'] = 'disabled'
+            return
         if os.path.exists(gui_paths.FILES_PATH/'.temp_upg_deltas.json'):
             os.remove(gui_paths.FILES_PATH/'.temp_upg_deltas.json')
         if self.replay_val == 'On':
@@ -374,13 +377,13 @@ class MonitoringWindow:
                         attempt_number += 1
                     if BotData.victory:
                         self.plans_status.append(
-                            f"{self.current_plans[0]} -- success [Attempt {attempt_number}/{retries_val}]")
+                            f"{self.current_plans[0]} -- success [{attempt_number}/{retries_val}]")
                     else:
                         self.plans_status.append(f"{self.current_plans[0]} -- failed")
                     self.current_plans.pop(0)
                 if self.queue_val == 'On':
-                    print("Plan queue finished.\n")
-                    print("Status:")
+                    print("Plan queue finished.")
+                    print("Results:")
                     for name in self.plans_status:
                         print(name)
                     print('>>>Replaying all plans in queue.\nStarting in... ')
@@ -403,14 +406,20 @@ class MonitoringWindow:
                     attempt_number += 1
                 if BotData.victory:
                     self.plans_status.append(
-                        f"{self.current_plans[0]} -- success [Attempt {attempt_number}/{retries_val}]")
+                        f"{self.current_plans[0]} -- success [{attempt_number}/{retries_val}]")
                 else:
                     self.plans_status.append(f"{self.current_plans[0]} -- failed")
                 self.current_plans.pop(0)
             self.monitor_run_button.configure(text='Run')
             if self.queue_val == 'On':
-                print("Plan queue finished.\n")
-                print("Status:")
+                print("Plan queue finished.")
+                print("Results:")
+                success: int = 0
+                total = len(self.plans_status)
+                for name in self.plans_status:
+                    if 'success [' in name:
+                        success += 1
+                print(f">Success rate: {((success/total)*100):.2f}%")
                 for name in self.plans_status:
                     print(name)
                 self.monitor_run_button.configure(text='Repeat queue')
