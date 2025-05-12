@@ -93,6 +93,7 @@ class Rounds:
 
     @staticmethod
     def _defeat_return(exit_str: str) -> None:
+        BotData.set_data(current_round=Rounds.end_round+1)
         print('Defeat: returning to menu in...', end=' ')
         timing.counter(3)
         if exit_str == 'manual':
