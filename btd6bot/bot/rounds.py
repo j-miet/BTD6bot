@@ -30,6 +30,8 @@ class Rounds:
         DEFEAT_CHECK_FREQUENCY (int, class attribute): Controls the frequency of defeat checks under Rounds.¨
             round_check, Monkey._check_upgrade, and Monkey._place. Increasing the value makes defeat screen detection 
             slower, but improves speed (and thus accuracy) of ocr in listed methods.
+        LEVELUP_CHECK_FREQUENCY (int, class attribute): Frequency of clicking top right of the screen to push away any
+            level up popups.
 
         begin (int, class attribute): Current plan first round. Should only change its value through a plan file when 
             initialize() is called.
@@ -37,8 +39,9 @@ class Rounds:
             initialize() is called.
         current_round_begin_time (float, class attribute): Stores starting time of current round. Should only change 
             its value after round_check verifies current round.
-        defeat_status (bool, class attribute): Whether bot has been unable to place/upgrade a tower for a set period of 
-            time: this time is determined under BotVars.checking_time_limit.
+        exit_type (str, class attribute): Identifier for bot to select how to properly exit back to main menu. Default
+            value is 'defeat', which means bot return to menu via defeat screen. Another possibility is 'manual' which
+            means bot will open esc menu and exit manually.
         escsettings_checked (bool, class attribute): Whether automatic game settings check has been performed once.
     """
 
@@ -56,12 +59,13 @@ class Rounds:
         }
     
     DEFEAT_CHECK_FREQUENCY = 12
+    LEVEL_UP_CHECK_FREQUENCY = 30
 
     begin_round: int = 0
     end_round: int = 0
     current_round_begin_time: float = 0
 
-    defeat_status: bool = False
+    exit_type: str = 'defeat'
     escsettings_checked: bool = False
 
     @staticmethod
@@ -88,12 +92,15 @@ class Rounds:
             Rounds.escsettings_checked = True
 
     @staticmethod
-    def _defeat_return() -> None:
+    def _defeat_return(exit_str: str) -> None:
         print('Defeat: returning to menu in...', end=' ')
         timing.counter(3)
-        kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
-        time.sleep(0.5)
-        kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
+        if exit_str == 'manual':
+            kb_mouse.click(Rounds.BUTTONS['home_button2'])
+        elif exit_str == 'defeat':
+            kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
+            time.sleep(0.5)
+            kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
         bot.menu_return.returned(False)
         Rounds.escsettings_checked = False
         print('\nPlan failed.\n')
@@ -123,14 +130,15 @@ class Rounds:
                 if cycle == frequency:   # frequency of defeat checks: 2 = every second loop, N = every Nth loop.
                     if weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
                         print("\n**Defeat screen detected, game status set to defeat.**")
-                        Rounds.defeat_status = True
+                        BotVars.defeat_status = True
                         return True
                     else:
                         return False
                 return False
             else:
-                print("Checking time limit reached! Game status set to defeat.")
-                Rounds.defeat_status = True
+                print("\nChecking time limit reached! Game status set to defeat.")
+                BotVars.defeat_status = True
+                Rounds.exit_type = 'manual'
                 return True
         else:
             print("Bad cycle and/or frequency values.")
@@ -154,7 +162,7 @@ class Rounds:
         while not strong_delta_check('Next', Rounds.NEXT_TEXT, OCR_READER):
             if weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
                 BotData.set_data(current_round=Rounds.end_round+1)
-                Rounds._defeat_return()
+                Rounds._defeat_return(Rounds.exit_type)
                 return
             else:
                 kb_mouse.click((0.999, 0.01))    # click away if round 100 insta pop-up.
@@ -224,20 +232,17 @@ class Rounds:
             kb_mouse.press_esc()
             return Rounds.end_round + 1
         current_round: int
-        if Rounds.defeat_status:
+        if BotVars.defeat_status:
             kb_mouse.press_esc()
             BotData.set_data(current_round=Rounds.end_round+1)
             wait_start = times.current_time()
             while not weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
                 if times.current_time()-wait_start > 3:
-                    print("Defeat: no defeat screen found, returning via escape menu.")
                     time.sleep(1)
-                    kb_mouse.click(Rounds.BUTTONS['home_button2'])
-                    time.sleep(0.25)
-                    Rounds._defeat_return()
+                    Rounds._defeat_return('manual')
                     return Rounds.end_round + 1
                 time.sleep(0.3)
-            Rounds._defeat_return()
+            Rounds._defeat_return('defeat')
             return Rounds.end_round + 1
         
         current_round = prev_round + 1
@@ -259,14 +264,14 @@ class Rounds:
                                                      Rounds.CURRENT_ROUND, OCR_READER)
                 if not round_value[0]:
                     times.pause_bot()
-                    if levelup_check == 20:
+                    if levelup_check == Rounds.LEVEL_UP_CHECK_FREQUENCY:
                         kb_mouse.click((0.9994791666667, 0))
                         levelup_check = 0
                     levelup_check += 1
                     if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
                         defeat_check = 1
                     if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
-                        Rounds._defeat_return()
+                        Rounds._defeat_return(Rounds.exit_type)
                         return Rounds.end_round+1
                     if '/' in round_value[1]:
                         try:
