@@ -72,7 +72,7 @@ class MonitoringWindow:
             thread.
         bot_thread (threading.Thread): Current thread where bot iself is allocated. A placeholder thread is initially 
             created so that MainWindow can start tracking its existence and won't throw an error. After 'Run' button is 
-            pressed, stop_or_run method is called and target of this thread is set to run_bot method instead.
+            pressed, _stop_or_run method is called and target of this thread is set to _run_bot method instead.
     """
     PAUSE_HOTKEY: Key | str
     START_STOP_HOTKEY: Key | str
@@ -209,7 +209,7 @@ class MonitoringWindow:
         monitor_collection_text = tk.Label(self.monitoringwindow, text='Collection event: '+str(self.collection_val),
                                            relief='sunken',padx=10, pady=10)
         monitor_collection_text.grid(column=5, row=2, sticky='ne')
-        self.update_event_status_to_json()
+        self._update_event_status_to_json()
 
         monitor_queuemode_text = tk.Label(self.monitoringwindow, text='Queue mode: '+str(self.queue_val),             
                                           relief='sunken',padx=10, pady=10)
@@ -223,12 +223,12 @@ class MonitoringWindow:
         self.bot_thread = threading.Thread()
         MonitoringWindow.current_bot_thread = self.bot_thread
 
-        self.monitor_run_button = tk.Button(self.monitoringwindow, text='Run', command=self.stop_or_run, state='active',
-                                            padx=10, pady=10)
+        self.monitor_run_button = tk.Button(self.monitoringwindow, text='Run', command=self._stop_or_run, 
+                                            state='active', padx=10, pady=10)
         self.monitor_run_button.grid(column=5, row=4, sticky='ne')
 
         # listener thread object sends keyboard inputs to bot_hotkey method
-        self.bot_hk_listener = pynput.keyboard.Listener(on_press = self.bot_hotkey)
+        self.bot_hk_listener = pynput.keyboard.Listener(on_press = self._bot_hotkey)
         self.bot_hk_listener.daemon = True
         self.bot_hk_listener.start()  
 
@@ -251,7 +251,7 @@ class MonitoringWindow:
                 self.roundtime.set("0.00")
         self.roundtime.set("-")
 
-    def update_event_status_to_json(self) -> None:
+    def _update_event_status_to_json(self) -> None:
         """Updates collection event status to gui_vars.json."""
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict = json.load(f)
@@ -259,23 +259,23 @@ class MonitoringWindow:
         with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
             json.dump(gui_vars_dict, f, indent=4)
 
-    def stop_or_run(self) -> None:
+    def _stop_or_run(self) -> None:
         """Handles current bot thread termination and opening of new ones."""
         if self.bot_thread.is_alive():
             gui_tools.terminate_thread(self.bot_thread)
-            self.bot_thread = threading.Thread(target=self.run_bot, daemon=True)
+            self.bot_thread = threading.Thread(target=self._run_bot, daemon=True)
             MonitoringWindow.current_bot_thread = self.get_bot_thread()
             self.monitor_run_button.configure(text='Run')
             print('\n#####Bot terminated#####')
             return
-        self.bot_thread = threading.Thread(target=self.run_bot, daemon=True)
+        self.bot_thread = threading.Thread(target=self._run_bot, daemon=True)
         MonitoringWindow.current_bot_thread = self.get_bot_thread()
         self.bot_thread.start()
         self.monitor_run_button.configure(text='Stop')
         roundtimer_thread = threading.Thread(target=self._update_round_timer, daemon=True)
         roundtimer_thread.start()
 
-    def res_check(self, customres: bool, resolution_val: list[int], windowed: bool, w: int, h: int) -> None:
+    def _res_check(self, customres: bool, resolution_val: list[int], windowed: bool, w: int, h: int) -> None:
         with open(gui_paths.FILES_PATH/'upgrades_current.json') as f:
             identifier: list[int | str] = json.load(f)["__identifier"]
         issue_flag = 0
@@ -310,7 +310,7 @@ class MonitoringWindow:
                     27*" "+".\n"+
                     27*" "+".\n")
 
-    def plantest_print(self, plan: str, attempt: int, attempt_limit: int) -> None:
+    def _plantest_print(self, plan: str, attempt: int, attempt_limit: int) -> None:
         if 1 <= attempt <= attempt_limit:
             if attempt_limit == 1:
                 print('~~~~'+plan_data.return_map(plan)+', '+
@@ -322,7 +322,41 @@ class MonitoringWindow:
                     plan_data.return_strategy(plan).split('-')[1].lower()+
                     f' [Attempt {attempt}/{attempt_limit}]~~~~')
 
-    def run_bot(self) -> None:
+    def _queuemode_results(self) -> None:
+        print("Plan queue finished.")
+        print("Results:")
+        success: int = 0
+        total = len(self.plans_status)
+        for name in self.plans_status:
+            if 'success [' in name:
+                success += 1
+        print(f">Success rate: {((success/total)*100):.2f}%")
+        for name in self.plans_status:
+            print(name)
+
+    def _run_plans(self, retries) -> None:
+        if self.current_plans == []:
+            self.current_plans = self.all_plans[:]
+        while self.current_plans != []:
+            BotData.victory = False
+            attempt_number = 1
+            while attempt_number <= retries:
+                self._plantest_print(self.current_plans[0], attempt_number, retries)
+                self._execute(self.current_plans, 0)
+                if BotData.victory:
+                    break
+                attempt_number += 1
+            if BotData.victory:
+                if retries == 1:
+                    self.plans_status.append(f"{self.current_plans[0]} -- success")
+                else:
+                    self.plans_status.append(
+                        f"{self.current_plans[0]} -- success [{attempt_number}/{retries}]")
+            else:
+                self.plans_status.append(f"{self.current_plans[0]} -- failed")
+            self.current_plans.pop(0)
+
+    def _run_bot(self) -> None:
         """Checks if replay mode is enabled/disabled and runs the sequence of plans listed in self.all_plans.
 
         Queue mode enabled/disabled check is already done before creating MonitorScreen object so queue check is not
@@ -337,7 +371,7 @@ class MonitoringWindow:
         retries_val: int = gui_vars_dict["retries"]
         w, h = pyautogui.size()
         if not gui_vars_dict["ocr_adjust_deltas"]:
-            self.res_check(customres_val, resolution_val, windowed_val, w, h)
+            self._res_check(customres_val, resolution_val, windowed_val, w, h)
         if customres_val:
             print('[Custom Resolution] '+str(resolution_val[0])+'x'+str(resolution_val[1])+'\n'
                     '[Windowed] '+str(windowed_val)+'\n')
@@ -366,80 +400,32 @@ class MonitoringWindow:
             os.remove(gui_paths.FILES_PATH/'.temp_upg_deltas.json')
         if self.replay_val == 'On':
             while True:
-                if self.current_plans == []:
-                    self.current_plans = self.all_plans[:]
-                while self.current_plans != []:
-                    BotData.victory = False
-                    attempt_number = 1
-                    while attempt_number <= retries_val:
-                        self.plantest_print(self.current_plans[0], attempt_number, retries_val)
-                        self.execute(self.current_plans, 0)
-                        if BotData.victory:
-                            break
-                        attempt_number += 1
-                    if BotData.victory:
-                        self.plans_status.append(
-                            f"{self.current_plans[0]} -- success [{attempt_number}/{retries_val}]")
-                    else:
-                        self.plans_status.append(f"{self.current_plans[0]} -- failed")
-                    self.current_plans.pop(0)
+                self._run_plans(retries_val)
                 if self.queue_val == 'On':
-                    print("Plan queue finished.")
-                    print("Results:")
-                    success: int = 0
-                    total = len(self.plans_status)
-                    for name in self.plans_status:
-                        if 'success [' in name:
-                            success += 1
-                    print(f">Success rate: {((success/total)*100):.2f}%")
-                    for name in self.plans_status:
-                        print(name)
-                    print('>>>Replaying all plans in queue.\nStarting in... ')
+                    self._queuemode_results()
+                    print('\n>>>Replaying all plans in queue. Starting in... ', end='')
                     timing.counter(3)
+                    print()
                 else:
-                    print("Replaying the selected plan.\nStarting in...")
+                    print("Replaying the selected plan. Starting in... ", end='')
                     timing.counter(3)
+                    print()
                 self.plans_status = []
         else:
-            if self.current_plans == []:
-                self.current_plans = self.all_plans[:]
-            while self.current_plans != []:
-                BotData.victory = False
-                attempt_number = 1
-                while attempt_number <= retries_val:
-                    self.plantest_print(self.current_plans[0], attempt_number, retries_val)
-                    self.execute(self.current_plans, 0)
-                    if BotData.victory:
-                        break
-                    attempt_number += 1
-                if BotData.victory:
-                    self.plans_status.append(
-                        f"{self.current_plans[0]} -- success [{attempt_number}/{retries_val}]")
-                else:
-                    self.plans_status.append(f"{self.current_plans[0]} -- failed")
-                self.current_plans.pop(0)
+            self._run_plans(retries_val)
             self.monitor_run_button.configure(text='Run')
             if self.queue_val == 'On':
-                print("Plan queue finished.")
-                print("Results:")
-                success: int = 0
-                total = len(self.plans_status)
-                for name in self.plans_status:
-                    if 'success [' in name:
-                        success += 1
-                print(f">Success rate: {((success/total)*100):.2f}%")
-                for name in self.plans_status:
-                    print(name)
+                self._queuemode_results()
                 self.monitor_run_button.configure(text='Repeat queue')
             self.plans_status = []
     
-    def execute(self, plans_list: list[str], index: int) -> None:
+    def _execute(self, plans_list: list[str], index: int) -> None:
         """Updates monitoring box data before moving responsibility to set_plan module.
 
         Args:
             plans_list: List of plan strings. 
             index: Integer value for finding desired plan from plans_list. If default gui configuration is used and
-                this function is called via run_bot, then plans_list is list of remaining plans and index is always 0.
+                this function is called via _run_bot, then plans_list is list of remaining plans and index is always 0.
         """
         current = plans_list[index]
         try:
@@ -458,11 +444,31 @@ class MonitoringWindow:
         self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display(current))
         set_plan.plan_setup(current)
 
+    def bot_hotkey(self, key: Key | KeyCode | None) -> None:
+        """Hotkey to start/stop bot when monitoring window is open.
+
+        Perfoms a separate winfo_exists check to ensure that previous MonitoringWindow.bot_hk_listener is
+        stopped, can otherwise throw an error for refering to now non-existent attributes of that window.
+
+        Args:
+            key: Latest keyboard key the user has pressed. 
+        """
+        if self.monitoringwindow.winfo_exists():
+            if (key == MonitoringWindow.START_STOP_HOTKEY or 
+                (isinstance(key, KeyCode) and key.char == MonitoringWindow.START_STOP_HOTKEY)):
+                self._stop_or_run()
+                time.sleep(1)
+            elif (key == MonitoringWindow.PAUSE_HOTKEY or
+                (isinstance(key, KeyCode) and key.char == MonitoringWindow.PAUSE_HOTKEY)):
+                BotVars.paused = not BotVars.paused
+        else:
+            self.bot_hk_listener.stop()
+
     def get_bot_thread(self) -> threading.Thread:
         """Return current bot thread.
 
         Returns:
-            Currently existing thread that targets run_bot.
+            Currently existing thread that targets _run_bot.
         """
         return self.bot_thread
 
@@ -481,23 +487,3 @@ class MonitoringWindow:
             Original stdout stream.
         """
         return self.old_stdout
-
-    def bot_hotkey(self, key: Key | KeyCode | None) -> None:
-        """Hotkey to start/stop bot when monitoring window is open.
-
-        Perfoms a separate winfo_exists check to ensure that previous MonitoringWindow.bot_hk_listener is
-        stopped, can otherwise throw an error for refering to now non-existent attributes of that window.
-
-        Args:
-            key: Latest keyboard key the user has pressed. 
-        """
-        if self.monitoringwindow.winfo_exists():
-            if (key == MonitoringWindow.START_STOP_HOTKEY or 
-                (isinstance(key, KeyCode) and key.char == MonitoringWindow.START_STOP_HOTKEY)):
-                self.stop_or_run()
-                time.sleep(1)
-            elif (key == MonitoringWindow.PAUSE_HOTKEY or
-                (isinstance(key, KeyCode) and key.char == MonitoringWindow.PAUSE_HOTKEY)):
-                BotVars.paused = not BotVars.paused
-        else:
-            self.bot_hk_listener.stop()
