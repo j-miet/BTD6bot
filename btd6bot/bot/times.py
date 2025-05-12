@@ -45,7 +45,6 @@ def time_print(start: float, end: float, str: str) -> None:
             _record_time(f'{round_num},{minutes}:{seconds:02d}')
         except IndexError:
             _record_time(f'{minutes}:{seconds:02d}')
-            print('All times succesfully recorded.')
 
 def pause_bot() -> None:
     """Pauses bot execution."""

@@ -5,8 +5,6 @@
     "windowed": false,
     "version": 48,
     "retries": 5,
-    "check_gamesettings": true,
-    "time_recording_status": false,
     "ocr_frequency": 0.01,
     "checking_time_limit": 300,
     "delta_ocrtext": false,
