@@ -17,6 +17,7 @@ import time
 from pynput.keyboard import Key
 
 from bot import kb_mouse
+from bot.bot_vars import BotVars
 from utils import timing
 
 class AutoStart:
@@ -45,7 +46,9 @@ def wait(timer: float | int = 0) -> None:
     Args:
         timer: Wait timer, can be integer or float. Integer counts down, float will just display the waiting time. 
             Default value is 0.
-    """    
+    """
+    if BotVars.defeat_status:
+        return
     print('Waiting... ', end='')
     timing.counter(timer)
     print(' -> Continuing.')
@@ -64,6 +67,8 @@ def forward(speed: int=2) -> None:
     Args:
         speed: Default value is 2 for fast-forward. Use value 1 for a single click. Other values do nothing.
     """
+    if BotVars.defeat_status:
+        return
     if speed == 1:
         kb_mouse.kb_input(Key.space)
         time.sleep(0.2)
@@ -91,6 +96,8 @@ def change_autostart() -> None:
     
     Should autostart be set to 'False', you need to use end_round command on ---every single round---.
     """
+    if BotVars.defeat_status:
+        return
     time.sleep(0.5)
     kb_mouse.kb_input(Key.esc)
     time.sleep(0.5)
@@ -116,6 +123,8 @@ def end_round(time_limit: int = 0) -> None:
     Args:
         time_limit: Waiting period before start button is clicked. Measured in seconds. 
     """
+    if BotVars.defeat_status:
+        return
     if time_limit >= 2:
         print('Next round in... ', end='')
         timing.counter(time_limit)
