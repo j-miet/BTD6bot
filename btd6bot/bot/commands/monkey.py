@@ -27,6 +27,7 @@ import time
 from pynput.keyboard import Key, KeyCode
 
 from bot import kb_mouse, times
+from bot.bot_vars import BotVars
 from bot.hotkeys import hotkeys
 import bot.ocr.ocr as ocr
 from bot.ocr.ocr import OcrValues
@@ -244,8 +245,8 @@ class Monkey(_MonkeyConstants):
         elif type == 'upgrade':
             print(f'\nUPGRADE PATH ERROR: upgrade path {obj} in current upgrade list {other} is invalid.')
         time.sleep(1)
-        Rounds.defeat_status = True
-        print(f'\n**An Error has occured. Current game state treated as Defeat**')
+        BotVars.defeat_status = True
+        print('\n**An Error has occured. Current game state treated as Defeat**')
 
     def _init_panel_position(self) -> str:
         """Get upgrade panel position of current monkey.
@@ -265,7 +266,7 @@ class Monkey(_MonkeyConstants):
         else:
             return "middle"
         
-    def _update_panel_position(self, new_x: float) -> None:
+    def _update_panel_position(self, new_x: float) -> bool:
         if new_x > 0.439:
             self._panel_pos = 'left'
             return True
@@ -788,14 +789,19 @@ class Monkey(_MonkeyConstants):
         paths = ['upgrade top', 'upgrade mid', 'upgrade bot'] 
         if cpos_x is not None:
             self._pos_x = cpos_x
-        if cpos_x is not None:
+        if cpos_y is not None:
             self._pos_y = cpos_y
         kb_mouse.click((self._pos_x, self._pos_y))
         if cpos_x is not None:
             self._update_panel_position(cpos_x)
+        start = time.time()
         counter = 0
         if self._panel_pos == 'right':
             while not ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER):
+                if time.time()-start > 10:
+                    BotVars.defeat_status = True
+                    print("Failed to find the upgradeable monkey.")
+                    return
                 if counter == 3:
                     kb_mouse.click((self._pos_x, self._pos_y))
                     if cpos_x is not None:
@@ -805,6 +811,10 @@ class Monkey(_MonkeyConstants):
                 counter += 1
         elif self._panel_pos == 'left':
             while not ocr.strong_delta_check('Sell', Monkey._LEFT_PANEL_SELL_LOCATION, OCR_READER):
+                if time.time()-start > 10:
+                    BotVars.defeat_status = True
+                    print("Failed to find the upgradeable monkey.")
+                    return
                 if counter == 3:
                     kb_mouse.click((self._pos_x, self._pos_y))
                     if cpos_x is not None:
@@ -818,7 +828,7 @@ class Monkey(_MonkeyConstants):
             for i in range(0, 3):
                 if int(u[2*i]) != int(upg[2*i]):
                     self._select_upgrade(upg, paths[i])
-                    if Rounds.defeat_status:
+                    if BotVars.defeat_status:
                         return
                     self._update_auto_target_paths(upg, i)
                     break
@@ -884,15 +894,13 @@ class Monkey(_MonkeyConstants):
             upg_match = self._name+' x-'+str(int(c_path[2])+1)+'-x'
         elif upg_path == 2:
             upg_match = self._name+' x-x-'+str(int(c_path[4])+1)
-        else:
-            upg_match = '' # not possible, and should stay that way.
 
         total_time = times.current_time()
         upgraded = 0
         defeat_check = 1
         levelup_check = 1
         while not upgraded:
-            if levelup_check == 20:
+            if levelup_check == Rounds.LEVEL_UP_CHECK_FREQUENCY:
                 kb_mouse.click((0.9994791666667, 0))
                 levelup_check = 0
             levelup_check += 1
@@ -900,10 +908,11 @@ class Monkey(_MonkeyConstants):
                 defeat_check = 1
             if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
                 print(f'**Failed to upgrade {self._name.capitalize()}**')
+                kb_mouse.press_esc()    # close the upgrade panel if still open
                 return
             defeat_check += 1
             kb_mouse.kb_input(hotkeys[button])
-            if self._name == 'super' and re.search("^4-[0-2]-0$|^4-0-[0-2]$|^5-[0-2]-0$|^5-0-[0-2]$", upg) != None:
+            if self._name == 'super' and re.search("^4-[0-2]-0$|^4-0-[0-2]$|^5-[0-2]-0$|^5-0-[0-2]$", upg) is not None:
                 kb_mouse.kb_input(Key.enter)    # if upgrade is Sun Temple/True Sun God, press Enter to confirm it
             if self._panel_pos == 'right':
                 if ocr.strong_delta_check(
@@ -939,7 +948,7 @@ class Monkey(_MonkeyConstants):
         This method also updates upgrade panel position to 'left' or 'right' if it was 'middle', to remove any 
         ambiguity and need to handle this value separately under other methods.
         """
-        if Rounds.defeat_status:
+        if BotVars.defeat_status:
             return
         print(f'Placing {self._name.capitalize()}...', end=' ')
         total_time = times.current_time()
@@ -954,7 +963,7 @@ class Monkey(_MonkeyConstants):
                 print(f'{self._name.capitalize()} placed.')
                 return
             times.pause_bot()
-            if levelup_check == 20:
+            if levelup_check == Rounds.LEVEL_UP_CHECK_FREQUENCY:
                 kb_mouse.click((0.9994791666667, 0))
                 levelup_check = 0
             levelup_check += 1
@@ -966,6 +975,7 @@ class Monkey(_MonkeyConstants):
             defeat_check += 1
             kb_mouse.kb_input(self._get_hotkey())
             kb_mouse.click((self._pos_x, self._pos_y), 2)
+            time.sleep(0.2)
             if self._panel_pos == 'right':
                 if ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER):
                     placed = 1
@@ -975,7 +985,6 @@ class Monkey(_MonkeyConstants):
             else:
                 if self._update_panel_position(self._pos_x):
                     placed = 1
-            time.sleep(0.1)
             if placed:
                 kb_mouse.press_esc()
                 if Monkey._wingmonkey == 0 and self._name == 'ace_wing':
@@ -1100,7 +1109,7 @@ class Monkey(_MonkeyConstants):
             Mortar special 1 used.
         """
         times.pause_bot()
-        if Rounds.defeat_status:
+        if BotVars.defeat_status:
             return
         elif s not in [1, 2, '1', '2']:
             print('Wrong input value on special ability; use 1 or 2')
@@ -1153,7 +1162,7 @@ class Monkey(_MonkeyConstants):
         Boomer sold!
         """
         times.pause_bot()
-        if Rounds.defeat_status:
+        if BotVars.defeat_status:
             return
         if cpos_x is not None:
             self._pos_x = cpos_x
@@ -1324,7 +1333,7 @@ class Monkey(_MonkeyConstants):
             Mortar special 1 used.
         """
         times.pause_bot()
-        if Rounds.defeat_status:
+        if BotVars.defeat_status:
             return
         val = self._change_target(set_target.lower(), x , y, cpos_x, cpos_y)
         if val != 'OK':
@@ -1463,7 +1472,7 @@ class Monkey(_MonkeyConstants):
             Upgrading 4-2-0 Dart to 5-2-0... Upgraded.
         """
         times.pause_bot()
-        if Rounds.defeat_status:
+        if BotVars.defeat_status:
             return
         elif self._name == 'hero':
             print("Heroes cannot be upgraded.")
@@ -1472,7 +1481,7 @@ class Monkey(_MonkeyConstants):
             for upg in set_upg:
                 if re.search("^[0-5]-[0-2]-0$|^[0-5]-0-[0-2]$|"
                             "^[0-2]-[0-5]-0$|^0-[0-5]-[0-2]$|"
-                            "^[0-2]-0-[0-5]$|^0-[0-2]-[0-5]$", upg) == None:
+                            "^[0-2]-0-[0-5]$|^0-[0-2]-[0-5]$", upg) is None:
                     self._error('upgrade', upg, set_upg)
                     return
             self._do_upgrades(set_upg, cpos_x, cpos_y)
@@ -1501,7 +1510,7 @@ class Monkey(_MonkeyConstants):
             cpos_y (float | None. Default = None): Updated current y-position.
         """
         times.pause_bot()
-        if Rounds.defeat_status:
+        if BotVars.defeat_status:
             return
         if self._name != 'super':
             print('This monkey is not a super monkey.')
@@ -1540,7 +1549,7 @@ class Monkey(_MonkeyConstants):
             cpos_y (float | None. Default = None): Updated current y-position.
         """
         times.pause_bot()
-        if Rounds.defeat_status:
+        if BotVars.defeat_status:
             return
         if self._name != 'beast':
             print("This monkey is not a beast handler.")
@@ -1557,7 +1566,7 @@ class Monkey(_MonkeyConstants):
         time.sleep(0.5)
         kb_mouse.press_esc()
         time.sleep(0.1)
-        print(f"Beast merged.") 
+        print("Beast merged.") 
 
     def center(self, x: float, y: float, cpos_x: float | None = None, cpos_y: float | None = None) -> None:
         """Change monkey ace centered path location.
@@ -1569,7 +1578,7 @@ class Monkey(_MonkeyConstants):
             cpos_y (float | None. Default = None): Updated current y-position.
         """
         times.pause_bot()
-        if Rounds.defeat_status:
+        if BotVars.defeat_status:
             return
         if self._name != 'ace':
             print("Can only be used on ace.")
@@ -1584,4 +1593,4 @@ class Monkey(_MonkeyConstants):
         kb_mouse.kb_input(hotkeys["centered path"])
         kb_mouse.click((x,y))
         kb_mouse.press_esc()
-        print(f"Ace center location updated.") 
+        print("Ace center location updated.") 

@@ -107,7 +107,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             tack.upgrade(['2-0-5'])
             village2.upgrade(['3-0-2'])
         elif current_round == 76:
-            ability(2,0.75)
+            ability(2,0.5)
         elif current_round == 78:
             ability(2,3.5)
             alch2.upgrade(['4-2-0'])

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 import json
-from typing import Any
 
 import tkinter as tk
 from tkinter import ttk
@@ -134,7 +133,7 @@ class QueueModeWindow:
                 info_comment_end = infolist[1:].index('\"\"\"\n')
                 try:
                     with open(gui_paths.FILES_PATH/'time_data.json') as timedata_read:
-                        current_version: dict[str, Any] = json.load(timedata_read)[original]["version"]
+                        current_version = json.load(timedata_read)[original]["version"]
                 except KeyError:
                     current_version = '-'
                 core_text = ['[Plan Name] '+original+'\n','[Game Version] '+str(current_version)+'\n']
@@ -213,7 +212,7 @@ class QueueModeWindow:
     def remove_allcurrentplans(self) -> None:  
         """Remove all currently selected plans from queue."""
         self.myplans.delete(0, "end")
-        with open(gui_paths.QUEUE_LIST_PATH, 'w') as file_write:
+        with open(gui_paths.QUEUE_LIST_PATH, 'w') as _:
             ...
 
     def remove_plan(self) -> None:

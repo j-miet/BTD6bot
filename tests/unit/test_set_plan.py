@@ -10,40 +10,44 @@ import pytest
 import set_plan
 from utils.exceptions import SetPlanError
 
-def test_flush_times_temp(capsys):
-    set_plan._flush_times_temp()
-    captured = capsys.readouterr()
-    assert captured.out == 'times_temp.txt contents cleared.\n'
-
 def test_update_time_data(mocker):
     time_data = "1,0:12\n2,0:05\n3,0:30\n0:47"
     version = 10
+    date = "2025-02-12"
 
     mock_temptime = mocker.patch("set_plan.open", mocker.mock_open(read_data = time_data))
     mock_timedata = mocker.patch("set_plan._read_timedata")
     mock_timedata.return_value = {
-        "logsEasyStandard": {"version": 1,
+        "logsEasyStandard": {"update_date": "2025/01/01",
+                                "version": 1,
                                 "rounds": ["1", "2", "3", "4", "5"],
                                 "times": ["0:08", "0:12", "0:02", "0:22", "0:15"],
                                 "time_total": "0:59"},
-        "quadHardImpoppable": {"version": 48,
+        "quadHardImpoppable": {"update_date": "2025/05/20",
+                                "version": 48,
                                 "rounds": ["10", "11", "12", "13", "14"],
                                 "times": ["0:24", "0:32", "0:42", "0:12", "0:11"],
                                 "time_total": "2:01"}
     }
     mock_guivars = mocker.patch("set_plan._read_guivars")
+    mock_datetime = mocker.patch("set_plan.datetime.date")
     mock_guivars.return_value = version
+    mock_datetime.today.return_value = date
+    date_string = date.replace('-','/')
 
     assert set_plan._update_time_data("monkey_meadowMediumMilitary") == {
-        "logsEasyStandard": {"version": 1,
+        "logsEasyStandard": {"update_date": "2025/01/01",
+                                "version": 1,
                                 "rounds": ["1", "2", "3", "4", "5"],
                                 "times": ["0:08", "0:12", "0:02", "0:22", "0:15"],
                                 "time_total": "0:59"},
-        "quadHardImpoppable": {"version": 48,
+        "quadHardImpoppable": {"update_date": "2025/05/20",
+                                "version": 48,
                                 "rounds": ["10", "11", "12", "13", "14"],
                                 "times": ["0:24", "0:32", "0:42", "0:12", "0:11"],
                                 "time_total": "2:01"},
-        "monkey_meadowMediumMilitary": {"version": version,
+        "monkey_meadowMediumMilitary": {"update_date": date_string,
+                                        "version": version,
                                         "rounds": ["1", "2", "3"],
                                         "times": ["0:12", "0:05", "0:30"],
                                         "time_total": "0:47"}
@@ -58,8 +62,6 @@ def test_save_to_json(mocker, capsys):
     mock_json_dump = mocker.patch("set_plan.json.dump")
 
     set_plan._save_to_json("monkey_meadowMediumMilitary")
-    captured = capsys.readouterr()
-    assert captured.out == 'Plot time data for monkey_meadowMediumMilitary updated.\n\n'
 
     mock_update_time_data.assert_called_once()
     mock_open.assert_called_once()
@@ -189,7 +191,6 @@ def test_plan_run(mocker):
     set_plan.plan_run(mock_name, mock_module, moc_info)
 
     mock_open.assert_called()
-    mock_json_load.assert_called_once()
     mock_flush_times_temp.assert_called_once() # if _flush_times_temp is called, then so is _save_to_json.
 
 def test_plan_setup(mocker):

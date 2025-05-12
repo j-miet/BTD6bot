@@ -266,9 +266,10 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             glue3.upgrade(['0-2-3','0-2-4'])
         elif current_round == 83:
             boomer1 = Monkey('boomer', 0.6697916666667, 0.287962962963)
-            boomer1.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-1-4','0-2-4'])
+            boomer1.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4'])
             boomer1.target('strong')
         elif current_round == 84:
+            boomer1.upgrade(['0-1-4','0-2-4'])
             boomer2 = Monkey('boomer', 0.6697916666667, 0.3490740740741)
             boomer2.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-1-4','0-2-4'])
             boomer2.target('strong')

@@ -100,7 +100,10 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             druid1.target('strong')
             end_round()
         elif current_round == 26:
-            end_round(7)
+            hero.target('first')
+            wait(7)
+            hero.target('strong')
+            end_round()
         elif current_round == 27:
             hero.target('first')
             druid1.upgrade(['1-0-0'])
@@ -210,9 +213,13 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 76:
             ability(1,0.75)
         elif current_round == 78:
-            ability(2,26.25)
+            ability(2, 3.5)
+            ability(2,26)
         elif current_round == 79:
             engi.special(1, 0.6973958333333, 0.0814814814815)
+            ability(1,11)
+            ability(2,20)
+            ability(1,25)
         elif current_round == 80:
             wizard.upgrade(['5-2-0'])
         elif current_round == 83:

@@ -117,7 +117,7 @@ def _choose_hero(hero_name: str | None) -> None:
     """
     all_heroes = (tuple(MouseLocations.HEROES.keys()),
                   tuple(MouseLocations.HEROES2.keys()))
-    if hero_name.lower() not in set().union(*all_heroes):
+    if hero_name is None or hero_name.lower() not in set().union(*all_heroes):
         print('No hero used in current plan')
         Hero.current_plan_hero_name = hero_name
         return
@@ -234,7 +234,8 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
     OcrValues._log_ocr_deltas = False
     bot.hotkeys.hotkeys = bot.hotkeys.generate_hotkeys()
     Rounds.begin_round, Rounds.end_round = begin_r, end_r
-    Rounds.defeat_status = False
+    BotVars.defeat_status = False
+    Rounds.exit_type = 'defeat'
     AutoStart.called_forward = False
     PauseControl.pause_length = 0
     BotVars.paused = False 
@@ -254,17 +255,13 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
             ScreenRes.set_baseres()
         windowed_val: bool = gui_vars_dict["windowed"]
         event_val: str = gui_vars_dict["current_event_status"]
-        record_val: bool = gui_vars_dict["time_recording_status"]
         time_limit_val: int = gui_vars_dict["checking_time_limit"]
-        gamesettings_val: bool = gui_vars_dict["check_gamesettings"]
         deltaocr_val: bool = gui_vars_dict["delta_ocrtext"]
         substringocr_val: bool = gui_vars_dict["substring_ocrtext"]
         frequency_val: float = gui_vars_dict["ocr_frequency"]
         BotVars.windowed = windowed_val
         BotVars.current_event_status = event_val
-        BotVars.time_recording_status = record_val
         BotVars.checking_time_limit = time_limit_val
-        BotVars.check_gamesettings = gamesettings_val
         BotVars.print_delta_ocrtext = deltaocr_val
         BotVars.print_substring_ocrtext = substringocr_val
         OcrValues.read_file_frequency = frequency_val

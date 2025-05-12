@@ -9,9 +9,9 @@ Examples of this module can be found in 'plans' folder and picking any .py plan 
 import time
 
 from bot import kb_mouse, times
+from bot.bot_vars import BotVars
 from bot.commands.monkey import Monkey
 from bot.hotkeys import hotkeys
-from bot.rounds import Rounds
 
 class Hero(Monkey):
     """Hero class that is used for placing a hero and implementing its hero-specific methods. 
@@ -342,7 +342,7 @@ class Hero(Monkey):
             Do not use this force_target in any other situation.            
         """
         times.pause_bot()
-        if Rounds.defeat_status:
+        if BotVars.defeat_status:
             return
         val = self._change_hero_target(set_target.lower(), x, y, cpos_x, cpos_y)
         if val != 'OK':
@@ -384,7 +384,7 @@ class Hero(Monkey):
             cpos_y: Updated current y-coordinate position.
         """
         times.pause_bot()
-        if Rounds.defeat_status:
+        if BotVars.defeat_status:
             return
         elif self._hero_name == 'geraldo':
             if cpos_x is not None:
@@ -433,7 +433,7 @@ class Hero(Monkey):
             cpos_y: Updated current y-coordinate position.
         """
         times.pause_bot()
-        if Rounds.defeat_status:
+        if BotVars.defeat_status:
             return
         elif self._hero_name == 'corvus':
             if cpos_x is not None:
