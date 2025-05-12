@@ -26,6 +26,8 @@ class BotVars:
         print_substring_ocrtext (bool, class attribute): Print substring texts e.g. round numbers.
         paused (bool, class attribute): Is bot paused or not. Default is False, should only be modified internally by
             bot.
+        defeat_status (bool, class attribute): If bot detected an issue and cannot continue, it sets this value to True.
+            Then every command will be skipped so that bot may exit to main menu as quickly as possible.
     """
     custom_resolution: list[int] = [0, 0]
     windowed: bool = False
@@ -37,3 +39,4 @@ class BotVars:
     print_substring_ocrtext: bool = False
 
     paused: bool = False
+    defeat_status: bool = False
