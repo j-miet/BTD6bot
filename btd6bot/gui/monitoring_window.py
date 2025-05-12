@@ -227,7 +227,7 @@ class MonitoringWindow:
                                             state='active', padx=10, pady=10)
         self.monitor_run_button.grid(column=5, row=4, sticky='ne')
 
-        # listener thread object sends keyboard inputs to bot_hotkey method
+        # listener thread object sends keyboard inputs to _bot_hotkey method
         self.bot_hk_listener = pynput.keyboard.Listener(on_press = self._bot_hotkey)
         self.bot_hk_listener.daemon = True
         self.bot_hk_listener.start()  
@@ -444,7 +444,7 @@ class MonitoringWindow:
         self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display(current))
         set_plan.plan_setup(current)
 
-    def bot_hotkey(self, key: Key | KeyCode | None) -> None:
+    def _bot_hotkey(self, key: Key | KeyCode | None) -> None:
         """Hotkey to start/stop bot when monitoring window is open.
 
         Perfoms a separate winfo_exists check to ensure that previous MonitoringWindow.bot_hk_listener is
