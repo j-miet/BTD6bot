@@ -17,6 +17,7 @@ status is True.
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
+import datetime
 import importlib
 import json
 import pathlib
@@ -38,7 +39,7 @@ def _check_if_temp_valid() -> bool:
 def _flush_times_temp() -> None:
     """Flushes existing contents of Files//times_temp.txt to allow new plan time data to be saved."""
     with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt', 'w') as f:
-        print('times_temp.txt contents cleared.')
+        ...
 
 def _read_timedata() -> dict[str, Any]:
     with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as f:
@@ -62,7 +63,9 @@ def _update_time_data(plan_name: str) -> dict[str, Any]:
     time_total = times_contents[-1]
     current_json: dict[str, Any] = _read_timedata()
     current_version: dict[str, Any] = _read_guivars()
+    date: str = str(datetime.date.today()).replace('-','/')
     data_dict = {
+        "update_date": date,
         "version": current_version,
         "rounds": rounds_list,
         "times": times_list,
@@ -81,8 +84,7 @@ def _save_to_json(plan_name: str) -> None:
     """
     json_data = _update_time_data(plan_name)
     with open(pathlib.Path(__file__).parent/'Files'/'time_data.json', 'w') as f:
-        json.dump(json_data, f, indent=4)
-    print('Plot time data for', plan_name, 'updated.\n')
+        json.dump(json_data, f, indent=2)
 
 def run_delta_adjust() -> None:
     import bot._adjust_deltas
@@ -164,7 +166,7 @@ def get_hero_name_from_plan(plan_name: str) -> str:
 def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str, int, int, str]) -> None:
     """Runs the plan file with given information.
 
-    Also handles time recording for round plots if time_recording_status is set to True.
+    Also handles time recording for round plots.
 
     Args:
         plan_name: Name of current plan.
@@ -173,16 +175,10 @@ def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str,
             begin round, end round, hero name.
     """
     try:
-        with open(pathlib.Path(__file__).parent/'Files'/'gui_vars.json') as f:
-            gui_vars: dict[str, str | bool | int] = json.load(f)
-        if gui_vars["time_recording_status"]:
-            _flush_times_temp()
+        _flush_times_temp()
         plan_module.play(info)
-        if gui_vars["time_recording_status"]:
-            if _check_if_temp_valid():
-                _save_to_json(plan_name)
-            else:
-                print("Plan could not be finished, no time data saved.")
+        if _check_if_temp_valid():
+            _save_to_json(plan_name)
     except BotError as err:
         print(err)
 

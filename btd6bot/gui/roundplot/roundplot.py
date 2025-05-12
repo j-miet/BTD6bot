@@ -62,9 +62,9 @@ under thread-creating methods for other windows.
 
 So just removing those two lines that I added long time ago solved the issue entirely!
 """
-
 import json
 import multiprocessing as mp
+from typing import Any
 
 from matplotlib import rcParams
 import matplotlib.pyplot as plt
@@ -198,12 +198,15 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
     rcParams['toolbar'] = 'None'
     winmanager = plt.get_current_fig_manager()
     winmanager.window.state('zoomed') # type: ignore
-    fig.suptitle(f'Round commands and round times of current plan "{plan_name}".')
+    fig.suptitle(f'Round commands and round times of current plan "{plan_name}"')
 
     # Axis 'round times'
     try:
         with open(gui_paths.FILES_PATH/'time_data.json') as f:
-            time_data = json.load(f)[plan_name]
+            time_data: dict[str, Any] = json.load(f)[plan_name]
+        update_date = time_data["update_date"]
+        fig.suptitle(f'Round commands and round times of current plan "{plan_name}"\n'
+                    r'Time data is updated after each succesful run (current date: ' + r"$\bf{%s}$" % update_date +'; format is YYYY/MM/DD')
         plan_rounds: list[str] = time_data["rounds"]
         plan_times: list[str] = time_data["times"]
         plan_times_in_seconds: list[int] = []
