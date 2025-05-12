@@ -234,7 +234,8 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
     OcrValues._log_ocr_deltas = False
     bot.hotkeys.hotkeys = bot.hotkeys.generate_hotkeys()
     Rounds.begin_round, Rounds.end_round = begin_r, end_r
-    Rounds.defeat_status = False
+    BotVars.defeat_status = False
+    Rounds.exit_type = 'defeat'
     AutoStart.called_forward = False
     PauseControl.pause_length = 0
     BotVars.paused = False 
