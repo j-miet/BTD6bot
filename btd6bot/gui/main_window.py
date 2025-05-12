@@ -83,6 +83,7 @@ class MainWindow:
     except FileNotFoundError:
         ...
 
+    EXIT_HOTKEY: Key | str
     with open(gui_paths.GUIHOTKEYS_PATH) as gui_hotkeys:
         try:
             EXIT_HOTKEY = hotkeys.PYNPUT_KEYS[gui_hotkeys.readlines()[2].split('= ')[1].strip()]
@@ -317,7 +318,7 @@ class MainWindow:
                 info_comment_end = infolist[1:].index('\"\"\"\n')
                 try:
                     with open(gui_paths.FILES_PATH/'time_data.json') as timedata_read:
-                        current_version: dict[str, Any] = json.load(timedata_read)[original]["version"]
+                        current_version = json.load(timedata_read)[original]["version"]
                 except KeyError:
                     current_version = '-'
                 core_text = ['[Plan Name] '+original+'\n','[Game Version] '+str(current_version)+'\n']
@@ -515,7 +516,7 @@ class MainWindow:
         If queue mode is On, but queue has no plans, also disables start button.
         """
         if self.queue.get() == 'On':
-            self.start_button.configure(state='disable')
+            self.start_button.configure(state='disabled')
             with open(gui_paths.QUEUE_LIST_PATH) as file_read:             
                 if len(file_read.readlines()) != 0:
                     self.start_button.configure(state='active')

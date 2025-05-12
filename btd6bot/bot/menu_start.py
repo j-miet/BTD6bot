@@ -117,7 +117,7 @@ def _choose_hero(hero_name: str | None) -> None:
     """
     all_heroes = (tuple(MouseLocations.HEROES.keys()),
                   tuple(MouseLocations.HEROES2.keys()))
-    if hero_name.lower() not in set().union(*all_heroes):
+    if hero_name is None or hero_name.lower() not in set().union(*all_heroes):
         print('No hero used in current plan')
         Hero.current_plan_hero_name = hero_name
         return

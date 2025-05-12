@@ -245,7 +245,7 @@ class Monkey(_MonkeyConstants):
             print(f'\nUPGRADE PATH ERROR: upgrade path {obj} in current upgrade list {other} is invalid.')
         time.sleep(1)
         Rounds.defeat_status = True
-        print(f'\n**An Error has occured. Current game state treated as Defeat**')
+        print('\n**An Error has occured. Current game state treated as Defeat**')
 
     def _init_panel_position(self) -> str:
         """Get upgrade panel position of current monkey.
@@ -265,7 +265,7 @@ class Monkey(_MonkeyConstants):
         else:
             return "middle"
         
-    def _update_panel_position(self, new_x: float) -> None:
+    def _update_panel_position(self, new_x: float) -> bool:
         if new_x > 0.439:
             self._panel_pos = 'left'
             return True
@@ -788,7 +788,7 @@ class Monkey(_MonkeyConstants):
         paths = ['upgrade top', 'upgrade mid', 'upgrade bot'] 
         if cpos_x is not None:
             self._pos_x = cpos_x
-        if cpos_x is not None:
+        if cpos_y is not None:
             self._pos_y = cpos_y
         kb_mouse.click((self._pos_x, self._pos_y))
         if cpos_x is not None:
@@ -911,7 +911,7 @@ class Monkey(_MonkeyConstants):
                 return
             defeat_check += 1
             kb_mouse.kb_input(hotkeys[button])
-            if self._name == 'super' and re.search("^4-[0-2]-0$|^4-0-[0-2]$|^5-[0-2]-0$|^5-0-[0-2]$", upg) != None:
+            if self._name == 'super' and re.search("^4-[0-2]-0$|^4-0-[0-2]$|^5-[0-2]-0$|^5-0-[0-2]$", upg) is not None:
                 kb_mouse.kb_input(Key.enter)    # if upgrade is Sun Temple/True Sun God, press Enter to confirm it
             if self._panel_pos == 'right':
                 if ocr.strong_delta_check(
@@ -1480,7 +1480,7 @@ class Monkey(_MonkeyConstants):
             for upg in set_upg:
                 if re.search("^[0-5]-[0-2]-0$|^[0-5]-0-[0-2]$|"
                             "^[0-2]-[0-5]-0$|^0-[0-5]-[0-2]$|"
-                            "^[0-2]-0-[0-5]$|^0-[0-2]-[0-5]$", upg) == None:
+                            "^[0-2]-0-[0-5]$|^0-[0-2]-[0-5]$", upg) is None:
                     self._error('upgrade', upg, set_upg)
                     return
             self._do_upgrades(set_upg, cpos_x, cpos_y)
@@ -1565,7 +1565,7 @@ class Monkey(_MonkeyConstants):
         time.sleep(0.5)
         kb_mouse.press_esc()
         time.sleep(0.1)
-        print(f"Beast merged.") 
+        print("Beast merged.") 
 
     def center(self, x: float, y: float, cpos_x: float | None = None, cpos_y: float | None = None) -> None:
         """Change monkey ace centered path location.
@@ -1592,4 +1592,4 @@ class Monkey(_MonkeyConstants):
         kb_mouse.kb_input(hotkeys["centered path"])
         kb_mouse.click((x,y))
         kb_mouse.press_esc()
-        print(f"Ace center location updated.") 
+        print("Ace center location updated.") 

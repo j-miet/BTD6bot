@@ -47,6 +47,8 @@ def _get_positions(monkey: str, panel_loc: str) -> tuple[float, float, float, fl
             rightmid_x, rightmid_y = 0.1921875, 0.6444444444444
             rightbot_x, rightbot_y = 0.1651041666667, 0.8435185185185
         return righttop_x, righttop_y, rightmid_x, rightmid_y, rightbot_x, rightbot_y
+    else:
+        return 0, 0, 0, 0, 0, 0
 
 def _check_ocr(m: str, 
               top_x: float, top_y: float,
@@ -208,7 +210,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
         _check_ocr(m, *_get_positions(m, 'right'))
     right_deltas: dict[str, Any] = {}
     with open(_TEMPFILE_PATH) as f:
-        right_deltas: dict[str, Any] = json.load(f)
+        right_deltas = json.load(f)
 
     # final deltas i.e. pick the smaller of left and right value
     delta_dict: dict[str, Any] = left_deltas.copy()
@@ -236,7 +238,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
     # update identifier key
     with open(_TEMPFILE_PATH) as f:
         upg_dict: dict[str, Any] = json.load(f)
-    if BotVars.windowed == True:
+    if BotVars.windowed:
         win = "windowed"
     else:
         win = "fullscreen"

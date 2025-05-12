@@ -104,7 +104,7 @@ def kb_input(input: Key | KeyCode | str, times: int = 1) -> None:
     if isinstance(times, int) and times >= 1:
         keyboard = pynput.keyboard.Controller()
         if isinstance(input, str) and input.strip("<>") in {f"{num}" for num in range(96, 106)}: # numpad keys
-            input_key = int(input.strip("<>"))
+            input_key = str(input.strip("<>"))
             for _ in range(times):
                 keyboard.press(KeyCode(input_key))
                 time.sleep(0.1)

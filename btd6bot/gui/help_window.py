@@ -3,8 +3,8 @@
 from __future__ import annotations
 import tkinter as tk
 
-import markdown
-from tkinterweb import HtmlFrame
+import markdown # type: ignore
+from tkinterweb import HtmlFrame # type: ignore
 
 import gui.gui_paths as gui_paths
 

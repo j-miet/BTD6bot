@@ -74,6 +74,8 @@ class MonitoringWindow:
             created so that MainWindow can start tracking its existence and won't throw an error. After 'Run' button is 
             pressed, stop_or_run method is called and target of this thread is set to run_bot method instead.
     """
+    PAUSE_HOTKEY: Key | str
+    START_STOP_HOTKEY: Key | str
     with open(gui_paths.GUIHOTKEYS_PATH) as gui_hotkeys:
         hotkey_vals = gui_hotkeys.readlines()
         try:
@@ -291,11 +293,11 @@ class MonitoringWindow:
                         " Ocr resolution: ", identifier[0], identifier[1], "\n"
                         " Display resolution: ", w, h)
                 issue_flag = 1
-        if identifier[2] == "fullscreen" and windowed == True:
+        if identifier[2] == "fullscreen" and windowed:
             print("-"*55+"\n"
                     ">Ocr data supports fullscreen, but you use\n windowed mode.")
             issue_flag = 1
-        elif identifier[2] == "windowed" and windowed == False:
+        elif identifier[2] == "windowed" and not windowed:
             print("-"*55+"\n"
                     ">Ocr data supports windowed mode, but you use\n fullscreen mode.")
             issue_flag = 1

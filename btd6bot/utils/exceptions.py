@@ -16,7 +16,7 @@ class SetPlanError(Exception):
     def __init__(self, code) -> None:
         """Invalid syntax and/or invalid substring values in plan file string."""
         self.code = code
-        super().__init__(f"Current plan file has invalid difficulty and/or game mode.")
+        super().__init__("Current plan file has invalid difficulty and/or game mode.")
 
     def __str__(self):
         if self.code == 1:

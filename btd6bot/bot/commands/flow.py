@@ -96,7 +96,7 @@ def change_autostart() -> None:
     time.sleep(0.5)
     kb_mouse.click(AutoStart.AUTOSTART_TOGGLE)
     kb_mouse.kb_input(Key.esc)
-    if AutoStart.autostart_status == False: 
+    if not AutoStart.autostart_status: 
         AutoStart.autostart_status = True
         print('Autostart enabled.')
         return

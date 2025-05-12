@@ -257,12 +257,12 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
             ax_time.xaxis.set_major_locator(MaxNLocator(len(plan_rounds)-1, steps=[2]))
     except KeyError:
         ax_time = fig.add_subplot(2,1,1)
-        ax_time.set_title(f'NO RECORDED TIME DATA FOUND')
+        ax_time.set_title('NO RECORDED TIME DATA FOUND')
         ax_time.set_axis_off()
 
     # Axis 'round commands'
     ax_rounds = fig.add_subplot(2,5,(7,9))
-    ax_rounds.set_title(f'Round commands - '
+    ax_rounds.set_title('Round commands - '
                         'Order of command execution is top to bottom. Rounds without commands are not included.')
     ax_rounds.get_yaxis().set_visible(False)
     for (x, r) in zip(round_labels, rounds):

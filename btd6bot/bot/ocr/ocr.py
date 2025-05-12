@@ -226,7 +226,7 @@ def strong_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> 
     # blackwhite_image.save(OcrValues.OCR_IMAGE_PATH/'strong_text.png')
     # final = array(Image.open(OcrValues.OCR_IMAGE_PATH/'strong_text.png'))
     ocr_img = pyautogui.screenshot(region=(tl_x, tl_y, width, height))
-    blackwhite_image = img_to_black_and_white(ocr_img)
+    blackwhite_image = img_to_black_and_white(ocr_img) # type: ignore
     final = array(blackwhite_image)
     if BotVars.windowed:
         zoom_factor = 2
@@ -328,12 +328,13 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
     text = strong_image_ocr((tl_x, tl_y, br_x, br_y), reader)
     if len(text) != 0:
         if input_str == '_upgrade_':
+            match = OcrValues._OCR_UPG_BASEDATA[upg_match]
             if OcrValues._log_ocr_deltas:
-                match_str = OcrValues._OCR_UPG_BASEDATA[upg_match][0]
+                match_str = match[0]
             else:
-                match_str = OcrValues.OCR_UPGRADEDATA[upg_match][0]
-                delta_limit = OcrValues.OCR_UPGRADEDATA[upg_match][1]
-            d = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), match_str).quick_ratio()
+                match_str = match[0]
+                delta_limit = match[1]
+            d = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), match_str).quick_ratio() # type: ignore
             if BotVars.print_delta_ocrtext:
                 print('\n-Text: '+text.lower())
                 print("-Match delta: "+str(d))
@@ -352,7 +353,7 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
                         'w') as f:
                         json.dump(temp_dict, f, indent=2)
                     return True
-            if d >= delta_limit:
+            if d >= delta_limit: # type: ignore
                 return True
         elif input_str != '':
             r = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), input_str.lower()).quick_ratio()
