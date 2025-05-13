@@ -370,16 +370,12 @@ class Monkey(_MonkeyConstants):
             Targeting option string or None if monkey has no targeting options.
         """
         match self._name:
-            case 'tack':
-                return None
             case 'heli':
                 return 'follow'
             case 'ace' | 'ace_wing':
                 return 'circle'
             case 'mortar':
                 return None
-            case 'sub':
-                return 'first'
             case 'dartling':
                 return 'normal'
             case 'spike':
@@ -489,8 +485,6 @@ class Monkey(_MonkeyConstants):
         if cpos_x is not None:
             self._update_panel_position(cpos_x)
         match self._name:
-            case 'tack':
-                return self._name, target
             case 'farm':
                 return self._name, target
             case 'sniper':
@@ -1241,7 +1235,8 @@ class Monkey(_MonkeyConstants):
         >>>
         'village' has initial value 'first'; change targeting only for 5-x-x paths  
         'ice' has initial value 'first'; change targeting only for x-x-3+ paths  
-        'tack', 'farm' have value None; but you have no need to target these anyway
+        'tack' has initial value 'first'; change targeting only for 5-x-x paths
+        'farm' has value None; but you have no need to target these anyway
 
         Examples:
             Dart monkey has default targeting value 'first' so calling it again does nothing.
