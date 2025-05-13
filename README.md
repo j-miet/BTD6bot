@@ -12,8 +12,9 @@ added.
 
 Bot is somewhat complex and has been tested pretty thoroughly. Still, you may encounter bugs.
 **If you have any questions/suggestion/bugs to report, feel free to create a new issue on Github.**  
-Another things is **random outcomes** i.e. **rng**, which cannot be entirely removed. So if you plan to use bot to obtain *Chimps
-black medals* on harder advanced/expert maps, it could take a few tries on each map before getting a succesful run.
+Another things is **random outcomes** i.e. **rng**, which cannot be entirely removed. So if you plan to use bot to 
+obtain *Chimps black medals* on harder advanced/expert maps, it could take a few tries on each map before getting a
+succesful run.
 
 
 ---
@@ -42,6 +43,7 @@ you can always run the bot offline. <u>You have been warned</u>.***
         - [Update bot hotkeys](#update-bot-hotkeys)
         - [Settings: update resolution and enable ocr auto-adjust](#settings-update-resolution-and-enable-ocr-auto-adjust)
         - [Run the ocr adjusting process](#run-the-ocr-adjusting-process)
+- [<u>Ultrawide resolutions</u>](#ultrawide-resolutions)
 - [<u>GUI windows</u>](#gui-windows)
     - [Main](#main)
     - [Help](#help)
@@ -81,7 +83,8 @@ but easy to use. Here are some of the properties:
     - **16:9** aspect ratio + **windowed mode**. Btd6 must be run with ``-popupwindow`` launch argument to remove 
     windowed border. This sets game window in the middle of screen, leaving empty space to sides. Window cannot be moved
     (*works, but decreasing window size too much could reduce bot&#39;s text reading accuracy*)
-    - aspect ratio **greater than 16:9** + **fullscreen**, but game events must occur in an area with **16:9** aspect ratio.
+    - aspect ratio **greater than 16:9** + **fullscreen**, but game events must occur in an area with **16:9** aspect 
+    ratio.
     For example, with ``3440x1440``, the actual game screen area is ``2560x1440`` which has exactly 16:9 ratio (*should
     work, but similarly to windowed mode, could face some accuracy issues*)
 
@@ -134,8 +137,8 @@ Next, external dependencies. Install the following third party packages:
 
 An easy way to do this is to open your BTD6bot folder, then run ``reqs.bat``. 
 
-If this isn&#39;t working: open command terminal, change your current directory to ``<your path>/btd6bot`` where you installed
-BTD6bot, then type
+If this isn&#39;t working: open command terminal, change your current directory to ``<your path>/btd6bot`` where you
+installed BTD6bot, then type
 ``
 pip install -r requirements.txt
 ``
@@ -183,7 +186,8 @@ done, close hotkeys window.
 
     **Select a resolution with aspect ratio of 16:9 AND prefer fullscreen (*)**.
 
-    - If you use fullscreen/windowed fullscreen, **don&#39;t** enable custom resolution, or use windowed mode. Just leave it untoggled.
+    - If you use fullscreen/windowed fullscreen, **don&#39;t** enable custom resolution, or use windowed mode. Just 
+    leave it untoggled.
 
         ![](docs/images/settings/disable_custom.PNG)
 
@@ -199,7 +203,9 @@ done, close hotkeys window.
 
         ![](docs/images/settings/launchoption.PNG)
 
-    - **Aspect ratio greater than 16:9** might be compatible, if you use **fullscreen in-game**, but set bot to use **custom resolution and windowed mode** in order to limit the area the bot sees; check [Ultrawide resolutions](#using-windowed-mode-for-resolutions-with-varying-aspect-ratios) for more info*. 
+    - **Aspect ratio greater than 16:9** might be compatible, if you use **fullscreen in-game**, but set bot to use 
+    **custom resolution and windowed mode** in order to limit the area the bot sees; check 
+    [Ultrawide resolutions](#using-windowed-mode-for-resolutions-with-varying-aspect-ratios) for more info*. 
 
 
 3. Enable ocr auto-adjusting, make sure it has correct res and win values. Res is your current resolution, win stands
@@ -211,7 +217,9 @@ Your argument prompt should look similar to this:
 
     ![](docs/images/settings/auto_adjust.PNG)
 
-    ***Why adjusting is needed**: monkey upgrading process is based on reading upgrade path names from screen and matching these to static values. Different resolutions change the reading accuracy so bot will automatically adjust each upgrade path individually to minimize matching errors.*
+    ***Why adjusting is needed**: monkey upgrading process is based on reading upgrade path names from screen and 
+    matching these to static values. Different resolutions change the reading accuracy so bot will automatically adjust
+    each upgrade path individually to minimize matching errors.*
 
     ***<u>Know that any time you change resolution or windowed mode, you need to re-enable auto-adjust setting
     and run this process again!</u>***.  
@@ -428,29 +436,31 @@ If it fails, it can either throw an error or keep trying again. The latter is ho
     - if delta was below the threshold, run the cycle again until above is true
 
 This system is effective, but faces one problem: it uses same delta for ALL UPGRADES! Some upgrades might match easily,
-others being more difficult (require high delta). And not only this (require low delta), if two concecutive upgrade 
-paths are similarly named, like 'sharp shots' and 'razor sharp shots', they could be confused as same if delta is not
-high enough. To solve this problem, current system uses <u>individual deltas for each monkey and upgrade path</u>. 
+others being more difficult. And not only this, if two concecutive upgrade 
+paths are similarly named, like 'sharp shots' and 'razor sharp shots', they could be confused as same. A single delta 
+value cannot universally work with all previous cases. To solve this problem, current system uses <u>individual deltas 
+for each monkey and its upgrade paths</u>. 
 
 Process is now as follows: upgrade checks monkey name and desired upgrade path, say dart 5-x-x. It then gets the actual
-string value for this path, 'ultra juggernaut' and corresponding delta, lets say 0.8. If the upgrade input text is
-'ulta jugernaut', bot checks the following
+string value for this path, 'ultra juggernaut' and corresponding delta, lets say 0.85. If the upgrade input text is
+``'ulta jugernaut'``, bot checks the following
 
  - actual string has 16 letters (spaces includes)
- - input string has 14/16 similar letters, in same order*
-    *I don't know the exact implementation; it's a Python build-in system, but  
-     it does something like this
- - 14/16 = 0.875 > 0.8, upgrade passes
+ - input string has 14/16 similar letters in similar order (*) 
+
+    (*) Matching system uses Python's built-in library, I don&#39;t know its exact implementation. But it does something
+    similar to this.
+ - 14/16 = 0.875 > 0.85, upgrade passes
  - however, exact delta value is avoided because some reading error could  
-   change a few letters and then this becomes 12/16 = 0.75 < 0.8 = no match
+   change output a tiny bit and then value could become 0.84 < 0.85 = no match
  - to give room for some error, a delta value is substracted to lower this 
    exact value. From testing, substracting 0.04 from all deltas keeps good 
-   accuracy. In settings, this value is written as delta=4: it lowers all 
+   accuracy for the most part. In settings, this value is written as delta=4: it lowers all 
    deltas by 4 units, where unit is 0.01. Valid deltas are 0-9 (which translate 
-   to 0-0.09)
+   to values 0-0.09)
 
-Above process is then repeated for all monkeys and all upgrade paths. It very loosely speaking 'trains' the bot to
-detect valid upgrade thresholds. Then, when you run any plan file, it should have no issues with upgrading and mixing
+Above process is then repeated for all monkeys and all upgrade paths. In very loose terms, this 'trains' the bot to
+detect valid upgrade thresholds. Then, when you run any plan file, it should have rarely issues with upgrading and mixing
 inputs, thus working as intended.
 
 Another thing you might be thinking of: Why not just use the cash value instead of upgrade names? Bot could just read
@@ -462,7 +472,8 @@ background had other elements like snow. With upgrade texts, background is
 always the same.
 - upgrade costs would need to be updated in a separate file after each update. 
 This is not really a big deal, but adds one extra layer of active maintenance.
-- Upgrading would need to performs additional checks for discounted prices e.g. monkey in range of ``0-0-1+`` village. This problem can be complety ignored now.
+- Upgrading would need to performs additional checks for discounted prices e.g. monkey in range of ``0-0-1+`` village.
+This issue can be completely ignored now.
 ---
 
 | ![](docs/images/monitoring/monitoring_adjustbegin.PNG) |
@@ -476,7 +487,12 @@ Text window gets updated: the text &#39;Ocr adjust mode enabled&#39; pops up and
 adjusting process. Bot is now active and is searching for the menu &#39;Play&#39; button text. After it finds it, ocr
 adjusting may begin.
 
-**During adjusting, do not use keyboard or mouse! Just wait until it&#39;s done.**
+**During adjusting, do not use keyboard or mouse! Just wait until it&#39;s done.** Bot should be able to return to menu
+on its own, but if there&#39;s an error and it gets stuck for more than 30 seconds with visibly doing nothing, do the 
+following:
+- close current monitoring window and reopen it: window should still say current plan is *spa pits, easy* with 
+**Sandbox mode** enabled
+- place your Btd6 game screen back to main menu screen, then retry the adjusting by pressing 'Run' button
 
 <u>What is delta adjusting:</u>
 
@@ -491,11 +507,11 @@ adjusting may begin.
     final delta.
  5. To finish things, all delta values are adjusted with equal amount. Default value is 4 i.e. delta=4: this adjust
     them by 4 units. An unit is 0.01 so with 4, bot substracts 0.04 from all values. This process is done to allow room
-    for error. If delta=0, exact values are used, but then even a slightest error breaks the ocr process, and
+    for error. If delta=0, exact values are used, but then even a slightest error would break the ocr process, and
     eventually, the bot.
  6. Process is now done and your upgrades_current.json file inside btd6bot/Files folder has been updated. Bot will also
-    automatically disable the auto-adjust option from setting so if need to do this process again, enable it again
-    manually.
+    automatically disable the auto-adjust option from setting so if you need to do this process again in the future, 
+    just open setting and enable it again with appropriate arguments.
 
 
 | ![](docs/images/monitoring/monitoring_adjustend.PNG) |
@@ -519,19 +535,21 @@ Make sure you have the required hero, all monkeys and their upgrade paths unlock
 - they follow the normal order of top-mid-bot e.g. ``sniper 2-0-4`` uses 2. top path and 4. bottom path upgrades
 - they state **highest crosspaths required**. Therefore you sometimes see stuff like ``2-5-5 sniper`` listed which
 simply means plan requires 2. top, 5. middle and 5. bottom paths. For example, such plan could use both ``2-0-5`` and
-``0-5-2`` snipers, maybe even include a few ``0-3-2``&#39;s, too.  
+``0-5-2`` snipers and maybe even include a few ``0-3-2``&#39;s, too.  
 
 Remember to scroll the info panel down to see all requirements!
 
 Now reopen the monitoring window, have Btd6 menu screen opened, press run and just wait for bot to do its thing.
-If you&#39;re able to finish a plan and bot can return to main menu automatically, everything&#39;s working!
+If bot is able to finish a plan and returns to main menu automatically, everything should be working!
 
 **----- Full tutorial ends here -----**
 -
 
 # <u>Ultrawide resolutions</u>
 
-As stated under &#39;Enable custom resolution&#39;, resolutions should have aspect ratio of 16:9. But, it is possible to leave in-game resolution to your **native fullscreen resolution**, but still use **custom resolution + windowed mode** to reduce the visible screen area.
+As stated under &#39;Enable custom resolution&#39;, resolutions should have aspect ratio of 16:9. But, it is possible
+to leave in-game resolution to your **native fullscreen resolution**, but still use
+**custom resolution + windowed mode** to reduce the visible screen area.
 
 When you run ``Btd6bot`` with windowed mode, it uses the logic descripted in following image
 
