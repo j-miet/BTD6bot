@@ -10,10 +10,10 @@ It includes a simple graphical user interface (**gui**): not impressive visually
 Support for multiplayer/competitive modes such as races, bosses, contested territory, boss rush, etc. will not be 
 added.
 
-Bot is somewhat complex and has been tested pretty thoroughly. Still, you may encounter bugs.
-**If you have any questions/suggestion/bugs to report, feel free to create a new issue on Github.**  
-Another things is **random outcomes** i.e. **rng**, which cannot be entirely removed. So if you plan to use bot to 
-obtain *Chimps black medals* on harder advanced/expert maps, it could take a few tries on each map before getting a
+Bot is quite complex and has been tested pretty thoroughly. Still, you may encounter bugs.  
+
+Btd6 includes elements of **randomness** (**rng**), which cannot be entirely removed. So if you plan to use bot to 
+obtain *Chimps black medals* on harder advanced and expert maps, it could take a few tries on each before getting a
 succesful run.
 
 
@@ -101,11 +101,10 @@ finishes.
 
     See [Creating a new plan](#creating-a-new-plan) section for more info.
 
-- Extensive bot library with build-in gui support, which can also operate independently. Uses optical character reading
+- Extensive bot library with built-in gui support, which can also operate independently. Uses optical character reading
 (ocr) and kb+mouse to update bot state.  
-While library code is thoroughly documented, it still benefits from a short
-guide. [Updating the bot](#updating-the-bot) section is devoted to this topic and provides the baseline for
-adding new content if this page no longer receives updates.
+While library code is thoroughly documented, [Updating the bot](#updating-the-bot) provides baseline for adding new
+content should this project no longer receives updates.
 
 # <u>Installation</u>
 First you need to install [Python](https://www.python.org/downloads/).  
@@ -572,7 +571,7 @@ So if you have a ``3440x1440`` monitor and wish to play on this resolution, go t
 - And of course, remember to readjust ocr deltas for new resolution, as always!
 
 
-Here's an elegant visual explanation:
+Here's a visual explanation on situation:
 
 ![](docs/images/settings/3440x1440example.PNG)
 
@@ -676,7 +675,8 @@ or reopening the Main window, this file gets deleted again!
 Info texts are exactly the same you see on main window page.
 - You can use the 'Add' and 'Remove' buttons to add new/remove existing plan in queue. These also have supported
 hotkeys: 'a' for add, 'r' for remove.
-- Has a search box for all available plans. This makes it easier to find specific plans by using keywords such as map name, difficulty or game mode.
+- Has a search box for all available plans. This makes it easier to find specific plans by using keywords such as map 
+name, difficulty or game mode.
 - When queue mode is toggled on, bot will use this plan queue instead of currently selected plan in main window.
 
 
@@ -707,8 +707,8 @@ hotkeys: 'a' for add, 'r' for remove.
 |:--:|
 | *Settings window*|
 
-- Includes basic and advanced settings. Advanced settings are mostly for internal testing, except the auto-adjust option,
-which was already introduced when setting up the bot first time.
+- Includes basic and advanced settings. Advanced settings are mostly for internal testing, except the auto-adjust 
+option, which was already introduced when setting up the bot first time.
 
 <u>Explanations</u>  
 **(Basic)**
@@ -811,7 +811,8 @@ When you press it, plan queue resets and begins running all plans in same order 
     (*) finished means plan was either *succesfully finished* or it *could not be completed within set amount of 
     retries*.
 
-    - Also, when plan queue is finished, a success rate percentage is displayed. Furthermore, each plan name, their success status ('success'/'failed') and amount of attemps out of total if status is 'success' are also printed.
+    - Also, when plan queue is finished, a success rate percentage is displayed. Furthermore, each plan name, their 
+    success status ('success'/'failed') and amount of attemps out of total if status is 'success' are also printed.
 
 - Displays round timer for current round; not 100% accurate, but still quite good and very useful for adjusting ability
 timings when new plans are created.
@@ -1127,7 +1128,7 @@ For practical examples, check any plan file in ``btd6bot/plans`` folder.
 |-|-|-|
 | Hero(pos_x, pos_y) | Places a hero at location (``x``,``y``). **To access commands, store it in a variable with recognizable name**. <br>All available heroes are listed [here](#heroes-1). | <pre>hero = Hero(0.5, 0.5)</pre>
 | target<br> special<br>sell | Works exactly the same as with Monkey, see the table above. | <pre>hero.target('last')<br>hero.special(2, 0.1, 0.1)<br>hero.sell()</pre>
-| force_target() | Currently, only use is to update internal targeting flag for bot when ``Etienne`` hits level ``11``: because bot is unable to <br>track hero xp, it cannot auto-update divide & conquer to zone control.If you use ``Etienne`` and plan to change his <br>targeting after lvl 11, you must call this command at the beginning of the round he reaches this milestone; otherwise <br>bot and game have different targeting value which could cause issues. | <pre>hero.force_target() </pre>
+| force_target() | Currently, only use is to update internal targeting flag for bot when ``Etienne`` hits level ``11``: because bot is unable to <br>track hero xp, it cannot auto-update divide & conquer to zone control. If you use ``Etienne`` and plan to change his <br>targeting after lvl 11, you must call this command at the beginning of the round he reaches this milestone; otherwise <br>bot and game have different targeting value which could cause issues. | <pre>hero.force_target() </pre>
 | shop(item, target_x, target_y, cpos_x, cpos_y) | Use Geraldo&#39;s shop ``item`` at location (``target_x``, ``target_y``). Item is given as an integer 1-16: first item being top left, <br>last being bottom right, order of items is left to right, top to bottom. This means first row is items 1-4, second 5-8, <br>third 9-12, fourth 13-16 | <pre>hero.shop(10, 0.5, 0.5)</pre>
 | spellbook(spells, cpos_x, cpos_y) | Use Corvus&#39;s spellbook. Similar to Geraldo&#39;s shop, but ``spells`` takes a **list** of integers 1-16; order still the same <br>(left to right, top to bottom). You can pass multiple integers to chain spells. | <pre>hero.spellbook([1])<br>hero.spellbook([20, 6, 2, 3])</pre>
 
@@ -1299,7 +1300,7 @@ Use ``target(set_target, x, y, cpos_x, cpos_y)`` to change targeting.
 | 'strong'          |               | 'centered'            |                   |               |                   | 'smart'
 |                   |               | 'wingmonkey' (**2**)
 
-**1**: Valid for most monkeys/heroes. Also, ``x-x-3+ ice`` and ``5-x-x village`` can use these.
+**1**: Valid for most monkeys/heroes. Also, ``x-x-3+ ice``, ``5-x-x`` tack and ``5-x-x village`` can use these.
 - For ``x-3+-x super``, use ``target_robo`` command to control second arm targeting.
 
 **2**: To enable ``wingmonkey`` mk, first ace must be named ``ace_wing`` instead of ``ace``. This enables a global flag
@@ -1355,15 +1356,15 @@ heroes.
 was added and you wanted to create a plan for it on *hard, standard* then simply name the plan file 
 ``bloons_mapHardStandard.py``.
 
-- For major changes, like new additions to game's ui, some bigger changes in bot code could be required. However, because changes
- like these are too vague to be descripted under set rules, they are not covered here and each case must be handled 
- individually.
+- For major changes, like new additions to game's ui, some bigger changes in bot code could be required. However, 
+because changes like these are too vague to be descripted under set rules, they are not covered here and each case must
+be handled individually.
 
 Bot and files directory can be summed shortly:
 
 - ``bot`` contains the entire bot library which is responsible of all in-game bot actions. It includes the logic for
- menu navigation, round and defeat checks, time flow, kb and mouse controls. Also implements all bot commands used in plan files, and required ocr
-  functions.
+ menu navigation, round and defeat checks, time flow, kb and mouse controls. Also implements all bot commands used in 
+ plan files, and required ocr functions.
 
 - ``Files`` includes all the non-Python files gui and bot need. Only upgrade ocr template and hotkeys
  need to be updated.
