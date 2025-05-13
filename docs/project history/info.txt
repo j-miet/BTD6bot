@@ -1,6 +1,6 @@
 This folder has previous code and files used in btd6bot.
 
--For a thorough history, check 'project history.txt'
+-For a thorough history before moving to Git/Github, check 'project history.txt'
 
 -To see the first backup version of this project, check the 'btd6bot - 29.9.2024' folder.
  (project was started on 14.9.2024 so this was the progress made in about 2 weeks)

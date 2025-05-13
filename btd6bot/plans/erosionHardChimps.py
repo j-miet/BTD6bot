@@ -20,7 +20,11 @@ _______________________________________
 Gameplay-wise, should be viable for black bordering.
 
 For late game rounds (90+), bot might skip ahead and begin executing commands for upcoming rounds.
+Reason is there's lot of projectiles/bloons moving around round label, which can cause reads.
 This should not matter, as long as 99 => 100 is detected normally; 100 requires abilities and if bot uses them earlier than intended, you will lose.
+Only affects saved round times: some display too short and other too long round durations.
+
+Should issues rise with 99 => 100 transition, solution is to use manual round ending with end_round() command. With it enabled, bot won't begin to search for the next round until countdown ends.
 """
 
 from._plan_imports import *

@@ -7,16 +7,7 @@
  --together with docstrings, makes navigating, rewriting and adding code so much easier.
 
 **Important things regarding type hints**
-1. some rows have 'type: ignore' command to stop mypy errors. These errors are
-	>easyocr has no mypy type hints available -> don't really feel like writing a custom type hint file so they're 
-    	 ignored
- 	>class attributes of some objects are not recognized (not even by VS Code interpreter, but they still work) -> a 
-   	  very specific case, which won't cause problems
-   	 --examples: Tkinter.Label.image (gui_windows.py), matplotlib.window.state (roundplot.py)
-        >in gui_tools.py, the ctypes.c_long(thread.ident) throws an error because it expects thread.ident : int, but 
-         gets int | None
-        >in roundplot.py, the row plt.text(x, ...) can accept strings even though text-method has type 'float'; this 
-         obviously throws type error
+1. some rows have 'type: ignore' command to stop mypy or ruff (see #linting below) errors 
 
 
  2. some files have imports needed for type hints to work properly
@@ -32,8 +23,7 @@
 
 #docstrings
 -Had some poor documentating before, mostly using just comments. But as some modules/functions have much more 
- complexity, decided that it would be a good thing to add
- better documentations for future reference.
+ complexity, decided that it would be a good thing to add better documentations for future reference.
 -Current docstrings follow mostly Google style guide -> https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings
 
 
@@ -42,12 +32,12 @@
  duplicate lines.
 
 ==>You can run ruff in VS Code terminal, or just use cmd/powershell. You need to type:
-	ruff 'your_file_path' check
+	ruff check 'your_file_path'
 
 ----Other----
 #doctests
 -These were added to have better documentations with examples included under bot/api.
 -The idea with these is to check whether all basic commands work
--You can run doctests on command line, but the easier way is to just run _doctests.py script, found in source root 
- alongside with main.py
+-You can run doctests on command line, but the easier way is to just run commands_doctests.py script, found in _ocr_tests
+**doctests might be a bit dated at this point, because README.md serves as main documentation**
  

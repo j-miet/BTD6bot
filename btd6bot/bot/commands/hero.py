@@ -249,7 +249,7 @@ class Hero(Monkey):
         """
         if self._hero_name == 'etienne':
             self._targeting = 'zone'
-            print('Etienne targeting prio set to \'zone\' to match in-game prio.')
+            print('Etienne bot target value set to \'zone\'.')
         else:
             print("Nothing was changed.")
         
