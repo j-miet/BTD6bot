@@ -267,13 +267,13 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 98:
             mortar.special(1, 0.3682291666667, 0.0611111111111)
             ability(3)
+            sub2 = Monkey('sub', 0.5213541666667, 0.6)
+            sub2.upgrade(['0-1-0','0-2-0','0-3-0'])
             ability(1,14)
             ability(2,18.5)
             spike3 = Monkey('spike', 0.3890625, 0.1296296296296)
             spike3.upgrade(['1-0-0','1-0-1','1-0-2','1-0-3'])
             spike3.target('close')
-            sub2 = Monkey('sub', 0.5213541666667, 0.6)
-            sub2.upgrade(['0-1-0','0-2-0','0-3-0'])
         elif current_round == 99:
             ability(3,2)
             ability(1,3.5)
