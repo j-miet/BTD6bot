@@ -853,7 +853,7 @@ class Monkey(_MonkeyConstants):
                                 Monkey._BOT_UPG_CURRENT_LEFTWINDOW,
                                 Monkey._BOT_UPG_CURRENT_RIGHTWINDOW,
                                 2)
-            
+
     def _check_upgrade(self, upg: str,
                       button: str,
                       current_l: tuple[float, float, float, float],
@@ -880,7 +880,6 @@ class Monkey(_MonkeyConstants):
             upg_path: Integer for upgrade path: 0 = top, 1 = middle, 2 = bot. Is necessary for some special monkey 
                 upgrade paths which ocr needs to identify and handle separately.
         """
-        # upgrade current path info for ocr to detect special cases.
         c_path = self._upgrade_path
         if upg_path == 0:
             upg_match = self._name+' '+str(int(c_path[0])+1)+'-x-x'
