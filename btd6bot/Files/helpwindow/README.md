@@ -1,6 +1,6 @@
 # BTD6bot
 
-![](docs/images/monitoring/monitoring_finish.PNG)
+![](docs/images/monitoring/monitoring_finish.png)
 
 
 ``BTD6bot`` is a program for automating **Bloons Tower Defense 6** game.  
@@ -115,7 +115,7 @@ Then, download *BTD6bot*:
 
 Click the green [<> Code] button at the top of github page.
 
-![](docs/images/github_codebutton.PNG)
+![](docs/images/github_codebutton.png)
 
 Then either
 
@@ -146,7 +146,7 @@ pip install -r requirements.txt
 above 1.7.8 cause a fatal error when any gui hotkeys are used.
 
 # <u>First-time setup</u>
-| ![](docs/images/main/main.PNG) |
+| ![](docs/images/main/main.png) |
 |:--:|
 | *Main window default view*|
 
@@ -188,19 +188,19 @@ done, close hotkeys window.
     - If you use fullscreen/windowed fullscreen, **don&#39;t** enable custom resolution, or use windowed mode. Just 
     leave it untoggled.
 
-        ![](docs/images/settings/disable_custom.PNG)
+        ![](docs/images/settings/disable_custom.png)
 
     - If you use custom resolution, set width & height values, then update values.
         - Toggle windowed mode on if you wish to use it. **It&#39;s recommended to always use fullscreen**, and use
         windowed mode only for *aspect ratios differing from 16:9*, as mentioned before.
 
-        ![](docs/images/settings/custom_windowed.PNG)
+        ![](docs/images/settings/custom_windowed.png)
 
         **If windowed mode is enabled, you must run Btd6 with ``-popupwindow`` launch argument.** E.g. if you use Steam
         version:  
         library -> bloons td 6 -> right-click -> properties, then set the following
 
-        ![](docs/images/settings/launchoption.PNG)
+        ![](docs/images/settings/launchoption.png)
 
     - **Aspect ratio greater than 16:9** might be compatible, if you use **fullscreen in-game**, but set bot to use 
     **custom resolution and windowed mode** in order to limit the area the bot sees; check 
@@ -214,7 +214,7 @@ Easiest way is to just press ``Reset args`` button once.
 Now, press ``Set args`` button to save args.  
 Your argument prompt should look similar to this:
 
-    ![](docs/images/settings/auto_adjust.PNG)
+    ![](docs/images/settings/auto_adjust.png)
 
     ***Why adjusting is needed**: monkey upgrading process is based on reading upgrade path names from screen and 
     matching these to static values. Different resolutions change the reading accuracy so bot will automatically adjust
@@ -253,7 +253,7 @@ Click the gear symbol and open hotkeys menu.
 
 Now, update your game hotkeys for bot. Press &#39;Set hotkeys&#39; button in gui. Following window opens:
 
-| ![](docs/images/hotkeys/hotkeys.PNG) |
+| ![](docs/images/hotkeys/hotkeys.png) |
 |:--:|
 | *Hotkey window*|
 
@@ -292,7 +292,7 @@ After you&#39;ve updated all the keys, close the hotkey window.
 
 Next, open settings window by pressing &#39;Settings&#39; button.
 
-| ![](docs/images/settings/settings.PNG) |
+| ![](docs/images/settings/settings.png) |
 |:--:|
 | *Settings window*|
 
@@ -322,7 +322,7 @@ option off, you should see your current resolution next to &#39;Current resoluti
 
     For example, if your monitor is ``1920x1080``, you see following 
 
-    ![](docs/images/settings/disable_custom.PNG)
+    ![](docs/images/settings/disable_custom.png)
 
     [**Note**] For bot, fullscreen and windowed fullscreen mean the same thing so always use this option if you wish to
     use maximum supported resolution.
@@ -334,18 +334,18 @@ Custom value is stored in a file and will be loaded back if you disable and re-e
     Example: if you have ``1920x1080`` as native res and set a custom res ``1600x900``, then toggling setting on and off
     would display following resolutions:
 
-    ![](docs/images/settings/difference.PNG)
+    ![](docs/images/settings/difference.png)
 
     With custom resolutions, you can enable *windowed mode*.
     
-    ![](docs/images/settings/windowed.PNG)
+    ![](docs/images/settings/windowed.png)
     
     If you use windowed mode in btd6 normally, it adds the bar on top of game window. Bot, however, assumes this bar
     doesn&#39;t exist and requires game to be opened with ``-popupwindow`` option.  
     If you have Btd6 steam version, go to steam library, right click on Bloons TD 6, then simply add the argument like
     shown below
 
-    ![](docs/images/settings/launchoption.PNG)
+    ![](docs/images/settings/launchoption.png)
 
     Using windowed mode can decrease the text quality for ocr, though. If you use significantly smaller resolution with
     windowed mode, bot could have issues with verifying text inputs.  
@@ -354,7 +354,7 @@ Custom value is stored in a file and will be loaded back if you disable and re-e
 Lastly, enable the &#39;Auto-adjust ocr upgrade data the next time a plan is run&#39; option. 
 For 1920x1080 with fullscreen enabled, it looks like this:
 
-![](docs/images/settings/auto_adjust.PNG)
+![](docs/images/settings/auto_adjust.png)
 
 
 It should include following parts, each separated by space:
@@ -375,11 +375,11 @@ Then just press &#39;Set args&#39; and you&#39;re done! You may now close the se
 For last part, you need to enter the monitoring window. Click the &#39;Initialize bot&#39; button, located at bottom
 right of main window:
 
-![](docs/images/main/init_button.PNG)
+![](docs/images/main/init_button.png)
 
 Following load message appears
 
-![](docs/images/main/load_msg.PNG)
+![](docs/images/main/load_msg.png)
 
 Program needs to load the ocr model into your temporary memory (RAM) each time you initialize bot and is therefor only
 required once per runtime loop. If you close the entire program and reopen it, the model must be loaded again.
@@ -387,11 +387,11 @@ required once per runtime loop. If you close the entire program and reopen it, t
 After the message disappears, model has been loaded and initialize button should now display &#39;Open bot window&#39;
 instead.
 
-![](docs/images/main/openbotwin_button.PNG)
+![](docs/images/main/openbotwin_button.png)
 
 Click the button to open monitoring window.
 
-| ![](docs/images/monitoring/monitoring.PNG) |
+| ![](docs/images/monitoring/monitoring.png) |
 |:--:|
 | *Monitoring window*|
 
@@ -475,7 +475,7 @@ This is not really a big deal, but adds one extra layer of active maintenance.
 This issue can be completely ignored now.
 ---
 
-| ![](docs/images/monitoring/monitoring_adjustbegin.PNG) |
+| ![](docs/images/monitoring/monitoring_adjustbegin.png) |
 |:--:|
 | *After 'Run' button is pressed and menu play button is detected on main monitor, bot sets a countdown from 5 to 0, then begins the auto-adjusting process*|
 
@@ -513,7 +513,7 @@ following:
     just open setting and enable it again with appropriate arguments.
 
 
-| ![](docs/images/monitoring/monitoring_adjustend.PNG) |
+| ![](docs/images/monitoring/monitoring_adjustend.png) |
 |:--:|
 | *Adjusting process complete. Current monitoring window must be closed in order to continue.*|
 
@@ -523,11 +523,11 @@ your bot is ready to be tested with an actual plan.
 To run your first plan, it&#39;s recommended to pick something simple. Close the monitoring window and select either
 ``[monkey meadow, easy-standard]`` or ``[dark castle, easy-standard]`` in main window:
 
-![](docs/images/main/monkeymeadow.PNG)
+![](docs/images/main/monkeymeadow.png)
 
 or
 
-![](docs/images/main/darkcastle.PNG)
+![](docs/images/main/darkcastle.png)
 
 Make sure you have the required hero, all monkeys and their upgrade paths unlocked. For upgrade paths:
 
@@ -552,7 +552,7 @@ to leave in-game resolution to your **native fullscreen resolution**, but still 
 
 When you run ``Btd6bot`` with windowed mode, it uses the logic descripted in following image
 
-![](docs/images/settings/ultrawide.PNG)
+![](docs/images/settings/ultrawide.png)
 
 Because windowed mode normally leaves empty space around, you could limit the readable area to the middle of screen.
 A good example would be ``3440x1440`` resolution: it adds extra borders during maps which is 440 pixels each side. This
@@ -566,14 +566,14 @@ So if you have a ``3440x1440`` monitor and wish to play on this resolution, go t
 - enable custom resolution and set it as ``2560x1440``
 - enable windowed mode
 
-    ![](docs/images/settings/3440x1440_settings.PNG)
+    ![](docs/images/settings/3440x1440_settings.png)
 
 - And of course, remember to readjust ocr deltas for new resolution, as always!
 
 
 Here's a visual explanation on situation:
 
-![](docs/images/settings/3440x1440example.PNG)
+![](docs/images/settings/3440x1440example.png)
 
 
 In general, for any resolution, check the following:
@@ -599,7 +599,7 @@ doing
 
 ## Main
 
-| ![](docs/images/main/main_modified.PNG) |
+| ![](docs/images/main/main_modified.png) |
 |:--:|
 | *Main window, with ocr already initialized. Currently selected plan is bloody_puddlesHardChimps, with collection event and replay modes enabled.*|
 
@@ -631,18 +631,18 @@ i.e. selected map + strategy combination. Info is stored in each plan file and c
     
     For example, if you wanted monkey meadow, x factor and #ouch map images, files should be named  
 
-    - ``monkey meadow.PNG``
+    - ``monkey meadow.png``
 
-    - ``x factor.PNG``
+    - ``x factor.png``
     
-    - ``#ouch.PNG``
+    - ``#ouch.png``
 
     Map images can be downloaded from https://www.bloonswiki.com/List_of_maps_in_BTD6
     
 
 ## Help
 
-| ![](docs/images/help/help.PNG) |
+| ![](docs/images/help/help.png) |
 |:--:|
 | *Help window, expanded to fullscreen. It displays the same README contents, however none of links are in working condition*|
 
@@ -667,7 +667,7 @@ or reopening the Main window, this file gets deleted again!
 
 ## Queue
 
-| ![](docs/images/queue/queue.PNG) |
+| ![](docs/images/queue/queue.png) |
 |:--:|
 | *Queue window with dark_dungeonsHardChimps placed in queue. When a plan is selected, its info panel is displayed.*|
 
@@ -683,7 +683,7 @@ name, difficulty or game mode.
 
 ## Hotkeys
 
-| ![](docs/images/hotkeys/hotkeys.PNG) |
+| ![](docs/images/hotkeys/hotkeys.png) |
 |:--:|
 | *Hotkey window.*|
 
@@ -703,7 +703,7 @@ name, difficulty or game mode.
 
 ## Settings
 
-| ![](docs/images/settings/settings.PNG) |
+| ![](docs/images/settings/settings.png) |
 |:--:|
 | *Settings window*|
 
@@ -783,7 +783,7 @@ on trying, these texts must be as precisely readable as possible. For upgrades, 
 
 ## Monitoring
 
-| ![](docs/images/monitoring/monitoring.PNG) |
+| ![](docs/images/monitoring/monitoring.png) |
 |:--:|
 | *Monitoring window, with queue mdoe enabled. Current plan is quadHardChimps, with dark_castleHardChimps coming after.*|
 
@@ -834,11 +834,11 @@ timings when new plans are created.
     
     For example, if you wanted monkey meadow, x factor and #ouch map images, files should be named  
 
-    - ``monkey meadow.PNG``
+    - ``monkey meadow.png``
 
-    - ``x factor.PNG``
+    - ``x factor.png``
     
-    - ``#ouch.PNG``
+    - ``#ouch.png``
 
     Map images can be downloaded from https://www.bloonswiki.com/List_of_maps_in_BTD6
 
