@@ -82,11 +82,13 @@ def _save_to_json(plan_name: str) -> None:
     
     Should only be called by plan_run.
     """
-    json_data = _update_time_data(plan_name)
-    with open(pathlib.Path(__file__).parent/'Files'/'time_data-backup.json', 'w') as f:
-        json.dump(json_data, f, indent=2)
+    new_times = _update_time_data(plan_name)
+    with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as timef:
+        current_times: dict[str, Any] = json.load(timef)
+    with open(pathlib.Path(__file__).parent/'Files'/'time_data-backup.json', 'w') as timef:
+        json.dump(current_times, timef, indent=2)
     with open(pathlib.Path(__file__).parent/'Files'/'time_data.json', 'w') as f:
-        json.dump(json_data, f, indent=2)
+        json.dump(new_times, f, indent=2)
 
 def run_delta_adjust() -> None:
     import bot._adjust_deltas
