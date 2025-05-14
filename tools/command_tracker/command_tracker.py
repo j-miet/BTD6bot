@@ -275,7 +275,7 @@ def add_command(comment_str: str) -> None:
             TrackerVals.coordinates_file.write('    '+''.join(cmd[1:])+"\n")
             print("-> "+''.join(cmd[1:]), end='')
         case '-l':
-            TrackerVals.coordinates_file.write(f'     ({x}, {y})\n')
+            TrackerVals.coordinates_file.write(f'    ({x}, {y})\n')
             print(f"-> ({x}, {y})", end='')
         case _:
             print("--Nothing was added--")

@@ -160,10 +160,7 @@ class Hero(Monkey):
     def _prepare_hero_menu(self) -> None:
         """Sets custom panel, like Geraldo shop or Corvus spellbook, in order to access them."""
         if self._hero_name in {'geraldo', 'corvus'}:
-            kb_mouse.click((self._pos_x, self._pos_y))
-            time.sleep(0.3)
             self.special(1)
-            kb_mouse.press_esc()
 
     def _basic_hero_target(self) -> str | None:
         """Defines default hero targeting behaviour.
@@ -369,8 +366,8 @@ class Hero(Monkey):
         8: Sharpening stone  
         9: Worn hero's cape  
         10: Blade trap  
-        11: Bottle of 'Gerry's fire' ho sauce  
-        12: Fertilizer
+        11: Bottle of 'Gerry's fire' hot sauce  
+        12: Fertilizer  
         13: Pet rabbit  
         14: Rejuv potion  
         15: Genie bottle  
@@ -392,6 +389,7 @@ class Hero(Monkey):
             if cpos_y is not None:
                 self._pos_y = cpos_y
             kb_mouse.click((self._pos_x, self._pos_y))
+            time.sleep(0.2)
             if cpos_x is not None:
                 self._update_panel_position(cpos_x)
             if self._panel_pos == 'left':
