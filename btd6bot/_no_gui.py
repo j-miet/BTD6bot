@@ -7,6 +7,7 @@ Can play any currently supported plan, though, as bot is entirely separated from
 
 import os
 import signal
+import sys
 
 import pynput.keyboard
 from pynput.keyboard import Key, KeyCode
@@ -14,6 +15,7 @@ import set_plan
 import utils.plan_data
 
 def run() -> None:
+    
     def exit(key: Key | KeyCode | None) -> None:
         """Program termination via hotkey (same one is used in gui.MainWindow).
 
@@ -26,10 +28,10 @@ def run() -> None:
             os.kill(os.getpid(), signal.SIGTERM)
 
     # listener thread object sends keyboard inputs to exit function
-    kb_listener = pynput.keyboard.Listener(on_press = exit)
-    kb_listener.daemon = True
-    kb_listener.start()
-
+    if sys.platform == "win32":
+        kb_listener = pynput.keyboard.Listener(on_press = exit)
+        kb_listener.daemon = True
+        kb_listener.start()
 
     print('===================================\n'
           '|   Welcome to gui-free BTD6bot   |\n'
@@ -51,7 +53,9 @@ def run() -> None:
     plans = utils.plan_data.read_plans()
     while 1:
         user_input = input('=>')
-        if user_input.lower() == 'plans':
+        if len(user_input) == 0:
+            ...
+        elif user_input.lower() == 'plans':
             print('All available plans: \n')
             for p in plans:
                 print(p)
@@ -69,7 +73,7 @@ def run() -> None:
                     set_plan.plan_setup(plan_name)
                 else:
                     print('Plan not found.')
-            except TypeError:
+            except (TypeError, IndexError):
                 print("Invalid input.")
         elif user_input.lower() == 'exit':
             break
