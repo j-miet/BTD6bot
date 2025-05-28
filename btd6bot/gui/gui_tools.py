@@ -1,8 +1,12 @@
-"""Thread termination (to close gui windows) and redirecting sys.stdout to MonitoringScreen Text panel."""
+"""Thread termination (to close gui windows) and redirecting sys.stdout to MonitoringScreen Text panel.
+
+Also includes get_osfont for getting properly adjusted fonts for each supported operating system.
+"""
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import ctypes
+from sys import platform
 
 from tkinter import TclError
 if TYPE_CHECKING:
@@ -31,7 +35,19 @@ def terminate_thread(thread: Thread) -> None:
         # and you should call it again with exc=NULL to revert the effect"""
         ctypes.pythonapi.PyThreadState_SetAsyncExc(thread.ident, None)
         raise SystemError("PyThreadState_SetAsyncExc failed")
+
+def get_osfont() -> tuple[str, int]:
+    """Font size for each operating system."""
+    if platform == "win32":
+        return ('Arial', 9)
+    elif platform == "darwin":
+        return ('Arial', 12)
+    else: # after testing other OS such as linux, add them here too
+        return ('Arial', 9)
     
+os_font: tuple[str, int] = get_osfont()
+"""Font for current operating system."""
+
 class TextRedirector(object):
     """Class to redirect standard output into tkinter Text. Implements its own print method with write.
 
