@@ -16,7 +16,6 @@ PYNPUT_KEYS: dict[str, Key] = {
         'Key.shift': Key.shift,
         'Key.backspace': Key.backspace,
         'Key.tab': Key.tab,
-        'Key.insert': Key.insert,
         'Key.delete': Key.delete,
         'Key.home': Key.home,
         'Key.end': Key.end,
