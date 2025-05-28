@@ -21,10 +21,11 @@ import gui.gui_tools as gui_tools
 from gui.help_window import HelpWindow
 from gui.hotkey_window import HotkeyWindow
 from gui.monitoring_window import MonitoringWindow
+import gui.gui_paths as gui_paths
+from gui.gui_tools import os_font
 from gui.queue_window import QueueModeWindow
 import gui.roundplot.roundplot as roundplot
 from gui.settings_window import SettingsWindow
-import gui.gui_paths as gui_paths
 from utils import plan_data
 
 if TYPE_CHECKING:
@@ -104,9 +105,10 @@ class MainWindow:
             os.kill(os.getpid(), signal.SIGTERM)
 
     # listener thread object sends keyboard inputs to exit function
-    kb_listener = pynput.keyboard.Listener(on_press = exit)
-    kb_listener.daemon = True
-    kb_listener.start()
+    if sys.platform == "win32":
+        kb_listener = pynput.keyboard.Listener(on_press = exit)
+        kb_listener.daemon = True
+        kb_listener.start()
 
     def __init__(self, root: tk.Tk) -> None:
         """Initialize main window using the passed tkinter root.
@@ -230,6 +232,25 @@ class MainWindow:
                                       state='active', padx=10, pady=0)
         self.start_button.grid(column=3, row=5, sticky='e')
     
+        if sys.platform == "darwin": # adjust gui element placements if macOS
+            self.root.geometry("695x442+700+300")
+            self.root.minsize(695,442)
+            self.root.maxsize(695,442)
+            self.maps_box.config(font=os_font)
+            self.maps_box.grid(column=0, row=6, sticky='sw', pady=10)
+            info_window_scroll.grid(column=2, row=3, rowspan=3, sticky="nsw")
+            self.info_window.config(font=os_font)
+            self.info_window.grid(column=0, columnspan=2, row=3, rowspan=3)
+            self.strat_box.config(font=os_font)
+            self.strat_box.grid(column=1, row=6, sticky='sw', pady=10)
+            self.collection_toggle.config(font=os_font)
+            self.collection_toggle.grid(column=3, row=3, sticky='ne')
+            self.queue_toggle.config(font=os_font)
+            self.replay_toggle.config(font=os_font)
+            self.replay_toggle.grid(column=3, row=5, sticky='se')
+            self.monitor_plot_button.grid(column=2, row=6, sticky='e', padx=55)
+            self.start_button.grid(column=3, row=6, sticky='e')
+
         self._delete_readme_html()
         self._autoupdate_readme()
 
