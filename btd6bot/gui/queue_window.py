@@ -7,6 +7,7 @@ import tkinter as tk
 from tkinter import ttk
 
 import gui.gui_paths as gui_paths
+from gui.gui_tools import os_font
 from utils import plan_data
 
 class QueueModeWindow:
@@ -30,60 +31,63 @@ class QueueModeWindow:
         """Initialize queue mode window."""
         self.queue_optionwindow = tk.Toplevel()
         self.queue_optionwindow.title("Queue map list")
-        self.queue_optionwindow.geometry('910x400+100+550')
+        self.queue_optionwindow.geometry('930x400+100+550')
         self.queue_optionwindow.minsize(930,400)
         self.queue_optionwindow.maxsize(930,400)
 
         currentplans_scroll = ttk.Scrollbar(self.queue_optionwindow, orient='vertical')
         currentplans_scroll.grid(column=1, row=1, sticky="nsw")
         self.current_plan = ''
-        self.myplanslabel = tk.Label(self.queue_optionwindow, text='Current queue')
+        self.myplanslabel = tk.Label(self.queue_optionwindow, text='Current queue', font=os_font)
         self.myplanslabel.grid(column=0, row=0)
-        self.myplans = tk.Listbox(self.queue_optionwindow, width=40, height=20, 
-                                    yscrollcommand=currentplans_scroll.set,)
+        self.myplans = tk.Listbox(self.queue_optionwindow, width=36, height=20, 
+                                    yscrollcommand=currentplans_scroll.set, font=os_font)
         self.myplans.grid(column=0, row=1, padx=(11, 0))
         self.myplans.bind("<<ListboxSelect>>", lambda _: self.update_planinfo())
 
         self.delbutton = tk.Button(self.queue_optionwindow, text='Remove (r)', 
-                                    command=self.remove_plan, width=10)
+                                    command=self.remove_plan, width=10, font=os_font)
         self.delbutton.grid(column=0, row=2, sticky="w", padx=(11,0))
         self.queue_optionwindow.bind("r", lambda _: self.remove_plan())
 
         self.delall_button = tk.Button(self.queue_optionwindow, text='Remove all', 
-                                       command=self.remove_allcurrentplans, width=10)
+                                       command=self.remove_allcurrentplans, width=10, font=os_font)
         self.delall_button.grid(column=0, row=2, sticky="e", padx=(11,0))
 
-        self.up = tk.Button(self.queue_optionwindow, text=u'\u2191' , width=1, height=5, command=self.move_up)
+        self.up = tk.Button(self.queue_optionwindow, text=u'\u2191' , width=1, height=5, command=self.move_up,
+                            font=os_font)
         self.up.grid(column=2, row=1, sticky='n')
-        self.down = tk.Button(self.queue_optionwindow, text=u'\u2193' , width=1, height=5, command=self.move_down)
+        self.down = tk.Button(self.queue_optionwindow, text=u'\u2193' , width=1, height=5, command=self.move_down,
+                            font=os_font)
         self.down.grid(column=2, row=1, sticky='s')
     
         allplans_scroll = ttk.Scrollbar(self.queue_optionwindow, orient='vertical')
         allplans_scroll.grid(column=4, row=1, sticky="nsw", padx=(0, 11))
-        self.allplanslabel = tk.Label(self.queue_optionwindow, text='All plans')
+        self.allplanslabel = tk.Label(self.queue_optionwindow, text='All plans', font=os_font)
         self.allplanslabel.grid(column=3, row=0)
-        self.allplans = tk.Listbox(self.queue_optionwindow, width=40, height=20, yscrollcommand=allplans_scroll.set,)
+        self.allplans = tk.Listbox(self.queue_optionwindow, width=36, height=20, yscrollcommand=allplans_scroll.set,
+                                   font=os_font)
         self.allplans.grid(column=3, row=1, padx=(11, 0))
         self.allplans.bind("<<ListboxSelect>>", lambda _: self.update_planinfo())
 
-        self.addbutton = tk.Button(self.queue_optionwindow, text='Add (a)', command=self.add_plan, width=10)
+        self.addbutton = tk.Button(self.queue_optionwindow, text='Add (a)', command=self.add_plan, width=10, 
+                                   font=os_font)
         self.addbutton.grid(column=3, row=2, sticky="w", padx=(11,0))
         self.queue_optionwindow.bind("a", lambda _: self.add_plan())
 
-
         info_window_scroll = ttk.Scrollbar(self.queue_optionwindow, orient='vertical')
         info_window_scroll.grid(column=6, row=1, sticky="nsw")
-        self.infolabel = tk.Label(self.queue_optionwindow, text='Plan info')
+        self.infolabel = tk.Label(self.queue_optionwindow, text='Plan info', font=os_font)
         self.infolabel.grid(column=5, row=0)
-        self.info_window = tk.Text(self.queue_optionwindow, height=18, width=45, yscrollcommand=info_window_scroll.set, 
-                                   font=("Times New Roman", 11), wrap=tk.WORD, relief='sunken', padx=11)
+        self.info_window = tk.Text(self.queue_optionwindow, height=18, width=40, yscrollcommand=info_window_scroll.set, 
+                                   font=os_font, wrap=tk.WORD, relief='sunken', padx=11)
         self.info_window.grid(column=5, row=1, sticky='ns')
         self.info_window['state'] = 'disabled'
         info_window_scroll.configure(command=self.info_window.yview)
 
         self.all_searchbartext = tk.StringVar(value="")
         self.all_searchbartext.trace_add("write", lambda r, w, u: self._callback_all())
-        self.all_searchbar = tk.Entry(self.queue_optionwindow, textvariable=self.all_searchbartext)
+        self.all_searchbar = tk.Entry(self.queue_optionwindow, textvariable=self.all_searchbartext, font=os_font)
         self.all_searchbar.grid(column=3, row=2, sticky="e")
         self.all_searchbar.insert(0, "search plans...")
         self.all_searchbar.bind('<FocusIn>', lambda _: self._clear_entry())

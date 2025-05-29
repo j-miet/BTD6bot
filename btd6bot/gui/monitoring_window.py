@@ -15,15 +15,15 @@ import pyautogui
 import pynput
 from pynput.keyboard import Key, KeyCode
 
-import gui.gui_tools as gui_tools
-import set_plan as set_plan
-from utils import plan_data
-from utils import timing
-import gui.gui_paths as gui_paths
-
 from bot import times, hotkeys
 from bot.bot_data import BotData
 from bot.bot_vars import BotVars
+import gui.gui_paths as gui_paths
+import gui.gui_tools as gui_tools
+from gui.gui_tools import os_font
+import set_plan as set_plan
+from utils import plan_data
+from utils import timing
 
 if TYPE_CHECKING:
     from typing import Any, TextIO
@@ -136,13 +136,14 @@ class MonitoringWindow:
         self.old_stdout = sys.stdout
         sys.stdout = gui_tools.TextRedirector(self.textbox, "stdout")
 
-        self.roundtime_label = tk.Label(self.monitoringwindow, width=15, height=3, text='Round timer', relief='sunken')
+        self.roundtime_label = tk.Label(self.monitoringwindow, width=15, height=3, text='Round timer', relief='sunken',
+                                        font=os_font)
         self.roundtime_label.grid(column=0, row=4, sticky='sw', padx=10)
 
         self.roundtime = tk.StringVar(value='-')
 
         self.roundtime_display = tk.Label(self.monitoringwindow, width=8, height=3, relief='sunken', 
-                                          textvariable=self.roundtime)
+                                          textvariable=self.roundtime, font=os_font)
         self.roundtime_display.grid(column=0, row=4, sticky='s')
 
         scroll = tk.Scrollbar(self.monitoringwindow, orient='vertical')
@@ -228,9 +229,10 @@ class MonitoringWindow:
         self.monitor_run_button.grid(column=5, row=4, sticky='ne')
 
         # listener thread object sends keyboard inputs to _bot_hotkey method
-        self.bot_hk_listener = pynput.keyboard.Listener(on_press = self._bot_hotkey)
-        self.bot_hk_listener.daemon = True
-        self.bot_hk_listener.start()  
+        if sys.platform == "win32":
+            self.bot_hk_listener = pynput.keyboard.Listener(on_press = self._bot_hotkey)
+            self.bot_hk_listener.daemon = True
+            self.bot_hk_listener.start()  
 
     def _update_round_timer(self) -> None:
         """Update round timer value during rounds."""

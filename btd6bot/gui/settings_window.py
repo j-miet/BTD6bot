@@ -8,6 +8,7 @@ import tkinter as tk
 import pyautogui
 
 import gui.gui_paths as gui_paths
+from gui.gui_tools import os_font
 
 if TYPE_CHECKING:
     from typing import Any
@@ -63,37 +64,39 @@ class SettingsWindow:
         basic_text = tk.Label(self.settings_window, 
                               text='o-------o\n'
                                    '|  Basic  |\n'
-                                   'o-------o')
+                                   'o-------o', font=os_font)
         basic_text.grid(column=0, columnspan=2, row=0, sticky='w', padx=5)
 
         resolution_toggle = tk.Checkbutton(self.settings_window, 
                                             text="Enable custom resolution", anchor='nw', 
                                             onvalue='On', offvalue='Off', pady=5, padx=18, 
                                             variable=self.resolution,
-                                            command=self.change_resolution_status)
+                                            command=self.change_resolution_status,
+                                            font=os_font)
         resolution_toggle.grid(column=0, row=1, columnspan=3, sticky='nw')
 
-        resolution_label = tk.Label(self.settings_window, text='Current resolution')
+        resolution_label = tk.Label(self.settings_window, text='Current resolution', font=os_font)
         resolution_label.grid(column=2, row=1, sticky='sw', padx=1, pady=(1,10))
-        resolution_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.resolution_value)
+        resolution_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.resolution_value, 
+                                            font=os_font)
         resolution_current_value.grid(column=3, columnspan=2, row=1, sticky='sw', padx=(1,35), pady=(1,10))
-        res_reminder = tk.Text(self.settings_window, wrap=tk.WORD, width=10, height=5, relief='sunken')
+        res_reminder = tk.Text(self.settings_window, wrap=tk.WORD, width=10, height=5, relief='sunken', font=os_font)
         res_reminder.grid(column=4, row=1, rowspan=3, sticky='nw', padx=1, pady=(1,10))
         res_reminder.insert("end", '[Reminder] Aspect ratio should be 16:9')
         res_reminder['state'] = 'disabled'
 
-        self.resolution_width_entry = tk.Entry(self.settings_window, width=10)
+        self.resolution_width_entry = tk.Entry(self.settings_window, width=10, font=os_font)
         self.resolution_width_entry.grid(column=0, row=2, sticky='e', pady=(1,10), padx=(21,31))
         self.resolution_width_entry.insert(0, "width")
         self.resolution_width_entry.bind('<FocusIn>', lambda _: self._clear_entry())
         self.resolution_width_entry.config(fg='grey')
-        self.resolution_height_entry = tk.Entry(self.settings_window, width=10)
+        self.resolution_height_entry = tk.Entry(self.settings_window, width=10, font=os_font)
         self.resolution_height_entry.grid(column=1, row=2, sticky='w', pady=(1,10), padx=(1,31))
         self.resolution_height_entry.insert(0, "height")
         self.resolution_height_entry.bind('<FocusIn>', lambda _: self._clear_entry())
         self.resolution_height_entry.config(fg='grey')
         self.resolution_button = tk.Button(self.settings_window, text="Update resolution", anchor='w', padx=5,
-                                        command=self.set_resolution_value)
+                                        command=self.set_resolution_value, font=os_font)
         self.resolution_button.grid(column=2, columnspan=2, row=2, sticky='w', pady=(1,10))
 
         self.windowed_toggle = tk.Checkbutton(self.settings_window, 
@@ -102,65 +105,69 @@ class SettingsWindow:
                                             anchor='nw', 
                                             onvalue='On', offvalue='Off', pady=5, padx=18, 
                                             variable=self.windowed,
-                                            command=self.change_windowed_status)
+                                            command=self.change_windowed_status,
+                                            font=os_font)
         self.windowed_toggle.grid(column=0, row=3, columnspan=4, sticky='nw')
 
-        version_label = tk.Label(self.settings_window, text='Game version')
+        version_label = tk.Label(self.settings_window, text='Game version', font=os_font)
         version_label.grid(column=0, row=4, sticky='se', padx=(1,21), pady=(5,1))
-        version_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.version)
+        version_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.version, font=os_font)
         version_current_value.grid(column=1, row=4, sticky='sw', padx=1, pady=(5,1))
 
-        self.version_entry = tk.Entry(self.settings_window, width=10)
+        self.version_entry = tk.Entry(self.settings_window, width=10, font=os_font)
         self.version_entry.grid(column=0, row=5, sticky='e', pady=(1,10), padx=(21,31))
         version_button = tk.Button(self.settings_window, text="Update version", anchor='w', padx=5,
-                                    command=self.set_version_value)
+                                    command=self.set_version_value, font=os_font)
         version_button.grid(column=1, row=5, sticky='w', pady=(1,10))
 
-        retry_label = tk.Label(self.settings_window, text='Retries')
+        retry_label = tk.Label(self.settings_window, text='Retries', font=os_font)
         retry_label.grid(column=0, row=6, sticky='w', padx=(17,21), pady=(5,1))
-        retry_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.retries)
+        retry_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.retries, font=os_font)
         retry_current_value.grid(column=1, row=6, sticky='sw', padx=1, pady=(5,1))
 
-        self.retry_entry = tk.Entry(self.settings_window, width=10)
+        self.retry_entry = tk.Entry(self.settings_window, width=10, font=os_font)
         self.retry_entry.grid(column=0, row=7, sticky='e', pady=(1,10), padx=(21,31))
         retry_button = tk.Button(self.settings_window, text="Update value", anchor='w', padx=5,
-                                    command=self.set_retries_value)
+                                    command=self.set_retries_value, font=os_font)
         retry_button.grid(column=1, row=7, sticky='w', pady=(1,10))
 
         advanced_text = tk.Label(self.settings_window, 
                               text='o------------o\n'
                                    '|  Advanced  |\n'
-                                   'o------------o')
+                                   'o------------o', font=os_font)
         advanced_text.grid(column=0, columnspan=2, row=8, sticky='w', padx=5, pady=(15, 1))
         
-        time_limit_label = tk.Label(self.settings_window, text='Ocr time limit')
+        time_limit_label = tk.Label(self.settings_window, text='Ocr time limit', font=os_font)
         time_limit_label.grid(column=0, row=9, sticky='se', padx=(1,21), pady=(5,1))
-        time_limit_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.time_limit)
+        time_limit_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.time_limit, 
+                                            font=os_font)
         time_limit_current_value.grid(column=1, row=9, sticky='sw', padx=1, pady=(5,1))
 
-        self.time_limit_entry = tk.Entry(self.settings_window, width=10)
+        self.time_limit_entry = tk.Entry(self.settings_window, width=10, font=os_font)
         self.time_limit_entry.grid(column=0, row=10, sticky='e', pady=(1,10), padx=(21,31))
         time_limit_button = tk.Button(self.settings_window, text="Update time limit", anchor='w', padx=5,
-                                           command=self.set_time_limit_value)
+                                           command=self.set_time_limit_value, font=os_font)
         time_limit_button.grid(column=1, row=10, sticky='w', pady=(1,10))
 
 
-        ocr_frequency_label = tk.Label(self.settings_window, text='Ocr frequency')
+        ocr_frequency_label = tk.Label(self.settings_window, text='Ocr frequency', font=os_font)
         ocr_frequency_label.grid(column=0, row=11, sticky='se', padx=(1,21), pady=(5,1))
-        ocr_frequency_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.ocr_frequency)
+        ocr_frequency_current_value = tk.Label(self.settings_window, relief='ridge', textvariable=self.ocr_frequency,
+                                               font=os_font)
         ocr_frequency_current_value.grid(column=1, row=11, sticky='sw', padx=1, pady=(5,1))
 
-        self.ocr_frequency_entry = tk.Entry(self.settings_window, width=10)
+        self.ocr_frequency_entry = tk.Entry(self.settings_window, width=10, font=os_font)
         self.ocr_frequency_entry.grid(column=0, row=12, sticky='e', pady=(1,10), padx=(21,31))
         ocr_frequency_button = tk.Button(self.settings_window, text="Update frequency value", anchor='w', padx=5,
-                                           command=self.set_ocr_frequency_value)
+                                           command=self.set_ocr_frequency_value, font=os_font)
         ocr_frequency_button.grid(column=1, columnspan=2, row=12, sticky='w', pady=(1,10))
 
         delta_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
                                                 text="Print ocr delta text values in monitoring window", anchor='nw', 
                                                 onvalue='On', offvalue='Off', pady=5, padx=18, 
                                                 variable=self.delta_ocrtext,
-                                                command=self.change_deltaocr_status)
+                                                command=self.change_deltaocr_status,
+                                                font=os_font)
         delta_ocrtext_toggle.grid(column=0, row=13, columnspan=3, sticky='nw')
 
         substring_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
@@ -168,22 +175,24 @@ class SettingsWindow:
                                                 anchor='nw', 
                                                 onvalue='On', offvalue='Off', pady=5, padx=18, 
                                                 variable=self.substring_ocrtext,
-                                                command=self.change_substringocr_status)
+                                                command=self.change_substringocr_status,
+                                                font=os_font)
         substring_ocrtext_toggle.grid(column=0, row=14, columnspan=3, sticky='nw')
 
         ocr_autoadjust_toggle = tk.Checkbutton(self.settings_window, 
                                                text="Auto-adjust ocr upgrade data the next time a plan is run", 
                                                 anchor='nw', onvalue='On', 
                                                 offvalue='Off', pady=5, padx=18, variable=self.ocr_adjust,
-                                                command=self.change_ocradjust_status)
+                                                command=self.change_ocradjust_status,
+                                                font=os_font)
         ocr_autoadjust_toggle.grid(column=0, row=15, columnspan=3, sticky='nw')
-        self.ocr_autoadjust_entry = tk.Entry(self.settings_window, width=50)
+        self.ocr_autoadjust_entry = tk.Entry(self.settings_window, width=50, font=os_font)
         self.ocr_autoadjust_entry.grid(column=0, columnspan=4, row=16, sticky='w', pady=(1,10), padx=(21,31))
         self.ocr_autoadjust_button = tk.Button(self.settings_window, text="Set args", anchor='w', padx=5,
-                                           command=self.set_ocradjust_value)
+                                           command=self.set_ocradjust_value, font=os_font)
         self.ocr_autoadjust_button.grid(column=3, columnspan=2, row=16, sticky='w', pady=(1,10))
         self.ocr_autoadjust_reset_button = tk.Button(self.settings_window, text="Reset args", anchor='w', padx=5,
-                                                command=self.reset_ocradjust_value)
+                                                command=self.reset_ocradjust_value, font=os_font)
         self.ocr_autoadjust_reset_button.grid(column=4, row=16, sticky='w', padx=(1,20), pady=(1,10))
 
         self.update_variables()
