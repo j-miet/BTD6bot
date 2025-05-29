@@ -3,6 +3,7 @@
 Pynput docs: https://pynput.readthedocs.io/en/latest/keyboard.html#pynput.keyboard.Key
 """
 
+import copy
 import pathlib
 
 from pynput.keyboard import Key
@@ -40,7 +41,7 @@ PYNPUT_KEYS: dict[str, Key] = {
         }
 """Dictionary of supported pynput special keys."""
 
-def generate_hotkeys() -> dict[str, str | Key]:
+def generate_hotkeys(hotkey_dict: dict[str, str | Key]) -> None:
     """Reads hotkey.txt file from 'text files' folder and saves these to dictionary.
 
     Because this program uses pynput library to handle key presses, it needs to convert special/modifier keys
@@ -67,7 +68,8 @@ def generate_hotkeys() -> dict[str, str | Key]:
             actual_hotkeys.update({key: PYNPUT_KEYS[val]})
         else:
             actual_hotkeys[key] = val
-    return actual_hotkeys
+    hotkey_dict.update(actual_hotkeys)
 
-hotkeys: dict[str, str | Key] = generate_hotkeys()
+hotkeys: dict[str, str | Key] = {}
 """Dictionary of current hotkeys read from a hotkeys.txt file."""
+generate_hotkeys(hotkeys)
