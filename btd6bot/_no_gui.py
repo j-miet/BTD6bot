@@ -81,11 +81,7 @@ def run() -> None:
                 plan_name = user_input.split()[1]
                 if plan_name in plans:
                     print("Running plan: "+"'"+plan_name+"'.\n" 
-                            "1. if this is your first plan of the session, wait for the ocr reader to initialize\n"
-                            "2. number countdowns don't work in non-gui version so expect their entire result to "
-                            "pop after the countdown finishes.\n" 
-                            "(reason for above is that all print statements are build around gui version and must "
-                            "have flush=False)\n"
+                            "If this is your first plan of the session, bot needs to load the ocr model into memory.\n"
                             "============================================")
                     set_plan.plan_setup(plan_name)
                 else:
