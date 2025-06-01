@@ -23,6 +23,7 @@ class ScreenRes:
         width (int, class attribute): Screen width. 
         height (int, class attribute): Screen height.
     """
+    controller: pynput.keyboard.Controller = pynput.keyboard.Controller()
     BASE_RES: tuple[int, int] = pyautogui.size()
     width, height = pyautogui.size()
 
@@ -92,7 +93,9 @@ def move_cursor(xy: tuple[float, float], set_duration: float = 0.0) -> None:
     pyautogui.moveTo(x, y, duration=set_duration)
     time.sleep(0.1)
 
-def kb_input(input: Key | KeyCode | str, times: int = 1) -> None:
+def kb_input(input: Key | KeyCode | str, 
+             times: int = 1, 
+             controller: pynput.keyboard.Controller = ScreenRes.controller) -> None:
     """Simulates pressing a single keyboard input by default.
 
     If same key must be pressed multiple times, change 'times' value.
@@ -102,7 +105,7 @@ def kb_input(input: Key | KeyCode | str, times: int = 1) -> None:
         times: How many times key is pressed. Default value is 1.
     """
     if isinstance(times, int) and times >= 1:
-        keyboard = pynput.keyboard.Controller()
+        keyboard = controller
         if isinstance(input, str) and input.strip("<>") in {f"{num}" for num in range(96, 106)}: # numpad keys
             input_key = int(input.strip("<>"))
             for _ in range(times):
