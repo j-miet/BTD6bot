@@ -3,7 +3,8 @@
 easyocr==1.7.2
 markdown==3.8
 matplotlib==3.10.1
-numpy==2.2.3
+numpy==1.26.4; python_version < 3.13
+numpy==2.2.3; python_version >= 3.13
 pillow==11.1.0
 pyautogui==0.9.54
 pynput==1.7.8
