@@ -86,6 +86,7 @@ class Rounds:
                 time.sleep(0.5)
             if autostart[2] != 0:
                 kb_mouse.click((0.6697916666667, 0.2796296296296))
+                AutoStart.autostart_status = True
                 print("Enabled 'auto start'")
                 time.sleep(0.5)
             kb_mouse.press_esc()

@@ -282,7 +282,7 @@ def _start_plan() -> None:
                 timer = 3
                 x, y = pyautogui.position()
                 break
-            print(i, end=' ')
+            print(i, end=' ', flush=True)
             time.sleep(1)
             timer -= 1
     print()
