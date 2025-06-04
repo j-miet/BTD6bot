@@ -8,6 +8,7 @@ from tkinter import simpledialog
 
 import pynput
 
+from gui.guihotkeys import GuiHotkeys
 import gui.gui_paths as gui_paths
 from gui.gui_tools import os_font
 from utils import plan_data
@@ -74,9 +75,6 @@ class HotkeyWindow:
         self.read_guihotkeys()
 
         if sys.platform == 'darwin':
-            self.guihotkeyoptionlist['state'] = 'disabled'
-            self.info.config(text=self.info.cget("text")[:-186]+"\n[MacOS]\n-gui hotkeys don't currently work on mac " 
-                             "systems and are disabled.")
             self.sethotkeybutton = tk.Button(self.hotkeywindow, text='Edit selected entry', width=15, height=1, 
                                             font=os_font,
                                             command=self.save_hotkeys)
@@ -189,6 +187,7 @@ class HotkeyWindow:
         self.guihotkeyoptionlist.delete(0, 'end')
         self.read_guihotkeys()
         self.input_key.stop()
+        GuiHotkeys.update_guihotkeys()
         self.sethotkeybutton.configure(state='active')
         return
 

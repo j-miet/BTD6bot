@@ -9,35 +9,44 @@ import json
 import os
 from pathlib import Path
 import signal
-import sys
+import threading
+import time
 
 import pynput.keyboard
 from pynput.keyboard import Key, KeyCode
+
 import set_plan
 import utils.plan_data
+import gui.gui_tools as gui_tools
+from gui.guihotkeys import GuiHotkeys
+
+class BotThread:
+    bot_thread: threading.Thread
 
 def run() -> None:
-    
+    """Main loop for no-gui version of BTD6bot."""
     def exit(key: Key | KeyCode | None) -> None:
-        """Program termination via hotkey (same one is used in gui.MainWindow).
-
-        Termination hotkey is currently F11.
+        """Program termination via hotkey.
 
         Args:
             key: Latest keyboard key the user has pressed.       
         """
-        if key == Key.f11: 
+        if key == GuiHotkeys.exit_hotkey or (isinstance(key, KeyCode) and key.char == GuiHotkeys.exit_hotkey): 
             os.kill(os.getpid(), signal.SIGTERM)
+        elif (key == GuiHotkeys.start_stop_hotkey or 
+             (isinstance(key, KeyCode) and key.char == GuiHotkeys.start_stop_hotkey)):
+            gui_tools.terminate_thread(BotThread.bot_thread)
 
     # listener thread object sends keyboard inputs to exit function
-    if sys.platform == "win32":
-        kb_listener = pynput.keyboard.Listener(on_press = exit)
-        kb_listener.daemon = True
-        kb_listener.start()
+    kb_listener = pynput.keyboard.Listener(on_press = exit)
+    kb_listener.daemon = True
+    kb_listener.start()
 
     INFO_MESSAGE = ('*This version doesn\'t support collection event/queue/replay modes. It won\'t allow user to\n '
           'change settings/hotkeys, but current values from gui are shared, so if you want to\n' 
           'adjust them, do that in gui then run this version after. Also, no pause or reset buttons exist.\n'
+          'BUT, it does support the gui hotkeys \'start-stop\' and \'exit\' meaning you can stop current bot loop or '
+          'close this program entirely\n'
           '/////////\n'
           '--Commands--\n'
           'help = displays this message again\n'
@@ -47,13 +56,15 @@ def run() -> None:
           '                  >Note that when you use \'run ...\' command first time after running this script, \n '
           '                   the ocr reader is loaded into memory which might take a bit, just wait.\n'
           '                  >Example: run dark_castleEasyStandard\n'
-          'exit = exit program. Alternatively use F11 key: this hotkey works while bot is running, in case you \n'
-          '     need a quick exit.'
+          'exit = exit program.'
           )
+    
     print('===================================\n'
           '|   Welcome to gui-free BTD6bot   |\n'
           '===================================\n'
-          '/////////\n')
+          ">>> Ocr reader model is loaded into memory, please wait...")
+    from bot.ocr.ocr_reader import OCR_READER # type: ignore
+    print('Model loaded.\n')
     print(INFO_MESSAGE)
     plans = utils.plan_data.read_plans()
     while 1:
@@ -81,12 +92,15 @@ def run() -> None:
                 plan_name = user_input.split()[1]
                 if plan_name in plans:
                     print("Running plan: "+"'"+plan_name+"'.\n" 
-                            "If this is your first plan of the session, bot needs to load the ocr model into memory.\n"
                             "============================================")
-                    set_plan.plan_setup(plan_name)
+                    BotThread.bot_thread = threading.Thread(target=set_plan.plan_setup, args=[plan_name], daemon=True)
+                    BotThread.bot_thread.start()
+                    while BotThread.bot_thread.is_alive():
+                        time.sleep(0.1)
+                    print()
                 else:
                     print('Plan not found.')
             except (TypeError, IndexError):
-                print("Invalid input.")
+                print("Invalid plan input.")
         elif user_input.lower() == 'exit':
             break

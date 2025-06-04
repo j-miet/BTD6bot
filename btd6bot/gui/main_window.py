@@ -16,7 +16,7 @@ from tkinter import ttk
 import pynput
 from pynput.keyboard import Key, KeyCode
 
-from bot import hotkeys
+from gui.guihotkeys import GuiHotkeys
 import gui.gui_tools as gui_tools
 from gui.help_window import HelpWindow
 from gui.hotkey_window import HotkeyWindow
@@ -84,13 +84,6 @@ class MainWindow:
     except FileNotFoundError:
         ...
 
-    EXIT_HOTKEY: Key | str
-    with open(gui_paths.GUIHOTKEYS_PATH) as gui_hotkeys:
-        try:
-            EXIT_HOTKEY = hotkeys.PYNPUT_KEYS[gui_hotkeys.readlines()[2].split('= ')[1].strip()]
-        except IndexError:
-            EXIT_HOTKEY = gui_hotkeys.readlines()[2].split('= ')[2].strip()
-
     @staticmethod
     def exit(key: Key | KeyCode | None) -> None:
         """Program termination via hotkey.
@@ -101,14 +94,18 @@ class MainWindow:
         Args:
             key: Latest keyboard key the user has pressed.       
         """
-        if key == MainWindow.EXIT_HOTKEY or (isinstance(key, KeyCode) and key.char == MainWindow.EXIT_HOTKEY): 
+        if key == GuiHotkeys.exit_hotkey or (isinstance(key, KeyCode) and key.char == GuiHotkeys.exit_hotkey): 
             os.kill(os.getpid(), signal.SIGTERM)
+        elif key == GuiHotkeys.start_stop_hotkey:
+            GuiHotkeys.start_stop_status = 1
+        elif key == GuiHotkeys.pause_hotkey:
+            GuiHotkeys.pause_status = 1
 
     # listener thread object sends keyboard inputs to exit function
-    if sys.platform == "win32":
-        kb_listener = pynput.keyboard.Listener(on_press = exit)
-        kb_listener.daemon = True
-        kb_listener.start()
+    GuiHotkeys.update_guihotkeys()
+    kb_listener = pynput.keyboard.Listener(on_press = exit)
+    kb_listener.daemon = True
+    kb_listener.start()
 
     def __init__(self, root: tk.Tk) -> None:
         """Initialize main window using the passed tkinter root.

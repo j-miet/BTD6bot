@@ -105,7 +105,7 @@ def _scroll_down_heroes() -> None:
         m.scroll(0, -1)
         time.sleep(0.1)
 
-def _choose_hero(hero_name: str | None) -> None:
+def _choose_hero(hero_name: str | None) -> bool:
     """In menu screen, chooses a correct hero.
 
     Can also choose set None so hero won't change - useful in modes like deflation where hero might not be necessary.
@@ -120,11 +120,16 @@ def _choose_hero(hero_name: str | None) -> None:
     if hero_name is None or hero_name.lower() not in set().union(*all_heroes):
         print('No hero used in current plan')
         Hero.current_plan_hero_name = hero_name
-        return
+        return True
     else:
         print("Selecting", hero_name.capitalize(), "as hero... ", end='')
         kb_mouse.click(MouseLocations.BUTTONS['heroes'])
-        time.sleep(0.3)
+        start: int = time.time()
+        while not weak_substring_check('se', (0.5296875, 0.5472222222222, 0.6338541666667, 0.5916666666667),
+                                       OCR_READER):
+            if time.time()-start >= 10:
+                return False
+            time.sleep(0.3)
         if hero_name.lower() in MouseLocations.HEROES:
             kb_mouse.click(MouseLocations.HEROES[hero_name.lower()])
             Hero.current_plan_hero_name = hero_name
@@ -137,6 +142,7 @@ def _choose_hero(hero_name: str | None) -> None:
     time.sleep(0.3)
     kb_mouse.press_esc()
     print("Hero selected!")
+    return True
 
 def _choose_map(map_name: str) -> bool:
     """Chooses correct map by first clicking the map search bar and then typing the map name.
@@ -148,16 +154,20 @@ def _choose_map(map_name: str) -> bool:
         A boolean indicating if map selection was succesful. If False value is returned, it allows for bot to return
             to main menu screen.
     """
+    start: int = time.time()
+    while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
+        if time.time()-start >= 10:
+            return False
+        time.sleep(0.3)
     search_map = pynput.keyboard.Controller()
     map_str = map_name.replace('_', ' ')
-    time.sleep(0.4)
     kb_mouse.click(MouseLocations.BUTTONS['menu_play'])
     start = time.time()
     search_found = 0
     time.sleep(0.4)
     kb_mouse.click(MouseLocations.BUTTONS['search_map'])
     if BotVars.windowed:
-        while time.time()-start <= 3:
+        while time.time()-start <= 5:
             if weak_substring_check('search', (0.4140625, 0.0203703703704, 0.4651041666667, 0.0537037037037),
                                     OCR_READER):
                 search_found = 1
@@ -168,7 +178,7 @@ def _choose_map(map_name: str) -> bool:
             search_found = 0
             kb_mouse.click(MouseLocations.BUTTONS['search_map'], ignore_windowed=True)
             start = time.time()
-            while time.time()-start <= 3:
+            while time.time()-start <= 5:
                 if weak_substring_check('search', (0.4140625, 0.0203703703704, 0.4651041666667, 0.0537037037037), 
                                         OCR_READER):
                     search_found = 1
@@ -310,9 +320,10 @@ def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, 
         time.sleep(0.3)
     _start_plan()
     #print(f"\n~~~~{map_name}, {diff.lower()}, {mode.lower()}~~~~")
-    _choose_hero(hero)
+    if not _choose_hero(hero):
+        return 0, 0
     if not _choose_map(map_name):
-        return -1, -1
+        return 0, 0
     _choose_diff(diff)
     _choose_mode(mode)
     return begin_round, end_round

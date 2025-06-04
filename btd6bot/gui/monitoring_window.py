@@ -12,12 +12,11 @@ import tkinter as tk
 from tkinter import ttk
 
 import pyautogui
-import pynput
-from pynput.keyboard import Key, KeyCode
 
-from bot import times, hotkeys
+from bot import times
 from bot.bot_data import BotData
 from bot.bot_vars import BotVars
+from gui.guihotkeys import GuiHotkeys
 import gui.gui_paths as gui_paths
 import gui.gui_tools as gui_tools
 from gui.gui_tools import os_font
@@ -74,19 +73,6 @@ class MonitoringWindow:
             created so that MainWindow can start tracking its existence and won't throw an error. After 'Run' button is 
             pressed, _stop_or_run method is called and target of this thread is set to _run_bot method instead.
     """
-    PAUSE_HOTKEY: Key | str
-    START_STOP_HOTKEY: Key | str
-    with open(gui_paths.GUIHOTKEYS_PATH) as gui_hotkeys:
-        hotkey_vals = gui_hotkeys.readlines()
-        try:
-            PAUSE_HOTKEY = hotkeys.PYNPUT_KEYS[hotkey_vals[0].split('= ')[1].strip()]
-        except KeyError:
-            PAUSE_HOTKEY = hotkey_vals[0].split('= ')[1].strip()
-        try:
-            START_STOP_HOTKEY = hotkeys.PYNPUT_KEYS[hotkey_vals[1].split('= ')[1].strip()]
-        except KeyError:
-            START_STOP_HOTKEY = hotkey_vals[1].split('= ')[1].strip()
-
     current_bot_thread: threading.Thread
 
     def __init__(self, all_plans_list: list[str], replay: str, queue: str, collection: str) -> None:
@@ -228,11 +214,14 @@ class MonitoringWindow:
                                             state='active', padx=10, pady=10)
         self.monitor_run_button.grid(column=5, row=4, sticky='ne')
 
+        # self.bot_hk_listener = pynput.keyboard.Listener(on_press = self._bot_hotkey)
+
         # listener thread object sends keyboard inputs to _bot_hotkey method
-        if sys.platform == "win32":
-            self.bot_hk_listener = pynput.keyboard.Listener(on_press = self._bot_hotkey)
-            self.bot_hk_listener.daemon = True
-            self.bot_hk_listener.start()  
+        GuiHotkeys.start_stop_status = 0
+        GuiHotkeys.pause_status = 0
+        self.bot_hk_listener = threading.Thread(target=self._bot_hotkey)
+        self.bot_hk_listener.daemon = True
+        self.bot_hk_listener.start()  
 
     def _update_round_timer(self) -> None:
         """Update round timer value during rounds."""
@@ -446,7 +435,7 @@ class MonitoringWindow:
         self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display(current))
         set_plan.plan_setup(current)
 
-    def _bot_hotkey(self, key: Key | KeyCode | None) -> None:
+    def _bot_hotkey(self) -> None:
         """Hotkey to start/stop bot when monitoring window is open.
 
         Perfoms a separate winfo_exists check to ensure that previous MonitoringWindow.bot_hk_listener is
@@ -455,16 +444,21 @@ class MonitoringWindow:
         Args:
             key: Latest keyboard key the user has pressed. 
         """
-        if self.monitoringwindow.winfo_exists():
-            if (key == MonitoringWindow.START_STOP_HOTKEY or 
-                (isinstance(key, KeyCode) and key.char == MonitoringWindow.START_STOP_HOTKEY)):
+        while self.monitoringwindow.winfo_exists():
+            #if (key == MonitoringWindow.START_STOP_HOTKEY or 
+            #    (isinstance(key, KeyCode) and key.char == MonitoringWindow.START_STOP_HOTKEY)):
+            if GuiHotkeys.start_stop_status == 1:
+                GuiHotkeys.start_stop_status = 0
                 self._stop_or_run()
                 time.sleep(1)
-            elif (key == MonitoringWindow.PAUSE_HOTKEY or
-                (isinstance(key, KeyCode) and key.char == MonitoringWindow.PAUSE_HOTKEY)):
+            #elif (key == MonitoringWindow.PAUSE_HOTKEY or
+            #    (isinstance(key, KeyCode) and key.char == MonitoringWindow.PAUSE_HOTKEY)):
+            elif GuiHotkeys.pause_status == 1:
                 BotVars.paused = not BotVars.paused
+                GuiHotkeys.pause_status = 0
+            time.sleep(0.1)
         else:
-            self.bot_hk_listener.stop()
+            gui_tools.terminate_thread(self.bot_hk_listener)
 
     def get_bot_thread(self) -> threading.Thread:
         """Return current bot thread.

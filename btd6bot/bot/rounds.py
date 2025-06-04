@@ -228,7 +228,7 @@ class Rounds:
             Current round number.
         """
         if prev_round == -1:
-            print("Map selection failed.")
+            print("\nHero/map selection failed.")
             kb_mouse.click((0.1911458333333, 0.0388888888889))
             time.sleep(1)
             kb_mouse.press_esc()
