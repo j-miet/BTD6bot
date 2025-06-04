@@ -197,7 +197,10 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
     plt.subplots_adjust(left=0.05, bottom=0.1, right=0.99, top=0.9, wspace=None, hspace=None)
     rcParams['toolbar'] = 'None'
     winmanager = plt.get_current_fig_manager()
-    winmanager.window.state('zoomed') # type: ignore
+    try:
+        winmanager.window.state('zoomed') # type: ignore
+    except AttributeError:
+        ...
     fig.suptitle(f'Round commands and round times of current plan "{plan_name}"')
 
     # Axis 'round times'
@@ -206,7 +209,9 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
             time_data: dict[str, Any] = json.load(f)[plan_name]
         update_date = time_data["update_date"]
         fig.suptitle(f'Round commands and round times of current plan "{plan_name}"\n'
-                    r'Time data is updated after each succesful run (current date: ' + r"$\bf{%s}$" % update_date +'; format is YYYY/MM/DD')
+                    r'Time data is updated after each succesful run (current date: ' + r"$\bf{%s}$" % update_date +'; '
+                    'format is YYYY/MM/DD',
+                    fontsize='medium')
         plan_rounds: list[str] = time_data["rounds"]
         plan_times: list[str] = time_data["times"]
         plan_times_in_seconds: list[int] = []
@@ -263,7 +268,8 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
     # Axis 'round commands'
     ax_rounds = fig.add_subplot(2,5,(7,9))
     ax_rounds.set_title('Round commands - '
-                        'Order of command execution is top to bottom. Rounds without commands are not included.')
+                        'Order of command execution is top to bottom. Rounds without commands are not included.',
+                        fontsize='medium')
     ax_rounds.get_yaxis().set_visible(False)
     for (x, r) in zip(round_labels, rounds):
         lines = ''
