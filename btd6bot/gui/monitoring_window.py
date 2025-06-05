@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 import json
 import os
+from pathlib import Path
 import sys
 import threading
 import time
@@ -16,6 +17,7 @@ import pyautogui
 from bot import times
 from bot.bot_data import BotData
 from bot.bot_vars import BotVars
+from customprint import cprint
 from gui.guihotkeys import GuiHotkeys
 import gui.gui_paths as gui_paths
 import gui.gui_tools as gui_tools
@@ -216,9 +218,16 @@ class MonitoringWindow:
 
         # self.bot_hk_listener = pynput.keyboard.Listener(on_press = self._bot_hotkey)
 
-        # listener thread object sends keyboard inputs to _bot_hotkey method
+        with open(gui_paths.ROOT.parent/'Logs.txt', 'w') as f:
+            ...
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+            if json.load(f)["logging"]:
+                BotVars.logging = True
+            else:
+                BotVars.logging = False
         GuiHotkeys.start_stop_status = 0
         GuiHotkeys.pause_status = 0
+        # listener thread object sends keyboard inputs to _bot_hotkey method
         self.bot_hk_listener = threading.Thread(target=self._bot_hotkey)
         self.bot_hk_listener.daemon = True
         self.bot_hk_listener.start()  
@@ -257,7 +266,7 @@ class MonitoringWindow:
             self.bot_thread = threading.Thread(target=self._run_bot, daemon=True)
             MonitoringWindow.current_bot_thread = self.get_bot_thread()
             self.monitor_run_button.configure(text='Run')
-            print('\n#####Bot terminated#####')
+            cprint('\n#####Bot terminated#####')
             return
         self.bot_thread = threading.Thread(target=self._run_bot, daemon=True)
         MonitoringWindow.current_bot_thread = self.get_bot_thread()
@@ -272,28 +281,28 @@ class MonitoringWindow:
         issue_flag = 0
         if customres:
             if resolution_val != identifier[0:2]:
-                print("-"*55+"\n"
+                cprint("-"*55+"\n"
                         ">Ocr data resolution differs from display resolution:\n"
                         " Ocr resolution: ", identifier[0], identifier[1], "\n"
                         " Display resolution: ", resolution_val[0], resolution_val[1])
                 issue_flag = 1
         else:
             if list((w, h)) != identifier[0:2]:
-                print("-"*55+"\n"
+                cprint("-"*55+"\n"
                         ">Ocr data resolution differs from display resolution:\n"
                         " Ocr resolution: ", identifier[0], identifier[1], "\n"
                         " Display resolution: ", w, h)
                 issue_flag = 1
         if identifier[2] == "fullscreen" and windowed:
-            print("-"*55+"\n"
+            cprint("-"*55+"\n"
                     ">Ocr data supports fullscreen, but you use\n windowed mode.")
             issue_flag = 1
         elif identifier[2] == "windowed" and not windowed:
-            print("-"*55+"\n"
+            cprint("-"*55+"\n"
                     ">Ocr data supports windowed mode, but you use\n fullscreen mode.")
             issue_flag = 1
         if issue_flag == 1:
-            print(55*"-"+"\n"
+            cprint(55*"-"+"\n"
                     "-->> Issues detected; see above. <<--\n" \
                     "These don't prevent bot from starting, but are very likely to cause problems with ocr text "
                     "detection.\n"+
@@ -304,26 +313,26 @@ class MonitoringWindow:
     def _plantest_print(self, plan: str, attempt: int, attempt_limit: int) -> None:
         if 1 <= attempt <= attempt_limit:
             if attempt_limit == 1:
-                print('~~~~'+plan_data.return_map(plan)+', '+
+                cprint('~~~~'+plan_data.return_map(plan)+', '+
                     plan_data.return_strategy(plan).split('-')[0].lower()+', '+
                     plan_data.return_strategy(plan).split('-')[1].lower()+'~~~~')
             else:
-                print('~~~~'+plan_data.return_map(plan)+', '+
+                cprint('~~~~'+plan_data.return_map(plan)+', '+
                     plan_data.return_strategy(plan).split('-')[0].lower()+', '+
                     plan_data.return_strategy(plan).split('-')[1].lower()+
                     f' [Attempt {attempt}/{attempt_limit}]~~~~')
 
     def _queuemode_results(self) -> None:
-        print("Plan queue finished.")
-        print("Results:")
+        cprint("Plan queue finished.")
+        cprint("Results:")
         success: int = 0
         total = len(self.plans_status)
         for name in self.plans_status:
             if 'success [' in name:
                 success += 1
-        print(f">Success rate: {((success/total)*100):.2f}%")
+        cprint(f">Success rate: {((success/total)*100):.2f}%")
         for name in self.plans_status:
-            print(name)
+            cprint(name)
 
     def _run_plans(self, retries) -> None:
         if self.current_plans == []:
@@ -353,7 +362,7 @@ class MonitoringWindow:
         Queue mode enabled/disabled check is already done before creating MonitorScreen object so queue check is not
         needed again.
         """
-        print('\n=====Bot running=====')
+        cprint('=====Bot running=====')
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
         customres_val: bool = gui_vars_dict["check_resolution"]
@@ -364,11 +373,11 @@ class MonitoringWindow:
         if not gui_vars_dict["ocr_adjust_deltas"]:
             self._res_check(customres_val, resolution_val, windowed_val, w, h)
         if customres_val:
-            print('[Custom Resolution] '+str(resolution_val[0])+'x'+str(resolution_val[1])+'\n'
+            cprint('[Custom Resolution] '+str(resolution_val[0])+'x'+str(resolution_val[1])+'\n'
                     '[Windowed] '+str(windowed_val)+'\n')
         else:
             w, h = pyautogui.size()
-            print('[Resolution] '+str(w)+'x'+str(h)+'\n')
+            cprint('[Resolution] '+str(w)+'x'+str(h)+'\n')
         if gui_vars_dict["ocr_adjust_deltas"]:
             try:
                 new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'spa pits.png')
@@ -379,11 +388,11 @@ class MonitoringWindow:
                 self.monitor_mapscreen.configure(image='')
                 self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
             self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display('spa_pitsEasySandbox'))
-            print(".-------------------------.\n"
+            cprint(".-------------------------.\n"
                   "| Ocr adjust mode enabled |\n"
                   ".-------------------------.\n")
             set_plan.run_delta_adjust()
-            print("You may now close the monitoring window.")
+            cprint("You may now close the monitoring window.")
             self.monitor_run_button.configure(text='Run')
             self.monitor_run_button['state'] = 'disabled'
             return
@@ -394,13 +403,13 @@ class MonitoringWindow:
                 self._run_plans(retries_val)
                 if self.queue_val == 'On':
                     self._queuemode_results()
-                    print('\n>>>Replaying all plans in queue. Starting in... ', end='')
+                    cprint('\n>>>Replaying all plans in queue. Starting in... ', end='')
                     timing.counter(3)
-                    print()
+                    cprint()
                 else:
-                    print("Replaying the selected plan. Starting in... ", end='')
+                    cprint("Replaying the selected plan. Starting in... ", end='')
                     timing.counter(3)
-                    print()
+                    cprint()
                 self.plans_status = []
         else:
             self._run_plans(retries_val)

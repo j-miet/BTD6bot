@@ -52,13 +52,14 @@ class SettingsWindow:
 
         self.resolution = tk.StringVar(value='Off')
         self.resolution_value = tk.StringVar(value=self.read_value("custom_resolution"))
+        self.windowed = tk.StringVar(value='Off')
         self.version = tk.StringVar(value=self.read_value("version"))
         self.retries = tk.StringVar(value=self.read_value("retries"))
         self.time_limit = tk.StringVar(value=self.read_value("checking_time_limit"))
         self.ocr_frequency = tk.StringVar(value=self.read_value("ocr_frequency"))
+        self.logging = tk.StringVar(value='Off')
         self.delta_ocrtext = tk.StringVar(value='Off')
         self.substring_ocrtext = tk.StringVar(value='Off')
-        self.windowed = tk.StringVar(value='Off')
         self.ocr_adjust = tk.StringVar(value='Off')
 
         basic_text = tk.Label(self.settings_window, 
@@ -162,22 +163,31 @@ class SettingsWindow:
                                            command=self.set_ocr_frequency_value, font=os_font)
         ocr_frequency_button.grid(column=1, columnspan=2, row=12, sticky='w', pady=(1,10))
 
-        delta_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
-                                                text="Print ocr delta text values in monitoring window", anchor='nw', 
+        logging_toggle = tk.Checkbutton(self.settings_window,
+                                        text="Enable logging", 
+                                                anchor='nw', 
                                                 onvalue='On', offvalue='Off', pady=5, padx=18, 
+                                                variable=self.logging,
+                                                command=self.change_logging_status,
+                                                font=os_font)
+        logging_toggle.grid(column=0, row=13, columnspan=3, sticky='nw')
+
+        self.delta_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
+                                                text="Print ocr delta text values in monitoring window", anchor='nw', 
+                                                onvalue='On', offvalue='Off', pady=5, padx=40, 
                                                 variable=self.delta_ocrtext,
                                                 command=self.change_deltaocr_status,
                                                 font=os_font)
-        delta_ocrtext_toggle.grid(column=0, row=13, columnspan=3, sticky='nw')
+        self.delta_ocrtext_toggle.grid(column=0, row=14, columnspan=3, sticky='nw')
 
-        substring_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
+        self.substring_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
                                                 text="Print ocr substring text values in monitoring window", 
                                                 anchor='nw', 
-                                                onvalue='On', offvalue='Off', pady=5, padx=18, 
+                                                onvalue='On', offvalue='Off', pady=5, padx=40, 
                                                 variable=self.substring_ocrtext,
                                                 command=self.change_substringocr_status,
                                                 font=os_font)
-        substring_ocrtext_toggle.grid(column=0, row=14, columnspan=3, sticky='nw')
+        self.substring_ocrtext_toggle.grid(column=0, row=15, columnspan=3, sticky='nw')
 
         ocr_autoadjust_toggle = tk.Checkbutton(self.settings_window, 
                                                text="Auto-adjust ocr upgrade data the next time a plan is run", 
@@ -185,15 +195,15 @@ class SettingsWindow:
                                                 offvalue='Off', pady=5, padx=18, variable=self.ocr_adjust,
                                                 command=self.change_ocradjust_status,
                                                 font=os_font)
-        ocr_autoadjust_toggle.grid(column=0, row=15, columnspan=3, sticky='nw')
+        ocr_autoadjust_toggle.grid(column=0, row=16, columnspan=3, sticky='nw')
         self.ocr_autoadjust_entry = tk.Entry(self.settings_window, width=50, font=os_font)
-        self.ocr_autoadjust_entry.grid(column=0, columnspan=4, row=16, sticky='w', pady=(1,10), padx=(21,31))
+        self.ocr_autoadjust_entry.grid(column=0, columnspan=4, row=17, sticky='w', pady=(1,10), padx=(21,31))
         self.ocr_autoadjust_button = tk.Button(self.settings_window, text="Set args", anchor='w', padx=5,
                                            command=self.set_ocradjust_value, font=os_font)
-        self.ocr_autoadjust_button.grid(column=3, columnspan=2, row=16, sticky='w', pady=(1,10))
+        self.ocr_autoadjust_button.grid(column=3, columnspan=2, row=17, sticky='w', pady=(1,10))
         self.ocr_autoadjust_reset_button = tk.Button(self.settings_window, text="Reset args", anchor='w', padx=5,
                                                 command=self.reset_ocradjust_value, font=os_font)
-        self.ocr_autoadjust_reset_button.grid(column=4, row=16, sticky='w', padx=(1,20), pady=(1,10))
+        self.ocr_autoadjust_reset_button.grid(column=4, row=17, sticky='w', padx=(1,20), pady=(1,10))
 
         self.update_variables()
 
@@ -225,6 +235,13 @@ class SettingsWindow:
                 self.resolution_button['state'] = 'disabled'
             if gui_vars_dict["windowed"]:
                 self.windowed.set('On')
+            if gui_vars_dict["logging"]:
+                self.logging.set('On')
+                self.delta_ocrtext_toggle['state'] = 'normal'
+                self.substring_ocrtext_toggle['state'] = 'normal'
+            else:
+                self.delta_ocrtext_toggle['state'] = 'disabled'
+                self.substring_ocrtext_toggle['state'] = 'disabled'
             if gui_vars_dict["delta_ocrtext"]:
                 self.delta_ocrtext.set('On')
             if gui_vars_dict["substring_ocrtext"]:
@@ -273,6 +290,27 @@ class SettingsWindow:
             gui_vars_dict["windowed"] = True
         elif self.windowed.get() == 'Off':
             gui_vars_dict["windowed"] = False
+        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+            json.dump(gui_vars_dict, f, indent=4)
+
+    def change_logging_status(self) -> None:
+        """Changes logging status based on toggle button value."""
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+            gui_vars_dict: dict[str, Any] = json.load(f)
+        if self.logging.get() == 'On':
+            gui_vars_dict["logging"] = True
+            self.delta_ocrtext_toggle['state'] = 'normal'
+            self.substring_ocrtext_toggle['state'] = 'normal'
+            if self.delta_ocrtext.get() == 'On':
+                gui_vars_dict["delta_ocrtext"] = True
+            if self.substring_ocrtext.get() == 'On':
+                gui_vars_dict["substring_ocrtext"] = True
+        elif self.logging.get() == 'Off':
+            gui_vars_dict["logging"] = False
+            gui_vars_dict["delta_ocrtext"] = False
+            gui_vars_dict["substring_ocrtext"] = False
+            self.delta_ocrtext_toggle['state'] = 'disabled'
+            self.substring_ocrtext_toggle['state'] = 'disabled'
         with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
             json.dump(gui_vars_dict, f, indent=4)
 
