@@ -6,6 +6,7 @@ from bot.bot_data import BotData
 from bot.bot_vars import BotVars
 from bot.ocr.ocr import weak_substring_check, strong_delta_check
 from bot.ocr.ocr_reader import OCR_READER
+from customprint import cprint
 
 class OcrLocations:
     """Wrapper class: text locations for ocr (current ocr library is easyocr).
@@ -52,11 +53,11 @@ class CollectionEvent:
 
         current event status is read from BotVars.current_event_status.
         """
-        print('\nChecking if collection event screen appears...')
+        cprint('\nChecking if collection event screen appears...')
         start = time.time()
         while time.time()-start <= 5:
             if strong_delta_check('collect', CollectionEvent.COLLECTION_COLLECT, OCR_READER):
-                print('Clicking all insta pop-ups location...')
+                cprint('Clicking all insta pop-ups location...')
                 kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_event'], 2)
                 time.sleep(3)
                 kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_two_left'], 2)
@@ -72,7 +73,7 @@ class CollectionEvent:
                 kb_mouse.click(CollectionEvent.COLLECTION_BUTTONS['collection_continue'])
                 time.sleep(3)
                 kb_mouse.press_esc()
-                print('Collection of event collectables handled.')
+                cprint('Collection of event collectables handled.')
                 return
 
 def returned(victory: bool = True) -> None:

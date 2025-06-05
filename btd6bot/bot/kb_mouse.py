@@ -8,6 +8,7 @@ import pynput
 from pynput.keyboard import Key, KeyCode
 
 from bot.bot_vars import BotVars
+from customprint import cprint
 
 pyautogui.FAILSAFE = False
 # pyautogui.FAILSAFE controls build-in pyautogui fail-safe of dragging mouse to a corner of the screen, shutting down 
@@ -60,7 +61,7 @@ def pixel_position(xy: tuple[float | None, float | None], ignore_windowed: bool 
         else:
             x, y = round(ScreenRes.width*xy[0]), round(ScreenRes.height*xy[1])
         return x, y
-    print('Error with converting scalars to pixels.')
+    cprint('Error with converting scalars to pixels.')
     return -1, -1   # this was added to satisfy mypy type hints.
 
 def click(pos: tuple[float | None, float | None], clicks: int=1, ignore_windowed: bool = False) -> None:

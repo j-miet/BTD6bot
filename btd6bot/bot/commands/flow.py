@@ -18,6 +18,7 @@ from pynput.keyboard import Key
 
 from bot import kb_mouse
 from bot.bot_vars import BotVars
+from customprint import cprint
 from utils import timing
 
 class AutoStart:
@@ -49,9 +50,9 @@ def wait(timer: float | int = 0) -> None:
     """
     if BotVars.defeat_status:
         return
-    print('Waiting... ', end='')
+    cprint('Waiting... ', end='')
     timing.counter(timer)
-    print(' -> Continuing.')
+    cprint(' -> Continuing.')
 
 def forward(speed: int=2) -> None:
     """Clicks the start button.
@@ -77,7 +78,7 @@ def forward(speed: int=2) -> None:
         time.sleep(0.2)
         kb_mouse.kb_input(Key.space)
     else:
-        print("Speed value must be either 1 or 2.")
+        cprint("Speed value must be either 1 or 2.")
         return
     AutoStart.called_forward = True
 
@@ -105,10 +106,10 @@ def change_autostart() -> None:
     kb_mouse.kb_input(Key.esc)
     if not AutoStart.autostart_status: 
         AutoStart.autostart_status = True
-        print('Autostart enabled.')
+        cprint('Autostart enabled.')
         return
     AutoStart.autostart_status = False
-    print('Autostart disabled.')
+    cprint('Autostart disabled.')
 
 def end_round(time_limit: int = 0) -> None:
     """Used for single clicking the start button to start next round when automatic start is disabled.
@@ -126,9 +127,9 @@ def end_round(time_limit: int = 0) -> None:
     if BotVars.defeat_status:
         return
     if time_limit >= 2:
-        print('Next round in... ', end='')
+        cprint('Next round in... ', end='')
         timing.counter(time_limit)
-        print()
+        cprint()
     else:
         time.sleep(time_limit)
     kb_mouse.kb_input(Key.space)

@@ -12,6 +12,7 @@ from bot import kb_mouse, times
 from bot.bot_vars import BotVars
 from bot.commands.monkey import Monkey
 from bot.hotkeys import hotkeys
+from customprint import cprint
 
 class Hero(Monkey):
     """Hero class that is used for placing a hero and implementing its hero-specific methods. 
@@ -193,7 +194,7 @@ class Hero(Monkey):
         """
         current = self._targeting
         if target == current:
-            print(f'Target already set to {current.capitalize()}.')
+            cprint(f'Target already set to {current.capitalize()}.')
             return 'OK'
         if cpos_x is not None:
             self._pos_x = cpos_x
@@ -204,7 +205,7 @@ class Hero(Monkey):
             self._update_panel_position(cpos_x)
         match self._hero_name:
             case 'benjamin':
-                print('???')
+                cprint('???')
             case 'etienne':
                 if target == 'd&q':
                     if current == 'first':
@@ -225,7 +226,7 @@ class Hero(Monkey):
                     return self._name, target
             case _:
                 return self._normal_targeting(current, target)   
-        print(f"{self._name.capitalize()} targeting set to '{target}'.")
+        cprint(f"{self._name.capitalize()} targeting set to '{target}'.")
         return 'OK'
 
     def upgrade(self, upg_list: list[str], cpos_x: float | None = None, cpos_y: float | None = None) -> None:
@@ -234,7 +235,7 @@ class Hero(Monkey):
         Overrides upgrade method of Monkey to prevent calling 'upgrade' of superclass Monkey. As upgrading heroes is 
         not possible, all this method does is print a message "Can't upgrade heroes".
         """
-        print("Can't upgrade heroes.")
+        cprint("Can't upgrade heroes.")
 
     def force_target(self) -> None:
         """Force targeting priority of a hero without checks.
@@ -246,9 +247,9 @@ class Hero(Monkey):
         """
         if self._hero_name == 'etienne':
             self._targeting = 'zone'
-            print('Etienne bot target value set to \'zone\'.')
+            cprint('Etienne bot target value set to \'zone\'.')
         else:
-            print("Nothing was changed.")
+            cprint("Nothing was changed.")
         
     def target(self, set_target: str,
               x: float | None = None,
@@ -399,7 +400,7 @@ class Hero(Monkey):
             kb_mouse.move_cursor((0.45, 0.01))
             kb_mouse.click((target_x, target_y))
             kb_mouse.press_esc()
-            print(f"Geraldo item {item} used.")
+            cprint(f"Geraldo item {item} used.")
 
     def spellbook(self, spells: list[int],
             cpos_x: float | None = None,
@@ -447,5 +448,5 @@ class Hero(Monkey):
                 elif self._panel_pos == 'right':
                     kb_mouse.click(Hero.HERO_RIGHT_MENU[spell-1])
                 self.special(2)
-                print(f"Corvus spell {spell} used.")
+                cprint(f"Corvus spell {spell} used.")
             kb_mouse.press_esc()

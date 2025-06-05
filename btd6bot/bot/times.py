@@ -9,6 +9,7 @@ import time
 from bot import kb_mouse
 from bot.bot_data import BotData
 from bot.bot_vars import BotVars
+from customprint import cprint
 
 class PauseControl:
     pause_length: float = 0
@@ -38,7 +39,7 @@ def time_print(start: float, end: float, str: str) -> None:
     total = end-start
     minutes = int(total/60)
     seconds = int(total % 60)
-    print(f'###{str} --- {minutes}:{seconds:02d}###')
+    cprint(f'###{str} --- {minutes}:{seconds:02d}###')
     if BotVars.time_recording_status:
         try:
             round_num = str.split()[1]
@@ -53,14 +54,14 @@ def pause_bot() -> None:
         kb_mouse.click((0.9994791666667, 0.0))
         kb_mouse.press_esc()
         BotData.update_pause(BotVars.paused)
-        print('>>> Bot paused')
+        cprint('>>> Bot paused')
         while BotVars.paused:
             time.sleep(0.1)
         PauseControl.pause_length += time.time() - pause_start
         kb_mouse.click((0.9994791666667, 0.0))
         kb_mouse.press_esc()
         BotData.update_pause(BotVars.paused)
-        print('Bot unpaused')
+        cprint('Bot unpaused')
 
 def current_time() -> float:
     """Returns current time.

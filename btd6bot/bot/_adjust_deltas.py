@@ -14,6 +14,7 @@ from bot.ocr.ocr import weak_substring_check, OcrValues
 from bot.ocr.ocr_reader import OCR_READER
 from bot.menu_start import OcrLocations, MouseLocations, _choose_map, _choose_diff
 from bot.rounds import Rounds
+from customprint import cprint
 from utils import timing
 
 _TEMPFILE_PATH = pathlib.Path(__file__).parent.parent/'Files'/'.temp_upg_deltas.json'
@@ -139,13 +140,13 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
     baseval_flag = 0
     for key in base_keys:
         if key not in current_keys:
-            print("Current upgrades file has missing keys.\nALL monkeys will be adjusted.\n///")
+            cprint("Current upgrades file has missing keys.\nALL monkeys will be adjusted.\n///")
             with open(_TEMPFILE_PATH, 'w') as tempf:
                 json.dump(base_dict, tempf, indent=2)
             baseval_flag = 1
             break
         elif current_dict[key][0] != base_dict[key][0]:
-            print("Mismatch in one or more current upgrade names.\nALL monkeys will be adjusted.\n///")
+            cprint("Mismatch in one or more current upgrade names.\nALL monkeys will be adjusted.\n///")
             with open(_TEMPFILE_PATH, 'w') as tempf:
                 json.dump(base_dict, tempf, indent=2)
             baseval_flag = 1
@@ -170,35 +171,35 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
     BotVars.checking_time_limit = 10
     OcrValues._log_ocr_deltas = True
 
-    print("\nSearching for main menu screen...", end='')
+    cprint("\nSearching for main menu screen...", end='')
     while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
         time.sleep(0.5)
-    print(" <Menu detected>\n")
-    print("-Updating values will take a while.\n"
+    cprint(" <Menu detected>\n")
+    cprint("-Updating values will take a while.\n"
             "-Do not use mouse or keyboard during this process.")
-    print("Starting in... ", end='')
+    cprint("Starting in... ", end='')
     timing.counter(5)
-    print("\n--Begin--")
+    cprint("\n--Begin--")
 
     _choose_map('spa pits')
     _choose_diff('EASY')
     kb_mouse.click(MouseLocations.MODES['bottom_left']) # sandbox mode
 
     start = time.time()
-    print("\nWaiting for map screen...")
+    cprint("\nWaiting for map screen...")
     while not weak_substring_check('Upgrades', Rounds.UPGRADE_TEXT, OCR_READER):
         if time.time()-start > 20:
-            print("Could not find map screen in 20 seconds, script halted.")
+            cprint("Could not find map screen in 20 seconds, script halted.")
             return
         kb_mouse.click((0.5036458333333, 0.7064814814815))
         time.sleep(0.5)
-    print("\n###")
+    cprint("\n###")
     kb_mouse.click((0.5036458333333, 0.7064814814815))
     time.sleep(1)
 
     # left upgrade panel
     for m in monkeys:
-        print(f"=={m}==")
+        cprint(f"=={m}==")
         _check_ocr(m, *_get_positions(m, 'left'))
     left_deltas: dict[str, Any] = {}
     with open(_TEMPFILE_PATH) as f:
@@ -206,7 +207,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
 
     # right upgrade panel
     for m in monkeys:
-        print(f"=={m}==")
+        cprint(f"=={m}==")
         _check_ocr(m, *_get_positions(m, 'right'))
     right_deltas: dict[str, Any] = {}
     with open(_TEMPFILE_PATH) as f:
@@ -223,7 +224,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
     # adjusted final deltas
     if delta_adjust > 0:
         adjust_val = delta_adjust*0.01
-        print("---------------------------------------------------\n"
+        cprint("---------------------------------------------------\n"
                 "Adjusting ocr deltas based on delta value...")
         with open(_TEMPFILE_PATH) as f:
             adjusted_dict: dict[str, Any] = json.load(f)
@@ -248,14 +249,14 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
 
     with open(pathlib.Path(__file__).parent.parent/'Files'/'upgrades_current.json', 'w') as f:
         json.dump(upg_dict, f, indent=2)
-    print("-Deltas updated in upgrades_current.json")
+    cprint("-Deltas updated in upgrades_current.json")
     warning_flag = 1
     for monkey_vals in upg_dict.keys():
         if monkey_vals != "__identifier" and upg_dict[monkey_vals][1] <= 0.5:
             if warning_flag:
-                print("#!# Following deltas are unusually low #!#")
+                cprint("#!# Following deltas are unusually low #!#")
                 warning_flag = 0
-            print(f"{monkey_vals}, {upg_dict[monkey_vals][0]}: {upg_dict[monkey_vals][1]}")
+            cprint(f"{monkey_vals}, {upg_dict[monkey_vals][0]}: {upg_dict[monkey_vals][1]}")
 
     # automatically reset toggle value from settings after updating
     with open(pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json') as guivars_f:
@@ -263,7 +264,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
     guivars_dict["ocr_adjust_deltas"] = False
     with open(pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json', 'w') as guivars_f:
         json.dump(guivars_dict, guivars_f, indent=4)
-    print("-Auto-adjust set to False.\n")
+    cprint("-Auto-adjust set to False.\n")
 
     os.remove(_TEMPFILE_PATH)   # delete temp file .temp_upg_deltas.json
     time.sleep(2)
@@ -273,7 +274,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
 
     while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
         time.sleep(0.5)
-    print("Adjusting process complete!")
+    cprint("Adjusting process complete!")
 
 def run() -> None:
     with open(pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json') as f:
@@ -297,7 +298,7 @@ def run() -> None:
             delta_val = int(args[6:])
             if 0 <= delta_val <= 9:
                 delta = delta_val
-    print("Updating upgrade deltas with following arguments:\n" \
+    cprint("Updating upgrade deltas with following arguments:\n" \
             f"Resolution: {res_vals[0]}x{res_vals[1]}\n"
             f"Windowed: {BotVars.windowed}\n"
             f"Monkeys: {monkey_list}\n"

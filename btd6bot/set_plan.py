@@ -22,6 +22,7 @@ import importlib
 import json
 import pathlib
 
+from customprint import cprint
 import plans # shows as 'not accessed' in VS Code, because it's only used via importlib module.
 from utils import plan_data
 from utils.exceptions import SetPlanError, BotError
@@ -184,7 +185,7 @@ def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str,
         if _check_if_temp_valid():
             _save_to_json(plan_name)
     except BotError as err:
-        print(err)
+        cprint(err)
 
 def plan_setup(plan: str) -> None:
     """Handles and passes map, strategy and round settings to correct map module.
@@ -197,12 +198,12 @@ def plan_setup(plan: str) -> None:
     try:
         plan_module = importlib.import_module(name='plans.'+plan)
     except ModuleNotFoundError:
-        print(f'Plan file {plan}.py doesn\'t exist OR invalid module import somewhere under bot package.')
+        cprint(f'Plan file {plan}.py doesn\'t exist OR invalid module import somewhere under bot package.')
         return
     try:
         info = get_plan_info(plan)
     except SetPlanError as e:
-         print(f'{plan} - ', end='')
-         print(e)
+         cprint(f'{plan} - ', end='')
+         cprint(e)
          return
     plan_run(plan, plan_module, (*info, get_hero_name_from_plan(plan)))

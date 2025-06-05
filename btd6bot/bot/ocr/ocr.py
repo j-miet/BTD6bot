@@ -45,6 +45,7 @@ from numpy import array, repeat
 
 from bot import kb_mouse
 from bot.bot_vars import BotVars
+from customprint import cprint
 
 if TYPE_CHECKING:
     from easyocr import Reader  # type: ignore
@@ -269,7 +270,7 @@ def weak_substring_check(input_str: str, coords: tuple[float, float, float, floa
     (br_x, br_y) = kb_mouse.pixel_position((coords[2], coords[3]))
     text = weak_image_ocr((tl_x, tl_y, br_x, br_y), reader)
     if BotVars.print_substring_ocrtext:
-        print("\nText: "+text.lower()+'\nInput: '+input_str.lower())
+        cprint("\nText: "+text.lower()+'\nInput: '+input_str.lower())
     if len(text) != 0 and text.lower().find(input_str.lower()) != -1:
         return True
     time.sleep(OcrValues.read_file_frequency)
@@ -336,8 +337,8 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
                 delta_limit = match[1]
             d = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), match_str).quick_ratio() # type: ignore
             if BotVars.print_delta_ocrtext:
-                print('\n-Text: '+text.lower())
-                print("-Match delta: "+str(d))
+                cprint('\n-Text: '+text.lower())
+                cprint("-Match delta: "+str(d))
                 if OcrValues._log_ocr_deltas:
                     with open(
                         pathlib.Path(__file__).parent.parent.parent/'Files'/'.temp_upg_deltas.json'
@@ -358,7 +359,7 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
         elif input_str != '':
             r = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), input_str.lower()).quick_ratio()
             if BotVars.print_delta_ocrtext:
-                print('\n-Input: '+input_str.lower()+'\n-Text: '+text.lower()+'\n-Delta: '+str(r))
+                cprint('\n-Input: '+input_str.lower()+'\n-Text: '+text.lower()+'\n-Delta: '+str(r))
             if r >= OcrValues.DELTA:
                 return True
     time.sleep(OcrValues.read_file_frequency)
@@ -393,7 +394,7 @@ def strong_substring_check(input_str: str, coords: tuple[float, float, float, fl
     text = strong_image_ocr((tl_x, tl_y, br_x, br_y), reader)
     text_lower = text.lower()
     if BotVars.print_substring_ocrtext:
-        print("\nText: "+text_lower+'\nInput: '+input_str.lower())
+        cprint("\nText: "+text_lower+'\nInput: '+input_str.lower())
     if len(text) != 0 and text_lower.find(input_str.lower()) != -1:
         return (True, text_lower)
     time.sleep(OcrValues.read_file_frequency)

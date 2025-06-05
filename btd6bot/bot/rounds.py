@@ -9,6 +9,7 @@ from bot.bot_vars import BotVars
 import bot.menu_return
 from bot.ocr.ocr import weak_substring_check, strong_substring_check, strong_delta_check, get_pixelcolor
 from bot.ocr.ocr_reader import OCR_READER
+from customprint import cprint
 from utils import timing
 from utils.exceptions import BotError
 
@@ -78,16 +79,16 @@ class Rounds:
             autostart = get_pixelcolor(0.6697916666667, 0.2796296296296)
             if dragdrop[0] != 0:
                 kb_mouse.click((0.4427083333333, 0.2777777777778))
-                print("Enabled 'drag & drop'")
+                cprint("Enabled 'drag & drop'")
                 time.sleep(0.5)
             if nugde[2] != 0:
                 kb_mouse.click((0.4458333333333, 0.412962962963))
-                print("Disabled nugde mode'")
+                cprint("Disabled nugde mode'")
                 time.sleep(0.5)
             if autostart[2] != 0:
                 kb_mouse.click((0.6697916666667, 0.2796296296296))
                 AutoStart.autostart_status = True
-                print("Enabled 'auto start'")
+                cprint("Enabled 'auto start'")
                 time.sleep(0.5)
             kb_mouse.press_esc()
             Rounds.escsettings_checked = True
@@ -95,7 +96,7 @@ class Rounds:
     @staticmethod
     def _defeat_return(exit_str: str) -> None:
         BotData.set_data(current_round=Rounds.end_round+1)
-        print('Defeat: returning to menu in...', end=' ')
+        cprint('Defeat: returning to menu in...', end=' ')
         timing.counter(3)
         if exit_str == 'manual':
             kb_mouse.click(Rounds.BUTTONS['home_button2'])
@@ -105,7 +106,7 @@ class Rounds:
             kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
         bot.menu_return.returned(False)
         Rounds.escsettings_checked = False
-        print('\nPlan failed.\n')
+        cprint('\nPlan failed.\n')
 
     @staticmethod
     def defeat_check(current_time: float, cycle: int, frequency: int) -> bool:
@@ -131,19 +132,19 @@ class Rounds:
             if times.current_time() - current_time < BotVars.checking_time_limit:
                 if cycle == frequency:   # frequency of defeat checks: 2 = every second loop, N = every Nth loop.
                     if weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
-                        print("\n**Defeat screen detected, game status set to defeat.**")
+                        cprint("\n**Defeat screen detected, game status set to defeat.**")
                         BotVars.defeat_status = True
                         return True
                     else:
                         return False
                 return False
             else:
-                print("\nChecking time limit reached! Game status set to defeat.")
+                cprint("\nChecking time limit reached! Game status set to defeat.")
                 BotVars.defeat_status = True
                 Rounds.exit_type = 'manual'
                 return True
         else:
-            print("Bad cycle and/or frequency values.")
+            cprint("Bad cycle and/or frequency values.")
             return False
 
     @staticmethod
@@ -175,7 +176,7 @@ class Rounds:
         time.sleep(0.5)
         times.time_print(total_start, final_round_end, 'Total')
 
-        print('\nExiting map in...', end=' ')
+        cprint('\nExiting map in...', end=' ')
         timing.counter(3)
         kb_mouse.click(Rounds.BUTTONS['next_button'])
         time.sleep(0.5)
@@ -184,7 +185,7 @@ class Rounds:
         # for some reason, in apopalypse, the home button is placed slighty more to the right than usual.
         kb_mouse.click(Rounds.BUTTONS['home_button2'])
         bot.menu_return.returned()
-        print('\nPlan completed.\n')
+        cprint('\nPlan completed.\n')
 
     @staticmethod
     def start() -> None:
@@ -202,7 +203,7 @@ class Rounds:
             kb_mouse.click((0.5, 0.69)) #if game mode is 'Apopalypse', click the button.
             time.sleep(1)
         time.sleep(0.5)
-        print('--> Running...')
+        cprint('--> Running...')
         kb_mouse.click((0.999, 0.01))  # closes any difficulty info pop-up window after entering a game.
         time.sleep(1)
         if BotVars.check_gamesettings:
@@ -228,7 +229,7 @@ class Rounds:
             Current round number.
         """
         if prev_round == -1:
-            print("\nHero/map selection failed.")
+            cprint("\nHero/map selection failed.")
             kb_mouse.click((0.1911458333333, 0.0388888888889))
             time.sleep(1)
             kb_mouse.press_esc()
@@ -285,7 +286,7 @@ class Rounds:
                 else:
                     break
             times.time_print(Rounds.current_round_begin_time, times.current_time(), f'Round {current_round-1}')
-            print('=== Current round:', current_round, '===')
+            cprint('=== Current round:', current_round, '===')
         times.pause_bot()
         Rounds.current_round_begin_time = times.current_time()
         BotData.set_data(round_time=Rounds.current_round_begin_time,

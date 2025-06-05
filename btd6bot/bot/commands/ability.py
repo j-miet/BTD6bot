@@ -10,6 +10,7 @@ from bot import kb_mouse, times
 from bot.bot_vars import BotVars
 from bot.hotkeys import hotkeys
 from bot.rounds import Rounds
+from customprint import cprint
 
 def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, delay: float = 0) -> None:
     """Presses the specified ability hotkey.
@@ -53,7 +54,7 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
     times.pause_bot()
     if BotVars.defeat_status:
         return
-    print(f'Using ability {key} with timer {timer}... ', end='')
+    cprint(f'Using ability {key} with timer {timer}... ', end='')
     begin_time = Rounds.current_round_begin_time
     if timer == 0:
         kb_mouse.kb_input(hotkeys['ability '+str(key)])
@@ -63,7 +64,7 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
                 move_cursor(xy[0], xy[1])
             else:
                 kb_mouse.click(xy)
-        print('Ability used.')
+        cprint('Ability used.')
         return
     while times.current_time()-begin_time < timer:     
         time.sleep(0.01)    # small sleep timer to avoid constant processing of time.time
@@ -74,7 +75,7 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
             move_cursor(xy[0], xy[1])
         else:
             kb_mouse.click(xy)
-    print('Ability used.')
+    cprint('Ability used.')
 
 def click(x: float, y: float, N: int = 1) -> None:
     """Clicks selected position N times.
@@ -92,9 +93,9 @@ def click(x: float, y: float, N: int = 1) -> None:
         return
     kb_mouse.click((x, y), clicks=N)
     if N > 1:
-        print(f"Clicked at ({x}, {y}) {N} times")
+        cprint(f"Clicked at ({x}, {y}) {N} times")
     else:
-        print(f"Clicked at ({x}, {y})")
+        cprint(f"Clicked at ({x}, {y})")
 
 def move_cursor(x: float, y: float) -> None:
     """Move mouse cursor to target location"""

@@ -33,6 +33,7 @@ import bot.ocr.ocr as ocr
 from bot.ocr.ocr import OcrValues
 from bot.ocr.ocr_reader import OCR_READER
 from bot.rounds import Rounds
+from customprint import cprint
 
 class _MonkeyConstants:
     """Wrapper for constants of Monkey class.
@@ -233,20 +234,20 @@ class Monkey(_MonkeyConstants):
         obj = error_object 
         if type == 'init':
             if obj[0] == '-1':
-                print(f'\nNAME ERROR "{obj[0]}": monkey name not found.')
+                cprint(f'\nNAME ERROR "{obj[0]}": monkey name not found.')
             if obj[1] == '-1':
-                print(f'\nPOS_X ERROR {obj[1]}: x-coordinate must be within interval [0,1).')
+                cprint(f'\nPOS_X ERROR {obj[1]}: x-coordinate must be within interval [0,1).')
             if obj[2] == '-1':
-                print(f'\nPOS_Y ERROR {obj[2]}: y-coordinate must be within interval [0,1).')
+                cprint(f'\nPOS_Y ERROR {obj[2]}: y-coordinate must be within interval [0,1).')
         elif type == 'target':
-            print(f'\nTARGET ERROR "{obj}": {obj} is not a valid targeting for {other}.')
+            cprint(f'\nTARGET ERROR "{obj}": {obj} is not a valid targeting for {other}.')
         elif type == 'upgrade_list':
-            print('\nUPGRADE LIST ERROR: upgrade list is empty.')
+            cprint('\nUPGRADE LIST ERROR: upgrade list is empty.')
         elif type == 'upgrade':
-            print(f'\nUPGRADE PATH ERROR: upgrade path {obj} in current upgrade list {other} is invalid.')
+            cprint(f'\nUPGRADE PATH ERROR: upgrade path {obj} in current upgrade list {other} is invalid.')
         time.sleep(1)
         BotVars.defeat_status = True
-        print('\n**An Error has occured. Current game state treated as Defeat**')
+        cprint('\n**An Error has occured. Current game state treated as Defeat**')
 
     def _init_panel_position(self) -> str:
         """Get upgrade panel position of current monkey.
@@ -360,7 +361,7 @@ class Monkey(_MonkeyConstants):
                 return hotkeys['engineer monkey']
             case 'beast': 
                 return hotkeys['beast handler']
-        print("HOTKEY NOT FOUND")
+        cprint("HOTKEY NOT FOUND")
         return "Error"
     
     def _basic_monkey_targeting(self) -> str | None:
@@ -430,7 +431,7 @@ class Monkey(_MonkeyConstants):
                 kb_mouse.kb_input(hotkeys['target change'], 1)
         else:
             return self._name, target
-        print(f"{self._name.capitalize()} targeting set to '{target}'.")
+        cprint(f"{self._name.capitalize()} targeting set to '{target}'.")
         return 'OK'
     
     def _change_target_special(self, s: str | int, x: float | None = None, y: float | None = None) -> None:
@@ -442,7 +443,7 @@ class Monkey(_MonkeyConstants):
             y: If targetable ability, its y-coordinate. Default value is None.
         """
         if s not in [1, 2, '1', '2']:
-            print("Wrong input value on special ability; use 1/'1' or 2/'2'")
+            cprint("Wrong input value on special ability; use 1/'1' or 2/'2'")
             return
         kb_mouse.kb_input(hotkeys['special '+str(s)])
         if x is not None and y is not None:
@@ -474,7 +475,7 @@ class Monkey(_MonkeyConstants):
         """ 
         current = self._targeting
         if current == target:
-            print(f'Already set to {target.capitalize()}.')
+            cprint(f'Already set to {target.capitalize()}.')
             kb_mouse.press_esc()
             return 'OK'
         if cpos_x is not None:
@@ -688,7 +689,7 @@ class Monkey(_MonkeyConstants):
                             return self._name, target
             case 'mortar':  
                 # with mortar, you need to always use special(1, x, y) as mortars cannot use targeting.
-                print("Use special(1, x, y) instead.")
+                cprint("Use special(1, x, y) instead.")
                 return 'OK'
             case 'dartling':
                 # after changing to 'locked', you must use special(1, x, y) instead to change target. 
@@ -739,7 +740,7 @@ class Monkey(_MonkeyConstants):
                     return self._name, target
             case _:
                 return self._normal_targeting(current, target)
-        print(f"{self._name.capitalize()} targeting set to '{target}'.")
+        cprint(f"{self._name.capitalize()} targeting set to '{target}'.")
         return 'OK'
     
     def _update_auto_target_paths(self, upg_path: str, path_index: int) -> None:
@@ -794,7 +795,7 @@ class Monkey(_MonkeyConstants):
             while not ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER):
                 if time.time()-start > 10:
                     BotVars.defeat_status = True
-                    print("Failed to find the upgradeable monkey.")
+                    cprint("Failed to find the upgradeable monkey.")
                     return
                 if counter == 3:
                     kb_mouse.click((self._pos_x, self._pos_y))
@@ -807,7 +808,7 @@ class Monkey(_MonkeyConstants):
             while not ocr.strong_delta_check('Sell', Monkey._LEFT_PANEL_SELL_LOCATION, OCR_READER):
                 if time.time()-start > 10:
                     BotVars.defeat_status = True
-                    print("Failed to find the upgradeable monkey.")
+                    cprint("Failed to find the upgradeable monkey.")
                     return
                 if counter == 3:
                     kb_mouse.click((self._pos_x, self._pos_y))
@@ -818,7 +819,7 @@ class Monkey(_MonkeyConstants):
                 counter += 1
         for upg in upgrade_list:
             u = self._upgrade_path
-            print(f'Upgrading {u} {self._name.capitalize()} to {upg}...', end=' ')
+            cprint(f'Upgrading {u} {self._name.capitalize()} to {upg}...', end=' ')
             for i in range(0, 3):
                 if int(u[2*i]) != int(upg[2*i]):
                     self._select_upgrade(upg, paths[i])
@@ -900,7 +901,7 @@ class Monkey(_MonkeyConstants):
             if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
                 defeat_check = 1
             if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
-                print(f'**Failed to upgrade {self._name.capitalize()}**')
+                cprint(f'**Failed to upgrade {self._name.capitalize()}**')
                 kb_mouse.press_esc()    # close the upgrade panel if still open
                 return
             defeat_check += 1
@@ -923,7 +924,7 @@ class Monkey(_MonkeyConstants):
                     upgraded = 1
             if upgraded:
                 if not OcrValues._log_ocr_deltas:
-                    print('Upgraded.')
+                    cprint('Upgraded.')
                 self._upgrade_path = upg
                 return
 
@@ -943,7 +944,7 @@ class Monkey(_MonkeyConstants):
         """
         if BotVars.defeat_status:
             return
-        print(f'Placing {self._name.capitalize()}...', end=' ')
+        cprint(f'Placing {self._name.capitalize()}...', end=' ')
         total_time = times.current_time()
         placed = 0
         defeat_check = 1
@@ -953,7 +954,7 @@ class Monkey(_MonkeyConstants):
                 kb_mouse.click((0.5, 0))
                 kb_mouse.kb_input(self._get_hotkey())
                 kb_mouse.click((self._pos_x, self._pos_y), 1)
-                print(f'{self._name.capitalize()} placed.')
+                cprint(f'{self._name.capitalize()} placed.')
                 return
             times.pause_bot()
             if levelup_check == Rounds.LEVEL_UP_CHECK_FREQUENCY:
@@ -963,7 +964,7 @@ class Monkey(_MonkeyConstants):
             if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
                 defeat_check = 1
             if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
-                print(f'**Failed to place {self._name.capitalize()}**')
+                cprint(f'**Failed to place {self._name.capitalize()}**')
                 return
             defeat_check += 1
             kb_mouse.kb_input(self._get_hotkey())
@@ -982,7 +983,7 @@ class Monkey(_MonkeyConstants):
                 kb_mouse.press_esc()
                 if Monkey._wingmonkey == 0 and self._name == 'ace_wing':
                     Monkey._wingmonkey = 1  # detect and account for 'wingmonkey' mk if name 'ace_wing' is used.
-                print(f'{self._name.capitalize()} placed.')
+                cprint(f'{self._name.capitalize()} placed.')
                 return
     
     def special(self, s: str | int = 1,
@@ -1105,7 +1106,7 @@ class Monkey(_MonkeyConstants):
         if BotVars.defeat_status:
             return
         elif s not in [1, 2, '1', '2']:
-            print('Wrong input value on special ability; use 1 or 2')
+            cprint('Wrong input value on special ability; use 1 or 2')
             return
         # current position click; used on monkey-moving maps like Geared/Sanctuary. Updates new coordinates to monkey.
         if cpos_x is not None:
@@ -1120,7 +1121,7 @@ class Monkey(_MonkeyConstants):
             kb_mouse.click((x, y))
         kb_mouse.press_esc()
         #time.sleep(0.3)
-        print(f'{self._name.capitalize()} special {s} used.')
+        cprint(f'{self._name.capitalize()} special {s} used.')
 
     def sell(self, cpos_x: float | None = None, cpos_y: float | None = None) -> None:
         """Sells this monkey.
@@ -1167,7 +1168,7 @@ class Monkey(_MonkeyConstants):
         if self._name == 'sniper' and self._upgrade_path[2] == 5:
             Monkey._elite_sniper = 0
         if not OcrValues._log_ocr_deltas:
-            print(f'{self._name.capitalize()} sold!')
+            cprint(f'{self._name.capitalize()} sold!')
 
     def target(self, set_target: str,
                x: float | None = None,
@@ -1469,7 +1470,7 @@ class Monkey(_MonkeyConstants):
         if BotVars.defeat_status:
             return
         elif self._name == 'hero':
-            print("Heroes cannot be upgraded.")
+            cprint("Heroes cannot be upgraded.")
             return
         elif set_upg != []:
             for upg in set_upg:
@@ -1507,7 +1508,7 @@ class Monkey(_MonkeyConstants):
         if BotVars.defeat_status:
             return
         if self._name != 'super':
-            print('This monkey is not a super monkey.')
+            cprint('This monkey is not a super monkey.')
             return
         if cpos_x is not None:
             self._pos_x = cpos_x
@@ -1522,16 +1523,16 @@ class Monkey(_MonkeyConstants):
             elif direction == 'right':
                 kb_mouse.click((0.185, 0.292), clicks)
             else:
-                print("Could not change targeting.")
+                cprint("Could not change targeting.")
         else:
             if direction == 'left':
                 kb_mouse.click((0.680, 0.292), clicks)
             elif direction == 'right':
                 kb_mouse.click((0.822, 0.292), clicks)
             else:
-                print("Could not change targeting.")
+                cprint("Could not change targeting.")
         kb_mouse.press_esc()
-        print("Changed robo monkey second arm targeting.")
+        cprint("Changed robo monkey second arm targeting.")
 
     def merge(self, x: float, y: float, cpos_x: float | None = None, cpos_y: float | None = None) -> None:
         """Merges this beast handler into another.
@@ -1546,7 +1547,7 @@ class Monkey(_MonkeyConstants):
         if BotVars.defeat_status:
             return
         if self._name != 'beast':
-            print("This monkey is not a beast handler.")
+            cprint("This monkey is not a beast handler.")
             return
         if cpos_x is not None:
             self._pos_x = cpos_x
@@ -1560,7 +1561,7 @@ class Monkey(_MonkeyConstants):
         time.sleep(0.5)
         kb_mouse.press_esc()
         time.sleep(0.1)
-        print("Beast merged.") 
+        cprint("Beast merged.") 
 
     def center(self, x: float, y: float, cpos_x: float | None = None, cpos_y: float | None = None) -> None:
         """Change monkey ace centered path location.
@@ -1575,7 +1576,7 @@ class Monkey(_MonkeyConstants):
         if BotVars.defeat_status:
             return
         if self._name != 'ace':
-            print("Can only be used on ace.")
+            cprint("Can only be used on ace.")
             return
         if cpos_x is not None:
             self._pos_x = cpos_x
@@ -1587,4 +1588,4 @@ class Monkey(_MonkeyConstants):
         kb_mouse.kb_input(hotkeys["centered path"])
         kb_mouse.click((x,y))
         kb_mouse.press_esc()
-        print("Ace center location updated.") 
+        cprint("Ace center location updated.") 
