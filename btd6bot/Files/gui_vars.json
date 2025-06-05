@@ -7,6 +7,7 @@
     "retries": 5,
     "ocr_frequency": 0.01,
     "checking_time_limit": 300,
+    "logging": false,
     "delta_ocrtext": false,
     "substring_ocrtext": false,
     "ocr_adjust_deltas": false,

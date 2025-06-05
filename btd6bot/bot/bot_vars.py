@@ -35,6 +35,7 @@ class BotVars:
     time_recording_status: bool = True
     checking_time_limit: int = 300
     check_gamesettings: bool = True
+    logging: bool = False
     print_delta_ocrtext: bool = False
     print_substring_ocrtext: bool = False
 

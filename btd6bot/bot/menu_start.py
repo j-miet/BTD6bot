@@ -29,6 +29,7 @@ from bot.ocr.ocr import weak_substring_check
 from bot.ocr.ocr_reader import OCR_READER
 from bot.rounds import Rounds
 from bot.times import PauseControl
+from customprint import cprint
 
 if TYPE_CHECKING:
     from typing import Any
@@ -118,11 +119,11 @@ def _choose_hero(hero_name: str | None) -> bool:
     all_heroes = (tuple(MouseLocations.HEROES.keys()),
                   tuple(MouseLocations.HEROES2.keys()))
     if hero_name is None or hero_name.lower() not in set().union(*all_heroes):
-        print('No hero used in current plan')
+        cprint('No hero used in current plan')
         Hero.current_plan_hero_name = hero_name
         return True
     else:
-        print("Selecting", hero_name.capitalize(), "as hero... ", end='')
+        cprint("Selecting", hero_name.capitalize(), "as hero... ", end='')
         kb_mouse.click(MouseLocations.BUTTONS['heroes'])
         start: int = time.time()
         while not weak_substring_check('se', (0.5296875, 0.5472222222222, 0.6338541666667, 0.5916666666667),
@@ -141,7 +142,7 @@ def _choose_hero(hero_name: str | None) -> bool:
     kb_mouse.click(MouseLocations.BUTTONS['hero_select'])
     time.sleep(0.3)
     kb_mouse.press_esc()
-    print("Hero selected!")
+    cprint("Hero selected!")
     return True
 
 def _choose_map(map_name: str) -> bool:
@@ -254,7 +255,7 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
         with open(pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
     except json.decoder.JSONDecodeError:
-        print('gui_vars.json not found or cannot be read. Defaulting to bot_vars default values.')
+        cprint('gui_vars.json not found or cannot be read. Defaulting to bot_vars default values.')
         return
     try:
         customres_val: bool = gui_vars_dict["check_resolution"]
@@ -276,27 +277,27 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
         BotVars.print_substring_ocrtext = substringocr_val
         OcrValues.read_file_frequency = frequency_val
     except ValueError:
-        print("Unable to read at least one of the gui_vars.json keys. Defaulting to bot_vars initial values.")
+        cprint("Unable to read at least one of the gui_vars.json keys. Defaulting to bot_vars initial values.")
 
 def _start_plan() -> None:
     """Resets counter if mouse moves during it."""
-    print('Starting plan in...', end=' ')
+    cprint('Starting plan in...', end=' ')
     timer = 3
     x, y = pyautogui.position()
     while timer > 0:
         for i in range(3, 0, -1):
             if (x, y) != tuple(pyautogui.position()):
-                print("\nMouse moved, reseting timer!")
-                print('Starting plan in...', end=' ')
+                cprint("\nMouse moved, reseting timer!")
+                cprint('Starting plan in...', end=' ')
                 time.sleep(0.1)
                 timer = 3
                 x, y = pyautogui.position()
                 break
-            print(i, end=' ', flush=True)
+            cprint(i, end=' ', flush=True)
             time.sleep(1)
             timer -= 1
-    print()
-    print('--> *Bot running*')
+    cprint()
+    cprint('--> *Bot running*')
 
 def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, hero: str) -> tuple[int, int]:
     """Sets up pre-game conditions for the plan by choosing correct hero, map, difficulty and game mode.
@@ -315,7 +316,7 @@ def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, 
         Begin and end rounds.
     """
     _update_external_variables(begin_round, end_round)
-    print('Searching for main menu screen...')
+    cprint('Searching for main menu screen...')
     while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
         time.sleep(0.3)
     _start_plan()
