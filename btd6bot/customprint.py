@@ -6,8 +6,12 @@ def cprint(*values, sep = " ", end = "\n", file = None, flush = False) -> None:
     """Custom print"""
     if BotVars.logging:
         with open(Path(__file__).parent.parent/"Logs.txt", 'a') as logfile:
-            logfile.writelines(*values)
-            logfile.write("\n")
+            for val in values:
+                logfile.write(str(val))
+                if sep == " ":
+                    logfile.write(" ")
+            if end == "\n":
+                logfile.write("\n")
     print(*values, sep=sep, end=end, file=file, flush=flush)
 
 def cinput(prompt="") -> str:
@@ -15,5 +19,5 @@ def cinput(prompt="") -> str:
     value = input(prompt)
     if BotVars.logging:
         with open(Path(__file__).parent.parent/"Logs.txt", 'a') as logfile:
-            logfile.write(prompt+value+'\n')
+            logfile.write(str(prompt)+value+'\n')
     return value
