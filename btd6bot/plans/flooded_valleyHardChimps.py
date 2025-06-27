@@ -29,7 +29,10 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         if current_round == BEGIN:
             sub1 = Monkey('sub', 0.5557291666667, 0.8203703703704)
             forward()
+            wait(5)
+            forward(1)
             sub2 = Monkey('sub', 0.4817708333333, 0.1407407407407)
+            forward(1)
         elif current_round == 10:
             hero = Hero(0.5411458333333, 0.6462962962963)
         elif current_round == 13:

@@ -132,6 +132,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             alch1.upgrade(['1-0-0'])
             end_round(3)
         elif current_round == 36:
+            ability(1)
             end_round(10)
         elif current_round == 37:
             alch1.target('close')
@@ -193,7 +194,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             ice1.upgrade(['1-0-0','2-0-0','3-0-0','3-1-0'])
             end_round(10)
         elif current_round == 50:
-            ability(1,1.5)
+            ability(1,1.25)
             village1 = Monkey('village', 0.4786458333333, 0.9435185185185)
             village1.upgrade(['1-0-0','2-0-0','2-0-1','2-0-2'])
             end_round(3)

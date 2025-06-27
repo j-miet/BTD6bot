@@ -111,9 +111,6 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             ability(2, 6.5)
             ability(1, 9)
         elif current_round == 73:
-            ability(2, 10)
             glue.upgrade(['5-2-0'], cpos_x=0.5322916666667, cpos_y=0.2231481481481)
         elif current_round == 75:
             sniper1.upgrade(['4-0-2'], cpos_x=0.328125, cpos_y=0.0564814814815)
-        elif current_round == 77:
-            sniper1.target('strong', cpos_x=0.4916666666667, cpos_y=0.0305555555556)
