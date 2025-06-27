@@ -329,10 +329,11 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
     text = strong_image_ocr((tl_x, tl_y, br_x, br_y), reader)
     if len(text) != 0:
         if input_str == '_upgrade_':
-            match = OcrValues.OCR_UPGRADEDATA[upg_match]
             if OcrValues._log_ocr_deltas:
+                match = OcrValues._OCR_UPG_BASEDATA[upg_match]
                 match_str = match[0]
             else:
+                match = OcrValues.OCR_UPGRADEDATA[upg_match]
                 match_str = match[0]
                 delta_limit = match[1]
             d = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), match_str).quick_ratio() # type: ignore
