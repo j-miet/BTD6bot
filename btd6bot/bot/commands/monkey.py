@@ -45,30 +45,18 @@ class _MonkeyConstants:
 
         TOP_UPG_CURRENT_LEFTWINDOW (T[F], class attribute): Location of current top path 
             upgrade if upgrade window opens on the left.
-        TOP_UPG_NEXT_LEFTWINDOW (T[F]], class attribute): Location of next top path upgrade 
-            if upgrade window opens on the left.
         TOP_UPG_CURRENT_RIGHTWINDOW (T[F]], class attribute): Current top path upgrade if 
             upgrade window opens on the right.
-        TOP_UPG_NEXT_RIGHTWINDOW (T[F]], class attribute): next top path upgrade if upgrade 
-            window opens on the right.
 
         MID_UPG_CURRENT_LEFTWINDOW (T[F], class attribute): Current middle path upgrade if 
             upgrade window opens on the left.
-        MID_UPG_NEXT_LEFTWINDOW (T[F], class attribute): Next middle upgrade path if 
-            upgrade window  opens on the left.
         MID_UPG_CURRENT_RIGHTWINDOW (T[F], class attribute): Current middle path upgrade 
             if upgrade  window opens on the right.
-        MID_UPG_NEXT_RIGHTWINDOW (T[F], class attribute): Next middle path upgrade if 
-            upgrade window opens on the right.
 
         BOT_UPG_CURRENT_LEFTWINDOW (T[F], class attribute): Current bottom path upgrade if 
             upgrade window opens on the left.
-        BOT_UPG_NEXT_LEFTWINDOW (T[F], class attribute): Next bottom path upgrade if 
-            upgrade window opens on the left.
         BOT_UPG_CURRENT_RIGHTWINDOW (T[F], class attribute): Current path bottom upgrade 
             if upgrade  window opens on the right.
-        BOT_UPG_NEXT_RIGHTWINDOW (T[F], class attribute): Next bottom path upgrade if 
-            upgrade window opens on the right.
 
         RIGHT_PANEL_SELL_LOCATION (T[F], class attribute): Sell button location if upgrade 
             panel opens on the right.
@@ -76,7 +64,7 @@ class _MonkeyConstants:
             panel opens on the left.
     """
     _MONKEY_NAMES = (
-        'dart', 'boomer', 'bomb', 'tack', 'ice', 'glue',
+        'dart', 'boomer', 'bomb', 'tack', 'ice', 'glue', 'desperado',
         'sniper', 'sub', 'boat', 'ace', 'heli', 'mortar', 'dartling',
         'wizard', 'super', 'ninja', 'alch', 'druid', 'mermonkey',
         'farm', 'spike', 'village', 'engineer', 'beast',
@@ -87,19 +75,13 @@ class _MonkeyConstants:
     )
     
     _TOP_UPG_CURRENT_LEFTWINDOW = (0.0333333333333, 0.3696296296296, 0.121875, 0.462037037037)
-    _TOP_UPG_NEXT_LEFTWINDOW = (0.1317708333333, 0.3696296296296, 0.2203125, 0.462037037037)
     _TOP_UPG_CURRENT_RIGHTWINDOW = (0.6777083333333, 0.3696296296296, 0.7661458333333, 0.462037037037)
-    _TOP_UPG_NEXT_RIGHTWINDOW = (0.7666666666667, 0.3696296296296, 0.8552083333333, 0.462037037037)
 
     _MID_UPG_CURRENT_LEFTWINDOW = (0.0333333333333, 0.5122222222222, 0.121875, 0.5861111111111)
-    _MID_UPG_NEXT_LEFTWINDOW = (0.1317708333333, 0.5122222222222, 0.2203125, 0.5861111111111)
     _MID_UPG_CURRENT_RIGHTWINDOW = (0.6777083333333, 0.5122222222222, 0.7661458333333, 0.5861111111111)
-    _MID_UPG_NEXT_RIGHTWINDOW = (0.7666666666667, 0.5122222222222, 0.8552083333333, 0.5861111111111)
 
     _BOT_UPG_CURRENT_LEFTWINDOW = (0.0333333333333, 0.6492592592593, 0.121875, 0.7231481481481)
-    _BOT_UPG_NEXT_LEFTWINDOW = (0.1317708333333, 0.6492592592593, 0.2203125, 0.7231481481481)
     _BOT_UPG_CURRENT_RIGHTWINDOW = (0.6777083333333, 0.6492592592593, 0.7661458333333, 0.7231481481481)
-    _BOT_UPG_NEXT_RIGHTWINDOW = (0.7666666666667, 0.6492592592593, 0.8552083333333, 0.7231481481481)
 
     _RIGHT_PANEL_SELL_LOCATION = (0.7808333333333, 0.8148148148148, 0.8380208333333, 0.8703703703704)
     _LEFT_PANEL_SELL_LOCATION = (0.141083333333, 0.808148148148, 0.1984375, 0.8638888888889)
@@ -112,7 +94,7 @@ class Monkey(_MonkeyConstants):
 
     Attributes:
         name (str): Name of a Monkey. All available monkeys names:
-            'dart', 'boomer', 'bomb', 'tack', 'ice', 'glue',
+            'dart', 'boomer', 'bomb', 'tack', 'ice', 'glue', 'desperado',
             'sniper', 'sub', 'boat', 'ace', 'heli', 'mortar', 'dartling',
             'wizard', 'super', 'ninja', 'alch', 'druid', 'mermonkey',
             'farm', 'spike', 'village', 'engineer', 'beast'.
@@ -322,6 +304,8 @@ class Monkey(_MonkeyConstants):
                 return hotkeys['ice monkey']
             case 'glue':
                 return hotkeys['glue gunner']
+            case 'desperado':
+                return hotkeys['desperado']
             # Military
             case 'sniper':
                 return hotkeys['sniper monkey']
@@ -711,31 +695,56 @@ class Monkey(_MonkeyConstants):
                 if target == 'normal':
                     if current == 'close':
                         kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                    elif current == 'far':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
                     elif current == 'smart':
+                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                    elif current == 'set':
+                        kb_mouse.kb_input(hotkeys['target change'], 2)
+                    elif current == 'automatic':
                         kb_mouse.kb_input(hotkeys['target change'], 1)
                 elif target == 'close':
                     if current == 'normal':
                         kb_mouse.kb_input(hotkeys['target change'], 1)
-                    elif current == 'far':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
                     elif current == 'smart':
+                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                    elif current == 'set':
+                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                    elif current == 'automatic':
                         kb_mouse.kb_input(hotkeys['target change'], 2)
-                elif target == 'far':
-                    if current == 'close':
+                elif target == 'set':
+                    if current == 'normal':
+                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                        if x is not None and y is not None:
+                            self._change_target_special(1, x, y)
+                    elif current == 'close':
+                        kb_mouse.kb_input(hotkeys['target change'], 2)
+                        if x is not None and y is not None:
+                            self._change_target_special(1, x, y)
+                    elif current == 'smart':
                         kb_mouse.kb_input(hotkeys['target change'], 1)
-                    elif current == 'normal':
-                        kb_mouse.kb_input(hotkeys['target change'], 2)
-                    elif current == 'smart':
+                        if x is not None and y is not None:
+                            self._change_target_special(1, x, y)
+                    elif current == 'automatic':
                         kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                        if x is not None and y is not None:
+                            self._change_target_special(1, x, y)
                 elif target == 'smart':
                     if current == 'close':
+                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                    elif current == 'set':
+                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                    elif current == 'normal':
                         kb_mouse.kb_input(hotkeys['target change'], 2)
-                    elif current == 'far':
+                    elif current == 'automatic':
+                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                elif target == 'automatic':
+                    if current == 'close':
+                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                    elif current == 'set':
                         kb_mouse.kb_input(hotkeys['target change'], 1)
                     elif current == 'normal':
                         kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                    elif current == 'smart':
+                        kb_mouse.kb_input(hotkeys['target change'], 2)
                 else:
                     return self._name, target
             case _:
@@ -1220,9 +1229,10 @@ class Monkey(_MonkeyConstants):
         >>>
             'spike' {default: 'normal'} # use only for x-x-2+
                 'normal'
-                'far'
+                'set'
                 'close'
                 'smart'
+                'automatic'
         >>>
             Others {default: 'first'}
                 'first'

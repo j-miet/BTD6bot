@@ -126,11 +126,17 @@ def _choose_hero(hero_name: str | None) -> bool:
         cprint("Selecting", hero_name.capitalize(), "as hero... ", end='')
         kb_mouse.click(MouseLocations.BUTTONS['heroes'])
         start: int = time.time()
-        while not weak_substring_check('se', (0.5296875, 0.5472222222222, 0.6338541666667, 0.5916666666667),
+        loop: int = 1
+        while loop:
+            for letter in ('s','e','l','e','c','t','e','d'):
+                if not weak_substring_check(letter, (0.5296875, 0.5472222222222, 0.6338541666667, 0.5916666666667),
                                        OCR_READER):
-            if time.time()-start >= 10:
-                return False
-            time.sleep(0.3)
+                    if time.time()-start >= 10:
+                        return False
+                    time.sleep(0.3)
+                else:
+                    loop = 0
+                    break
         if hero_name.lower() in MouseLocations.HEROES:
             kb_mouse.click(MouseLocations.HEROES[hero_name.lower()])
             Hero.current_plan_hero_name = hero_name
@@ -156,10 +162,16 @@ def _choose_map(map_name: str) -> bool:
             to main menu screen.
     """
     start: int = time.time()
-    while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
-        if time.time()-start >= 10:
-            return False
-        time.sleep(0.3)
+    loop: int = 1
+    while loop:
+        for letter in ('p','l','a','y'):
+            if not weak_substring_check(letter, OcrLocations.MENU_PLAYTEXT, OCR_READER):
+                if time.time()-start >= 10:
+                    return False
+                time.sleep(0.3)
+            else:
+                loop = 0
+                break
     search_map = pynput.keyboard.Controller()
     map_str = map_name.replace('_', ' ')
     kb_mouse.click(MouseLocations.BUTTONS['menu_play'])
@@ -168,24 +180,29 @@ def _choose_map(map_name: str) -> bool:
     time.sleep(0.4)
     kb_mouse.click(MouseLocations.BUTTONS['search_map'])
     if BotVars.windowed:
-        while time.time()-start <= 5:
-            if weak_substring_check('search', (0.4140625, 0.0203703703704, 0.4651041666667, 0.0537037037037),
-                                    OCR_READER):
-                search_found = 1
-                break
-            else:
-                time.sleep(0.3)
+        loop = 1
+        while time.time()-start <= 5 and loop:
+            for letter in ('s','e','a','r','c','h'):
+                if weak_substring_check(letter, (0.4140625, 0.0203703703704, 0.4651041666667, 0.0537037037037),
+                                        OCR_READER):
+                    search_found = 1
+                    loop = 0
+                    break
+                else:
+                    time.sleep(0.3)
         if not search_found:
             search_found = 0
             kb_mouse.click(MouseLocations.BUTTONS['search_map'], ignore_windowed=True)
             start = time.time()
-            while time.time()-start <= 5:
-                if weak_substring_check('search', (0.4140625, 0.0203703703704, 0.4651041666667, 0.0537037037037), 
-                                        OCR_READER):
-                    search_found = 1
-                    break
-                else:
-                    time.sleep(0.3)
+            while time.time()-start <= 5 and loop:
+                for letter in ('s','e','a','r','c','h'):
+                    if weak_substring_check('r', (0.4140625, 0.0203703703704, 0.4651041666667, 0.0537037037037), 
+                                            OCR_READER):
+                        search_found = 1
+                        loop = 0
+                        break
+                    else:
+                        time.sleep(0.3)
             if not search_found:
                 return False        
     time.sleep(0.4)
@@ -317,10 +334,15 @@ def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, 
     """
     _update_external_variables(begin_round, end_round)
     cprint('Searching for main menu screen...')
-    while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
-        time.sleep(0.3)
+    loop: int = 1
+    while loop:
+        for letter in ('p','l','a','y'):
+            if not weak_substring_check(letter, OcrLocations.MENU_PLAYTEXT, OCR_READER):
+                time.sleep(0.3)
+            else:
+                loop = 0
+                break
     _start_plan()
-    #print(f"\n~~~~{map_name}, {diff.lower()}, {mode.lower()}~~~~")
     if not _choose_hero(hero):
         return 0, 0
     if not _choose_map(map_name):

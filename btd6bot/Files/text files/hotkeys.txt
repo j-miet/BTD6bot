@@ -4,6 +4,7 @@ bomb shooter = e
 tack shooter = r
 ice monkey = t
 glue gunner = y
+desperado = p
 sniper monkey = z
 monkey sub = x
 monkey buccaneer = c

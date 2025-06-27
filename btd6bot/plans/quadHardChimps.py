@@ -15,14 +15,15 @@ heli 0-2-3
 
 wizard 0-3-2
 alch 4-2-0
+druid 0-1-2
 
 spike 4-0-2
 village 3-0-2
 engineer 3-3-2
 _______________________________________
 Depends on rng a bit, but should be quite consistent.
-Rounds 37-40, in particular 40, can leak randomly: the issue is with how quickly bot detects round change and times ability correctly, and sometimes ability is not required at all if wizard firewall is in right spot.
-Round 100 can also fail, unfortunately.
+Rounds 37-40, in particular 40, can leak randomly: the issue is with how quickly bot detects round change and times ability use correctly, and sometimes ability is not required at all if wizard firewall timing is just right.
+Round 100 has unfortunately some rng as well.
 """
 
 from._plan_imports import *
@@ -201,12 +202,14 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             boomer_top2.target('strong')
         elif current_round == 96:
             tack_top.upgrade(['2-0-5'])
-        elif current_round == 98:
-            ability(1, 8)
+        elif current_round == 97:
             heli = Monkey('heli', 0.2885416666667, 0.5824074074074)
             heli.target('lock', 0.3083333333333, 0.7111111111111)
-            heli.upgrade(['0-0-1', '0-0-2', '0-0-3', '0-1-3', '0-2-3'])
             ice_top = Monkey('ice', 0.4723958333333, 0.3342592592593)
+        elif current_round == 98:
+            ability(1, 8)
+            ability(2, 10)
+            heli.upgrade(['0-0-1', '0-0-2', '0-0-3', '0-1-3', '0-2-3'])
             ice_top.upgrade(['1-0-0', '2-0-0', '3-0-0', '4-0-0', '4-0-1'])
             alch_top.upgrade(['4-2-0'])
         elif current_round == 99:
@@ -215,7 +218,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             bomb.target('strong')
         elif current_round == 100:
             druid = Monkey('druid', 0.3807291666667, 0.2796296296296)
-            druid.upgrade(['0-0-1','0-0-2','0-0-3'])
+            druid.upgrade(['0-0-1','0-0-2','0-1-2'])
             heli.special(1, 0.6057291666667, 0.3527777777778)
             ability(1, 6)
             ability(2, 7.5)

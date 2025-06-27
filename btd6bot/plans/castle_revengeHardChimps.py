@@ -19,7 +19,7 @@ village 3-0-2
 
 _______________________________________
 Round 40 is bad rng-wise and usually ruins the run.
-But after 40, it becomes quite minimal, but late rounds like 98 can be scary.
+But after 40, it becomes quite minimal, although late rounds like 98 can be scary.
 """
 
 from._plan_imports import *
@@ -70,8 +70,10 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 39:
             super1 = Monkey('super', 0.3572916666667, 0.387962962963)
         elif current_round == 40:
-            ability(1,4.6)
+            forward(1)
+            ability(1,13.5)
         elif current_round == 41:
+            forward(1)
             village1 = Monkey('village', 0.4734375, 0.5231481481481)
             village1.upgrade(['0-0-1','0-0-2','1-0-2'])
             wizard.upgrade(['0-3-1','0-3-2'])

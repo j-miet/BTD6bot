@@ -54,7 +54,6 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
     times.pause_bot()
     if BotVars.defeat_status:
         return
-    cprint(f'Using ability {key} with timer {timer}... ', end='')
     begin_time = Rounds.current_round_begin_time
     if timer == 0:
         kb_mouse.kb_input(hotkeys['ability '+str(key)])
@@ -64,8 +63,9 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
                 move_cursor(xy[0], xy[1])
             else:
                 kb_mouse.click(xy)
-        cprint('Ability used.')
+        cprint(f'Ability {key} used.')
         return
+    cprint(f'Using ability {key} with timer {timer}... ', end='')
     while times.current_time()-begin_time < timer:     
         time.sleep(0.01)    # small sleep timer to avoid constant processing of time.time
     kb_mouse.kb_input(hotkeys['ability '+str(key)])

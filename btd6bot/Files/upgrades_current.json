@@ -23,7 +23,7 @@
   ],
   "dart 5-x-x": [
     "ultra-juggernaut",
-    0.8
+    0.86
   ],
   "dart x-1-x": [
     "quick shots",
@@ -31,7 +31,7 @@
   ],
   "dart x-2-x": [
     "very quick shots",
-    0.86
+    0.83
   ],
   "dart x-3-x": [
     "triple shot",
@@ -67,7 +67,7 @@
   ],
   "boomer 1-x-x": [
     "improved rangs",
-    0.92
+    0.88
   ],
   "boomer 2-x-x": [
     "glaives",
@@ -247,7 +247,7 @@
   ],
   "ice 1-x-x": [
     "permafrost",
-    0.76
+    0.8
   ],
   "ice 2-x-x": [
     "cold snap",
@@ -259,7 +259,7 @@
   ],
   "ice 4-x-x": [
     "embrittlement",
-    0.74
+    0.7
   ],
   "ice 5-x-x": [
     "super brittle",
@@ -295,7 +295,7 @@
   ],
   "ice x-x-3": [
     "cryo cannon",
-    0.86
+    0.91
   ],
   "ice x-x-4": [
     "icicles",
@@ -365,6 +365,66 @@
     "super glue",
     0.96
   ],
+  "desperado 1-x-x": [
+    "quickdraw",
+    0.96
+  ],
+  "desperado 2-x-x": [
+    "standoff",
+    0.89
+  ],
+  "desperado 3-x-x": [
+    "big iron",
+    0.83
+  ],
+  "desperado 4-x-x": [
+    "twin sixes",
+    0.96
+  ],
+  "desperado 5-x-x": [
+    "the blazing sun",
+    0.92
+  ],
+  "desperado x-1-x": [
+    "eagle eye",
+    0.96
+  ],
+  "desperado x-2-x": [
+    "bullseye",
+    0.83
+  ],
+  "desperado x-3-x": [
+    "deadeye",
+    0.81
+  ],
+  "desperado x-4-x": [
+    "bounty hunter",
+    0.92
+  ],
+  "desperado x-5-x": [
+    "golden justice",
+    0.92
+  ],
+  "desperado x-x-1": [
+    "wanderer",
+    0.96
+  ],
+  "desperado x-x-2": [
+    "nomad",
+    0.96
+  ],
+  "desperado x-x-3": [
+    "enforcer",
+    0.96
+  ],
+  "desperado x-x-4": [
+    "avenger",
+    0.96
+  ],
+  "desperado x-x-5": [
+    "the desert phantom",
+    0.93
+  ],
   "sniper 1-x-x": [
     "full metal jacket",
     0.92
@@ -407,7 +467,7 @@
   ],
   "sniper x-x-1": [
     "fast firing",
-    0.86
+    0.96
   ],
   "sniper x-x-2": [
     "even faster firing",
@@ -575,7 +635,7 @@
   ],
   "ace x-3-x": [
     "bomber ace",
-    0.76
+    0.8
   ],
   "ace x-4-x": [
     "ground zero",
@@ -771,7 +831,7 @@
   ],
   "dartling x-x-2": [
     "powerful darts",
-    0.84
+    0.53
   ],
   "dartling x-x-3": [
     "buckshot",
@@ -839,7 +899,7 @@
   ],
   "wizard x-x-4": [
     "necromancer: unpopped army",
-    0.76
+    0.72
   ],
   "wizard x-x-5": [
     "prince of darkness",
@@ -859,7 +919,7 @@
   ],
   "super 4-x-x": [
     "sun temple",
-    0.96
+    0.53
   ],
   "super 5-x-x": [
     "true sun god",
@@ -875,7 +935,7 @@
   ],
   "super x-3-x": [
     "robo monkey",
-    0.81
+    0.72
   ],
   "super x-4-x": [
     "tech terror",
@@ -887,7 +947,7 @@
   ],
   "super x-x-1": [
     "knockback",
-    0.84
+    0.78
   ],
   "super x-x-2": [
     "ultravision",
@@ -935,7 +995,7 @@
   ],
   "ninja x-3-x": [
     "shinobi tactics",
-    0.82
+    0.85
   ],
   "ninja x-4-x": [
     "bloon sabotage",
@@ -1147,7 +1207,7 @@
   ],
   "farm 1-x-x": [
     "increased production",
-    0.93
+    0.91
   ],
   "farm 2-x-x": [
     "greater production",
@@ -1255,7 +1315,7 @@
   ],
   "spike x-x-3": [
     "long life spikes",
-    0.89
+    0.86
   ],
   "spike x-x-4": [
     "deadly spikes",
@@ -1295,7 +1355,7 @@
   ],
   "village x-3-x": [
     "monkey intelligence bureau",
-    0.72
+    0.73
   ],
   "village x-4-x": [
     "call to arms",
@@ -1319,7 +1379,7 @@
   ],
   "village x-x-4": [
     "monkey city",
-    0.81
+    0.72
   ],
   "village x-x-5": [
     "monkeyopolis",

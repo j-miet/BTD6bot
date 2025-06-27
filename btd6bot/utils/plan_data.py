@@ -58,18 +58,15 @@ def return_strategy(plan: str) -> str:
     Returns:
         String in a 'Difficulty-Mode' format.
     """
-    diff_and_mode = []
     diff_start_pos = 0
     mode_start_pos = 0
     try:
         for i in range(0, len(plan)):
             if plan[i].isupper():
                 diff_start_pos= i
-                diff_and_mode.append(i)
                 for j in range(diff_start_pos+1, len(plan)):
                     if plan[j].isupper():
                         mode_start_pos = j
-                        diff_and_mode.append(j)
                         break
                 break
         if diff_start_pos == 0 or mode_start_pos == 0:

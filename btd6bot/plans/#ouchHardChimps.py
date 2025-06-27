@@ -239,8 +239,9 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             ninja1.upgrade(['0-1-0','0-2-0','0-3-0','0-4-0'])
             ice1 = Monkey('ice', 0.2927083333333, 0.4416666666667)
             ice1.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-1-0'])
+            wait(5)
             change_autostart()
-            end_round(3)
+            end_round(2)
         elif current_round == 95:
             ability(3,10, xy=(0.4770833333333, 0.4842592592593))
             ability(4,12)

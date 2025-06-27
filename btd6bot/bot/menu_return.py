@@ -80,8 +80,14 @@ def returned(victory: bool = True) -> None:
     """Verifies that bot has returned to main menu and checks for collection event status."""
     if BotVars.current_event_status == 'On':
         CollectionEvent.collection_event_handler()
-    while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
-        time.sleep(0.3)
+    loop: int = 0
+    while loop:
+        for letter in ('p','l','a','y'):
+            if not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
+                time.sleep(0.3)
+            else:
+                loop = 1
+                break
     if victory:
         BotData.victory = True
     else:

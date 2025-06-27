@@ -195,13 +195,20 @@ class Rounds:
         (you start the bot with Autostart setting enabled in-game).
         """
         start_time = times.current_time()
-        while not weak_substring_check('Upgrades', Rounds.UPGRADE_TEXT, OCR_READER): 
-            if times.current_time() - start_time > 15:
-                for _ in range(3):
-                    kb_mouse.press_esc()
-                raise BotError("Failed to enter game: wrong map name in plan file, or map/game mode not unlocked.", 1)
-            kb_mouse.click((0.5, 0.69)) #if game mode is 'Apopalypse', click the button.
-            time.sleep(1)
+        loop: int = 1
+        while loop:
+            for letter in ('u','p','g','r','a','d','e'):
+                kb_mouse.click((0.5, 0.69)) # if game mode is 'Apopalypse', click the button.
+                if not weak_substring_check(letter, Rounds.UPGRADE_TEXT, OCR_READER): 
+                    if times.current_time() - start_time > 15:
+                        for _ in range(3):
+                            kb_mouse.press_esc()
+                        raise BotError("Failed to enter game: wrong map name in plan file, or map/game mode not "
+                                        "unlocked.", 1)
+                else:
+                    loop = 0
+                    break
+                time.sleep(1)
         time.sleep(0.5)
         cprint('--> Running...')
         kb_mouse.click((0.999, 0.01))  # closes any difficulty info pop-up window after entering a game.
