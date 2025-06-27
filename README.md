@@ -12,19 +12,35 @@ added.
 
 Bot is quite complex and has been tested pretty thoroughly. Still, you may encounter bugs.  
 
-Btd6 includes elements of **randomness** (**rng**), which cannot be entirely removed. So if you plan to use bot to 
-obtain *Chimps black medals* on harder advanced and expert maps, it could take a few tries on each before getting a
+Btd6 includes elements of **randomness** (**rng**), which cannot be entirely removed. On top of this, bot's text 
+detection times can vary ever so slightly which alters upgrade and ability timings etc. So if you plan to use bot to
+obtain *Chimps black medals* on harder advanced and expert maps, it could take several attempts before getting a 
 succesful run.
 
 
 ---
-**[Update status]  
-Updated for Bloons TD 6 version ``48``**
-- For now, bot is planned to be updated for each major game update (next being update ``49``)
-- Other than that, some new game plans might be added infrequently.
+**[Update status]    
+Updated for Bloons TD 6 version ``49``**
+  
+- For now, bot is planned to be updated after each major game update (next being update ``50``)
+- Other than that, new game plans might be added on an infrequent basis
 
-**[OS support]  
-Tested only on Windows operating systems**
+**[OS support]**  
+Because of limited access to other operating systems than Windows, it's very difficult to ensure bot works on 
+all of them. Currently:
+- **Windows (10 or higher) is fully supported and thus recommended.**
+
+- **MacOS** has two major issues:
+  - Python libraries used for gui and hotkeys (``tkinter`` & ``pynput`` respectively) cause bad errors when used 
+  together.
+  - Mac uses ``16:10`` aspect ratio and lacks the support for the required ``16:9`` resolutions.
+
+  I have possible fixes in mind. However, it takes time to plan, code and test all the stuff so realistic deadline would
+   be the next game update i.e. version ``50``.
+  
+- **Linux/Unix** have not been tested.
+
+
 
 **-- Warning --**  
 ***Be aware that automation/botting is againts Ninja Kiwi&#39;s [Terms of Service](https://ninjakiwi.com/terms) and
@@ -62,7 +78,7 @@ you can always run the bot offline. <u>You have been warned</u>.***
 
 # <u>Features</u>
 
-- [Tested on update ``48``, ``1920x1080`` , ``fullscreen``, with around ``144`` constant fps]  
+- [Tested on update ``49``, with ``1920x1080`` resolution + ``fullscreen``, with around ``144`` constant fps]  
 Plans for **all expert maps on chimps difficulty are included, making black medals obtainable.**
 
 - Graphical user interface, made with Python&#39;s build-in Tkinter library. Very simplified when it comes to visuals,
@@ -104,12 +120,12 @@ finishes.
 - Extensive bot library with built-in gui support, which can also operate independently. Uses optical character reading
 (ocr) and kb+mouse to update bot state.  
 While library code is thoroughly documented, [Updating the bot](#updating-the-bot) provides baseline for adding new
-content should this project no longer receives updates.
+content should this project no longer receive updates.
 
 # <u>Installation</u>
+
 First you need to install [Python](https://www.python.org/downloads/).  
-Most of bot was programmed in Python versions 3.12.5 and 3.13.2 so **Python 3.12+** is recommended.  
-It is likely to work on earlier versions of Python 3, but this has not been tested.
+Most of bot was programmed in Python versions 3.12.5 or higher so **Python 3.12+** is recommended.
 
 Then, download *BTD6bot*:
 
@@ -127,23 +143,23 @@ Next, external dependencies. Install the following third party packages:
     easyocr==1.7.2
     markdown==3.8
     matplotlib==3.10.1
-    numpy==2.2.3
+    numpy==1.26.4; python_version < '3.13'
+    numpy==2.2.3; python_version >= '3.13'
     pillow==11.1.0
     pyautogui==0.9.54
     pynput==1.7.8
     pyperclip==1.9.0
     tkinterweb==4.3.1
 
-An easy way to do this is to open your BTD6bot folder, then run ``reqs.bat``. 
+If you use Windows, an easy way to do this is to open your BTD6bot folder, then run ``reqs.bat``. 
 
-If this isn&#39;t working: open command terminal, change your current directory to ``<your path>/btd6bot`` where you
-installed BTD6bot, then type
-``
-pip install -r requirements.txt
-``
+If this isn&#39;t working/you use another OS: open command terminal, change your current directory to 
+``<your path>/btd6bot`` where you installed BTD6bot, then type
+``pip install -r requirements.txt``.
 
 [Note] Exact version as listed above might not be required, but are always recommended. For pynput however, versions
 above 1.7.8 cause a fatal error when any gui hotkeys are used.
+
 
 # <u>First-time setup</u>
 | ![](docs/images/main/main.png) |
@@ -153,7 +169,7 @@ above 1.7.8 cause a fatal error when any gui hotkeys are used.
 To run ``BTD6bot``, try <u>one</u> of the following:
 
 - Open your BTD6bot folder, then run the ``run.bat`` file
-- Open command terminal, set current directory to ``<your path>/btd6bot`` then type ``py btd6bot `
+- Open command terminal, set current directory to ``<your path>/btd6bot`` then type ``py btd6bot``
 
 If you managed to run BTD6bot, then a window similar to above should have opened.
 There&#39;s plenty of stuff in here, but for now focus is on getting the bot to work properly in your system.  
@@ -174,7 +190,7 @@ Afterwards, you&#39;re free to experiment with all the gui settings and if neede
 should something break irrevocably.**
 
 
-## Quick tutorial:
+## Quick tutorial
 
 *1920x1080 monitor is used below; your values may look different*  
 *1600x900 is used as custom resolution example* 
@@ -183,7 +199,7 @@ should something break irrevocably.**
 done, close hotkeys window.
 2. Open **Settings** window and set resolution. 
 
-    **Select a resolution with aspect ratio of 16:9 AND prefer fullscreen (*)**.
+    **Select a resolution with aspect ratio of 16:9 AND prefer fullscreen**.
 
     - If you use fullscreen/windowed fullscreen, **don&#39;t** enable custom resolution, or use windowed mode. Just 
     leave it untoggled.
@@ -204,13 +220,13 @@ done, close hotkeys window.
 
     - **Aspect ratio greater than 16:9** might be compatible, if you use **fullscreen in-game**, but set bot to use 
     **custom resolution and windowed mode** in order to limit the area the bot sees; check 
-    [Ultrawide resolutions](#using-windowed-mode-for-resolutions-with-varying-aspect-ratios) for more info*. 
+    [Ultrawide resolutions](#using-windowed-mode-for-resolutions-with-varying-aspect-ratios) for more info. 
 
 
 3. Enable ocr auto-adjusting, make sure it has correct res and win values. Res is your current resolution, win stands
 for fullscreen (``win=0``) or windowed (``win=1``).  
 Finally, ``monkeys=all`` and ``delta=4`` values should be automatically set.  
-Easiest way is to just press ``Reset args`` button once.
+Easiest way to do all of this is to just press ``Reset args``.
 Now, press ``Set args`` button to save args.  
 Your argument prompt should look similar to this:
 
@@ -687,7 +703,7 @@ name, difficulty or game mode.
 |:--:|
 | *Hotkey window.*|
 
-- Is used for updating bot hotkeys.
+- Used for updating bot hotkeys.
 - Includes instructions window. Not very long so you should read through it once.
 - Hotkey panel is divided into two parts: 
   - upper part is for in-game hotkeys, which must match with Btd6 in-game hotkeys
@@ -729,8 +745,8 @@ option, which was already introduced when setting up the bot first time.
     [ultrawide resolutions or those with greater than 16:9 aspect ratio](#ultrawide-resolutions).
 
 - **Game version**: 
-    Current major game patch version. If version is 48, 48.1, 48.2 etc. just use 48. This value is used to update plan
-    info for any plan and verify it works on current version.
+    Current major game patch version. For example, if version is 48, 48.1, 48.2 etc. just use 48. This value is used to 
+    update plan info for any plan and verify it works on current version.
 
 - **Retries**: 
     How many times the bot will retry current plan before moving on to next one. However, if bot finishes before
@@ -751,11 +767,15 @@ makes ocr more inaccurate/slow. For normal use, keep this value around 0.01-0.1.
 processes, like farming xp/monkey money with simple strategies such dark castle easy/deflation - for hours - you 
 could set this value to even high as 0.5-1.
 
-- **Print ocr (delta | substring) text values in monitoring window**: Enables text printing for ocr processes which use
-delta matching | substring matching. For example, monkey placements and upgrades use delta matching whereas finding 
-current round number uses substring matching.
+- **Enable logging**: Enabled text logging. Each time a new monitoring window is created, a new ``Logs.txt`` file is 
+created in project root folder. All the text bot prints is then simply copied into this file which is useful for 
+debugging/testing the bot.
 
-- **Auto-adjust ocr upgrade data the next time a plan is run**: <u>this was already introduced under
+- **Print ocr (delta | substring) text values in monitoring window**: Enables detailed text printing for ocr processes 
+which use delta matching | substring matching. For example, monkey placements and upgrades use delta matching whereas 
+finding current round number uses substring matching.
+
+- **Auto-adjust ocr upgrade data the next time a plan is run**: <u>This was already introduced under
 [first-time setup](#update-resolution-and-enable-ocr-auto-adjust)</u>. Updates all upgrade ocr values based on current
 resolution settings. As bot uses upgrade labels to determine whether is has succesfully upgraded a monkey or has to keep
 on trying, these texts must be as precisely readable as possible. For upgrades, bot has three cases:
@@ -848,8 +868,8 @@ timings when new plans are created.
 
 Plan files are located in ``btd6bot/plans``.
 
-For creating and writing plans, it helps a lot if you understand basics of syntax and object-oriented programming in
-Python. This is not required, but except some things to be harder to understand.
+For creating and writing plans, it helps a lot if you understand basics of object-oriented programming in
+Python. This is not required, but some things can be be harder to understand.
 
 ## Create a plan file
 
@@ -1266,7 +1286,7 @@ Use these values when placing a new monkey with ``Monkey(name, pos_x, pos_y)`` c
 | tack      | ace (**1**)   | alch          | engineer
 | ice       | heli          | druid         | beast
 | glue      | mortar        | mermonkey     |
-|           | dartling      |               |
+| desperado | dartling      |               |
 
 
 **1**: If you plan to use ``wingmonkey`` monkey knowledge, see [Targeting](#targeting) (**2**).
@@ -1295,10 +1315,10 @@ Use ``target(set_target, x, y, cpos_x, cpos_y)`` to change targeting.
 | Basic (**1**)     | heli          | ace                   | sniper            | mortar (**4**)| dartling          | spike (**6**)
 |-|-|-|-|-|-|-|
 | 'first'           | 'lock' (**5**)| 'circle'              | 'elite' (**3**)   |               | 'locked' (**5**)  | 'normal'
-| 'close'           | 'pursuit'     | 'infinite'            |                   |               |                   | 'far'
+| 'close'           | 'pursuit'     | 'infinite'            |                   |               |                   | 'set'
 | 'last'            |               | 'eight'               |                   |               |                   | 'close'
 | 'strong'          |               | 'centered'            |                   |               |                   | 'smart'
-|                   |               | 'wingmonkey' (**2**)
+|                   |               | 'wingmonkey' (**2**)  |                   |               |                   | 'automatic'
 
 **1**: Valid for most monkeys/heroes. Also, ``x-x-3+ ice``, ``5-x-x`` tack and ``5-x-x village`` can use these.
 - For ``x-3+-x super``, use ``target_robo`` command to control second arm targeting.
@@ -1323,7 +1343,7 @@ To retarget either of monkeys, you must use ``special(1, x, y)`` instead. This i
 require new targeting value to be different from current e.g. you can&#39;t set a monkey on ``first`` if it already has
 this value. Therefore, when trying set dartling/heli to ``locked``/``lock`` respectively, same rule applies.
 
-**6**: Requires ``x-x-2+ spike``.
+**6**: Requires ``x-x-2+ spike``. With ``set``, you can set initial location with ``target('set', x, y)`` and must use ``special(1, x, y)`` afterwards.
 
 
 
