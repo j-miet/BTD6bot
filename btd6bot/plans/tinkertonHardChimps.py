@@ -3,10 +3,14 @@
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
-*list all monkeys + their highest crosspaths here*
-Example: sniper 5-3-1 means plan uses tier 5 top path, tier 3 middle path, and tier 1 bottom path for snipers.
+glue 0-2-4
+
+sniper 0-0-0
+heli 5-0-5
+
+village 2-3-0
 _______________________________________
-*put description/any additional comments here*
+If price change to heli where 3-0-0 not available for round 28, please update to pop lead bloons.
 """
 
 from._plan_imports import *
