@@ -35,7 +35,8 @@ all of them. Currently:
   together.
   - Mac uses ``16:10`` aspect ratio and lacks the support for the required ``16:9`` resolutions.
 
-  I have possible fixes in mind. However, it takes time to plan, code and test all the stuff so realistic deadline would be the next game update i.e. version ``50``.
+  I have possible fixes in mind. However, it takes time to plan, code and test all the stuff so realistic deadline would
+   be the next game update i.e. version ``50``.
   
 - **Linux/Unix** have not been tested.
 
@@ -142,7 +143,8 @@ Next, external dependencies. Install the following third party packages:
     easyocr==1.7.2
     markdown==3.8
     matplotlib==3.10.1
-    numpy==2.2.3
+    numpy==1.26.4; python_version < '3.13'
+    numpy==2.2.3; python_version >= '3.13'
     pillow==11.1.0
     pyautogui==0.9.54
     pynput==1.7.8
@@ -151,8 +153,8 @@ Next, external dependencies. Install the following third party packages:
 
 If you use Windows, an easy way to do this is to open your BTD6bot folder, then run ``reqs.bat``. 
 
-If this isn&#39;t working/you use another OS: open command terminal, change your current directory to ``<your path>/btd6bot`` where you
-installed BTD6bot, then type
+If this isn&#39;t working/you use another OS: open command terminal, change your current directory to 
+``<your path>/btd6bot`` where you installed BTD6bot, then type
 ``pip install -r requirements.txt``.
 
 [Note] Exact version as listed above might not be required, but are always recommended. For pynput however, versions
@@ -743,8 +745,8 @@ option, which was already introduced when setting up the bot first time.
     [ultrawide resolutions or those with greater than 16:9 aspect ratio](#ultrawide-resolutions).
 
 - **Game version**: 
-    Current major game patch version. If version is 48, 48.1, 48.2 etc. just use 48. This value is used to update plan
-    info for any plan and verify it works on current version.
+    Current major game patch version. For example, if version is 48, 48.1, 48.2 etc. just use 48. This value is used to 
+    update plan info for any plan and verify it works on current version.
 
 - **Retries**: 
     How many times the bot will retry current plan before moving on to next one. However, if bot finishes before
@@ -872,7 +874,7 @@ Python. This is not required, but some things can be be harder to understand.
 ## Create a plan file
 
 First, you need a plan template. One can be found in 'plan template' folder, located in project root folder. Then,
-simply copy this plan_template.py to yours plan folder.
+simply copy this plan_template.py to your plan folder.
 
 
 **<u>Plan file: naming</u>**
@@ -1132,7 +1134,7 @@ For practical examples, check any plan file in ``btd6bot/plans`` folder.
 |-|-|-|
 | Monkey(name, pos_x, pos_y) | Places a monkey ``name`` at location (``x``,``y``). **To access commands, store it in a variable with recognizable name**. <br>All supported monkeys can be found [here](#monkey-names). | <pre>dart = Monkey('dart', 0.5, 0.5) <br>heli1 = Monkey('heli', 0.1, 0)</pre>
 | target(set_target, x, y, cpos_x, cpos_y) | Change monkey targeting to ``set_target``. For non-targetable monkeys, simply enter the target string. <br>For target options with target coordinate (x, y), pass ``x`` and ``y`` values.<br>All possible targeting options are listed [here](#targeting). | <pre>dart.target('strong')<br>heli1.target('lock', 0.1, 0.15)</pre>
-| upgrade(set_upg, cpos_x, cpos_y) | Upgrade a monkey. Upgrades are given as a list of strings ``set_upg`` of form 't-m-b' where t=top, m=middle, b=bottom<br> path i.e. they follow the usual path standard. Multiple upgrade can thus be queued in one call. <br>Make sure path is valid: cannot do ``['0-0-1','0-0-3']``. | <pre>dart.upgrade(['1-0-0']) <br>dart.upgrade(['2-0-0-','2-1-0','3-1-0']) </pre>
+| upgrade(set_upg, cpos_x, cpos_y) | Upgrade a monkey. Upgrades are given as a list of strings ``set_upg`` of form 't-m-b' where t=top, m=middle, b=bottom<br> path i.e. they follow the usual path standard. Multiple upgrade can thus be queued in one call. <br>Make sure path is valid: cannot do ``['0-0-1','0-0-3']``. | <pre>dart.upgrade(['1-0-0']) <br>dart.upgrade(['2-0-0','2-1-0','3-1-0']) </pre>
 | special(s, x, y, cpos_x, cpos_y) | Use special ability 1 or 2. Thus, ``s`` is either ``1`` or ``2``. If targetable special, give also ``x`` and ``y`` for target location. <br>Is required for moving mortar and dartling location. Special 2 is rarer: some uses would be beast handler second <br>crosspath beast location and (for heroes) Rosalia replace location. | <pre>heli.special(1, 0.1, 0.1) <br>mortar.special(1, 0.1, 0.1) <br>dartling.special(1, 0.5, 0.785) <br>sniper.special(1) <br>beast.special(2)</pre>
 | sell(cpos_x, cpos_y) | Sells current monkey. On code level, object still exists so please don&#39;t refer to it afterwards, unless you&#39;ve inserted<br> another non-sold monkey in same variable. | <pre>dart.sell()</pre>
 | target_robo(direction, clicks, cpos_x, cpos_y) | Change second arm targeting of a robo monkey. Current targeting value must be tracked manually: then, you simply <br>pass ``direction`` as ``'left'`` or ``'right'`` to click either left or right arrow direction and give amount of ``clicks`` to <br>this direction. For example, after placing a robo monkey, if first hand is on &#39;first&#39; then second is set on &#39;last&#39;. Clicking <br>left arrow once<br> changes it to &#39;close&#39;. And clicking right once would change it back to &#39;last&#39;. | <pre>super.target_robo('left', 2)</pre>
@@ -1155,7 +1157,7 @@ For practical examples, check any plan file in ``btd6bot/plans`` folder.
 
 | Command (with arguments) | Description | Examples |
 |-|-|-|
-| ability(key, timer, xy, delay) | Press ability hotkey 1-10, after ``timer`` seconds has passed, at tuple location``xy``, with optional ``delay`` value.<br> Abilities order depend on the order they get unlocked; keep this in mind!Timer value is counted as seconds and is a float number. <br>It defaults to 0 and uses ability instantly the moment bot reads the command. If timer value N > 0, bot wait N seconds from <br>round start before using the ability. <br>However, if time since round start has already exceeded the N, ability is obviosly used instantly when command is read <br>e.g. ``ability(1,10)`` uses ability 1 instantly if, say 15 seconds have passed. If ability requires a target (e.g. engineer overclock),<br> pass it **as a tuple value ``xy``, NOT as separate x and y**. <br>Finally, ``delay`` uses ability, waits for delay amount (measured in seconds), then moves cursor over to location xy. Its only reasonable<br> use is to refresh Obyn&#39;s trees, wait the delay amount to let bananas finish their moving animation, then move cursor to tree location<br> to collect them. You can just also achieve this by setting a wait timer, then use ``move_cursor`` command at tree location.<br>**Importantly**, ``delay`` has default value of ``0``, which actually disables the cursor moving: any value greated than 0 enables it!  | <pre>ability(1)<br>ability(3,10)<br>ability(2,xy=(0.25, 0.25))<br>ability(1, 5, (0.1, 0.1), 1)</pre>
+| ability(key, timer, xy, delay) | Press ability hotkey 1-10, after ``timer`` seconds has passed, at tuple location``xy``, with optional ``delay`` value.<br> Abilities order depend on the order they get unlocked; keep this in mind!Timer value is counted as seconds and is a float number. <br>It defaults to 0 and uses ability instantly the moment bot reads the command. If timer value N > 0, bot wait N seconds from <br>round start before using the ability. <br>However, if time since round start has already exceeded the N, ability is obviously used instantly when command is read <br>e.g. ``ability(1,10)`` uses ability 1 instantly if, say 15 seconds have passed. If ability requires a target (e.g. engineer overclock),<br> pass it **as a tuple value ``xy``, NOT as separate x and y**. <br>Finally, ``delay`` uses ability, waits for delay amount (measured in seconds), then moves cursor over to location xy. Its only reasonable<br> use is to refresh Obyn&#39;s trees, wait the delay amount to let bananas finish their moving animation, then move cursor to tree location<br> to collect them. You can just also achieve this by setting a wait timer, then use ``move_cursor`` command at tree location.<br>**Importantly**, ``delay`` has default value of ``0``, which actually disables the cursor moving: any value greated than 0 enables it!  | <pre>ability(1)<br>ability(3,10)<br>ability(2,xy=(0.25, 0.25))<br>ability(1, 5, (0.1, 0.1), 1)</pre>
 | wait(timer) | Pauses any bot commands for ``timer`` amount of seconds, then resumes after. | <pre>wait(10)</pre>
 | click(x, y, N) | Left mouse click at target location (``x``, ``y``), ``N`` times. Useful for interracting with map elements. Default for N is 1, usually this suffices.<br> Exception would be Ravine where sword needs to clicked 23 out of total 24 to prepare it. |<pre>click(0.3, 0.4)<br>click(0.05, 0.12, 15)</pre>
 | move_cursor(x, y) | Move mouse cursor to target location (``x``, ``y``). Rarely useful. Similarly to ``ability``, you could use it to collect bananas from Obyn's<br> tree. | <pre>move_cursor(0.75, 0.44)</pre>
