@@ -47,7 +47,7 @@ class HotkeyWindow:
         """Initialize hotkey window."""   
         self.hotkeywindow = tk.Toplevel()
         self.hotkeywindow.title("Hotkeys")
-        self.hotkeywindow.columnconfigure(0, weight=1)
+        self.hotkeywindow.columnconfigure(0, minsize=190, weight=1)
         self.hotkeywindow.rowconfigure(0, weight=1)
         self.hotkeywindow.geometry('800x600+900+350')
         self.hotkeywindow.minsize(800,600)
