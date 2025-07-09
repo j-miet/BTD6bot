@@ -23,7 +23,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
     while current_round < END+1:
         current_round = Rounds.round_check(current_round, map_start)
         if current_round == BEGIN:     
-            hero = Hero(0.4885416666667, 0.7583333333333)
+            hero = Hero(0.5796875, 0.6611111111111)
         elif current_round == 9:
             sniper1 = Monkey('sniper', 0.5505208333333, 0.7000000000000)
             sniper1.target('strong')
@@ -56,7 +56,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 58:
             heli2.upgrade(['2-0-4'])
         elif current_round == 63:
-            village1.upgrade(['1-2-0','2-3-0'])
+            village1.upgrade(['2-2-0','2-3-0'])
         elif current_round == 83:
             heli1.upgrade(['5-0-2'])
         elif current_round == 95:
