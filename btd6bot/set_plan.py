@@ -39,7 +39,10 @@ def _check_if_temp_valid() -> bool:
 
 def _flush_times_temp() -> None:
     """Flushes existing contents of Files//times_temp.txt to allow new plan time data to be saved."""
-    with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt', 'w') as _:
+    try:
+        with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt', 'w') as _:
+            ...
+    except OSError:
         ...
 
 def _read_timedata() -> dict[str, Any]:
