@@ -55,7 +55,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 58:
             heli2.upgrade(['2-0-4'])
         elif current_round == 63:
-            village1.upgrade(['1-2-0','2-3-0'])
+            village1.upgrade(['2-2-0','2-3-0'])
         elif current_round == 83:
             heli1.upgrade(['5-0-2'])
         elif current_round == 95:
