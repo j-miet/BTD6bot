@@ -53,21 +53,41 @@ class HotkeyWindow:
         self.hotkeywindow.minsize(800,600)
         self.hotkeywindow.maxsize(800,600)
 
-        hotkeylabel = tk.Label(self.hotkeywindow, text='Hotkeys', height=1, relief="groove", font=os_font)
+        hotkeylabel = tk.Label(self.hotkeywindow, 
+                               text='Hotkeys', 
+                               height=1, 
+                               relief="groove", 
+                               font=os_font)
         hotkeylabel.grid(column=0, row=0, sticky="nsew", padx=20, pady=5)
-        self.hotkeyoptionlist = tk.Listbox(self.hotkeywindow, width=30, font=os_font)
+        self.hotkeyoptionlist = tk.Listbox(self.hotkeywindow, 
+                                           width=30, 
+                                           font=os_font)
         self.hotkeyoptionlist.grid(column=0, row=1, padx=20, sticky="nsew")
 
-        self.guihotkeyoptionlist = tk.Listbox(self.hotkeywindow, width=30, height=3, font=os_font)
+        self.guihotkeyoptionlist = tk.Listbox(self.hotkeywindow, 
+                                              width=30, 
+                                              height=3, 
+                                              font=os_font)
         self.guihotkeyoptionlist.grid(column=0, row=2, padx=20, sticky="nsew")
 
-        self.sethotkeybutton = tk.Button(self.hotkeywindow, text='Set hotkey', width=15, height=1, font=os_font,
+        self.sethotkeybutton = tk.Button(self.hotkeywindow, 
+                                         text='Set hotkey', 
+                                         width=15, 
+                                         height=1, 
+                                         font=os_font,
                                          command=self.set_hotkey)
         self.sethotkeybutton.grid(column=0, row=3, sticky="s")
 
-        hotkeyhelplabel = tk.Label(self.hotkeywindow, text='Instructions', height=1, relief="groove", font=os_font)
+        hotkeyhelplabel = tk.Label(self.hotkeywindow, 
+                                   text='Instructions', 
+                                   height=1, 
+                                   relief="groove", 
+                                   font=os_font)
         hotkeyhelplabel.grid(column=1, row=0, sticky="nsew", padx=20, pady=5)
-        self.info = tk.Label(self.hotkeywindow, justify='left', relief='sunken', text=self.showhotkeyhelp(), 
+        self.info = tk.Label(self.hotkeywindow, 
+                             justify='left', 
+                             relief='sunken', 
+                             text=self.showhotkeyhelp(), 
                              font=os_font)
         self.info.grid(column=1, row=1, padx=20, sticky="nsew")
 
@@ -75,9 +95,12 @@ class HotkeyWindow:
         self.read_guihotkeys()
 
         if sys.platform == 'darwin':
-            self.sethotkeybutton = tk.Button(self.hotkeywindow, text='Edit selected entry', width=15, height=1, 
-                                            font=os_font,
-                                            command=self.save_hotkeys)
+            self.sethotkeybutton = tk.Button(self.hotkeywindow, 
+                                             text='Edit selected entry', 
+                                             width=15, 
+                                             height=1, 
+                                             font=os_font,
+                                             command=self.save_hotkeys)
             self.sethotkeybutton.grid(column=0, row=3, sticky="s")
 
     def save_hotkeys(self) -> None:
