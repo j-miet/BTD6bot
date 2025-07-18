@@ -5,7 +5,7 @@
 ===Monkeys & upgrades required===
 glue 0-2-4
 
-sniper 4-0-2
+sniper 4-2-0
 heli 5-0-5
 
 village 2-3-0
