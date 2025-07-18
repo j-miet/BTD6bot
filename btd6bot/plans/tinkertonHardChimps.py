@@ -10,7 +10,11 @@ heli 5-0-5
 
 village 2-3-0
 _______________________________________
-If price change to heli where 3-0-0 not available for round 28, please update to pop lead bloons.
+If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
+Inspired by monkey_meadowHardChimps:
+    - tower position changed
+    - different sniper crosspath
+    - village bigger range upgrade bougth earlier
 """
 
 from._plan_imports import *
