@@ -5,9 +5,6 @@ Reader takes a bit to load up. Only a single one is necessary so this loading pr
 No mypy type hints available for easyocr so either 'Reader' or 'Any' is used with Reader objects.
 """
 
-import ssl
-ssl._create_default_https_context = ssl._create_unverified_context
-
 import easyocr # type: ignore
 
 OCR_READER: easyocr.Reader = easyocr.Reader(['en'], gpu=False, verbose=False, quantize=False)
