@@ -6,6 +6,7 @@ import json
 import tkinter as tk
 
 import pyautogui
+import torch
 
 import gui.gui_paths as gui_paths
 from gui.gui_tools import os_font
@@ -67,7 +68,7 @@ class SettingsWindow:
         # self.ingame_res = tk.StringVar(value='Off')
         # self.ingame_res_value = tk.StringVar(value=self.read_value("ingame_resolution"))
         self.verify_limit = tk.StringVar(value=self.read_value("upg_verify_limit"))
-        # self.toggle_gpu = tk.StringVar(value='Off')
+        self.gpu = tk.StringVar(value='Off')
         self.time_limit = tk.StringVar(value=self.read_value("checking_time_limit"))
         self.ocr_frequency = tk.StringVar(value=self.read_value("ocr_frequency"))
         self.logging = tk.StringVar(value='Off')
@@ -261,7 +262,17 @@ class SettingsWindow:
                                         font=os_font)
         verify_limit_button.grid(column=1, row=16, sticky='w', pady=(1,10))
 
-        # set gpu toggle here
+        self.gpu_toggle = tk.Checkbutton(self.settings_window, 
+                                         text="Use gpu in ocr (requires a restart to update value)", 
+                                         anchor='nw', 
+                                         onvalue='On', 
+                                         offvalue='Off', 
+                                         pady=5, 
+                                         padx=18, 
+                                         variable=self.gpu,
+                                         command=self.change_gpu_status,
+                                         font=os_font)
+        self.gpu_toggle.grid(column=0, row=17, columnspan=4, sticky='nw')
 
         logging_toggle = tk.Checkbutton(self.settings_window,
                                         text="Enable logging", 
@@ -342,45 +353,53 @@ class SettingsWindow:
         """Updates toggle button values with matching gui_vars.json values."""
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
-            if gui_vars_dict["check_resolution"]:
-                self.resolution.set('On')
-                self.windowed_toggle['state'] = 'normal'
-                self.resolution_value.set(self.read_value("custom_resolution"))
-                self.resolution_width_entry['state'] = 'normal'
-                self.resolution_height_entry['state'] = 'normal'
-                self.resolution_button['state'] = 'normal'
-            else:
-                self.windowed_toggle['state'] = 'disabled'
-                res = pyautogui.size()
-                self.resolution_value.set(f' {res[0]} x {res[1]} ')
-                self.resolution_width_entry['state'] = 'disabled'
-                self.resolution_height_entry['state'] = 'disabled'
-                self.resolution_button['state'] = 'disabled'
-            if gui_vars_dict["windowed"]:
-                self.windowed.set('On')
-            if gui_vars_dict["logging"]:
-                self.logging.set('On')
-                self.delta_ocrtext_toggle['state'] = 'normal'
-                self.substring_ocrtext_toggle['state'] = 'normal'
-            else:
-                self.delta_ocrtext_toggle['state'] = 'disabled'
-                self.substring_ocrtext_toggle['state'] = 'disabled'
-            if gui_vars_dict["delta_ocrtext"]:
-                self.delta_ocrtext.set('On')
-            if gui_vars_dict["substring_ocrtext"]:
-                self.substring_ocrtext.set('On')
-            if gui_vars_dict["ocr_adjust_deltas"]:
-                self.ocr_adjust.set('On')
-                self.ocr_autoadjust_entry['state'] = 'normal'
-                self.ocr_autoadjust_button['state'] = 'normal'
-                self.ocr_autoadjust_reset_button['state'] = 'normal'
-                self.ocr_autoadjust_entry.insert("end", gui_vars_dict["adjust_args"])
-            else:
-                self.ocr_autoadjust_button['state'] = 'disabled'
-                self.ocr_autoadjust_reset_button['state'] = 'disabled'
-                self.ocr_autoadjust_entry['state'] = 'normal'
-                self.ocr_autoadjust_entry.insert("end", gui_vars_dict["adjust_args"])
-                self.ocr_autoadjust_entry['state'] = 'disabled'
+        if gui_vars_dict["check_resolution"]:
+            self.resolution.set('On')
+            self.windowed_toggle['state'] = 'normal'
+            self.resolution_value.set(self.read_value("custom_resolution"))
+            self.resolution_width_entry['state'] = 'normal'
+            self.resolution_height_entry['state'] = 'normal'
+            self.resolution_button['state'] = 'normal'
+        else:
+            self.windowed_toggle['state'] = 'disabled'
+            res = pyautogui.size()
+            self.resolution_value.set(f' {res[0]} x {res[1]} ')
+            self.resolution_width_entry['state'] = 'disabled'
+            self.resolution_height_entry['state'] = 'disabled'
+            self.resolution_button['state'] = 'disabled'
+        if gui_vars_dict["windowed"]:
+            self.windowed.set('On')
+        if torch.cuda.is_available():
+            if gui_vars_dict["use_gpu"]:
+                self.gpu.set('On')
+        else:
+            self.gpu.set('Off')
+            self.gpu_toggle['text'] = "Use gpu in ocr (Gpu has no CUDA support, using CPU instead)"
+            self.gpu_toggle['state'] = "disabled"
+            self.change_gpu_status()
+        if gui_vars_dict["logging"]:
+            self.logging.set('On')
+            self.delta_ocrtext_toggle['state'] = 'normal'
+            self.substring_ocrtext_toggle['state'] = 'normal'
+        else:
+            self.delta_ocrtext_toggle['state'] = 'disabled'
+            self.substring_ocrtext_toggle['state'] = 'disabled'
+        if gui_vars_dict["delta_ocrtext"]:
+            self.delta_ocrtext.set('On')
+        if gui_vars_dict["substring_ocrtext"]:
+            self.substring_ocrtext.set('On')
+        if gui_vars_dict["ocr_adjust_deltas"]:
+            self.ocr_adjust.set('On')
+            self.ocr_autoadjust_entry['state'] = 'normal'
+            self.ocr_autoadjust_button['state'] = 'normal'
+            self.ocr_autoadjust_reset_button['state'] = 'normal'
+            self.ocr_autoadjust_entry.insert("end", gui_vars_dict["adjust_args"])
+        else:
+            self.ocr_autoadjust_button['state'] = 'disabled'
+            self.ocr_autoadjust_reset_button['state'] = 'disabled'
+            self.ocr_autoadjust_entry['state'] = 'normal'
+            self.ocr_autoadjust_entry.insert("end", gui_vars_dict["adjust_args"])
+            self.ocr_autoadjust_entry['state'] = 'disabled'
 
     def change_resolution_status(self) -> None:
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
@@ -413,6 +432,17 @@ class SettingsWindow:
             gui_vars_dict["windowed"] = True
         elif self.windowed.get() == 'Off':
             gui_vars_dict["windowed"] = False
+        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+            json.dump(gui_vars_dict, f, indent=4)
+
+    def change_gpu_status(self) -> None:
+        """Change gpu toggle status based on toggle button value."""
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+            gui_vars_dict: dict[str, Any] = json.load(f)
+        if self.gpu.get() == 'On':
+            gui_vars_dict["use_gpu"] = True
+        else:
+            gui_vars_dict["use_gpu"] = False
         with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
             json.dump(gui_vars_dict, f, indent=4)
 
@@ -579,6 +609,9 @@ class SettingsWindow:
         except ValueError:
             ...
 
+    # TODO when ingame resolution is added, a new check must be added:
+    # > when ingame res is enabled, ocr auto-adjust must use this resolution instead of base/custom res
+    # so reset_ocradjust_value, monitoring_window and _adjust_deltas.py require some changes
     def set_ocradjust_value(self) -> None:
         """Saves current ocr adjust data to gui_vars.json."""
         val = self.ocr_autoadjust_entry.get()
