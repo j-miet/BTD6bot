@@ -16,6 +16,7 @@ from tkinter import ttk
 import pynput
 from pynput.keyboard import Key, KeyCode
 
+from bot.bot_vars import BotVars
 from gui.guihotkeys import GuiHotkeys
 import gui.gui_tools as gui_tools
 from gui.help_window import HelpWindow
@@ -452,6 +453,16 @@ class MainWindow:
         Initialization process takes several seconds as the ocr model is loaded into memory: afterwards, all initially 
         disabled buttons are enabled and free to use. Current init label window is destroyed at the end.
         """
+        try:
+            with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+                gpu_enabled: bool = json.load(f)["use_gpu"]
+            if gpu_enabled:
+                BotVars.use_gpu = True
+            else:
+                BotVars.use_gpu = False
+        except json.decoder.JSONDecodeError:
+            print("use_gpu value not found in gui_vars.json, defaulting to CPU.")
+            BotVars.use_gpu = False
         from bot.ocr.ocr_reader import OCR_READER # type: ignore
         init_win.destroy()
         self.start_button['state'] = 'active'
