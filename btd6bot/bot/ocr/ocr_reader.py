@@ -7,8 +7,11 @@ No mypy type hints available for easyocr so either 'Reader' or 'Any' is used wit
 
 import easyocr # type: ignore
 
-OCR_READER: easyocr.Reader = easyocr.Reader(['en'], gpu=False, verbose=False, quantize=False)
+from bot.bot_vars import BotVars
+
+# TODO Implement CPU/GPU toggle
+OCR_READER: easyocr.Reader = easyocr.Reader(['en'], gpu=BotVars.use_gpu, verbose=False, quantize=False)
 """Easyocr reader for english language text with gpu support disabled.
 
-    On windows platforms, you can set quantize=True to test if it improves ocr accuracy.
+On windows platforms, you can set quantize=True to test if it improves ocr accuracy.
 """
