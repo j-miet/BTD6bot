@@ -164,7 +164,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             tack10.upgrade(['0-0-1','0-0-2','0-0-3','1-0-3','2-0-3'])
         elif current_round == 98:
             tack10.upgrade(['2-0-4'])
-            wait(3)
+            wait(4.5)
             forward(1)
             hero.shop(8, 0.5328125, 0.6212962962963)
             hero.shop(8, 0.5026041666667, 0.6453703703704)
