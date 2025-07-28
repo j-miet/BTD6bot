@@ -3,6 +3,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import json
+import os
 import tkinter as tk
 
 import pyautogui
@@ -23,10 +24,16 @@ class SettingsWindow:
         resolution_value (tk.StringVar): Custom display resolution value.
         windowed (tk.StringVar): Windowed mode enabled/disabled.
         version (tk.StringVar): Game version.
-        retries
-        verify_limit (tk.StringVar):
-        time_limit (tk.StringVar): Ocr time limit until bot gives up.
-        ocr_frequency
+        retries (tk.StringVar): Amount of retries on a single plan before bot moves onto next plan if queue mode 
+            enabled, or bot finished loop if a single plan.
+        ingame_res (tk.StringVar): Enable/disable in-game resolution shift i.e. shift all position coordinates based on
+            shift values.
+        ingame_res_value (tk.StringVar): Pair of pixel values for width and height shift. Pixels are shifted towards 
+            middle point with positive values and away from middle with negative values.
+        verify_limit (tk.StringVar): Amount of verification bot performs on an upgrade text before pressing upgrade 
+            button again.
+        time_limit (tk.StringVar): Ocr time limit until bot gives up and returns to main menu.
+        ocr_frequency: (tk.StringVar): Additional time pause added for each ocr operation.
         logging (tk.StringVar): Enable/disable printing of ocr text values and saving them into Logs.txt in root.
         delta_ocrtext (tk.StringVar): Delta text print enabled/disabled.
         substring_ocrtext (tk.StringVar): Substring text print enabled/disabled. 
@@ -54,9 +61,9 @@ class SettingsWindow:
         """Initialize settings window."""
         self.settings_window = tk.Toplevel()
         self.settings_window.title("Settings")
-        self.settings_window.geometry('580x850+100+150')
-        self.settings_window.minsize(580,850)
-        self.settings_window.maxsize(580,850)
+        self.settings_window.geometry('580x750+100+150')
+        self.settings_window.minsize(580,750)
+        self.settings_window.maxsize(580,750)
 
         self.settings_window.grid_columnconfigure((0,1,2,3,4), weight=1, uniform='1')
 
@@ -65,8 +72,8 @@ class SettingsWindow:
         self.windowed = tk.StringVar(value='Off')
         self.version = tk.StringVar(value=self.read_value("version"))
         self.retries = tk.StringVar(value=self.read_value("retries"))
-        # self.ingame_res = tk.StringVar(value='Off')
-        # self.ingame_res_value = tk.StringVar(value=self.read_value("ingame_resolution"))
+        self.ingame_res = tk.StringVar(value='Off')
+        self.ingame_res_value = tk.StringVar(value=self.read_value("ingame_res_shift"))
         self.verify_limit = tk.StringVar(value=self.read_value("upg_verify_limit"))
         self.gpu = tk.StringVar(value='Off')
         self.time_limit = tk.StringVar(value=self.read_value("checking_time_limit"))
@@ -153,6 +160,15 @@ class SettingsWindow:
                                          textvariable=self.version, 
                                          font=os_font)
         version_current_value.grid(column=1, row=4, sticky='sw', padx=1, pady=(5,1))
+        retry_label = tk.Label(self.settings_window, 
+                               text='Retries', 
+                               font=os_font)
+        retry_label.grid(column=2, row=4, sticky='w', padx=(17,21), pady=(5,1))
+        retry_current_value = tk.Label(self.settings_window, 
+                                       relief='ridge', 
+                                       textvariable=self.retries, 
+                                       font=os_font)
+        retry_current_value.grid(column=3, row=4, sticky='sw', padx=1, pady=(5,1))
 
         self.version_entry = tk.Entry(self.settings_window, 
                                       width=10, 
@@ -165,17 +181,6 @@ class SettingsWindow:
                                    command=self.set_version_value, 
                                    font=os_font)
         version_button.grid(column=1, row=5, sticky='w', pady=(1,10))
-
-        retry_label = tk.Label(self.settings_window, 
-                               text='Retries', 
-                               font=os_font)
-        retry_label.grid(column=2, row=4, sticky='w', padx=(17,21), pady=(5,1))
-        retry_current_value = tk.Label(self.settings_window, 
-                                       relief='ridge', 
-                                       textvariable=self.retries, 
-                                       font=os_font)
-        retry_current_value.grid(column=3, row=4, sticky='sw', padx=1, pady=(5,1))
-
         self.retry_entry = tk.Entry(self.settings_window, 
                                     width=10, 
                                     font=os_font)
@@ -193,77 +198,118 @@ class SettingsWindow:
                                       '| Advanced |\n'
                                       'o--------------o', 
                                  font=os_font)
-        advanced_text.grid(column=0, columnspan=2, row=8, sticky='w', padx=5, pady=(1, 1))
-            
+        advanced_text.grid(column=0, columnspan=2, row=6, sticky='w', padx=5, pady=(10, 1))
+        
+        ingame_res_toggle = tk.Checkbutton(self.settings_window, 
+                                            text="Enable in-game resolution shift", 
+                                            anchor='nw', 
+                                            onvalue='On', 
+                                            offvalue='Off', 
+                                            pady=5, 
+                                            padx=18, 
+                                            variable=self.ingame_res,
+                                            command=self.change_ingame_res_status,
+                                            font=os_font)
+        ingame_res_toggle.grid(column=0, row=7, columnspan=3, sticky='nw')
+        ingame_res_label = tk.Label(self.settings_window, 
+                                    text='Pixel shift', 
+                                    font=os_font)
+        ingame_res_label.grid(column=2, row=7, sticky='se', padx=(1,15), pady=(1,10))
+        ingame_res_current_value = tk.Label(self.settings_window, 
+                                            relief='ridge', 
+                                            textvariable=self.ingame_res_value, 
+                                            font=os_font)
+        ingame_res_current_value.grid(column=3, columnspan=2, row=7, sticky='sw', padx=(1,35), pady=(1,10))
+
+        self.ingame_res_width_entry = tk.Entry(self.settings_window, 
+                                               width=10, 
+                                               font=os_font)
+        self.ingame_res_width_entry.grid(column=0, row=8, sticky='e', pady=(1,10), padx=(21,31))
+        self.ingame_res_width_entry.insert(0, "width")
+        self.ingame_res_width_entry.bind('<FocusIn>', lambda _: self._clear_entry())
+        self.ingame_res_width_entry.config(fg='grey')
+        self.ingame_res_height_entry = tk.Entry(self.settings_window, 
+                                                width=10, 
+                                                font=os_font)
+        self.ingame_res_height_entry.grid(column=1, row=8, sticky='w', pady=(1,10), padx=(1,31))
+        self.ingame_res_height_entry.insert(0, "height")
+        self.ingame_res_height_entry.bind('<FocusIn>', lambda _: self._clear_entry())
+        self.ingame_res_height_entry.config(fg='grey')
+        self.ingame_res_button = tk.Button(self.settings_window, 
+                                           text="Update shift value", 
+                                           anchor='w', 
+                                           padx=5,
+                                           command=self.set_ingame_res_value, 
+                                           font=os_font)
+        self.ingame_res_button.grid(column=2, columnspan=2, row=8, sticky='w', pady=(1,10))
+
         time_limit_label = tk.Label(self.settings_window, 
                                     text='Ocr time limit', 
                                     font=os_font)
-        time_limit_label.grid(column=0, row=13, sticky='se', padx=(1,21), pady=(5,1))
+        time_limit_label.grid(column=0, row=9, sticky='se', padx=(1,21), pady=(5,1))
         time_limit_current_value = tk.Label(self.settings_window, 
                                             relief='ridge', 
                                             textvariable=self.time_limit, 
                                             font=os_font)
-        time_limit_current_value.grid(column=1, row=13, sticky='sw', padx=1, pady=(5,1))
+        time_limit_current_value.grid(column=1, row=9, sticky='sw', padx=1, pady=(5,1))
+        ocr_frequency_label = tk.Label(self.settings_window, 
+                                       text='Ocr frequency', 
+                                       font=os_font)
+        ocr_frequency_label.grid(column=2, row=9, sticky='se', padx=(1,21), pady=(5,1))
+        ocr_frequency_current_value = tk.Label(self.settings_window, 
+                                               relief='ridge', 
+                                               textvariable=self.ocr_frequency,
+                                               font=os_font)
+        ocr_frequency_current_value.grid(column=3, row=9, sticky='sw', padx=1, pady=(5,1))
 
+    
         self.time_limit_entry = tk.Entry(self.settings_window, 
                                          width=10, 
                                          font=os_font)
-        self.time_limit_entry.grid(column=0, row=14, sticky='e', pady=(1,10), padx=(21,31))
+        self.time_limit_entry.grid(column=0, row=10, sticky='e', pady=(1,10), padx=(21,31))
         time_limit_button = tk.Button(self.settings_window, 
                                       text="Update time limit", 
                                       anchor='w', 
                                       padx=5,
                                       command=self.set_time_limit_value, 
                                       font=os_font)
-        time_limit_button.grid(column=1, row=14, sticky='w', pady=(1,10))
-
-
-        ocr_frequency_label = tk.Label(self.settings_window, 
-                                       text='Ocr frequency', 
-                                       font=os_font)
-        ocr_frequency_label.grid(column=2, row=13, sticky='se', padx=(1,21), pady=(5,1))
-        ocr_frequency_current_value = tk.Label(self.settings_window, 
-                                               relief='ridge', 
-                                               textvariable=self.ocr_frequency,
-                                               font=os_font)
-        ocr_frequency_current_value.grid(column=3, row=13, sticky='sw', padx=1, pady=(5,1))
-
+        time_limit_button.grid(column=1, row=10, sticky='w', pady=(1,10))
         self.ocr_frequency_entry = tk.Entry(self.settings_window, 
                                             width=10, 
                                             font=os_font)
-        self.ocr_frequency_entry.grid(column=2, row=14, sticky='e', pady=(1,10), padx=(21,31))
+        self.ocr_frequency_entry.grid(column=2, row=10, sticky='e', pady=(1,10), padx=(21,31))
         ocr_frequency_button = tk.Button(self.settings_window, 
                                          text="Update frequency value", 
                                          anchor='w',
                                          padx=5,
                                          command=self.set_ocr_frequency_value, 
                                          font=os_font)
-        ocr_frequency_button.grid(column=3, columnspan=2, row=14, sticky='w', pady=(1,10))
+        ocr_frequency_button.grid(column=3, columnspan=2, row=10, sticky='w', pady=(1,10))
 
         verify_limit_label = tk.Label(self.settings_window, 
                                       text='Upgrade checks', 
                                       font=os_font)
-        verify_limit_label.grid(column=0, row=15, sticky='se', padx=(18,5), pady=(5,1))
+        verify_limit_label.grid(column=0, row=11, sticky='se', padx=(18,5), pady=(5,1))
         verify_limit_current_value = tk.Label(self.settings_window, 
                                               relief='ridge',
                                               textvariable=self.verify_limit, ##
                                               font=os_font)
-        verify_limit_current_value.grid(column=1, row=15, sticky='sw', padx=1, pady=(5,1))
+        verify_limit_current_value.grid(column=1, row=11, sticky='sw', padx=1, pady=(5,1))
 
         self.verify_limit_entry = tk.Entry(self.settings_window, 
                                            width=10, 
                                            font=os_font)
-        self.verify_limit_entry.grid(column=0, row=16, sticky='e', pady=(1,10), padx=(21,31))
+        self.verify_limit_entry.grid(column=0, row=12, sticky='e', pady=(1,10), padx=(21,31))
         verify_limit_button = tk.Button(self.settings_window, 
                                         text="Update check limit", 
                                         anchor='w', 
                                         padx=5,
                                         command=self.set_verify_limit_value,
                                         font=os_font)
-        verify_limit_button.grid(column=1, row=16, sticky='w', pady=(1,10))
+        verify_limit_button.grid(column=1, row=12, sticky='w', pady=(1,10))
 
         self.gpu_toggle = tk.Checkbutton(self.settings_window, 
-                                         text="Use gpu in ocr (requires a restart to update value)", 
+                                         text="Use gpu in ocr (a restart is required to update this value)", 
                                          anchor='nw', 
                                          onvalue='On', 
                                          offvalue='Off', 
@@ -272,7 +318,7 @@ class SettingsWindow:
                                          variable=self.gpu,
                                          command=self.change_gpu_status,
                                          font=os_font)
-        self.gpu_toggle.grid(column=0, row=17, columnspan=4, sticky='nw')
+        self.gpu_toggle.grid(column=0, row=13, columnspan=4, sticky='nw')
 
         logging_toggle = tk.Checkbutton(self.settings_window,
                                         text="Enable logging", 
@@ -284,7 +330,7 @@ class SettingsWindow:
                                         variable=self.logging,
                                         command=self.change_logging_status,
                                         font=os_font)
-        logging_toggle.grid(column=0, row=18, columnspan=3, sticky='nw')
+        logging_toggle.grid(column=0, row=14, columnspan=3, sticky='nw')
 
         self.delta_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
                                                    text="Print ocr delta text values in monitoring window", 
@@ -296,7 +342,7 @@ class SettingsWindow:
                                                    variable=self.delta_ocrtext,
                                                    command=self.change_deltaocr_status,
                                                    font=os_font)
-        self.delta_ocrtext_toggle.grid(column=0, row=19, columnspan=3, sticky='nw')
+        self.delta_ocrtext_toggle.grid(column=0, row=15, columnspan=3, sticky='nw')
 
         self.substring_ocrtext_toggle = tk.Checkbutton(self.settings_window, 
                                                       text="Print ocr substring text values in monitoring window", 
@@ -308,7 +354,7 @@ class SettingsWindow:
                                                       variable=self.substring_ocrtext,
                                                       command=self.change_substringocr_status,
                                                       font=os_font)
-        self.substring_ocrtext_toggle.grid(column=0, row=20, columnspan=3, sticky='nw')
+        self.substring_ocrtext_toggle.grid(column=0, row=16, columnspan=3, sticky='nw')
 
         ocr_autoadjust_toggle = tk.Checkbutton(self.settings_window, 
                                                text="Auto-adjust ocr upgrade data the next time a plan is run", 
@@ -319,25 +365,26 @@ class SettingsWindow:
                                                variable=self.ocr_adjust,
                                                command=self.change_ocradjust_status,
                                                font=os_font)
-        ocr_autoadjust_toggle.grid(column=0, row=21, columnspan=3, sticky='nw')
+        ocr_autoadjust_toggle.grid(column=0, row=17, columnspan=3, sticky='nw')
+
         self.ocr_autoadjust_entry = tk.Entry(self.settings_window, 
-                                             width=50, 
+                                             width=45, 
                                              font=os_font)
-        self.ocr_autoadjust_entry.grid(column=0, columnspan=4, row=22, sticky='w', pady=(1,10), padx=(21,31))
+        self.ocr_autoadjust_entry.grid(column=0, columnspan=4, row=19, sticky='w', pady=(1,10), padx=(21,31))
         self.ocr_autoadjust_button = tk.Button(self.settings_window, 
                                                text="Set args", 
                                                anchor='w',
                                                padx=5,
                                                command=self.set_ocradjust_value, 
                                                font=os_font)
-        self.ocr_autoadjust_button.grid(column=3, columnspan=2, row=22, sticky='w', pady=(1,10))
+        self.ocr_autoadjust_button.grid(column=3, columnspan=2, row=19, sticky='w', pady=(1,10), padx=(10,1))
         self.ocr_autoadjust_reset_button = tk.Button(self.settings_window, 
                                                      text="Reset args", 
                                                      anchor='w', 
                                                      padx=5,
                                                      command=self.reset_ocradjust_value, 
                                                      font=os_font)
-        self.ocr_autoadjust_reset_button.grid(column=4, row=22, sticky='w', padx=(1,20), pady=(1,10))
+        self.ocr_autoadjust_reset_button.grid(column=4, row=19, sticky='w', padx=(1,20), pady=(1,10))
 
         self.update_variables()
 
@@ -348,6 +395,12 @@ class SettingsWindow:
         elif self.resolution_height_entry.get() == 'height':
             self.resolution_height_entry.delete(0, "end")
             self.resolution_height_entry.config(fg='black')
+        if self.ingame_res_width_entry.get() == 'width':
+            self.ingame_res_width_entry.delete(0, "end")
+            self.ingame_res_width_entry.config(fg='black')
+        elif self.ingame_res_height_entry.get() == 'height':
+            self.ingame_res_height_entry.delete(0, "end")
+            self.ingame_res_height_entry.config(fg='black')
 
     def update_variables(self) -> None:
         """Updates toggle button values with matching gui_vars.json values."""
@@ -369,6 +422,17 @@ class SettingsWindow:
             self.resolution_button['state'] = 'disabled'
         if gui_vars_dict["windowed"]:
             self.windowed.set('On')
+        if gui_vars_dict["check_ingame_resolution"]:
+            self.ingame_res.set('On')
+            self.ingame_res_value.set(self.read_value("ingame_res_shift"))
+            self.ingame_res_width_entry['state'] = 'normal'
+            self.ingame_res_height_entry['state'] = 'normal'
+            self.ingame_res_button['state'] = 'normal'
+        else:
+            self.ingame_res_value.set(f' 0 x 0 ')
+            self.ingame_res_width_entry['state'] = 'disabled'
+            self.ingame_res_height_entry['state'] = 'disabled'
+            self.ingame_res_button['state'] = 'disabled'
         if torch.cuda.is_available():
             if gui_vars_dict["use_gpu"]:
                 self.gpu.set('On')
@@ -402,6 +466,7 @@ class SettingsWindow:
             self.ocr_autoadjust_entry['state'] = 'disabled'
 
     def change_resolution_status(self) -> None:
+        """Change custom resolution status based on toggle button value."""
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
         if self.resolution.get() == 'On':
@@ -426,6 +491,7 @@ class SettingsWindow:
             json.dump(gui_vars_dict, f, indent=4)
 
     def change_windowed_status(self) -> None:
+        """Change windowed mode status based on toggle button value."""
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
         if self.windowed.get() == 'On':
@@ -435,8 +501,27 @@ class SettingsWindow:
         with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
             json.dump(gui_vars_dict, f, indent=4)
 
+    def change_ingame_res_status(self) -> None:
+        """Change gpu toggle based on toggle button value."""
+        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+            gui_vars_dict: dict[str, Any] = json.load(f)
+        if self.ingame_res.get() == 'On':
+            gui_vars_dict["check_ingame_resolution"] = True
+            self.ingame_res_value.set(self.read_value("ingame_res_shift"))
+            self.ingame_res_width_entry['state'] = 'normal'
+            self.ingame_res_height_entry['state'] = 'normal'
+            self.ingame_res_button['state'] = 'normal'
+        elif self.ingame_res.get() == 'Off':
+            gui_vars_dict["check_ingame_resolution"] = False
+            self.ingame_res_value.set(' 0 x 0 ')
+            self.ingame_res_width_entry['state'] = 'disabled'
+            self.ingame_res_height_entry['state'] = 'disabled'
+            self.ingame_res_button['state'] = 'disabled'
+        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+            json.dump(gui_vars_dict, f, indent=4)
+
     def change_gpu_status(self) -> None:
-        """Change gpu toggle status based on toggle button value."""
+        """Change gpu status based on toggle button value."""
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
         if self.gpu.get() == 'On':
@@ -507,13 +592,22 @@ class SettingsWindow:
             json.dump(gui_vars_dict, f, indent=4)
 
     def set_resolution_value(self) -> None:
+        """Saves custom resolution value to gui_vars.json.
+        
+        Accepted values are integes from
+        - 1 to monitor pixel width, for width
+        - 1 to monitor pixel height, for height
+
+        Note that both width and height cannot use max values at the same time because that's just using native 
+        resolution again.
+        """
         try:
             width = self.resolution_width_entry.get()
             w = int(width)
             height = self.resolution_height_entry.get()
             h = int(height)
             native = pyautogui.size()
-            if 1 <= w < native[0] and 1 <= h < native[1]:
+            if (1 <= w <= native[0] and 1 <= h < native[1]) or (1 <= w < native[0] and 1 <= h <= native[1]) :
                     val = width+' x '+height
                     with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
                         gui_vars_dict: dict[str, Any] = json.load(f)
@@ -558,20 +652,39 @@ class SettingsWindow:
         except ValueError:
             ...
 
-    def set_verify_limit_value(self) -> None:
-        """Saves current upgrade verification limit value to gui_vars.json.
+    def set_ingame_res_value(self) -> None:
+        """Saves in-game resolution shift value to gui_vars.json.
         
-        Accepted values are integer from 1 to 99.
+        Width field accepts both positive and negative values in a range (-res/2, res/2).
+        - positive values shift coordinates towards middle point
+        - negative instead shifts them away from the middle.
+        Value res/2 would push all coordinates into middle coordinate and -res/2 push border coordinates far outside 
+        the game window, and are thus not needed.
+
+        Height field acccepts only only non-negative (>= 0) because base resolution 1920x1080 has no top border and thus
+        shifting coordinates away with negative values would immediately leave some min and max coordinates outside 
+        game window.
+
+        In practise, finding correct shift value for width can be difficult: 1920x1080 includes small horizontal borders
+        so you need to
+        - increase shift above 0 to account for larger border IF your resolution has less wider border (or no border 
+            at all)
+        - decrease shift below 0 to account for smaller border IF you resolution has wider border
         """
         try:
-            val = int(self.verify_limit_entry.get())
-            if 1 <= val <= 99:
-                with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-                    gui_vars_dict: dict[str, Any] = json.load(f)
-                gui_vars_dict["upg_verify_limit"] = val
-                self.verify_limit.set(' '+str(gui_vars_dict["upg_verify_limit"])+' ')
-                with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
-                    json.dump(gui_vars_dict, f, indent=4)
+            width = self.ingame_res_width_entry.get()
+            w = int(width)
+            height = self.ingame_res_height_entry.get()
+            h = int(height)
+            native = pyautogui.size()
+            if -native[0]/2 < w < native[0]/2 and 0 <= h < native[1]/2:
+                    val = width+' x '+height
+                    with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+                        gui_vars_dict: dict[str, Any] = json.load(f)
+                    gui_vars_dict["ingame_res_shift"] = val
+                    self.ingame_res_value.set(' '+val+' ')
+                    with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+                        json.dump(gui_vars_dict, f, indent=4)
         except ValueError:
             ...
 
@@ -609,9 +722,23 @@ class SettingsWindow:
         except ValueError:
             ...
 
-    # TODO when ingame resolution is added, a new check must be added:
-    # > when ingame res is enabled, ocr auto-adjust must use this resolution instead of base/custom res
-    # so reset_ocradjust_value, monitoring_window and _adjust_deltas.py require some changes
+    def set_verify_limit_value(self) -> None:
+        """Saves current upgrade verification limit value to gui_vars.json.
+        
+        Accepted values are integer from 1 to 99.
+        """
+        try:
+            val = int(self.verify_limit_entry.get())
+            if 1 <= val <= 99:
+                with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+                    gui_vars_dict: dict[str, Any] = json.load(f)
+                gui_vars_dict["upg_verify_limit"] = val
+                self.verify_limit.set(' '+str(gui_vars_dict["upg_verify_limit"])+' ')
+                with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+                    json.dump(gui_vars_dict, f, indent=4)
+        except ValueError:
+            ...
+
     def set_ocradjust_value(self) -> None:
         """Saves current ocr adjust data to gui_vars.json."""
         val = self.ocr_autoadjust_entry.get()
@@ -625,11 +752,14 @@ class SettingsWindow:
         """Reset adjust arguments."""
         res_raw = self.resolution_value.get().strip().split()
         res = 'res='+res_raw[0]+'x'+res_raw[2]
+        shift_raw = self.ingame_res_value.get().strip().split()
+        shift = 'shift='+shift_raw[0]+'x'+shift_raw[2]
         adjust_args = f'{res}'
         if self.resolution.get() == 'On' and self.windowed.get() == 'On':
             adjust_args += ' win=1'
         else:
             adjust_args += ' win=0'
+        adjust_args += f' {shift}'
         adjust_args += ' monkeys=all delta=4'
         self.ocr_autoadjust_entry.delete(0, "end")
         self.ocr_autoadjust_entry.insert("end", adjust_args)
