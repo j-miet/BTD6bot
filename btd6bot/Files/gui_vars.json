@@ -14,5 +14,5 @@
     "delta_ocrtext": false,
     "substring_ocrtext": false,
     "ocr_adjust_deltas": false,
-    "adjust_args": "res=1920x1080 win=0 shift=5x10 monkeys=all delta=4"
+    "adjust_args": "res=1920x1080 win=0 shift=0x0 monkeys=all delta=4"
 }
