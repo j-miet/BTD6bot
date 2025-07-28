@@ -239,7 +239,7 @@ class MonitoringWindow:
                                            padx=10, 
                                            pady=10)
         monitor_collection_text.grid(column=5, row=2, sticky='ne')
-        self._update_event_status_to_json()
+        self._update_collection_status()
 
         monitor_queuemode_text = tk.Label(self.monitoringwindow, 
                                           text='Queue mode: '+str(self.queue_val),             
@@ -300,13 +300,8 @@ class MonitoringWindow:
                 self.roundtime.set("0.00")
         self.roundtime.set("-")
 
-    def _update_event_status_to_json(self) -> None:
-        """Updates collection event status to gui_vars.json."""
-        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-            gui_vars_dict = json.load(f)
-        gui_vars_dict["current_event_status"] = self.collection_val
-        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
-            json.dump(gui_vars_dict, f, indent=4)
+    def _update_collection_status(self) -> None:
+        BotVars.current_event_status = self.collection_val
 
     def _stop_or_run(self) -> None:
         """Handles current bot thread termination and opening of new ones."""
@@ -324,36 +319,43 @@ class MonitoringWindow:
         roundtimer_thread = threading.Thread(target=self._update_round_timer, daemon=True)
         roundtimer_thread.start()
 
-    def _res_check(self, customres: bool, resolution_val: list[int], windowed: bool, w: int, h: int) -> None:
+    def _res_check(self, customres: bool, resolution_val: tuple[int, int], windowed: bool, w: int, h: int,
+                   ingame_shift: bool, shift_val: tuple[int, int]) -> None:
         with open(gui_paths.FILES_PATH/'upgrades_current.json') as f:
             identifier: list[int | str] = json.load(f)["__identifier"]
         issue_flag = 0
         if customres:
-            if resolution_val != identifier[0:2]:
+            if list(resolution_val) != identifier[0:2]:
                 cprint("-"*55+"\n"
                         ">Ocr data resolution differs from display resolution:\n"
-                        " Ocr resolution: ", identifier[0], identifier[1], "\n"
-                        " Display resolution: ", resolution_val[0], resolution_val[1])
+                        " Ocr resolution:", identifier[0], identifier[1], "\n"
+                        " Display resolution:", resolution_val[0], resolution_val[1])
                 issue_flag = 1
         else:
             if list((w, h)) != identifier[0:2]:
                 cprint("-"*55+"\n"
                         ">Ocr data resolution differs from display resolution:\n"
-                        " Ocr resolution: ", identifier[0], identifier[1], "\n"
-                        " Display resolution: ", w, h)
+                        " Ocr resolution:", identifier[0], identifier[1], "\n"
+                        " Display resolution:", w, h)
                 issue_flag = 1
-        if identifier[2] == "fullscreen" and windowed:
+        if identifier[4] == "fullscreen" and windowed:
             cprint("-"*55+"\n"
                     ">Ocr data supports fullscreen, but you use\n windowed mode.")
             issue_flag = 1
-        elif identifier[2] == "windowed" and not windowed:
+        elif identifier[4] == "windowed" and not windowed:
             cprint("-"*55+"\n"
                     ">Ocr data supports windowed mode, but you use\n fullscreen mode.")
+            issue_flag = 1
+        if ingame_shift and list(shift_val) != identifier[2:4]:
+            cprint("-"*55+"\n"
+                    ">Ocr data coordinate shift differs from current value:\n"
+                    " Ocr shift:", identifier[3], identifier[3], "\n"
+                    " Current shift:", shift_val[0], shift_val[1])
             issue_flag = 1
         if issue_flag == 1:
             cprint(55*"-"+"\n"
                     "-->> Issues detected; see above. <<--\n" \
-                    "These don't prevent bot from starting, but are very likely to cause problems with ocr text "
+                    "They don't prevent bot from starting, but are very likely to cause problems with ocr text "
                     "detection.\n"+
                     27*" "+".\n"+
                     27*" "+".\n"+
@@ -414,16 +416,19 @@ class MonitoringWindow:
         cprint('=====Bot running=====')
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
-        customres_val: bool = gui_vars_dict["check_resolution"]
-        resolution_val: list[int] = list(map(int, gui_vars_dict["custom_resolution"].split('x')))
-        windowed_val: bool = gui_vars_dict["windowed"]
+        customres: bool = gui_vars_dict["check_resolution"]
+        resolution_val: tuple[int,int] = tuple(map(int, gui_vars_dict["custom_resolution"].split('x')))
+        windowed: bool = gui_vars_dict["windowed"]
+        ingame_shift: bool = gui_vars_dict["check_resolution"]
+        shift_val: tuple[int,int] = tuple(map(int, gui_vars_dict["ingame_res_shift"].split('x')))
         retries_val: int = gui_vars_dict["retries"]
         w, h = pyautogui.size()
+
         if not gui_vars_dict["ocr_adjust_deltas"]:
-            self._res_check(customres_val, resolution_val, windowed_val, w, h)
-        if customres_val:
+            self._res_check(customres, resolution_val, windowed, w, h, ingame_shift, shift_val)
+        if customres:
             cprint('[Custom Resolution] '+str(resolution_val[0])+'x'+str(resolution_val[1])+'\n'
-                    '[Windowed] '+str(windowed_val)+'\n')
+                    '[Windowed] '+str(windowed)+'\n')
         else:
             w, h = pyautogui.size()
             cprint('[Resolution] '+str(w)+'x'+str(h)+'\n')
