@@ -6,9 +6,12 @@ from bot import kb_mouse, times
 from bot.bot_data import BotData
 from bot.commands.flow import AutoStart, change_autostart, forward
 from bot.bot_vars import BotVars
+from bot.kb_mouse import ScreenRes
+from bot.locations import get_click, get_text
 import bot.menu_return
 from bot.ocr.ocr import weak_substring_check, strong_substring_check, strong_delta_check, get_pixelcolor
 from bot.ocr.ocr_reader import OCR_READER
+from bot.times import PauseControl
 from customprint import cprint
 from utils import timing
 from utils.exceptions import BotError
@@ -20,14 +23,6 @@ class Rounds:
     round_check repeatedly. Also, current round begin time is class variable, as it's needed to print round end times.
 
     Attributes:
-        CURRENT_ROUND (tuple[float, float, float, float], class attribute): Text location of current in-game round, 
-            located in the upper-right of screen.
-        UPGRADE_TEXT (tuple[float, float, float, float], class attribute): Used in starting the first round.
-        NEXT_TEXT (tuple[float, float, float, float], class attribute): Exiting map.
-        LEVEL_UP (tuple[float, float, float, float], class attribute): Level up text location --CURRENTLY UNUSED--
-        DEFEAT (tuple[float, float, float, float], class attribute): Defeat screen 'bloons leaked' text location.
-        BUTTONS (dict[str, tuple[float, float]], class attribute): All required button locations to operate in-game 
-            rounds and exiting game.
         DEFEAT_CHECK_FREQUENCY (int, class attribute): Controls the frequency of defeat checks under Rounds.¨
             round_check, Monkey._check_upgrade, and Monkey._place. Increasing the value makes defeat screen detection 
             slower, but improves speed (and thus accuracy) of ocr in listed methods.
@@ -44,21 +39,7 @@ class Rounds:
             value is 'defeat', which means bot return to menu via defeat screen. Another possibility is 'manual' which
             means bot will open esc menu and exit manually.
         escsettings_checked (bool, class attribute): Whether automatic game settings check has been performed once.
-    """
-
-    CURRENT_ROUND: tuple[float, float, float, float] = (0.7181666666667, 0.027001, 0.8119791666667, 0.0685185185185)
-    UPGRADE_TEXT: tuple[float, float, float, float] = (0.875, 0.0175925925926, 0.9682291666667, 0.0638888888889) 
-    NEXT_TEXT: tuple[float, float, float, float] = (0.4364583333333, 0.8046296296296, 0.5526041666667, 0.8740740740741)
-    LEVEL_UP: tuple[float, float, float, float] = (0.4270833333333, 0.4907407407407, 0.5708333333333, 0.5648148148148)
-    DEFEAT: tuple[float, float, float, float] = (0.446875, 0.5361111111111, 0.5635416666667, 0.5712962962963)
-    BUTTONS: dict[str, tuple[float, float]] = {
-        'next_button': (0.5, 0.85),
-        'home_button': (0.37, 0.78),
-        'home_button2': (0.44, 0.78),
-        'defeat_home_button': (0.33, 0.75),
-        'defeat_home_button_first_round': (0.38, 0.75)
-        }
-    
+    """    
     DEFEAT_CHECK_FREQUENCY = 12
     LEVEL_UP_CHECK_FREQUENCY = 30
 
@@ -74,19 +55,19 @@ class Rounds:
         if not Rounds.escsettings_checked:
             kb_mouse.press_esc()
             time.sleep(0.5)
-            dragdrop = get_pixelcolor(0.4427083333333, 0.2777777777778)
-            nugde = get_pixelcolor(0.4458333333333, 0.412962962963)
-            autostart = get_pixelcolor(0.6697916666667, 0.2796296296296)
+            dragdrop = get_pixelcolor(*get_click('ingame_esc', 'dragdrop'))
+            nugde = get_pixelcolor(*get_click('ingame_esc', 'nudge'))
+            autostart = get_pixelcolor(*get_click('ingame_esc', 'autostart'))
             if dragdrop[0] != 0:
-                kb_mouse.click((0.4427083333333, 0.2777777777778))
+                kb_mouse.click(get_click('ingame_esc', 'dragdrop'))
                 cprint("Enabled 'drag & drop'")
                 time.sleep(0.5)
             if nugde[2] != 0:
-                kb_mouse.click((0.4458333333333, 0.412962962963))
+                kb_mouse.click(get_click('ingame_esc', 'nudge'))
                 cprint("Disabled nugde mode'")
                 time.sleep(0.5)
             if autostart[2] != 0:
-                kb_mouse.click((0.6697916666667, 0.2796296296296))
+                kb_mouse.click(get_click('ingame_esc', 'autostart'))
                 AutoStart.autostart_status = True
                 cprint("Enabled 'auto start'")
                 time.sleep(0.5)
@@ -99,11 +80,11 @@ class Rounds:
         cprint('Defeat: returning to menu in...', end=' ')
         timing.counter(3)
         if exit_str == 'manual':
-            kb_mouse.click(Rounds.BUTTONS['home_button2'])
+            kb_mouse.click(get_click('buttons', 'home_button2'))
         elif exit_str == 'defeat':
-            kb_mouse.click(Rounds.BUTTONS['defeat_home_button'])
+            kb_mouse.click(get_click('buttons','defeat_home_button'))
             time.sleep(0.5)
-            kb_mouse.click(Rounds.BUTTONS['defeat_home_button_first_round'])
+            kb_mouse.click(get_click('buttons','defeat_home_button_first_round'))
         bot.menu_return.returned(False)
         Rounds.escsettings_checked = False
         cprint('\nPlan failed.\n')
@@ -131,7 +112,7 @@ class Rounds:
         if isinstance(cycle, int) and cycle >= 1 and isinstance(frequency, int) and frequency >= cycle:
             if times.current_time() - current_time < BotVars.checking_time_limit:
                 if cycle == frequency:   # frequency of defeat checks: 2 = every second loop, N = every Nth loop.
-                    if weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
+                    if weak_substring_check('bloons leaked', get_text('message', 'defeat'), OCR_READER):
                         cprint("\n**Defeat screen detected, game status set to defeat.**")
                         BotVars.defeat_status = True
                         return True
@@ -162,8 +143,8 @@ class Rounds:
             total_start: Start time from round 1 placements.
             final_round: Final round number.
         """
-        while not strong_delta_check('Next', Rounds.NEXT_TEXT, OCR_READER):
-            if weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
+        while not strong_delta_check('Next', get_text('message', 'next_text'), OCR_READER):
+            if weak_substring_check('bloons leaked', get_text('message', 'defeat'), OCR_READER):
                 BotData.set_data(current_round=Rounds.end_round+1)
                 Rounds._defeat_return(Rounds.exit_type)
                 return
@@ -178,12 +159,12 @@ class Rounds:
 
         cprint('\nExiting map in...', end=' ')
         timing.counter(3)
-        kb_mouse.click(Rounds.BUTTONS['next_button'])
+        kb_mouse.click(get_click('buttons', 'next_button'))
         time.sleep(0.5)
-        kb_mouse.click(Rounds.BUTTONS['home_button'])
+        kb_mouse.click(get_click('buttons', 'home_button'))
         time.sleep(0.5)
         # for some reason, in apopalypse, the home button is placed slighty more to the right than usual.
-        kb_mouse.click(Rounds.BUTTONS['home_button2'])
+        kb_mouse.click(get_click('buttons', 'home_button2'))
         bot.menu_return.returned()
         cprint('\nPlan completed.\n')
 
@@ -194,12 +175,14 @@ class Rounds:
         Checks also current autostart status and will change it to True if not already, as True is the default value 
         (you start the bot with Autostart setting enabled in-game).
         """
+        if ScreenRes.get_shift() != (0,0):
+            BotVars.ingame_res_enabled = True
         start_time = times.current_time()
         loop: int = 1
         while loop:
             for letter in ('u','p','g','r','a','d','e'):
-                kb_mouse.click((0.5, 0.69)) # if game mode is 'Apopalypse', click the button.
-                if not weak_substring_check(letter, Rounds.UPGRADE_TEXT, OCR_READER): 
+                kb_mouse.click(get_click('buttons', 'apopalypse_start')) # if mode is 'Apopalypse', click start
+                if not weak_substring_check(letter, get_text('message','upgrade_text'), OCR_READER): 
                     if times.current_time() - start_time > 15:
                         for _ in range(3):
                             kb_mouse.press_esc()
@@ -208,8 +191,8 @@ class Rounds:
                 else:
                     loop = 0
                     break
-                time.sleep(1)
-        time.sleep(0.5)
+                time.sleep(0.25)
+        time.sleep(1)
         cprint('--> Running...')
         kb_mouse.click((0.999, 0.01))  # closes any difficulty info pop-up window after entering a game.
         time.sleep(1)
@@ -246,7 +229,7 @@ class Rounds:
             kb_mouse.press_esc()
             BotData.set_data(current_round=Rounds.end_round+1)
             wait_start = times.current_time()
-            while not weak_substring_check('bloons leaked', Rounds.DEFEAT, OCR_READER):
+            while not weak_substring_check('bloons leaked', get_text('message', 'defeat'), OCR_READER):
                 if times.current_time()-wait_start > 3:
                     time.sleep(1)
                     Rounds._defeat_return('manual')
@@ -271,9 +254,10 @@ class Rounds:
             levelup_check = 1
             while True:
                 round_value = strong_substring_check(str(current_round)+'/'+str(Rounds.end_round), 
-                                                     Rounds.CURRENT_ROUND, OCR_READER)
+                                                     get_text('message', 'current_round'), 
+                                                     OCR_READER)
                 if not round_value[0]:
-                    times.pause_bot()
+                    PauseControl.pause_bot()
                     if levelup_check == Rounds.LEVEL_UP_CHECK_FREQUENCY:
                         kb_mouse.click((0.9994791666667, 0))
                         levelup_check = 0
@@ -294,7 +278,7 @@ class Rounds:
                     break
             times.time_print(Rounds.current_round_begin_time, times.current_time(), f'Round {current_round-1}')
             cprint('=== Current round:', current_round, '===')
-        times.pause_bot()
+        PauseControl.pause_bot()
         Rounds.current_round_begin_time = times.current_time()
         BotData.set_data(round_time=Rounds.current_round_begin_time,
                             current_round=Rounds.begin_round,

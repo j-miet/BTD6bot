@@ -16,14 +16,14 @@ import time
 import pyautogui
 import pynput
 
-from bot import kb_mouse
+from bot import kb_mouse, locations
 from bot.commands.flow import AutoStart
 from bot.commands.hero import Hero
 from bot.commands.monkey import Monkey
 from bot.bot_vars import BotVars
 import bot.hotkeys
 from bot.kb_mouse import ScreenRes
-from bot.menu_return import OcrLocations
+from bot.locations import get_click, get_text, get_locationdict
 from bot.ocr.ocr import OcrValues
 from bot.ocr.ocr import weak_substring_check
 from bot.ocr.ocr_reader import OCR_READER
@@ -34,80 +34,17 @@ from customprint import cprint
 if TYPE_CHECKING:
     from typing import Any
 
-class MouseLocations:
-    """Wrapper class for mouse click locations.
-    
-    Attributes:
-        HEROES (dict[str, tuple[float, float]], class attribute): Dictionary of hero name keys with locations as values.
-        HEROES2 (dict[str, tuple[float, float]], class attribute): Dictionary of hero names locations that don't show 
-            initally; hero panel window needs to be scrolled down to access these.
-        BUTTONS (dict[str, tuple[float, float]], class attribute): Menu buttons.
-        DIFFICULTY (dict[str, tuple[float, float]], class attribute): Menu location of specific difficulty setting 
-            (easy, medium, hard).
-        MODES (dict[str, tuple[float, float]], class attribute): Menu locations of specific mode (standard, primary 
-            only, reverse, impoppable, chimps etc.)
-        SAVE_OVERRIDE (tuple[float, float], class attribute): After selecting mode, if user has previous save on a map, 
-            a button asking overriding it pops here.
-        HEROSCREEN_SCROLL (tuple[float, float], class attribute): Hero panel location to access more heroes by 
-            scrolling down while mouse is in this location. 
-    """
-    HEROES: dict[str, tuple[float, float]] = {
-        'quincy' : (0.0552083333333, 0.2018518518519),
-        'gwen' : (0.1338541666667, 0.2111111111111),
-        'striker' : (0.2192708333333, 0.2064814814815),
-        'obyn' : (0.0567708333333, 0.3777777777778),
-        'rosalia' : (0.134375, 0.387962962963),
-        'churchill' : (0.2171875, 0.3916666666667),
-        'benjamin' : (0.0572916666667, 0.5648148148148),
-        'pat' : (0.1401041666667, 0.5731481481481),
-        'ezili' : (0.2130208333333, 0.5787037037037),
-        'adora' : (0.0567708333333, 0.7546296296296),
-        'etienne' : (0.1354166666667, 0.75),
-        'sauda' : (0.2161458333333, 0.7453703703704),
-        'brickell' : (0.0526041666667, 0.9157407407407),
-        'psi' : (0.1307291666667, 0.9203703703704),
-        'geraldo' : (0.2104166666667, 0.9148148148148)
-        }
-    HEROES2: dict[str, tuple[float, float]] = {
-        'corvus' : (0.0541666666667, 0.835185185185266667)
-        }  
-    BUTTONS: dict[str, tuple[float, float]] = {
-        'heroes' : (0.275, 0.8888888888889),
-        'hero_select' : (0.5734375, 0.5592592592593),
-
-        'menu_play' : (0.5, 0.8657407407407),
-        'search_map' : (0.0395833333333, 0.1518518518519),
-        'search_map_bar' :(0.4338541666667, 0.0462962962963),
-        'choose_map' : (0.2817708333333, 0.3055555555556),
-        } 
-    DIFFICULTY: dict[str, tuple[float, float]] = {
-        'EASY' : (0.3255208333333, 0.3814814814815),
-        'MEDIUM' : (0.5026041666667, 0.3833333333333),
-        'HARD' : (0.6744791666667, 0.3861111111111)
-        }   
-    MODES: dict[str, tuple[float, float]] = {
-        'standard' : (0.3276041666667, 0.5564814814815),
-        'top_left' : (0.5036458333333, 0.4259259259259),
-        'top_middle' : (0.6651041666667, 0.4425925925926),
-        'top_right' : (0.8348958333333, 0.4296296296296),
-        'bottom_left' : (0.503125, 0.7027777777778),
-        'bottom_middle' : (0.6682291666667, 0.6981481481481),
-        'bottom_right' : (0.8411458333333, 0.6990740740741)
-        }
-    SAVE_OVERRIDE: tuple[float, float] = (0.5984375, 0.6842592592593)
-    HEROSCREEN_SCROLL: tuple[float, float] = (0.1401041666667, 0.5731481481481)
-
 
 def _scroll_down_heroes() -> None:
     """Scrolls down hero screen allowing access to more heroes."""
     m = pynput.mouse.Controller()
-    pyautogui.moveTo(kb_mouse.pixel_position(MouseLocations.HEROSCREEN_SCROLL)) 
+    pyautogui.moveTo(kb_mouse.pixel_position(get_click('menu', 'heroscreen_scroll'))) 
     for _ in range(0,4):
         m.scroll(0, -1)
         time.sleep(0.1)
 
 def _choose_hero(hero_name: str | None) -> bool:
-    """In menu screen, chooses a correct hero.
+    """In menu screen, chooses the correct hero.
 
     Can also choose set None so hero won't change - useful in modes like deflation where hero might not be necessary.
 
@@ -116,15 +53,16 @@ def _choose_hero(hero_name: str | None) -> bool:
     Args:
         hero_name: Lower/uppercase doesn't matter, only that name is spelled correctly.
     """
-    all_heroes = (tuple(MouseLocations.HEROES.keys()),
-                  tuple(MouseLocations.HEROES2.keys()))
+    hero_dict: dict[str, Any] = get_locationdict()['CLICK']
+    all_heroes = (tuple(hero_dict['heroes'].keys()),
+                  tuple(hero_dict['heroes2'].keys()))
     if hero_name is None or hero_name.lower() not in set().union(*all_heroes):
         cprint('No hero used in current plan')
         Hero.current_plan_hero_name = hero_name
         return True
     else:
         cprint("Selecting", hero_name.capitalize(), "as hero... ", end='')
-        kb_mouse.click(MouseLocations.BUTTONS['heroes'])
+        kb_mouse.click(get_click('buttons', 'hero_window'))
         start: int = time.time()
         loop: int = 1
         while loop:
@@ -137,15 +75,15 @@ def _choose_hero(hero_name: str | None) -> bool:
                 else:
                     loop = 0
                     break
-        if hero_name.lower() in MouseLocations.HEROES:
-            kb_mouse.click(MouseLocations.HEROES[hero_name.lower()])
+        if hero_name.lower() in hero_dict['heroes']:
+            kb_mouse.click(get_click('heroes', hero_name.lower()))
             Hero.current_plan_hero_name = hero_name
-        elif hero_name.lower() in MouseLocations.HEROES2:
+        elif hero_name.lower() in hero_dict['heroes2']:
             _scroll_down_heroes()
-            kb_mouse.click(MouseLocations.HEROES2[hero_name.lower()])
+            kb_mouse.click(get_click('heroes', hero_name.lower()))
             Hero.current_plan_hero_name = hero_name
     time.sleep(0.3)
-    kb_mouse.click(MouseLocations.BUTTONS['hero_select'])
+    kb_mouse.click(get_click('buttons', 'hero_select'))
     time.sleep(0.3)
     kb_mouse.press_esc()
     cprint("Hero selected!")
@@ -165,7 +103,7 @@ def _choose_map(map_name: str) -> bool:
     loop: int = 1
     while loop:
         for letter in ('p','l','a','y'):
-            if not weak_substring_check(letter, OcrLocations.MENU_PLAYTEXT, OCR_READER):
+            if not weak_substring_check(letter, get_text('message', 'menu_playtext'), OCR_READER):
                 if time.time()-start >= 10:
                     return False
                 time.sleep(0.3)
@@ -174,16 +112,17 @@ def _choose_map(map_name: str) -> bool:
                 break
     search_map = pynput.keyboard.Controller()
     map_str = map_name.replace('_', ' ')
-    kb_mouse.click(MouseLocations.BUTTONS['menu_play'])
+    kb_mouse.click(get_click('buttons', 'menu_play'))
     start = time.time()
     search_found = 0
     time.sleep(0.4)
-    kb_mouse.click(MouseLocations.BUTTONS['search_map'])
+    kb_mouse.click(get_click('buttons', 'search_map'))
     if BotVars.windowed:
         loop = 1
         while time.time()-start <= 5 and loop:
             for letter in ('s','e','a','r','c','h'):
-                if weak_substring_check(letter, (0.4140625, 0.0203703703704, 0.4651041666667, 0.0537037037037),
+                if weak_substring_check(letter, 
+                                        get_text('message', 'map_searchtext'),
                                         OCR_READER):
                     search_found = 1
                     loop = 0
@@ -192,11 +131,12 @@ def _choose_map(map_name: str) -> bool:
                     time.sleep(0.3)
         if not search_found:
             search_found = 0
-            kb_mouse.click(MouseLocations.BUTTONS['search_map'], ignore_windowed=True)
+            kb_mouse.click(get_click('buttons', 'search_map'), ignore_windowed=True)
             start = time.time()
             while time.time()-start <= 5 and loop:
                 for letter in ('s','e','a','r','c','h'):
-                    if weak_substring_check('r', (0.4140625, 0.0203703703704, 0.4651041666667, 0.0537037037037), 
+                    if weak_substring_check(letter, 
+                                            get_text('message', 'map_searchtext'), 
                                             OCR_READER):
                         search_found = 1
                         loop = 0
@@ -206,10 +146,10 @@ def _choose_map(map_name: str) -> bool:
             if not search_found:
                 return False        
     time.sleep(0.4)
-    kb_mouse.click(MouseLocations.BUTTONS['search_map_bar'])
+    kb_mouse.click(get_click('buttons', 'search_map_bar'))
     time.sleep(0.4)
     search_map.type(map_str)  # types map name to search bar.
-    kb_mouse.click(MouseLocations.BUTTONS['choose_map'])
+    kb_mouse.click(get_click('buttons', 'choose_map'))
     return True
 
 def _choose_diff(d: str) -> None:
@@ -220,7 +160,7 @@ def _choose_diff(d: str) -> None:
     Args:
         d: Difficulty.
     """
-    kb_mouse.click(MouseLocations.DIFFICULTY[d])
+    kb_mouse.click(get_click('difficulty', d))
 
 def _choose_mode(m: str) -> None:
     """Chooses correct game mode.
@@ -231,20 +171,20 @@ def _choose_mode(m: str) -> None:
         m: Game mode.
     """
     if m == 'STANDARD':
-        kb_mouse.click(MouseLocations.MODES['standard'])
+        kb_mouse.click(get_click('modes', 'standard'))
     elif m in {'PRIMARY', 'MILITARY', 'MAGIC'}:
-        kb_mouse.click(MouseLocations.MODES['top_left'])
+        kb_mouse.click(get_click('modes', 'top_left'))
     elif m in {'DEFLATION', 'APOPALYPSE', 'DOUBLE_HP'}:
-        kb_mouse.click(MouseLocations.MODES['top_middle'])
+        kb_mouse.click(get_click('modes', 'top_middle'))
     elif m == 'HALFCASH':
-        kb_mouse.click(MouseLocations.MODES['top_right'])
+        kb_mouse.click(get_click('modes', 'top_right'))
     elif m in {'REVERSE', 'ALTERNATE'}:
-        kb_mouse.click(MouseLocations.MODES['bottom_left'])
+        kb_mouse.click(get_click('modes', 'bottom_left'))
     elif m == 'IMPOPPABLE':
-        kb_mouse.click(MouseLocations.MODES['bottom_middle'])
+        kb_mouse.click(get_click('modes', 'bottom_middle'))
     elif m == 'CHIMPS':                                          
-        kb_mouse.click(MouseLocations.MODES['bottom_right'])
-    kb_mouse.click(MouseLocations.SAVE_OVERRIDE)  # if a previous save exists, overwrite it.
+        kb_mouse.click(get_click('modes', 'bottom_right'))
+    kb_mouse.click(get_click('buttons', 'save_overwrite'))  # if a previous save exists, overwrite it.
 
 def _reset_global_targeting() -> None:
     Monkey._wingmonkey = 0
@@ -259,6 +199,8 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
         begin_r: First round.
         end_r: Final round.
     """
+    BotVars.ingame_res_enabled = False
+    ScreenRes.update_shift(0, 0)
     OcrValues._log_ocr_deltas = False
     bot.hotkeys.generate_hotkeys(bot.hotkeys.hotkeys)
     Rounds.begin_round, Rounds.end_round = begin_r, end_r
@@ -276,20 +218,26 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
         return
     try:
         customres_val: bool = gui_vars_dict["check_resolution"]
-        resolution_val: list[int] = list(map(int, gui_vars_dict["custom_resolution"].split('x')))
         if customres_val:
+            resolution_val: tuple[int, int] = tuple(map(int, gui_vars_dict["custom_resolution"].split('x')))
             ScreenRes.update_res(resolution_val[0], resolution_val[1])
         else:
-            ScreenRes.set_baseres()
+            ScreenRes.update_res(ScreenRes.BASE_RES[0], ScreenRes.BASE_RES[1])
+        ingameres_val: bool = gui_vars_dict["check_ingame_resolution"]
+        if ingameres_val:
+            ingame_shift_val: tuple[int, int] = tuple(map(int, gui_vars_dict["ingame_res_shift"].split('x')))
+            ScreenRes.update_shift(ingame_shift_val[0], ingame_shift_val[1])
+            locations.update_customlocations()
+            cprint("#Custom location values loaded.")  
         windowed_val: bool = gui_vars_dict["windowed"]
-        event_val: str = gui_vars_dict["current_event_status"]
         time_limit_val: int = gui_vars_dict["checking_time_limit"]
+        frequency_val: float = gui_vars_dict["ocr_frequency"]
+        verify_limit: int = gui_vars_dict["upg_verify_limit"]
         deltaocr_val: bool = gui_vars_dict["delta_ocrtext"]
         substringocr_val: bool = gui_vars_dict["substring_ocrtext"]
-        frequency_val: float = gui_vars_dict["ocr_frequency"]
         BotVars.windowed = windowed_val
-        BotVars.current_event_status = event_val
         BotVars.checking_time_limit = time_limit_val
+        BotVars.upg_verify_limit = verify_limit
         BotVars.print_delta_ocrtext = deltaocr_val
         BotVars.print_substring_ocrtext = substringocr_val
         OcrValues.read_file_frequency = frequency_val
@@ -337,7 +285,7 @@ def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, 
     loop: int = 1
     while loop:
         for letter in ('p','l','a','y'):
-            if not weak_substring_check(letter, OcrLocations.MENU_PLAYTEXT, OCR_READER):
+            if not weak_substring_check(letter, get_text('message', 'menu_playtext'), OCR_READER):
                 time.sleep(0.3)
             else:
                 loop = 0
