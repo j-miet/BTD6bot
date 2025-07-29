@@ -3,7 +3,6 @@
 Pynput docs: https://pynput.readthedocs.io/en/latest/keyboard.html#pynput.keyboard.Key
 """
 
-import copy
 import pathlib
 
 from pynput.keyboard import Key
