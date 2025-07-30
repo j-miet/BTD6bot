@@ -18,6 +18,7 @@ from pynput.keyboard import Key
 
 from bot import kb_mouse
 from bot.bot_vars import BotVars
+from bot.locations import get_click
 from customprint import cprint
 from utils import timing
 
@@ -25,7 +26,6 @@ class AutoStart:
     """Wrapper class for autostart values.
     
     Attributes:
-        AUTOSTART_TOGGLE (tuple[float, float], class attribute): Location of in-game menu autostart toggle button.
         autostart_status (bool, class attribute): Whether bot has autostart enabled or not. Starts with initial value 
             True. But if any plan modifies this using flow.change_autostart, it's set to False. And if value if False, 
             then after loading into a game, bot will automatically revert this to True, even if it's immediately set to 
@@ -33,8 +33,6 @@ class AutoStart:
         called_forward (bool, class attribute): Whether forward() was called during first round. Default is False, 
             which means bot will automatically call it after first round block ends.
     """
-    AUTOSTART_TOGGLE: tuple[float, float] = (0.69, 0.284)
-
     autostart_status: bool = True
     called_forward = False
 
@@ -102,7 +100,7 @@ def change_autostart() -> None:
     time.sleep(0.5)
     kb_mouse.kb_input(Key.esc)
     time.sleep(0.5)
-    kb_mouse.click(AutoStart.AUTOSTART_TOGGLE)
+    kb_mouse.click(get_click('ingame', 'autostart'))
     kb_mouse.kb_input(Key.esc)
     if not AutoStart.autostart_status: 
         AutoStart.autostart_status = True

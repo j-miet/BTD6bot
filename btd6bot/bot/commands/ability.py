@@ -10,6 +10,7 @@ from bot import kb_mouse, times
 from bot.bot_vars import BotVars
 from bot.hotkeys import hotkeys
 from bot.rounds import Rounds
+from bot.times import PauseControl
 from customprint import cprint
 
 def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, delay: float = 0) -> None:
@@ -51,7 +52,7 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
         >>>
             ability(2, 10, xy=(0.5, 0.5), delay=1)
     """
-    times.pause_bot()
+    PauseControl.pause_bot()
     if BotVars.defeat_status:
         return
     begin_time = Rounds.current_round_begin_time
@@ -62,7 +63,7 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
                 time.sleep(delay)
                 move_cursor(xy[0], xy[1])
             else:
-                kb_mouse.click(xy)
+                kb_mouse.click(xy, shifted=True)
         cprint(f'Ability {key} used.')
         return
     cprint(f'Using ability {key} with timer {timer}... ', end='')
@@ -74,7 +75,7 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
             time.sleep(delay)
             move_cursor(xy[0], xy[1])
         else:
-            kb_mouse.click(xy)
+            kb_mouse.click(xy, shifted=True)
     cprint('Ability used.')
 
 def click(x: float, y: float, N: int = 1) -> None:
@@ -88,10 +89,10 @@ def click(x: float, y: float, N: int = 1) -> None:
         x: X-coordinate.
         y: Y-coordinate.
     """
-    times.pause_bot()
+    PauseControl.pause_bot()
     if BotVars.defeat_status:
         return
-    kb_mouse.click((x, y), clicks=N)
+    kb_mouse.click((x, y), clicks=N, shifted=True)
     if N > 1:
         cprint(f"Clicked at ({x}, {y}) {N} times")
     else:
@@ -99,7 +100,7 @@ def click(x: float, y: float, N: int = 1) -> None:
 
 def move_cursor(x: float, y: float) -> None:
     """Move mouse cursor to target location"""
-    times.pause_bot()
+    PauseControl.pause_bot()
     if BotVars.defeat_status:
         return
     kb_mouse.move_cursor((x, y))
