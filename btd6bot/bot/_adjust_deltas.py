@@ -174,7 +174,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
     OcrValues._log_ocr_deltas = True
 
     cprint("\nSearching for main menu screen...", end='')
-    while not weak_substring_check('Play', get_text('message', 'menu_playtext'), OCR_READER):
+    while not weak_substring_check('Play', get_text('menu', 'menu_playtext'), OCR_READER):
         time.sleep(0.5)
     cprint(" <Menu detected>\n")
     cprint("-Updating values will take a while.\n"
@@ -189,7 +189,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
 
     start = time.time()
     cprint("\nWaiting for map screen...")
-    while not weak_substring_check('Upgrades', get_text('message','upgrade_text'), OCR_READER):
+    while not weak_substring_check('Upgrades', get_text('ingame','upgrade_text'), OCR_READER):
         if time.time()-start > 20:
             cprint("Could not find map screen in 20 seconds, script halted.")
             return
@@ -275,7 +275,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
     time.sleep(1)
     kb_mouse.click((0.4442708333333, 0.7759259259259))
 
-    while not weak_substring_check('Play', get_text('message', 'menu_playtext'), OCR_READER):
+    while not weak_substring_check('Play', get_text('menu', 'menu_playtext'), OCR_READER):
         time.sleep(0.5)
     cprint("Adjusting process complete!")
 

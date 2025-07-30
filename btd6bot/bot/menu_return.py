@@ -23,7 +23,7 @@ def collection_event_handler() -> None:
     cprint('\nChecking if collection event screen appears...')
     start = time.time()
     while time.time()-start <= 5:
-        if strong_delta_check('collect', get_text('message', 'collection_collect'), OCR_READER):
+        if strong_delta_check('collect', get_text('menu', 'collection_collect'), OCR_READER):
             cprint('Clicking all insta pop-ups location...')
             kb_mouse.click(get_click('menu', 'collection_event'), 2)
             time.sleep(3)
@@ -51,7 +51,7 @@ def returned(victory: bool = True) -> None:
     loop: int = 0
     while loop:
         for letter in ('p','l','a','y'):
-            if not weak_substring_check(letter, get_text('message', 'menu_playtext'), OCR_READER):
+            if not weak_substring_check(letter, get_text('menu', 'menu_playtext'), OCR_READER):
                 time.sleep(0.3)
             else:
                 loop = 1

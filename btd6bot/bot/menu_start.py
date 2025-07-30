@@ -62,7 +62,7 @@ def _choose_hero(hero_name: str | None) -> bool:
         return True
     else:
         cprint("Selecting", hero_name.capitalize(), "as hero... ", end='')
-        kb_mouse.click(get_click('buttons', 'hero_window'))
+        kb_mouse.click(get_click('menu', 'hero_window'))
         start: int = time.time()
         loop: int = 1
         while loop:
@@ -80,10 +80,10 @@ def _choose_hero(hero_name: str | None) -> bool:
             Hero.current_plan_hero_name = hero_name
         elif hero_name.lower() in hero_dict['heroes2']:
             _scroll_down_heroes()
-            kb_mouse.click(get_click('heroes', hero_name.lower()))
+            kb_mouse.click(get_click('heroes2', hero_name.lower()))
             Hero.current_plan_hero_name = hero_name
     time.sleep(0.3)
-    kb_mouse.click(get_click('buttons', 'hero_select'))
+    kb_mouse.click(get_click('menu', 'hero_select'))
     time.sleep(0.3)
     kb_mouse.press_esc()
     cprint("Hero selected!")
@@ -103,7 +103,7 @@ def _choose_map(map_name: str) -> bool:
     loop: int = 1
     while loop:
         for letter in ('p','l','a','y'):
-            if not weak_substring_check(letter, get_text('message', 'menu_playtext'), OCR_READER):
+            if not weak_substring_check(letter, get_text('menu', 'menu_playtext'), OCR_READER):
                 if time.time()-start >= 10:
                     return False
                 time.sleep(0.3)
@@ -112,17 +112,17 @@ def _choose_map(map_name: str) -> bool:
                 break
     search_map = pynput.keyboard.Controller()
     map_str = map_name.replace('_', ' ')
-    kb_mouse.click(get_click('buttons', 'menu_play'))
+    kb_mouse.click(get_click('menu', 'menu_play'))
     start = time.time()
     search_found = 0
     time.sleep(0.4)
-    kb_mouse.click(get_click('buttons', 'search_map'))
+    kb_mouse.click(get_click('menu', 'search_map'))
     if BotVars.windowed:
         loop = 1
         while time.time()-start <= 5 and loop:
             for letter in ('s','e','a','r','c','h'):
                 if weak_substring_check(letter, 
-                                        get_text('message', 'map_searchtext'),
+                                        get_text('menu', 'map_searchtext'),
                                         OCR_READER):
                     search_found = 1
                     loop = 0
@@ -131,12 +131,12 @@ def _choose_map(map_name: str) -> bool:
                     time.sleep(0.3)
         if not search_found:
             search_found = 0
-            kb_mouse.click(get_click('buttons', 'search_map'), ignore_windowed=True)
+            kb_mouse.click(get_click('menu', 'search_map'), ignore_windowed=True)
             start = time.time()
             while time.time()-start <= 5 and loop:
                 for letter in ('s','e','a','r','c','h'):
                     if weak_substring_check(letter, 
-                                            get_text('message', 'map_searchtext'), 
+                                            get_text('menu', 'map_searchtext'), 
                                             OCR_READER):
                         search_found = 1
                         loop = 0
@@ -146,10 +146,10 @@ def _choose_map(map_name: str) -> bool:
             if not search_found:
                 return False        
     time.sleep(0.4)
-    kb_mouse.click(get_click('buttons', 'search_map_bar'))
+    kb_mouse.click(get_click('menu', 'search_map_bar'))
     time.sleep(0.4)
     search_map.type(map_str)  # types map name to search bar.
-    kb_mouse.click(get_click('buttons', 'choose_map'))
+    kb_mouse.click(get_click('menu', 'choose_map'))
     return True
 
 def _choose_diff(d: str) -> None:
@@ -184,7 +184,7 @@ def _choose_mode(m: str) -> None:
         kb_mouse.click(get_click('modes', 'bottom_middle'))
     elif m == 'CHIMPS':                                          
         kb_mouse.click(get_click('modes', 'bottom_right'))
-    kb_mouse.click(get_click('buttons', 'save_overwrite'))  # if a previous save exists, overwrite it.
+    kb_mouse.click(get_click('menu', 'save_overwrite'))  # if a previous save exists, overwrite it.
 
 def _reset_global_targeting() -> None:
     Monkey._wingmonkey = 0
@@ -285,7 +285,7 @@ def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, 
     loop: int = 1
     while loop:
         for letter in ('p','l','a','y'):
-            if not weak_substring_check(letter, get_text('message', 'menu_playtext'), OCR_READER):
+            if not weak_substring_check(letter, get_text('menu', 'menu_playtext'), OCR_READER):
                 time.sleep(0.3)
             else:
                 loop = 0
