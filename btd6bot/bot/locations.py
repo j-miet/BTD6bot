@@ -6,8 +6,35 @@ from bot.bot_vars import BotVars
 
 _DEFAULT_LOCATIONS: dict[str, Any] = {
     "CLICK": {
+        "heroes": {
+            "quincy": (0.0552083333333, 0.2018518518519),
+            "gwen": (0.1338541666667, 0.2111111111111),
+            "striker": (0.2192708333333, 0.2064814814815),
+            "obyn": (0.0567708333333, 0.3777777777778),
+            "rosalia": (0.134375, 0.387962962963),
+            "churchill": (0.2171875, 0.3916666666667),
+            "benjamin": (0.0572916666667, 0.5648148148148),
+            "pat": (0.1401041666667, 0.5731481481481),
+            "ezili": (0.2130208333333, 0.5787037037037),
+            "adora": (0.0567708333333, 0.7546296296296),
+            "etienne": (0.1354166666667, 0.75),
+            "sauda": (0.2161458333333, 0.7453703703704),
+            "brickell": (0.0526041666667, 0.9157407407407),
+            "psi": (0.1307291666667, 0.9203703703704),
+            "geraldo": (0.2104166666667, 0.9148148148148)
+        },
+        "heroes2": {
+            "corvus": (0.0541666666667, 0.835185185185266667)
+        },
         "menu": {
+            "hero_window": (0.275, 0.8888888888889),
             "heroscreen_scroll": (0.1401041666667, 0.5731481481481),
+            "hero_select": (0.5734375, 0.5592592592593),
+            "menu_play": (0.5, 0.8657407407407),
+            "search_map": (0.0395833333333, 0.1518518518519),
+            "search_map_bar": (0.4338541666667, 0.0462962962963),
+            "choose_map": (0.2817708333333, 0.3055555555556),
+            "save_overwrite": (0.5984375, 0.6842592592593),
             "collection_event": (0.5, 0.63),
             "collection_continue": (0.4953125, 0.9240740740741),
             "collection_two_left": (0.4244791666667, 0.5074074074074),
@@ -30,14 +57,10 @@ _DEFAULT_LOCATIONS: dict[str, Any] = {
             "bottom_middle": (0.6682291666667, 0.6981481481481),
             "bottom_right": (0.8411458333333, 0.6990740740741)
         },
-        "buttons": {
-            "hero_window": (0.275, 0.8888888888889),
-            "hero_select": (0.5734375, 0.5592592592593),
-            "menu_play": (0.5, 0.8657407407407),
-            "search_map": (0.0395833333333, 0.1518518518519),
-            "search_map_bar": (0.4338541666667, 0.0462962962963),
-            "choose_map": (0.2817708333333, 0.3055555555556),
-            "save_overwrite": (0.5984375, 0.6842592592593),
+        "ingame": {
+            "dragdrop": (0.4427083333333, 0.2777777777778),
+            "nudge": (0.4458333333333, 0.412962962963),
+            "autostart": (0.6697916666667, 0.2796296296296),
             "next_button": (0.5, 0.85),
             "home_button": (0.37, 0.78),
             "home_button2": (0.44, 0.78),
@@ -48,11 +71,6 @@ _DEFAULT_LOCATIONS: dict[str, Any] = {
             "target_leftpanel_rightarrow": (0.185, 0.292),
             "target_rightpanel_leftarrow": (0.680, 0.292),
             "target_rightpanel_rightarrow": (0.822, 0.292)
-        },
-        "ingame_esc": {
-            "dragdrop": (0.4427083333333, 0.2777777777778),
-            "nudge": (0.4458333333333, 0.412962962963),
-            "autostart": (0.6697916666667, 0.2796296296296)
         },
         "hero_left_menu": {
             "1": (0.0453125, 0.1712962962963),
@@ -89,48 +107,28 @@ _DEFAULT_LOCATIONS: dict[str, Any] = {
             "14": (0.7307291666667, 0.6083333333333),
             "15": (0.7786458333333, 0.6083333333333),
             "16": (0.8255208333333, 0.6083333333333)
-        },  
-        "heroes": {
-            "quincy": (0.0552083333333, 0.2018518518519),
-            "gwen": (0.1338541666667, 0.2111111111111),
-            "striker": (0.2192708333333, 0.2064814814815),
-            "obyn": (0.0567708333333, 0.3777777777778),
-            "rosalia": (0.134375, 0.387962962963),
-            "churchill": (0.2171875, 0.3916666666667),
-            "benjamin": (0.0572916666667, 0.5648148148148),
-            "pat": (0.1401041666667, 0.5731481481481),
-            "ezili": (0.2130208333333, 0.5787037037037),
-            "adora": (0.0567708333333, 0.7546296296296),
-            "etienne": (0.1354166666667, 0.75),
-            "sauda": (0.2161458333333, 0.7453703703704),
-            "brickell": (0.0526041666667, 0.9157407407407),
-            "psi": (0.1307291666667, 0.9203703703704),
-            "geraldo": (0.2104166666667, 0.9148148148148)
-        },
-        "heroes2": {
-            "corvus": (0.0541666666667, 0.835185185185266667)
         }
     },
     "TEXT": {
-        "message": {
+        "menu": {
             "menu_playtext": (0.4560416666667, 0.932962962963, 0.55875, 0.9914814814815),
             "map_searchtext": (0.4140625, 0.0203703703704, 0.4651041666667, 0.0537037037037),
+            "collection_collect": (0.43, 0.59, 0.534375, 0.6453703703704)
+        },    
+        "ingame": {
             "current_round": (0.7181666666667, 0.027001, 0.8119791666667, 0.0685185185185),
             "upgrade_text": (0.875, 0.0175925925926, 0.9682291666667, 0.0638888888889),
             "next_text": (0.4364583333333, 0.8046296296296, 0.5526041666667, 0.8740740740741),
             "level_up": (0.4270833333333, 0.4907407407407, 0.5708333333333, 0.5648148148148),
             "defeat": (0.446875, 0.5361111111111, 0.5635416666667, 0.5712962962963),
-            "collection_collect": (0.43, 0.59, 0.534375, 0.6453703703704)
-        },    
-        "verify": {
+            "right_panel_sell_location": (0.7808333333333, 0.8148148148148, 0.8380208333333, 0.8703703703704),
+            "left_panel_sell_location": (0.141083333333, 0.808148148148, 0.1984375, 0.8638888888889),
             "top_upg_current_leftwindow": (0.0333333333333, 0.3696296296296, 0.121875, 0.462037037037),
             "top_upg_current_rightwindow": (0.6777083333333, 0.3696296296296, 0.7661458333333, 0.462037037037),
             "mid_upg_current_leftwindow": (0.0333333333333, 0.5122222222222, 0.121875, 0.5861111111111),
             "mid_upg_current_rightwindow": (0.6777083333333, 0.5122222222222, 0.7661458333333, 0.5861111111111),
             "bot_upg_current_leftwindow": (0.0333333333333, 0.6492592592593, 0.121875, 0.7231481481481),
-            "bot_upg_current_rightwindow": (0.6777083333333, 0.6492592592593, 0.7661458333333, 0.7231481481481),
-            "right_panel_sell_location": (0.7808333333333, 0.8148148148148, 0.8380208333333, 0.8703703703704),
-            "left_panel_sell_location": (0.141083333333, 0.808148148148, 0.1984375, 0.8638888888889)
+            "bot_upg_current_rightwindow": (0.6777083333333, 0.6492592592593, 0.7661458333333, 0.7231481481481)
         }
     }
 }
@@ -144,23 +142,15 @@ point to top-left corner, next two to bottom-right corner.
 Do not modify these values. Instead, mofify corresponding valus in _CUSTOM_LOCATIONS dictionary.
 
 CLICK (2-tuple):
+    heroes: All heroes which icons can be clicked immediately after entering hero panel.
+
+    heroes2: Heroes which require scrolling down to access their icons.
+
     menu (Main menu):
+        hero_window:
+            Hero panel access.
         heroscreen_scroll:
             Mouse location where hero screen can be scrolled down to access more heroes.
-        collection_event:
-            Collection event collect button.
-        collection_continue:
-            Continue button to exit collection event screen.
-        collection_two_left/collection_two_right/collection_three_left/collection_three_middle/collection_three_right:
-            Collection event clickables. 
-
-    difficulty (Map difficulty buttons)
-
-    modes (Map game mode buttons)       
-
-    buttons (Clickable buttons):
-        heroes:
-            Hero panel access.
         hero_select:
             Herp select button.
         menu_play:
@@ -173,12 +163,30 @@ CLICK (2-tuple):
             Upper left map location. After searching any map, it appears at this same location.
         save_override:
             After selecting difficulty
+        collection_event:
+            Collection event collect button.
+        collection_continue:
+            Continue button to exit collection event screen.
+        collection_two_left/collection_two_right/collection_three_left/collection_three_middle/collection_three_right:
+            Collection event clickables. 
+
+    difficulty (Map difficulty menu buttons)
+
+    modes (Map game mode menu buttons)       
+
+    ingame (In-game click locations except hero menu panels):
+        dragdrop:
+            Drag & drop setting.
+        nudge:
+            Nudge mode setting.
+        autostart:
+            Autostart setting.
         next_button:
             Next button after a map is finished succesfully.
         home_button:
             Default home button after a map is finished or defeat screen appears after first round.
         home_button2:
-            Esc menu location during first round, or during apopalypse game mode.
+            Home button location if esc menu is opened, or during apopalypse mode win screen.
         defeat_home_button:
             Defeat screen home button.
         defeat_home_button_first_round:
@@ -194,30 +202,22 @@ CLICK (2-tuple):
             Same as left panel"s left arrow, but when panel opens on right.
         target_rightpanel_rightarrow:
             Panel on the right and right arrow.
-
-    ingame_esc (In-game esc menu):
-        dragdrop:
-            Drag & drop setting.
-        nudge:
-            Nudge mode setting.
-        autostart:
-            Autostart setting.
-
-    hero_left_menu (Hero utility panel for Geraldo, Corvus etc. button locations, if panel opens on the left => hero is 
-        placed on the right side of gameplay screen middle point).
+        
+    hero_left_menu (Hero utility panel button locations for Geraldo shop, Corvus spellbook etc., if panel opens on the  
+        left => hero is placed on the right side of gameplay screen middle point).
 
     hero_right_menu (Same as above except if panel opens on right => hero placed on the left).      
 
-    heroes: All heroes which icons can be clicked immediately after entering hero panel.
-
-    heroes2: Heroes which require scrolling down to access their icons.
-
 TEXT (4-tuple):
-    message (General messages): 
+    menu (Menu text boxes): 
         menu_playtext: 
             Start menu "Play" text.
         map_searchtext:
             Location of text "search" inside map search bar.
+        collection_collect:
+            Collect event "collect" button text.
+
+    ingame (Text boxes during gameplay): 
         current_round:
             Current round text location with start and end round e.g. 6/100. 
         upgrade_text:
@@ -228,10 +228,10 @@ TEXT (4-tuple):
             Level-up pop up message.
         defeat:
             Defeat screen.
-        collection_collect:
-            Collect event "collect" button text.
-
-    verify (Placement and upgrade verification): 
+        right_panel_sell_location:
+            Sell button text location if monkey panel opens on right side. Used for checking succesful placements.
+        left_panel_sell_location:
+            Sell button text location if monkey panel opens on left side. Used for checking succesful placements.
         top_upg_current_leftwindow:
             Top upgrade path name if monkey upgrade window opens on the right (= monkey places on the left side of
             gameplay screen middle point).
@@ -245,10 +245,6 @@ TEXT (4-tuple):
             Bottom upgrade path name if upgrade panel on left side.
         bot_upg_current_rightwindow:
             Bottom upgrade path name if upgrade panel on right side.
-        right_panel_sell_location:
-            Sell button text location if monkey panel opens on right side. Used for checking succesful placements.
-        left_panel_sell_location:
-            Sell button text location if monkey panel opens on left side. Used for checking succesful placements.
 """
 
 _custom_locations: dict[str, Any] = {}
