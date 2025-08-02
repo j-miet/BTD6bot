@@ -31,6 +31,7 @@ class QueueModeWindow:
         """Initialize queue mode window."""
         self.queue_optionwindow = tk.Toplevel()
         self.queue_optionwindow.title("Queue map list")
+        self.queue_optionwindow.iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
         self.queue_optionwindow.geometry('930x400+100+550')
         self.queue_optionwindow.minsize(930,400)
         self.queue_optionwindow.maxsize(930,400)

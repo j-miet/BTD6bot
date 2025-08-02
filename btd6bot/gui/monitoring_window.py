@@ -94,6 +94,7 @@ class MonitoringWindow:
 
         self.monitoringwindow = tk.Toplevel()
         self.monitoringwindow.title("Bot Monitoring Window")
+        self.monitoringwindow.iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
         self.monitoringwindow.geometry('800x480')
         self.monitoringwindow.minsize(800,480)
         self.monitoringwindow.maxsize(800,480)
@@ -446,7 +447,7 @@ class MonitoringWindow:
                   "| Ocr adjust mode enabled |\n"
                   ".-------------------------.\n")
             set_plan.run_delta_adjust()
-            cprint("You may now close the monitoring window.")
+            cprint("You may now close this window.")
             self.monitor_run_button.configure(text='Run')
             self.monitor_run_button['state'] = 'disabled'
             return

@@ -22,6 +22,7 @@ class HelpWindow:
         """Initialize help window.""" 
         self.helpwindow = tk.Toplevel()
         self.helpwindow.title("Help")
+        self.helpwindow.iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
         self.helpwindow.columnconfigure(0, weight=1)
         self.helpwindow.rowconfigure(0, weight=1)
         self.helpwindow.geometry("+50+50")

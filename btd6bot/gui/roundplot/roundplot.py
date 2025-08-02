@@ -190,13 +190,14 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
     """
     plt.rcParams['toolbar'] = 'None'
     plt.style.use('dark_background')    # has to be set before any text is inserted.
-    fig = plt.figure()
+    fig = plt.figure(f"[Roundplot] {plan_name}")
     plt.axis('off')
     fig.gca().get_yaxis().set_visible(False)
     fig.gca().get_xaxis().set_visible(False)
     plt.subplots_adjust(left=0.05, bottom=0.1, right=0.99, top=0.9, wspace=None, hspace=None)
     rcParams['toolbar'] = 'None'
     winmanager = plt.get_current_fig_manager()
+    winmanager.window.wm_iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
     try:
         winmanager.window.state('zoomed') # type: ignore
     except AttributeError:
