@@ -276,7 +276,6 @@ class MainWindow:
                                             state='disabled')
         self.replay_toggle.grid(column=3, row=4, sticky='se')
 
-        # lambda is required to pass a function call with args under 'command'.
         self.monitor_plot_button = tk.Button(mainframe, 
                                              text='Show plot', 
                                              height=1, 
@@ -313,17 +312,10 @@ class MainWindow:
             self.start_button.grid(column=3, row=6, sticky='e')
 
         self._delete_readme_html()
-        self._autoupdate_readme()
 
     def _delete_readme_html(self) -> None:
         if os.path.exists(gui_paths.FILES_PATH/'helpwindow'/'README.html'):
             os.remove(gui_paths.FILES_PATH/'helpwindow'/'README.html')
-
-    def _autoupdate_readme(self) -> None:
-        try:
-            shutil.copy(gui_paths.ROOT.parent/'README.md', gui_paths.FILES_PATH/'helpwindow'/'README.md')
-        except FileNotFoundError:
-            print("Could not update helpwindow/README.md because default README.md cannot be found.")
 
     def get_maps(self) -> list[str]:
         """Get all map names.
