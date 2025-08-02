@@ -24,6 +24,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         current_round = Rounds.round_check(current_round, map_start)
         if current_round == BEGIN:
             sub1 = Monkey('sub', 0.7510416667, 0.4601851852)
+            dart1 = Monkey('dart', 0.1442708333, 0.5277777778)
         elif current_round == 7:
             boat1 = Monkey('boat', 0.7197916667, 0.5842592593)
         elif current_round == 10:
