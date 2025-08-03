@@ -53,9 +53,9 @@ all of them. Currently:
 - **MacOS**:
   - Python libraries used for gui and hotkeys (``tkinter`` & ``pynput`` respectively) cause bad errors when used 
   together. Thus, gui can be only used for changing settings, but bot itself cannot be run inside gui mode. The solution
-   is to use a command line version of the bot which does lack some features, though.
+   is to thus use gui version for setting and command line version to run the bot.
   - Mac uses ``16:10`` aspect ratio as a baseline and lacks the support for recommended ``16:9`` resolutions. Again, 
-  this can be fixed by using the tricks explained above in resolution section, but it's a lot of work.
+  this can probably be fixed by using the tricks explained above in resolution section, but it's a lot of work.
 
 - **Linux/Unix** has not been tested.
 
@@ -644,19 +644,36 @@ correct positions,
 2. change locations of clickable buttons and ocr text boxex locations so that bot can properly execute all its commands
 and validity checks.
 
+Full explanation:  
+Game adds horizontal or vertical borders depending of current aspect ratio and extends them based on resolution. 
+As shift is based on 16:9 aspect ratio, such as 1920x1080 resolution, 0 height means no border and 0 width means some 
+border width which gets added on each side of screen
+    - as 16:9 resolution have no borders at the top/bottom of screen, it already has the minimal border height of 0.
+    Thus, height can only get values >= 0 because other resolution can only possibly add more border.
+    - 16:9 however includes a small border on both left and right side. It's length? Depends on user's monitor base 
+    resolution and current game resolution so it cannot be determined automatically. Thus, width can get both negative
+    and positive values because on certain aspect ratios, border is smaller/is removed altogether OR is wider than base border.
+To measure border pixel width/height, use ``btd6bot/tools/show_coordinates`` tool or something similar.
+
+Unfortunately shifting can only adjust non-static coordinates (monkey/hero locations, ability targets etc.). Static 
+locations like text and button locations do change between aspect ratios and therefore must be updated manually by 
+editing the ``btd6bot/Files/custom_locations.json`` file.
+
 For 1. 
 - use ``btd6bot/tools/show_coordinates`` tool and measure the width or height of borders in pixels
 - use the *Enable in-game resolution shift* setting and set a custom value. With height (top+bottom borders) you simply
-add the height. With width, you have to just test approximate value because 16:9 resolution has a base border length
+add the height if necessary. With width, you have to just test approximate value because 16:9 resolution has a base border length
 so thinner/wider border must take this into account.
 
 For 2.
 - open ``btd6bot/Files/custom_locations.json``. You can also open ``btd6bot/bot/locations.py`` to check the info docs 
-and see what each value represents
+and see what each value represents. Only in-game locations should require changes: these are the following dictionaries
+    - ``"CLICK"`` -> ``"ingame"``, ``"hero_left_menu"`` and ``"hero_right_menu"``
+    - ``"TEXT"`` -> ``"ingame"``
 - again, use the ``show_coordinates`` tool. Save coordinates and change corresponding 2-tuple or 4-tuple values.
 
 Now whenever you have the in-game resolution shift enabled, bot uses ``custom_locations.json`` coordinates instead. To
-use default ``locations.py`` values, simply disable the setting.
+use default ``locations.py`` values, simply disable shifting.
 
 
 # <u>GUI windows</u>
@@ -815,25 +832,7 @@ option, which was already introduced when setting up the bot first time.
 - **Enable in-game resolution shift**: Shifts all non-static coordinates relative to middle coordinate by given amount of 
 pixels. Width and height can be adjusted individually. Positive values shift towards mid point, negatives away from it.
 
-    It's main use is to move coordinates out of border textures when user has a non-16:9 aspect ratio resolution:  
-game adds horizontal or vertical borders depending of current aspect ratio and extends them based on resolution. 
-As shift is based on 16:9 aspect ratio, such as 1920x1080 resolution, 0 height means no border and 0 width means some 
-border width which gets added on each side of screen
-    - as 16:9 resolution have no borders at the top/bottom of screen, it already has the minimal border height of 0.
-    Thus, height can only get values >= 0 because other resolution can only possibly add more border.
-    - 16:9 however includes a small border on both left and right side. It's length? Depends on user's monitor base 
-    resolution and current game resolution so it cannot be determined automatically. Thus, width can get both negative
-    and positive values because on certain aspect ratios, border is smaller/is removed OR it's wider.
-To measure border pixel width/height, use ``btd6bot/tools/show_coordinates`` tool or something similar.
-
-    Unfortunately shifting can only adjust non-static coordinates (monkey/hero locations, ability targets etc.). Static 
-locations like text and button locations do change between aspect ratios and therefore must be updated manually by 
-editing the ``btd6bot/Files/custom_locations.json`` file. Good thing is you only need to change the in-game location
-values:
-    - ``"CLICK"`` -> ``"ingame"``, ``"hero_left_menu"`` and ``"hero_right_menu"``
-    - ``"TEXT"`` -> ``"ingame"``
-
-    For a better guide, see the [this section](#any-aspect-ratio) of advanced resolutions guide.
+    It's main use is to move coordinates out of border textures when user has a non-16:9 aspect ratio resolution. See [this section](#any-aspect-ratio) of advanced resolutions guide.
 
 - **Ocr time limit**: How long will bot attempt to search for various text flags before it gives up and attempts to
 return to main menu. Typically, this should never occur so a high value of 300 seconds or more is recommended: this 
