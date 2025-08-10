@@ -178,7 +178,7 @@ class Rounds:
         if ScreenRes.get_shift() != (0,0):
             BotVars.ingame_res_enabled = True
         start_time = times.current_time()
-        loop: int = 1
+        loop: bool = True
         while loop:
             for letter in ('u','p','g','r','a','d','e'):
                 kb_mouse.click(get_click('ingame', 'apopalypse_start')) # if mode is 'Apopalypse', click start
@@ -189,7 +189,7 @@ class Rounds:
                         raise BotError("Failed to enter game: wrong map name in plan file, or map/game mode not "
                                         "unlocked.", 1)
                 else:
-                    loop = 0
+                    loop = False
                     break
                 time.sleep(0.25)
         time.sleep(1)

@@ -64,7 +64,7 @@ def _choose_hero(hero_name: str | None) -> bool:
         cprint("Selecting", hero_name.capitalize(), "as hero... ", end='')
         kb_mouse.click(get_click('menu', 'hero_window'))
         start: int = time.time()
-        loop: int = 1
+        loop: bool = True
         while loop:
             for letter in ('s','e','l','e','c','t','e','d'):
                 if not weak_substring_check(letter, (0.5296875, 0.5472222222222, 0.6338541666667, 0.5916666666667),
@@ -73,7 +73,7 @@ def _choose_hero(hero_name: str | None) -> bool:
                         return False
                     time.sleep(0.3)
                 else:
-                    loop = 0
+                    loop = False
                     break
         if hero_name.lower() in hero_dict['heroes']:
             kb_mouse.click(get_click('heroes', hero_name.lower()))
@@ -100,7 +100,7 @@ def _choose_map(map_name: str) -> bool:
             to main menu screen.
     """
     start: int = time.time()
-    loop: int = 1
+    loop: bool = True
     while loop:
         for letter in ('p','l','a','y'):
             if not weak_substring_check(letter, get_text('menu', 'menu_playtext'), OCR_READER):
@@ -108,7 +108,7 @@ def _choose_map(map_name: str) -> bool:
                     return False
                 time.sleep(0.3)
             else:
-                loop = 0
+                loop = False
                 break
     search_map = pynput.keyboard.Controller()
     map_str = map_name.replace('_', ' ')
@@ -282,13 +282,13 @@ def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, 
     """
     _update_external_variables(begin_round, end_round)
     cprint('Searching for main menu screen...')
-    loop: int = 1
+    loop: bool = True
     while loop:
         for letter in ('p','l','a','y'):
             if not weak_substring_check(letter, get_text('menu', 'menu_playtext'), OCR_READER):
                 time.sleep(0.3)
             else:
-                loop = 0
+                loop = False
                 break
     _start_plan()
     if not _choose_hero(hero):

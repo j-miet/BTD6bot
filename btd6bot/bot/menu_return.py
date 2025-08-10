@@ -48,13 +48,13 @@ def returned(victory: bool = True) -> None:
     BotVars.ingame_res_enabled = False
     if BotVars.current_event_status == 'On':
         collection_event_handler()
-    loop: int = 0
+    loop: bool = True
     while loop:
         for letter in ('p','l','a','y'):
             if not weak_substring_check(letter, get_text('menu', 'menu_playtext'), OCR_READER):
                 time.sleep(0.3)
             else:
-                loop = 1
+                loop = False
                 break
     if victory:
         BotData.victory = True
