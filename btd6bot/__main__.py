@@ -4,7 +4,7 @@ import pathlib
 import sys
 import tkinter as tk
 
-import _no_gui
+from _no_gui import NoGui
 from gui.main_window import MainWindow
     
 def main(argv: list[str]) -> None:
@@ -15,7 +15,8 @@ def main(argv: list[str]) -> None:
             gui-free mode.
     """
     if len(argv) > 1 and argv[1] == '-nogui':
-        _no_gui.run()
+        nogui = NoGui()
+        nogui.run()
     else:
         root = tk.Tk()
         root.iconbitmap(pathlib.Path(__file__).parent/'Files'/"btd6bot.ico")
