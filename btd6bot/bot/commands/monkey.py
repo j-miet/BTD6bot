@@ -130,8 +130,8 @@ class Monkey():
         'ace_wing'
         )
 
-    _wingmonkey = 0
-    _elite_sniper = 0
+    _wingmonkey: bool = False
+    _elite_sniper: bool = False
 
     def __init__(self, name: str, pos_x: float, pos_y: float, placement_check: bool = True) -> None:
         """Initializes a Monkey by passing it name and position coordinates.
@@ -947,12 +947,12 @@ class Monkey():
                     placed = 1
             if placed:
                 kb_mouse.press_esc()
-                if Monkey._wingmonkey == 0 and self._name == 'ace_wing':
-                    Monkey._wingmonkey = 1  # detect and account for 'wingmonkey' mk if name 'ace_wing' is used.
+                if not Monkey._wingmonkey and self._name == 'ace_wing':
+                    Monkey._wingmonkey = True  # detect and account for 'wingmonkey' mk if name 'ace_wing' is used.
                 cprint(f'{self._name.capitalize()} placed.')
                 return
     
-    def special(self, s: str | int = 1,
+    def special(self, s: str | int,
                 x: float | None = None,
                 y: float | None = None,
                 cpos_x: float | None = None,
@@ -970,7 +970,7 @@ class Monkey():
         If monkey position has changed after initial placement (Geared/Sanctuary), use cpos to update current position.
 
         Args:
-            s: Special ability, either 1 (most common) or 2. Strings '1' or '2' are also valid. Default value is 1.
+            s: Special ability, either 1 (most common) or 2. Strings '1' or '2' are also valid.
             x: If targetable ability, its x-coordinate. Default value is None.
             y: If targetable ability, its y-coordinate. Default value is None.
             cpos_x: If monkey's current x-coordinate position has changed, update it. Default value is None.
@@ -1071,7 +1071,7 @@ class Monkey():
         PauseControl.pause_bot()
         if BotVars.defeat_status:
             return
-        elif s not in [1, 2, '1', '2']:
+        elif s not in (1, 2, '1', '2'):
             cprint('Wrong input value on special ability; use 1 or 2')
             return
         # current position click; used on monkey-moving maps like Geared/Sanctuary. Updates new coordinates to monkey.

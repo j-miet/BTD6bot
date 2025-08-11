@@ -187,8 +187,8 @@ def _choose_mode(m: str) -> None:
     kb_mouse.click(get_click('menu', 'save_overwrite'))  # if a previous save exists, overwrite it.
 
 def _reset_global_targeting() -> None:
-    Monkey._wingmonkey = 0
-    Monkey._elite_sniper = 0
+    Monkey._wingmonkey = False
+    Monkey._elite_sniper = False
 
 def _update_external_variables(begin_r: int, end_r: int) -> None:
     """Initializes all external class-level variables used within bot package.
