@@ -112,7 +112,7 @@ def click(pos: tuple[float | None, float | None],
             pyautogui.click(new_X, new_Y)
             pyautogui.moveTo(old_X, old_Y)
 
-def move_cursor(xy: tuple[float, float], set_duration: float = 0.0, shifted = True) -> None:
+def move_cursor(xy: tuple[float, float], set_duration: float = 0.0, shifted: bool = True) -> None:
     """Moves mouse to specified coordinate location.
     
     Args:

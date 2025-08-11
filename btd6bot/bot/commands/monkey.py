@@ -1131,7 +1131,7 @@ class Monkey():
         kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
         time.sleep(0.3)
         kb_mouse.kb_input(hotkeys['sell'])
-        if self._name == 'sniper' and self._upgrade_path[2] == 5:
+        if self._name == 'sniper' and int(self._upgrade_path[2]) == 5:
             Monkey._elite_sniper = 0
         if not OcrValues._log_ocr_deltas:
             cprint(f'{self._name.capitalize()} sold!')

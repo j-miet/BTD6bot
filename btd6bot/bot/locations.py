@@ -259,15 +259,31 @@ def update_customlocations(default_file: dict[str, Any] = _custom_locations) -> 
         locations: dict[str, Any] = json.load(loc_file)
     default_file.update(locations)
 
-def get_click(category: str, value: str) -> tuple[float, float]:
-    """Return a click location (2-tuple) from selected category dictionary."""
+def get_click(category: str, value: str) -> Any:
+    """Return a click location (2-tuple) from selected category dictionary.
+    
+    Args:
+        category (str): A dictionary key
+        value (str): Value of dictionary, a 2-tuple
+    
+    Returns:
+        A 2-tuple value
+    """
     if BotVars.ingame_res_enabled:
         return _custom_locations["CLICK"][category][value]
     else:
         return _DEFAULT_LOCATIONS["CLICK"][category][value]
 
-def get_text(category: str, value: str) -> tuple[float, float, float, float]:
-    """Return a text box location (4-tuple) from selected category dictionary."""
+def get_text(category: str, value: str) -> Any:
+    """Return a text box location (4-tuple) from selected category dictionary.
+    
+    Args:
+        category (str): A dictionary key
+        value (str): Value of dictionary, a 4-tuple
+    
+    Returns:
+        A 2-tuple value
+    """
     if BotVars.ingame_res_enabled:
         return _custom_locations["TEXT"][category][value]
     else:
@@ -277,6 +293,9 @@ def get_locationdict() -> dict[str, Any]:
     """Return entire dictionary of all click and text positions.
     
     If in-game resolution shift is enabled, a custom location dictionary is returned instead.
+
+    Returns:
+        Location dictionary
     """
     if BotVars.ingame_res_enabled:
         return _custom_locations

@@ -23,7 +23,7 @@ import gui.gui_tools as gui_tools
 from gui.guihotkeys import GuiHotkeys
 
 class NoGui:
-    def __init__(self):
+    def __init__(self) -> None:
         self.replay: bool = False
         self.bot_thread: threading.Thread
         self.bot_thread_active = False
@@ -130,7 +130,7 @@ class NoGui:
             '|   Welcome to gui-free BTD6bot   |\n'
             '===================================\n'
             ">>> Ocr reader model is loaded into memory, please wait...")
-        from bot.ocr.ocr_reader import OCR_READER # type: ignore
+        from bot.ocr.ocr_reader import OCR_READER
         cprint('Model loaded.')
         print(self.INFO_MESSAGE)
         while 1:

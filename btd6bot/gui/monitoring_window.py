@@ -320,8 +320,8 @@ class MonitoringWindow:
         roundtimer_thread = threading.Thread(target=self._update_round_timer, daemon=True)
         roundtimer_thread.start()
 
-    def _res_check(self, customres: bool, resolution_val: tuple[int, int], windowed: bool, w: int, h: int,
-                   ingame_shift: bool, shift_val: tuple[int, int]) -> None:
+    def _res_check(self, customres: bool, resolution_val: tuple[int, ...], windowed: bool, w: int, h: int,
+                   ingame_shift: bool, shift_val: tuple[int, ...]) -> None:
         with open(gui_paths.FILES_PATH/'upgrades_current.json') as f:
             identifier: list[int | str] = json.load(f)["__identifier"]
         issue_flag = 0
@@ -386,7 +386,7 @@ class MonitoringWindow:
         for name in self.plans_status:
             cprint(name)
 
-    def _run_plans(self, retries) -> None:
+    def _run_plans(self, retries: int) -> None:
         if self.current_plans == []:
             self.current_plans = self.all_plans[:]
         while self.current_plans != []:
@@ -418,10 +418,10 @@ class MonitoringWindow:
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             gui_vars_dict: dict[str, Any] = json.load(f)
         customres: bool = gui_vars_dict["check_resolution"]
-        resolution_val: tuple[int,int] = tuple(map(int, gui_vars_dict["custom_resolution"].split('x')))
+        resolution_val: tuple[int, ...] = tuple(map(int, gui_vars_dict["custom_resolution"].split('x')))
         windowed: bool = gui_vars_dict["windowed"]
         ingame_shift: bool = gui_vars_dict["check_resolution"]
-        shift_val: tuple[int,int] = tuple(map(int, gui_vars_dict["ingame_res_shift"].split('x')))
+        shift_val: tuple[int, ...] = tuple(map(int, gui_vars_dict["ingame_res_shift"].split('x')))
         retries_val: int = gui_vars_dict["retries"]
         w, h = pyautogui.size()
 

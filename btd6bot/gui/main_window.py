@@ -455,7 +455,7 @@ class MainWindow:
         except json.decoder.JSONDecodeError:
             print("use_gpu value not found in gui_vars.json, defaulting to CPU.")
             BotVars.use_gpu = False
-        from bot.ocr.ocr_reader import OCR_READER # type: ignore
+        from bot.ocr.ocr_reader import OCR_READER
         init_win.destroy()
         self.start_button['state'] = 'active'
         self.start_button['text'] = "Open\nbot window"

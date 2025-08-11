@@ -283,7 +283,7 @@ class QueueModeWindow:
             listed_plans_raw = file_read.readlines()
             listed_plans = plan_data.list_format(listed_plans_raw)
         all_plans = plan_data.read_plans()
-        if listed_plans != [] and set(listed_plans) not in set(all_plans):
+        if listed_plans != [] and set(listed_plans).issubset(set(all_plans)):
             for plan in listed_plans:
                 if plan not in all_plans:
                     try:

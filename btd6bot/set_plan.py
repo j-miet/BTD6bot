@@ -45,11 +45,11 @@ def _flush_times_temp() -> None:
     except OSError:
         ...
 
-def _read_timedata() -> dict[str, Any]:
+def _read_timedata() -> Any:
     with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as f:
         return json.load(f)
 
-def _read_guivars() -> dict[str, Any]:
+def _read_guivars() -> Any:
     with open(pathlib.Path(__file__).parent/'Files'/'gui_vars.json') as varsfile:
         return json.load(varsfile)["version"]
 

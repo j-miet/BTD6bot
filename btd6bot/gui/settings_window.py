@@ -662,9 +662,9 @@ class SettingsWindow:
         Value res/2 would push all coordinates into middle coordinate and -res/2 push border coordinates far outside 
         the game window, and are thus not needed.
 
-        Height field acccepts only only non-negative (>= 0) because base resolution 1920x1080 has no top border and thus
-        shifting coordinates away with negative values would immediately leave some min and max coordinates outside 
-        game window.
+        Height field acccepts only non-negative values (>= 0) because base resolution 1920x1080, or any 16:9 
+        resolution, has no top border and thus shifting coordinates away with negative values would immediately leave 
+        some min and max coordinates outside game window.
 
         In practise, finding correct shift value for width can be difficult: 1920x1080 includes small horizontal borders
         so you need to

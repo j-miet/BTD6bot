@@ -63,7 +63,7 @@ def _choose_hero(hero_name: str | None) -> bool:
     else:
         cprint("Selecting", hero_name.capitalize(), "as hero... ", end='')
         kb_mouse.click(get_click('menu', 'hero_window'))
-        start: int = time.time()
+        start: float = time.time()
         loop: bool = True
         while loop:
             for letter in ('s','e','l','e','c','t','e','d'):
@@ -99,7 +99,7 @@ def _choose_map(map_name: str) -> bool:
         A boolean indicating if map selection was succesful. If False value is returned, it allows for bot to return
             to main menu screen.
     """
-    start: int = time.time()
+    start: float = time.time()
     loop: bool = True
     while loop:
         for letter in ('p','l','a','y'):
@@ -118,14 +118,14 @@ def _choose_map(map_name: str) -> bool:
     time.sleep(0.4)
     kb_mouse.click(get_click('menu', 'search_map'))
     if BotVars.windowed:
-        loop = 1
+        loop = True
         while time.time()-start <= 5 and loop:
             for letter in ('s','e','a','r','c','h'):
                 if weak_substring_check(letter, 
                                         get_text('menu', 'map_searchtext'),
                                         OCR_READER):
                     search_found = 1
-                    loop = 0
+                    loop = False
                     break
                 else:
                     time.sleep(0.3)
@@ -139,7 +139,7 @@ def _choose_map(map_name: str) -> bool:
                                             get_text('menu', 'map_searchtext'), 
                                             OCR_READER):
                         search_found = 1
-                        loop = 0
+                        loop = False
                         break
                     else:
                         time.sleep(0.3)
@@ -219,13 +219,13 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
     try:
         customres_val: bool = gui_vars_dict["check_resolution"]
         if customres_val:
-            resolution_val: tuple[int, int] = tuple(map(int, gui_vars_dict["custom_resolution"].split('x')))
+            resolution_val: tuple[int, ...] = tuple(map(int, gui_vars_dict["custom_resolution"].split('x')))
             ScreenRes.update_res(resolution_val[0], resolution_val[1])
         else:
             ScreenRes.update_res(ScreenRes.BASE_RES[0], ScreenRes.BASE_RES[1])
         ingameres_val: bool = gui_vars_dict["check_ingame_resolution"]
         if ingameres_val:
-            ingame_shift_val: tuple[int, int] = tuple(map(int, gui_vars_dict["ingame_res_shift"].split('x')))
+            ingame_shift_val: tuple[int, ...] = tuple(map(int, gui_vars_dict["ingame_res_shift"].split('x')))
             ScreenRes.update_shift(ingame_shift_val[0], ingame_shift_val[1])
             locations.update_customlocations()
             cprint("#Custom location values loaded.")  

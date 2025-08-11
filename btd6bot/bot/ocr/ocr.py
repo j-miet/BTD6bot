@@ -80,13 +80,13 @@ class OcrValues:
     DELTA: float = 0.75
 
     @staticmethod
-    def _get_current_upgradedata() -> dict[str, list[str | float]]:
+    def _get_current_upgradedata() -> Any:
         with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'upgrades_current.json') as f:
             return json.load(f)    
     OCR_UPGRADEDATA = _get_current_upgradedata()
 
     @staticmethod
-    def _get_base_upgradedata() -> dict[str, list[str | float]]:
+    def _get_base_upgradedata() -> Any:
         with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'_ocr_upgradedata.json') as f:
             return json.load(f)   
     _OCR_UPG_BASEDATA = _get_base_upgradedata() 
@@ -336,7 +336,7 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
                 match = OcrValues.OCR_UPGRADEDATA[upg_match]
                 match_str = match[0]
                 delta_limit = match[1]
-            d = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), match_str).quick_ratio() # type: ignore
+            d = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), match_str).quick_ratio()
             if BotVars.print_delta_ocrtext:
                 cprint('\n-Text: '+text.lower())
                 cprint("-Match delta: "+str(d))
@@ -355,7 +355,7 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
                         'w') as f:
                         json.dump(temp_dict, f, indent=2)
                     return True
-            if d >= delta_limit: # type: ignore
+            if d >= delta_limit:
                 return True
         elif input_str != '':
             r = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), input_str.lower()).quick_ratio()
