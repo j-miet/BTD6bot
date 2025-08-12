@@ -297,11 +297,10 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
     difference between sequences and is much faster to calculate. Return values (= deltas) are on interval [0,1]
     where 0 is for entirely different strings and 1 for perfect matches.
 
-    After some testing, common deltas seem to exceed 0.8 often. Shouldn't be too high either as ocr could reject valid
-    strings, too. And in some cases, relatively high delta can still match two different upgrades. For this reason, all 
-    upgrade strings are saved in OcrValues.OCR_UPGRADE_DATA dictionary. Not only that, each string has individual delta 
-    which helps at tweaking problematic cases, but keeping majority of upgrades passable: for latter, a high delta (>= 
-    0.8) is used as base value to avoid false positives, when two consecutive upgrade strings share too many symbols.
+    Deltas shouldn't be too high either as ocr could reject valid strings. And in some cases, relatively high delta can 
+    still match two different upgrades. For this reason, all upgrade strings are saved in OcrValues.OCR_UPGRADE_DATA 
+    dictionary, where each string has individual delta: this helps with tweaking problematic cases individually. For 
+    non-upgrade strings, a general delta value OcrValues.DELTA works just fine, which should be at least 0.7.
 
     Like mentioned, uses quick_ratio() instead of ratio() due to it being considerably faster.
 
@@ -341,18 +340,14 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
                 cprint('\n-Text: '+text.lower())
                 cprint("-Match delta: "+str(d))
                 if OcrValues._log_ocr_deltas:
-                    with open(
-                        pathlib.Path(__file__).parent.parent.parent/'Files'/'.temp_upg_deltas.json'
-                        ) as f:
+                    with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'.temp_upg_deltas.json') as f:
                         temp_dict: dict[str, Any] = json.load(f)
                     if len(str(d)) <= 4:
                         add_dict = {upg_match: [match_str, d]}
                     else:
                         add_dict = {upg_match: [match_str, round(d-0.005, 2)]}
                     temp_dict.update(add_dict)
-                    with open(
-                        pathlib.Path(__file__).parent.parent.parent/'Files'/'.temp_upg_deltas.json',
-                        'w') as f:
+                    with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'.temp_upg_deltas.json','w') as f:
                         json.dump(temp_dict, f, indent=2)
                     return True
             if d >= delta_limit:

@@ -9,7 +9,6 @@ import easyocr # type: ignore
 
 from bot.bot_vars import BotVars
 
-# TODO Implement CPU/GPU toggle
 OCR_READER: easyocr.Reader = easyocr.Reader(['en'], gpu=BotVars.use_gpu, verbose=False, quantize=False)
 """Easyocr reader for english language text with gpu support disabled.
 
