@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 
 import json
 import os
-import shutil
 import signal
 import sys
 import threading
@@ -38,14 +37,7 @@ class MainWindow:
     Places main window frame inside root. All GUI windows need the main thread which is tied to this root:
     if this thread is terminated, all other windows and their respective threads will also close.
 
-    Static Methods:
-    --
-    exit ((Key | KeyCode | str) -> None): Terminates program when EXIT_HOTKEY press is detected. Is 
-        targeted by 'kb_listener' thread object.
-
     Attributes:
-        MAP_IMAGES (list[str], class attribute): List of all map image names.
-        EXIT_HOTKEY (pynput.Key, class attribute): Hotkey for stopping the entire program at any moment. Current: F11.
         kb_listener (pynput.keyboard.Listener, class attribute): Pynput keyboard listener to track key presses for 
             'exit'. Listener is a thread object so it can track inputs at all times and is terminated only after entire 
             program is closed.
@@ -81,13 +73,13 @@ class MainWindow:
         start_button (tk.Button): Button object which opens a separate MonitoringWindow for running the bot.
     """
     try:
-        MAP_IMAGES = os.listdir(gui_paths.MAP_IMAGES_PATH)
+        _MAP_IMAGES = os.listdir(gui_paths.MAP_IMAGES_PATH)
     except FileNotFoundError:
         ...
 
     @staticmethod
-    def exit(key: Key | KeyCode | None) -> None:
-        """Program termination via hotkey.
+    def _exit(key: Key | KeyCode | None) -> None:
+        """Handles gui hotkey states.
 
         It's important to not put any pausing functions inside this (time.sleep() or similar) as it will cause all 
         keyboard inputs to lag during program runtime.
@@ -102,9 +94,13 @@ class MainWindow:
         elif key == GuiHotkeys.pause_hotkey:
             GuiHotkeys.pause_status = 1
 
-    # listener thread object sends keyboard inputs to exit function
+    # Listener thread object sends keyboard inputs to exit function
+    # [Important] It's important to run only a single pynput listener in entire program, otherwise certain operating 
+    # systems (e.g.MacOS) could throw a critical error when listener.start() gets called.
+    # Should other Listener objects exist, make sure to disable them on any unsupported OS and implement alternate
+    # systems in place.
     GuiHotkeys.update_guihotkeys()
-    kb_listener = pynput.keyboard.Listener(on_press = exit)
+    kb_listener = pynput.keyboard.Listener(on_press = _exit)
     kb_listener.daemon = True
     kb_listener.start()
 
@@ -348,9 +344,8 @@ class MainWindow:
             if self.maps_box.get() == map_name:
                 self.current_map = map_name
                 try:
-                    temp = tk.PhotoImage(
-                        file=gui_paths.MAP_IMAGES_PATH/
-                                MainWindow.MAP_IMAGES[MainWindow.MAP_IMAGES.index(self.current_map+'.png')])
+                    temp = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/
+                                        MainWindow._MAP_IMAGES[MainWindow._MAP_IMAGES.index(self.current_map+'.png')])
                     self.mapscreen['text'] = ''
                     self.mapscreen.configure(image=temp)
                     self.mapscreen.image = temp # type: ignore 
@@ -365,7 +360,7 @@ class MainWindow:
                 self.current_strat = self.MAP_NAMES_AND_STRATS_DICT[map_name][0]
                 self.info_window.insert('end', '')
                 self.update_stratconfig()
-                return
+
     
     def update_stratconfig(self) -> None:
         """Updates current strat value and possible map info screen if available."""
@@ -549,9 +544,9 @@ class MainWindow:
             old_stdout: Original standard output stream.
         """
         while True:
-            while not current_monitoringwin.winfo_exists():
+            if not current_monitoringwin.winfo_exists():
                 gui_tools.terminate_thread(MonitoringWindow.current_bot_thread)
-                sys.stdout =  old_stdout # return to original output stream
+                sys.stdout = old_stdout # return to original output stream
                 if self.queue.get() == 'On':
                     self.start_button.configure(state='disabled')
                     with open(gui_paths.QUEUE_LIST_PATH) as f:
@@ -580,7 +575,7 @@ class MainWindow:
             current_options: Current QueueModeWindow object.
         """
         while True:
-            while not current_options.winfo_exists():
+            if not current_options.winfo_exists():
                 self.queueoptions_button.configure(state='active')
                 if self.queue.get() == 'On':
                     self.start_button.configure(state='disabled')
@@ -625,7 +620,7 @@ class MainWindow:
             current_hotket: Current HotkeyWindow object.
         """
         while True:
-            while not current_hotkey.winfo_exists():
+            if not current_hotkey.winfo_exists():
                 if HotkeyWindow.input_key_listener.is_alive():
                     HotkeyWindow.input_key_listener.stop()
                 self.hotkey_button.configure(state='active')
@@ -645,7 +640,6 @@ class MainWindow:
     def help_window(self) -> None:
         """Open help window which operates on its own thread."""
         self.help_button.configure(state='disabled')
-        #self.start_button.configure(state='disabled')
         helpwindow = HelpWindow()
         helpwindowthread = threading.Thread(target=self.is_helpwindow, args=[helpwindow.get_helpwindow()])
         helpwindowthread.daemon = True
@@ -658,7 +652,7 @@ class MainWindow:
             current_help: Current HelpWindow object.
         """
         while True:
-            while not current_help.winfo_exists():
+            if not current_help.winfo_exists():
                 self._delete_readme_html()
                 self.help_button.configure(state='active')
                 if self.queue.get() == 'On':
@@ -671,7 +665,6 @@ class MainWindow:
                 elif self.reader_init:
                     self.start_button.configure(state='active')
                 return
-            #self.start_button.configure(state='disabled')
             time.sleep(0.01)
      
     def settings_window(self) -> None:
@@ -690,7 +683,7 @@ class MainWindow:
             current_settings: Current SettingsWindow object.
         """
         while True:
-            while not current_settings.winfo_exists():
+            if not current_settings.winfo_exists():
                 self.settings_button.configure(state='active')
                 if self.queue.get() == 'On':
                     self.start_button.configure(state='disabled')
