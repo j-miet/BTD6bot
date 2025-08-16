@@ -14,7 +14,6 @@ import pathlib
 import time
 
 import pyautogui
-import pynput
 
 from bot import kb_mouse, locations
 from bot.commands.flow import AutoStart
@@ -37,10 +36,9 @@ if TYPE_CHECKING:
 
 def _scroll_down_heroes() -> None:
     """Scrolls down hero screen allowing access to more heroes."""
-    m = pynput.mouse.Controller()
-    pyautogui.moveTo(kb_mouse.pixel_position(get_click('menu', 'heroscreen_scroll'))) 
+    pyautogui.moveTo(kb_mouse.pixel_position(get_click('menu', 'heroscreen_scroll')))
     for _ in range(0,4):
-        m.scroll(0, -1)
+        pyautogui.scroll(clicks=-1000)
         time.sleep(0.1)
 
 def _choose_hero(hero_name: str | None) -> bool:
@@ -110,7 +108,6 @@ def _choose_map(map_name: str) -> bool:
             else:
                 loop = False
                 break
-    search_map = pynput.keyboard.Controller()
     map_str = map_name.replace('_', ' ')
     kb_mouse.click(get_click('menu', 'menu_play'))
     start = time.time()
@@ -148,7 +145,7 @@ def _choose_map(map_name: str) -> bool:
     time.sleep(0.4)
     kb_mouse.click(get_click('menu', 'search_map_bar'))
     time.sleep(0.4)
-    search_map.type(map_str)  # types map name to search bar.
+    pyautogui.write(map_str) # types map name to search bar.
     kb_mouse.click(get_click('menu', 'choose_map'))
     return True
 
