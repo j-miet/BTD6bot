@@ -43,7 +43,7 @@ class MonitoringWindow:
             particular if monitoring window is closed while bot thread is in use. So the newest thread has to be known 
             at all times, otherwise it could leave the previous thread running. And if, for example, this thread was 
             currently performing ocr, but not finding any fitting match, it would end up eating a up A LOT of CPU. Even 
-            worse, these unaccessable & unusable threads could stack and execute multiple bots at the same time, which 
+            worse, these inaccessible & unusable threads could stack and execute multiple bots at the same time, which 
             of course, would break everything as they all share key & mouse inputs and all files.
         
         all_plans (list[str]): List of all plans in the queue list or a single plan if queue mode is disabled.
@@ -53,13 +53,13 @@ class MonitoringWindow:
             value to gui_vars.json.
         current_plans (list[str]): List of currently unfinished plans. When bot is run, all_plans contents are copied
             into this. Then after finishing a plan, it gets removed from this list. Here finishing means plan was either
-            completed succesfully, or failed to finish within given amount of retries.  
+            completed successfully, or failed to finish within given amount of retries.  
             Eventually, current_plans becomes an empty list. If queue mode is not on (i.e. only a single plan), bot can
             run the plan again. If queue mode is enabled, bot cannot be run again until a new monitoring window is
             opened an queue is refreshed. If replay mode is on, bot will automatically reset queue and go again no
             matter if there's a single or multiple plans.
         plans_status (list[str]): Stores status of completed plans. If queue mode is enabled, its contents are used for
-            not only displaying succesfully finished plans, but also any unsuccesful attempts.
+            not only displaying successfully finished plans, but also any unsuccessful ones.
         monitoringwindow (tk.Toplevel): Window where other gui elements can be inserted.
         textbox (tk.Text): Text object that is responsible of displaying all text output during bot runtime.
         old_stdout (TextIO | Any): Original standard output stream. Program will return to it if MonitoringWindow is 
@@ -71,7 +71,7 @@ class MonitoringWindow:
         monitor_infobox_next (tk.Label): Displays next plan's info panel.
         monitor_run_button (tk.Button): Button object required to start/stop bot. Bot is set to run on a separate 
             thread.
-        bot_thread (threading.Thread): Current thread where bot iself is allocated. A placeholder thread is initially 
+        bot_thread (threading.Thread): Current thread where bot itself is allocated. A placeholder thread is initially 
             created so that MainWindow can start tracking its existence and won't throw an error. After 'Run' button is 
             pressed, _stop_or_run method is called and target of this thread is set to _run_bot method instead.
     """
@@ -268,8 +268,6 @@ class MonitoringWindow:
                                             pady=10)
         self.monitor_run_button.grid(column=5, row=4, sticky='ne')
 
-        with open(gui_paths.ROOT.parent/'Logs.txt', 'w') as f:
-            ...
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             if json.load(f)["logging"]:
                 BotVars.logging = True

@@ -122,9 +122,6 @@ class NoGui:
         with open(Path(__file__).parent/'Files'/'gui_vars.json') as f:
             if json.load(f)["logging"]:
                 BotVars.logging = True
-        if BotVars.logging:
-            with open(Path(__file__).parent.parent/'Logs.txt', 'w') as f:
-                ...
         
         cprint('===================================\n'
             '|   Welcome to gui-free BTD6bot   |\n'
