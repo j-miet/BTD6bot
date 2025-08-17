@@ -8,6 +8,7 @@ from tkinter import simpledialog
 
 import pynput
 
+from bot.hotkeys import PYNPUT_KEYS
 from gui.guihotkeys import GuiHotkeys
 import gui.gui_paths as gui_paths
 from gui.gui_tools import os_font
@@ -93,9 +94,9 @@ class HotkeyWindow:
         self.info.grid(column=1, row=1, padx=20, sticky="nsew")
 
         self.read_hotkeys()
-        self.read_guihotkeys()
-
-        if sys.platform == 'darwin':
+        if sys.platform != 'darwin':
+            self.read_guihotkeys()
+        else:
             self.sethotkeybutton = tk.Button(self.hotkeywindow, 
                                              text='Edit selected entry', 
                                              width=15, 
@@ -103,13 +104,18 @@ class HotkeyWindow:
                                              font=os_font,
                                              command=self.save_hotkeys)
             self.sethotkeybutton.grid(column=0, row=3, sticky="s")
+            self.guihotkeyoptionlist.insert(0, "Gui hotkeys are disabled")
+            self.guihotkeyoptionlist.insert(1, "for MacOS platforms")
+            self.guihotkeyoptionlist.insert(2, "")
+            self.guihotkeyoptionlist['state'] = 'disabled'
 
     def save_hotkeys(self) -> None:
         """Set a hotkey value for currently highlighted row without pynput.Listener.
         
         Similar to set_hotkey, but requires user to manually type in hotkeys. 
         
-        Used with mac operating systems as pynput causes critical errors with listener objects for some unknown reason.
+        Used with Mac operating systems as pynput Listener/Controller thread objects cause critical error when used
+        alongside tkinter gui.
         """
         self.sethotkeybutton.configure(state='disabled')
         new_input = self.hotkeyoptionlist.curselection() # type: ignore
@@ -123,7 +129,7 @@ class HotkeyWindow:
             user_input = simpledialog.askstring(title="Hotkey", prompt="Insert a new key value for: "+selected_text)
             if user_input is not None:
                 if len(user_input) != 0:
-                    HotkeyWindow.hotkey_list[selected] = selected_text + ' = ' + user_input
+                    HotkeyWindow.hotkey_list[selected] = selected_text + ' = ' + user_input.lower()
                     with open(gui_paths.HOTKEYS_PATH, 'w') as file_write:
                         for line in HotkeyWindow.hotkey_list:
                             file_write.write(line+'\n')
@@ -136,7 +142,7 @@ class HotkeyWindow:
             user_input = simpledialog.askstring(title="Hotkey", prompt="Insert a new key value for: "+selected_text)
             if user_input is not None:
                 if len(user_input) != 0:
-                    HotkeyWindow.guihotkey_list[selected] = selected_text + ' = ' + user_input
+                    HotkeyWindow.guihotkey_list[selected] = selected_text + ' = ' + user_input.lower()
                     with open(gui_paths.GUIHOTKEYS_PATH, 'w') as file_write:
                         for line in HotkeyWindow.guihotkey_list:
                             file_write.write(line+'\n')
@@ -185,7 +191,16 @@ class HotkeyWindow:
             selected_row: Number of currently selected row: top row is 0, increases downwards.
         """
         previous_key_begin = HotkeyWindow.hotkey_list[selected_row].split(' = ')[0]
-        HotkeyWindow.hotkey_list[selected_row] = previous_key_begin + ' = ' + str(key).replace('\'', '')
+        key_pressed: str = str(key)
+        if 'Key.' in key_pressed:
+            key_pressed = key_pressed.replace("Key.", "")
+            if key_pressed in PYNPUT_KEYS.keys():
+                ... # continue as usual
+            else:
+                self.input_key.stop()
+                self.sethotkeybutton.configure(state='active')
+                return
+        HotkeyWindow.hotkey_list[selected_row] = previous_key_begin + ' = ' + key_pressed.replace('\'', '')
         with open(gui_paths.HOTKEYS_PATH, 'w') as file_write:
             for line in HotkeyWindow.hotkey_list:
                 file_write.write(line+'\n')
@@ -193,7 +208,6 @@ class HotkeyWindow:
         self.read_hotkeys()
         self.input_key.stop()
         self.sethotkeybutton.configure(state='active')
-        return
 
     def read_hotkeys(self) -> None:
         """Read all hotkeys from hotkey_list and insert them to Listbox object."""
@@ -213,7 +227,6 @@ class HotkeyWindow:
         self.input_key.stop()
         GuiHotkeys.update_guihotkeys()
         self.sethotkeybutton.configure(state='active')
-        return
 
     def read_guihotkeys(self) -> None:
         """Read all gui hotkeys from guihotkey_list and insert them to Listbox object."""
