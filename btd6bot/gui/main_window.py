@@ -38,13 +38,19 @@ class MainWindow:
     if this thread is terminated, all other windows and their respective threads will also close.
 
     Attributes:
-        kb_listener (pynput.keyboard.Listener, class attribute): Pynput keyboard listener to track key presses for 
-            'exit'. Listener is a thread object so it can track inputs at all times and is terminated only after entire 
-            program is closed.
+        kb_listener (pynput.keyboard.Listener, class attribute): 
+            Pynput keyboard listener to track key presses for gui hotkey tracking function. Listener is a thread object 
+            so it can track inputs at all times and is terminated only after entire program is closed.
 
-        root (tk.Tk): A tkinter.root object for placing the main window.
-        reader_init (bool): Tracks ocr reader initialization status. Starts as False, and after   
-            initialization, remains True for the rest of program runtime.
+            Listener thread is not started on Mac operating systems as it appears to interfere with keyboard controller,
+            crashing entire program. As controller is responsible for handling all keyboards inputs it must be
+            prioritized which unfortunately leaves gui hotkeys unavailable.
+
+        root (tk.Tk): 
+            A tkinter.root object for placing the main window.
+        reader_init (bool): 
+            Tracks ocr reader initialization status. Starts as False, and after initialization, remains True for the 
+            rest of program runtime.
         init_button_first_time (bool): Tracks if initialization button has been pressed or not. This is important as 
             otherwise opening and closing windows/toggling button On then Off, could enable button access prematurely.
         replay (tk.StringVar): StringVar to set On/Off value for a replay mode button.
@@ -56,7 +62,7 @@ class MainWindow:
             plan file located in 'plans' folder using current current_map and current_strat values.
         current_strat (str): Currently selected strategy based on current_map.
         strat_box (ttk.Combobox): Dropdown menu of all strategies for currently selected map.
-        mapscreen_text_str (str): Default string text to display in place of mapscreen.
+        mapscreen_text_str (str): Default string text to display in place of map screen.
         mapscreen (tk.Label): Label used for displaying current map image. Images are stored and loaded from 
             'map images' folder. If no image is found, insert mapscreen_text_str into label instead.
         help_button (tk.Button): Opens a separate help window.
@@ -76,9 +82,10 @@ class MainWindow:
         _MAP_IMAGES = os.listdir(gui_paths.MAP_IMAGES_PATH)
     except FileNotFoundError:
         ...
+    GuiHotkeys.update_guihotkeys()
 
     @staticmethod
-    def _exit(key: Key | KeyCode | None) -> None:
+    def _hotkey_tracker(key: Key | KeyCode | None) -> None:
         """Handles gui hotkey states.
 
         It's important to not put any pausing functions inside this (time.sleep() or similar) as it will cause all 
@@ -94,15 +101,15 @@ class MainWindow:
         elif key == GuiHotkeys.pause_hotkey:
             GuiHotkeys.pause_status = 1
 
-    # Listener thread object sends keyboard inputs to exit function
-    # [Important] It's important to run only a single pynput listener in entire program, otherwise certain operating 
-    # systems (e.g.MacOS) could throw a critical error when listener.start() gets called.
+    # Listener thread object sends keyboard inputs to _hotkey_tracker function. 
+    # If user operating system is MacOS, gui hotkeys must be disabled in order to avoid errors with keyboard controller 
+    # used in bot\kb_mouse.py
     # Should other Listener objects exist, make sure to disable them on any unsupported OS and implement alternate
     # systems in place.
-    GuiHotkeys.update_guihotkeys()
-    kb_listener = pynput.keyboard.Listener(on_press = _exit)
-    kb_listener.daemon = True
-    kb_listener.start()
+    if sys.platform != 'darwin':
+        kb_listener = pynput.keyboard.Listener(on_press = _hotkey_tracker)
+        kb_listener.daemon = True
+        kb_listener.start()    
 
     def __init__(self, root: tk.Tk) -> None:
         """Initialize main window using the passed tkinter root.

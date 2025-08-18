@@ -139,7 +139,8 @@ Locations are either
 - 4-tuples if position refers to a text box where bot searches for a pre-specified text value. First two coordinates
 point to top-left corner, next two to bottom-right corner.
 
-Do not modify these values. Instead, mofify corresponding valus in _CUSTOM_LOCATIONS dictionary.
+*Do not modify these values*. Instead, modify corresponding values in _CUSTOM_LOCATIONS dictionary which will be used
+when resolution shifting is enabled.
 
 CLICK (2-tuple):
     heroes: All heroes which icons can be clicked immediately after entering hero panel.
@@ -168,7 +169,7 @@ CLICK (2-tuple):
         collection_continue:
             Continue button to exit collection event screen.
         collection_two_left/collection_two_right/collection_three_left/collection_three_middle/collection_three_right:
-            Collection event clickables. 
+            Collection event clickable insta monkey icons. 
 
     difficulty (Map difficulty menu buttons)
 
@@ -182,7 +183,7 @@ CLICK (2-tuple):
         autostart:
             Autostart setting.
         next_button:
-            Next button after a map is finished succesfully.
+            Next button after a map is finished successfully.
         home_button:
             Default home button after a map is finished or defeat screen appears after first round.
         home_button2:
@@ -221,7 +222,7 @@ TEXT (4-tuple):
         current_round:
             Current round text location with start and end round e.g. 6/100. 
         upgrade_text:
-            In-game "Upgrade" text location; used for checking entering a map was succesful.
+            In-game "Upgrade" text location; used for checking entering a map was successful.
         next_text:
             Next button text location.
         level_up:
@@ -229,9 +230,9 @@ TEXT (4-tuple):
         defeat:
             Defeat screen.
         right_panel_sell_location:
-            Sell button text location if monkey panel opens on right side. Used for checking succesful placements.
+            Sell button text location if monkey panel opens on right side. Used for checking successful placements.
         left_panel_sell_location:
-            Sell button text location if monkey panel opens on left side. Used for checking succesful placements.
+            Sell button text location if monkey panel opens on left side. Used for checking successful placements.
         top_upg_current_leftwindow:
             Top upgrade path name if monkey upgrade window opens on the right (= monkey places on the left side of
             gameplay screen middle point).

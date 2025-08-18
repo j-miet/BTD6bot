@@ -1,30 +1,18 @@
 """All tools required for optical character recognition tasks.
 
 Prior to using easyocr, it was first screen_ocr base library for the longest time. Then briefly tested screen_ocr_winrt
-lib too. Then came tesseract: reason for changing to tesseract was simply lack of accuracy with upgrade texts. However,
-it was much slower, like 25-30% slower with monkey upgrades than screen_ocr, but that's the price to pay for accuracy.
+backend. Then came tesseract: reason for changing to tesseract was simply lack of accuracy with upgrade texts. However,
+this was much slower, like 25-30% slower with monkey upgrades than screen_ocr, but that's the price to pay for accuracy.
 
 Now, current one is easyocr: it seems even more accurate, or at least ocr temp get very good matches from one another
 so upgrading monkeys works consistently so far; obviously there could be problematic cases but only time will tell.
-Also similar speedwise to tesseract; would be a lot slower with all the processing, but now for example zooming of 
+Also similar speed-wise to tesseract; would be a lot slower with all the processing, but now for example zooming of 
 images is no longer necessary which saves time. Easyocr does have the initial reader setup delay, which is done before
-lauching program: it takes like 10 seconds, but isn't required afterwards as reader is loaded from ocr_reader and
-passed as a variable to all implemented reader-utilizing tools.
+launching program: it takes like 10 seconds, but isn't required afterwards as reader is loaded from ocr_reader and
+passed as a variable to all implemented reader-utilizing tools. Also a major plus with easyocr is that it can be 
+installed entirely as a Python package whereas tesseract requires an executable file on top of its code library.
 
-After reader is initialized, it will reserve quite sizeable chunk in memory, about 400MB.
-
-I have only tested easyocr with CPU. It has GPU support which would make it run much faster, but this is not really a
-concern with a slower program such as this bot.
-
-CPU-wise, ocr is quite resource-heavy if no pic is found. For example, if you start program, but put main menu screen 
-away, it tries to search word 'play' constantly. That's why an artificial pause is introduced with time.sleep, both to 
-start menu search but also in general, known as read_file_frequency. But even with this, CPU usage will likely jump up 
-a lot. Easyocr suggests using GPU support as it will increase your ocr performance A LOT: this is because easyocr is 
-build around PyTorch library, which has CUDA support for modern (Nvidia) GPUs. However, I've designed this bot around 
-the CPU version of ocr, so it will work on any system capable of running BTD6. It's just that (as stated before) CPU 
-version uses relatively far more utilization than the GPU version. But that shouldn't be much of an issue as you'd have 
-this bot + game running, with no other major program open (barring a web browser or similar).
-
+After reader is initialized, it will reserve quite a sizeable chunk in memory, about 400MB.
 
 Constants:
     WHITE, GRAY:
@@ -58,7 +46,7 @@ class OcrValues:
     Attributes:
         OCR_IMAGE_PATH (pathlib.PATH, class attribute):
             Folder location that stores temporary ocr images. Images are constantly overwritten as ocr process repeats 
-            screenshotting and reading text from screenshot image.
+            screenshots and reading text from screenshot image.
         DELTA (float, class attribute):
             Controls OCR string matching accuracy in strong_delta_check for general strings - upgrade string are 
             handled separately. Delta value itself is included i.e. 0.8 means that all deltas on closed interval 
@@ -71,8 +59,8 @@ class OcrValues:
         read_file_frequency (float, class attribute):
             Text recognition check rate in both find_text and check_upg_text: lower number increases rate of checking, 
             but also increases CPU usage significantly. Frequency itself is just a pause timer in seconds so 1 equals 
-            to ~1 check a second, but this doesh't include the other part of process like screenshotting, reading text 
-            and comparing text. This means the actual frequence to checks ratio diminishes greatly with smaller value 
+            to ~1 check a second, but this doesn't include the other part of process like screenshots, reading text 
+            and comparing text. This means the actual frequency to checks ratio diminishes greatly with smaller value 
             i.e. 0.01 doesn't match to 100 checks per second.
 
     """
@@ -188,10 +176,6 @@ def weak_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> st
     """
     tl_x, tl_y, br_x, br_y = coordinates[0], coordinates[1], coordinates[2], coordinates[3]
     width, height = br_x - tl_x, br_y - tl_y
-    # uncomment and replace 2 lines below with these if you need images; images are created in Files/ocr_temp
-    #
-    # pyautogui.screenshot(imageFilename=OcrValues.OCR_IMAGE_PATH/'weak_new.png', region=(tl_x, tl_y, width, height))
-    # img = array(Image.open(OcrValues.OCR_IMAGE_PATH/'weak_new.png'))
     ocr_img = pyautogui.screenshot(region=(tl_x, tl_y, width, height))
     img = array(ocr_img)
     try:
@@ -220,18 +204,12 @@ def strong_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> 
     """
     tl_x, tl_y, br_x, br_y = coordinates[0], coordinates[1], coordinates[2], coordinates[3]
     width, height = br_x - tl_x, br_y - tl_y
-    # uncomment and replace 3 lines below with these if you need images; images are created in Files/ocr_temp
-    # 
-    # pyautogui.screenshot(imageFilename=OcrValues.OCR_IMAGE_PATH/'strong_new.png', region=(tl_x, tl_y, width, height))
-    # blackwhite_image = img_to_black_and_white(Image.open(OcrValues.OCR_IMAGE_PATH/'strong_new.png'))
-    # blackwhite_image.save(OcrValues.OCR_IMAGE_PATH/'strong_text.png')
-    # final = array(Image.open(OcrValues.OCR_IMAGE_PATH/'strong_text.png'))
     ocr_img = pyautogui.screenshot(region=(tl_x, tl_y, width, height))
     blackwhite_image = img_to_black_and_white(ocr_img) # type: ignore
     final = array(blackwhite_image)
     if BotVars.windowed:
         zoom_factor = 2
-        for i in range(2):             # zooming of images, quite expensive to calculate.
+        for i in range(2): # zooming of images, quite expensive to calculate.
             final = repeat(final, zoom_factor, axis=i)
     try:
         result = reader.readtext(final)
@@ -243,7 +221,7 @@ def strong_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> 
     return string
     
 def weak_substring_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader) -> bool:
-    """Attemps to find inputed string from screenshot ocr string by substring matching.
+    """Attempts to find inputted string from screenshot ocr string by substring matching.
 
     Tries to read the input_str from screen within specified coordinates. If it's found, returns True, otherwise False.
     Order of coordinates: (left, top, right, bottom), meaning (top_left x, top_left y, bottom_right x, bottom_right y),
@@ -276,10 +254,9 @@ def weak_substring_check(input_str: str, coords: tuple[float, float, float, floa
     time.sleep(OcrValues.read_file_frequency)
     return False
 
-def strong_delta_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader, 
-                       upg_match: str = '',
+def strong_delta_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader, upg_match: str = ''
                        ) -> bool:
-    """Attemps to match a string with strong_image_ocr string by their similarity.
+    """Attempts to match a string with strong_image_ocr string by their similarity.
 
     Differs from substring checking by using a delta parameter which compares similar symbols in two strings.
     This makes it powerful when matching to complex ocr like upgrade texts, or two ocr strings (latter was used before 
@@ -363,7 +340,7 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
 
 def strong_substring_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader
                            ) -> tuple[bool, str]:
-    """Attemps to find inputed string from screenshot ocr string by substring matching with black and white text box.
+    """Attempts to find inputted string from screenshot ocr string by substring matching with black and white text box.
     
     Middle ground for weak_substring_check and strong_delta_check: uses strong_image_ocr to get black and white text
     box, but still uses substring matching instead of DELTA.
@@ -373,7 +350,7 @@ def strong_substring_check(input_str: str, coords: tuple[float, float, float, fl
     is shorter than, say, 'round .../100' text of impoppable/chimps.
 
     Use cases:  
-    -checking current round text.
+        -checking current round text.
 
     Args:
         input_str: The substring that should be contained within ocr string.

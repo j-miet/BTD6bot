@@ -7,12 +7,12 @@ Monkey class creates a prototype of a monkey and is responsible for
 -selling them
 
 It also implements 
--checking of succesful placements and upgrades, which allows queueing up these commands beforehand, for
+-checking of successful placements and upgrades, which allows queueing up these commands beforehand, for
  example if player can't currently afford a monkey, bot keeps repeating the command until it succeeds.
 -checks for correct inputs in coordinate and targeting values. With upgrades, it only checks for non-empty
  inputs.
 
-Special abilities and selling don't have any ocr-level checks like targetting and upgrading do.
+Special abilities and selling don't have any ocr-level checks like targeting and upgrading do.
 
 Examples of this module can be found in 'plans' folder and picking any .py plan file OR checking the documentation of 
 used method.
@@ -24,7 +24,7 @@ from __future__ import annotations
 import re
 import time
 
-from pynput.keyboard import Key, KeyCode
+from pynput.keyboard import Key
 
 from bot import kb_mouse, times
 from bot.bot_vars import BotVars
@@ -38,7 +38,7 @@ from bot.times import PauseControl
 from customprint import cprint
     
 class Monkey():
-    """Monkey class: creates all placeable monkeys and implements their common behaviour.
+    """Monkey class: creates all placeable monkeys and implements their common behavior.
 
     Attributes:
         name (str): Name of a Monkey.
@@ -52,7 +52,7 @@ class Monkey():
         placement_check: If bot will verify the monkey was placed. Should always use the default value True unless you 
                 know what you're doing. Use case: if placed monkey is under life/money/round hud, it can be placed 
                 there but afterwards clicking on this location does nothing because of hud. To access monkey again, you 
-                need to update its position slighly away from center and it should work again. To update monkey 
+                need to update its position slightly away from center and it should work again. To update monkey 
                 location, use cpos_x, cpos_y arguments for next command. A concrete example of above would be bloody 
                 puddles chimps plan, where sniper is placed on top of current cash display.
         panel_pos (str): Side where upgrade panel opens. This is always relative to middle x-coordinate of non-panel 
@@ -81,7 +81,7 @@ class Monkey():
         btd6bot (project root) -> tools -> show_coordinates or coordinate_tracker, to find coordinates.
 
     Examples:
-        Even if you never refer to a monkey after its placement, it's prefered to save it in a variable for clarity.
+        Even if you never refer to a monkey after its placement, it's preferred to save it in a variable for clarity.
 
         >>> 
             Monkey('dart', 0.15, 0.2)
@@ -190,7 +190,7 @@ class Monkey():
         Values 'left' and 'right' are always opposite of relative position of monkey from middle. The 'middle' value is 
         only required because different resolution could shift the small interval of middle values. Then for some 
         resolutions it could be left, for other right. However, 'middle' is a placeholder value anyway, as _place will 
-        ovewrite it and set it as one of the directional values.
+        overwrite it and set it as one of the directional values.
 
         Returns:
             "left" if monkey is on right, "right" if on left, "middle" if close to midpoint.
@@ -233,11 +233,11 @@ class Monkey():
         if '-1' in init_check:
             self._error('init', init_check)
             
-    def _get_hotkey(self) -> Key | KeyCode | str:
+    def _get_hotkey(self) -> Key | str:
         """Returns keyboard hotkey of current monkey.
 
         Returns:
-            Corresponding pynput.keyboard Key, KeyCode, or a string value. If no key-like value can be returned, 
+            Corresponding pynput.keyboard Key or a string value. If no key-like value can be returned, 
                 returns False.
         """
         match self._name.lower():
@@ -302,7 +302,7 @@ class Monkey():
         return "Error"
     
     def _basic_monkey_targeting(self) -> str | None:
-        """Defines default targeting behaviour of monkey.
+        """Defines default targeting behavior of monkey.
 
         Returns:
             Targeting option string or None if monkey has no targeting options.
@@ -327,7 +327,7 @@ class Monkey():
     def _normal_targeting(self, current: str | None, target: str) -> str | tuple[str, str]:
         """Set targeting for monkey under normal targeting rules.
         
-        Most monkeys have the basic 4 targeting choises: first, last, close, and strong. 
+        Most monkeys have the basic 4 targeting choices: first, last, close, and strong. 
         This method handles targeting change for such cases.
         
         Args:
@@ -335,7 +335,7 @@ class Monkey():
             target: New targeting priority.     
             
         Returns:
-            'OK' string if targeting change was succesful.
+            'OK' string if targeting change was successful.
             name, target: If problems were encountered, return monkey's name and target string.
         """
         if target == 'first':
@@ -407,7 +407,7 @@ class Monkey():
 
         Returns:
             normal_targeting(current, target) value if targeting falls under that category,
-            'OK' string if any other targeting change was succesful.
+            'OK' string if any other targeting change was successful.
             name, target: If problems were encountered, return monkey's name and target string as a tuple. 
         """ 
         current = self._targeting
@@ -709,7 +709,7 @@ class Monkey():
         """Checks if new crosspath updates the targeting priority automatically and if so, updates targeting value.
         
         For some monkeys, like ace, if you do upgrade x-x-1 -> x-x-2, it unlocks a new targeting priority (centered 
-        path in this case) which is automatically set as current targetin priority. This method will check such cases 
+        path in this case) which is automatically set as current targeting priority. This method will check such cases 
         and handles the updating of current attributes for bot as well.
 
         This method is only called inside self._do_upgrades.
@@ -733,7 +733,7 @@ class Monkey():
 
         Upgrades monkey by first checking current upgrade path, then matching it to next upgrade and choosing correct
         upgrade by comparing differing values. Upgrades are passed as a list of strings which allows multiple upgrades
-        with one target method call. Ater
+        with one target method call.
         
         If monkey position has changed after initial placement (Geared/Sanctuary), use cpos to point current position.
 
@@ -826,7 +826,7 @@ class Monkey():
                       current_r: tuple[float, float, float, float], 
                       upg_path: int
                       ) -> None:
-        """Keeps trying to upgrade a monkey, then sends confirmation message after a succesful attempt.
+        """Keeps trying to upgrade a monkey, then sends confirmation message after a successful attempt.
 
         Also updates _upgrade_path attribute.
 

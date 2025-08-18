@@ -1,7 +1,7 @@
 """Contains BotVars class."""
 
 class BotVars:
-    """Variables for controlling key aspects of bot's behaviour.
+    """Variables for controlling key aspects of bot's behavior.
 
     All variables should have default initialization values in case that gui_vars.json file cannot be accessed/read.
 
@@ -30,7 +30,7 @@ class BotVars:
         time_recording_status (bool, class attribute): Whether the bot will record current map times for plotting 
             purposes, or not. Bot will always display time values during runtime, but with this setting as True, it 
             will also save their values in a txt file. Then, after a plan finishes, time data is stored and can be seen
-            under 'Show plot' button in gui. Default value is True: bot will always update time values after succesful
+            under 'Show plot' button in gui. Default value is True: bot will always update time values after successful
             completion of a plan.
         check_gamesettings (bool, class attribute): Whether bot checks the in-game esc settings and auto-updated them.
             Default is True: when bot is run first time, setting are always checked. Afterwards, they are only checked

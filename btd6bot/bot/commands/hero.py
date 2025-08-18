@@ -112,7 +112,7 @@ class Hero(Monkey):
             self.special(1)
 
     def _basic_hero_target(self) -> str | None:
-        """Defines default hero targeting behaviour.
+        """Defines default hero targeting behavior.
 
         Returns:
             Targeting option string or None if hero has no targeting options.
@@ -193,7 +193,7 @@ class Hero(Monkey):
         
         Currently, its only use is to set Etienne's Zone Control status for bot: bot doesn't know when Etienne 
         hits lvl 11 and won't update targeting priority to match in-game value. So user must call this command 
-        inside the round block where Etienne reaches lvl 11 - otherwise some unintended behaviour could occur
+        inside the round block where Etienne reaches lvl 11 - otherwise some unintended behavior could occur
         should user want to change targeting later.
         """
         if self._hero_name == 'etienne':

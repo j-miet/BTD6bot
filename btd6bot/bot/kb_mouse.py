@@ -1,18 +1,23 @@
 """Simulation of keyboard and mouse controls."""
 
 from __future__ import annotations
+import sys
 import time
 
 import pyautogui
 import pynput
-from pynput.keyboard import Key, KeyCode
+from pynput.keyboard import Key, KeyCode, Controller
 
 from bot.bot_vars import BotVars
 from customprint import cprint
 
-pyautogui.FAILSAFE = False
 # pyautogui.FAILSAFE controls build-in pyautogui fail-safe of dragging mouse to a corner of the screen, shutting down 
 # the program. This is set to "False" as there's already a custom hotkey (or Ctrl+C) for quick termination.
+# However for Mac systems gui hotkeys are disabled so Ctrl+C and mouse dragging become only ways to halt bot
+if sys.platform == 'darwin':
+    pyautogui.FAILSAFE = True
+else:
+    pyautogui.FAILSAFE = False
 
 class ScreenRes:
     """ScreenRes class for tracking current screen resolution.
@@ -21,11 +26,9 @@ class ScreenRes:
 
     Attributes:
         BASE_RES (int, class attribute): Base/native resolution.
-        width (int, class attribute): Screen width. 
-        height (int, class attribute): Screen height.
     """
-    controller: pynput.keyboard.Controller = pynput.keyboard.Controller()
     BASE_RES: tuple[int, int] = pyautogui.size()
+    _controller: pynput.keyboard.Controller = Controller()
     _width, _height = pyautogui.size()
     _w_shift, _h_shift = 0, 0
 
@@ -127,7 +130,7 @@ def move_cursor(xy: tuple[float, float], set_duration: float = 0.0, shifted: boo
 
 def kb_input(input: Key | KeyCode | str, 
              times: int = 1, 
-             controller: pynput.keyboard.Controller = ScreenRes.controller) -> None:
+             kb_controller: pynput.keyboard.Controller = ScreenRes._controller) -> None:
     """Simulates pressing a single keyboard input by default.
 
     If same key must be pressed multiple times, change 'times' value.
@@ -135,22 +138,22 @@ def kb_input(input: Key | KeyCode | str,
     Args:
         input: Key that needs to be pressed.
         times: How many times key is pressed. Default value is 1.
+        kb_controller: pynput keyboard controller object.
     """
     if isinstance(times, int) and times >= 1:
-        keyboard = controller
         if isinstance(input, str) and input.strip("<>") in {f"{num}" for num in range(96, 106)}: # numpad keys
             input_key = int(input.strip("<>"))
             for _ in range(times):
-                keyboard.press(KeyCode(input_key)) # type: ignore
+                kb_controller.press(KeyCode(input_key)) # type: ignore
                 time.sleep(0.1)
-                keyboard.release(KeyCode(input_key)) # type: ignore
+                kb_controller.release(KeyCode(input_key)) # type: ignore
                 if times >= 2:
                     time.sleep(0.1)
         else:
             for _ in range(times):
-                keyboard.press(input)
+                kb_controller.press(input)
                 time.sleep(0.1)
-                keyboard.release(input)
+                kb_controller.release(input)
                 if times >= 2:
                     time.sleep(0.1)
 

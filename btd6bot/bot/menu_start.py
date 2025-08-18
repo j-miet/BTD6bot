@@ -1,4 +1,4 @@
-"""Functions that handle in-game menu navigations before and after each game.
+"""Functions that handle in-game menu navigation before and after each game.
 
 Menu navigation is done with simulating mouse inputs on predetermined locations.
 Initial start condition is to search for main menu 'Play' button using ocr.
@@ -50,6 +50,10 @@ def _choose_hero(hero_name: str | None) -> bool:
 
     Args:
         hero_name: Lower/uppercase doesn't matter, only that name is spelled correctly.
+
+    Returns:
+        If hero selection could be verified (even if None) return True; otherwise hero selection screen couldn't be
+        processed and returns False.
     """
     hero_dict: dict[str, Any] = get_locationdict()['CLICK']
     all_heroes = (tuple(hero_dict['heroes'].keys()),
@@ -94,7 +98,7 @@ def _choose_map(map_name: str) -> bool:
         map_name: Map name.
 
     Returns:
-        A boolean indicating if map selection was succesful. If False value is returned, it allows for bot to return
+        A boolean indicating if map selection was successful. If False value is returned, it allows for bot to return
             to main menu screen.
     """
     start: float = time.time()

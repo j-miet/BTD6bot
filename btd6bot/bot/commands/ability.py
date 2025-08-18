@@ -28,8 +28,9 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
         xy: Target coordinate, a tuple of floats. Default is None.
         delay: If value is set greater than 0, then stands for time waited before mouse is moved to location xy. If
             value is 0, which is also the default value, no cursor movement is done afterwards.
-            Only reasonable use case is when reseting Obyn's trees: bananas have short animation during which they 
-            cannot be collected, so setting a value of 1 or similar, will let bananas finish spreading animation, then moves cursor on top of tree location (which is given xy value) to collect them.
+            Only reasonable use case is when resetting Obyn's trees: bananas have short animation during which they 
+            cannot be collected, so setting a value of 1 or similar, will let bananas finish spreading animation, then 
+            moves cursor on top of tree location (which is given xy value) to collect them.
 
     Examples:
         Use ability number 2 immediately after command is processed.
@@ -68,7 +69,7 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
         return
     cprint(f'Using ability {key} with timer {timer}... ', end='')
     while times.current_time()-begin_time < timer:     
-        time.sleep(0.01)    # small sleep timer to avoid constant processing of time.time
+        time.sleep(0.01)
     kb_mouse.kb_input(hotkeys['ability '+str(key)])
     if xy is not None:
         if delay > 0:
