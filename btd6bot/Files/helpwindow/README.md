@@ -15,10 +15,10 @@ Bot is quite complex and has been tested thoroughly. Still, you may encounter bu
 Btd6 includes elements of **randomness** (**rng**), which cannot be entirely removed. On top of this, bot's text 
 detection times can vary ever so slightly which alters upgrade and ability timings etc. So if you plan to use bot to
 obtain *Chimps black medals* on harder advanced and expert maps, it could take several attempts before getting a 
-succesful run.
+successful run.
 
 **-- Warning --**  
-***Be aware that automation/botting is againts Ninja Kiwi&#39;s [Terms of Service](https://ninjakiwi.com/terms) and
+***Be aware that automation/botting is against Ninja Kiwi&#39;s [Terms of Service](https://ninjakiwi.com/terms) and
 imposes the risk of flagging your account for cheating, or worst case, getting it banned.  
 I&#39;m not certain how they could enforce this ruleset in a single player environment, though. If you&#39;re concerned,
 you can always run bot offline. <u>You have been warned</u>.***
@@ -30,19 +30,21 @@ Updated for Bloons TD 6 version ``49``**
   
 - For now, bot is planned to be updated after each major game update (next being update ``50``)
 - Other than that, new game plans might be added on an infrequent basis
+    - For a list of all current plans, [see this](docs/Plans.md)
 
 **[Supported display resolutions]**
 
 - Resolutions with **16:9 aspect ratio are heavily recommended** as bot can easily scale mouse/text locations between 
 similar interfaces.
 - With ultrawide resolutions, game seems to restrict in-game area into a 16:9 box and extend unused space with border
-texture. With some minor adjustments, bot should work just fine. 
-- For an arbitrary aspect ratio, game is likely to add/remove border textures and change button/text locations during 
-gameplay. Bot offers two possible fixes for this:
+texture. With some adjustments, bot should work just fine (but this has not been tested). 
+- For an arbitrary aspect ratio, game is likely to add or remove vertical/horizontal border textures and change 
+button/text locations during 
+gameplay. Bot has a solution for this:
     - for borders: check manually the pixel widths/heights of border textures, then add this offset using 'in-game 
     resolution shift' setting.
     - for locations: record all static coordinate locations on your current resolution and replace existing custom 
-    values: <u>this a lot of work</u>, and I have yet to test and confirm it functions 100% as intended.
+    values: <u>this requires a lot of work</u>
 
 
 **[OS support]**  
@@ -51,9 +53,8 @@ all of them. Currently:
 - **Windows (10 or higher) is fully supported and thus recommended.**
 
 - **MacOS**:
-  - Python libraries used for gui and hotkeys (``tkinter`` & ``pynput`` respectively) cause bad errors when used 
-  together. Thus, gui can be only used for changing settings, but bot itself cannot be run inside gui mode. The solution
-   is to thus use gui version for setting and command line version to run the bot.
+  - Gui includes custom hotkeys, but these are disabled for Mac systems. Reason is Python libraries used for gui and 
+  hotkeys (``tkinter`` & ``pynput`` respectively) don't work together.
   - Mac uses ``16:10`` aspect ratio as a baseline and lacks the support for recommended ``16:9`` resolutions. Again, 
   this can probably be fixed by using the tricks explained above in resolution section, but it's a lot of work.
 
@@ -91,8 +92,9 @@ all of them. Currently:
 
 # <u>Features</u>
 
-- [Tested on update ``49``, with ``1920x1080`` resolution + ``fullscreen``, with around ``144`` constant fps]  
-Plans for **all expert maps on chimps difficulty are included, making black medals obtainable.**
+- [Tested with ``1920x1080`` resolution + ``fullscreen``, with around ``144`` constant fps]  
+All **advanced and expert map on CHIMPS difficulty are supported**. As bot is required to finish any plan in one go, 
+this also means CHIMPS includes **black medal/border**. For all supported plans, check [this list](docs/Plans.md).
 
 - Graphical user interface, made with Python&#39;s build-in Tkinter library. Very simplified when it comes to visuals,
 but easy to use. Here are some of the properties:
@@ -142,7 +144,7 @@ Most of bot was programmed in Python versions 3.12.5 or higher so **Python 3.12+
 
 Then, download *BTD6bot*.  
 <u>Main branch is selected by default - it's the recommended way to run bot</u>:
-- ``main`` is the release branch. It has the most stable version of bot with miminal amount of bugs.
+- ``main`` is the release branch. It has the most stable version of bot with minimal amount of bugs.
 - ``dev`` is the development branch. All upcoming features are added and tested here before they get merged into main.
 Expect this version to be less stable and include numerous bugs.  
 $~$ 
@@ -379,7 +381,7 @@ Custom value is stored in a file and will be loaded back if you disable and re-e
     ![](docs/images/settings/windowed.png)
     
     If you use windowed mode in btd6 normally, it adds the bar on top of game window. Bot, however, assumes this bar
-    doesn&#39;t exist and requires game to be opened with ``-popupwindow`` option.  
+    doesn't exist and requires game to be opened with ``-popupwindow`` option.  
     If you have Btd6 steam version, go to steam library, right click on Bloons TD 6, then simply add the argument like
     shown below
 
@@ -452,7 +454,7 @@ complicated system are required to verify the input.
 
 The most complicated of these is the monkey upgrade system. In order to make upgrading to work properly, bot needs to
 wait until upgrading becomes possible. The easy way to program this would be just say "when command is run, upgrade
-monkey, don't check if it was succesful". But then user would need to time the upgrading exactly and this becomes
+monkey, don't check if it was successful". But then user would need to time the upgrading exactly and this becomes
 obviously annoying over time.
 
 So better but more complicated way to implement this is to allow user to queue upgrade checks. Bot will just wait until
@@ -461,20 +463,20 @@ might not upgrade at all. For this reason, upgrading process must
 
  - queue upgrades
  - perform upgrading process when asked to
- - verify the upgrade process was succesful
+ - verify the upgrade process was successful
 
 If it fails, it can either throw an error or keep trying again. The latter is how this bot works:
 
  - takes upgrade command
- - attemps to upgrade bot simply by pressing the right upgrade path hotkey
+ - attempts to upgrade bot simply by pressing the right upgrade path hotkey
  - reads the current upgrade name, matches it with actual upgrade name, then   
    compares the difference of these strings and outputs a delta parameter.
 
-    - if delta is over the threshold, upgrade was succesful
+    - if delta is over the threshold, upgrade was successful
     - if delta was below the threshold, run the cycle again until above is true
 
 This system is effective, but faces one problem: it uses same delta for ALL UPGRADES! Some upgrades might match easily,
-others being more difficult. And not only this, if two concecutive upgrade 
+others being more difficult. And not only this, if two consecutive upgrade 
 paths are similarly named, like 'sharp shots' and 'razor sharp shots', they could be confused as same. A single delta 
 value cannot universally work with all previous cases. To solve this problem, current system uses <u>individual deltas 
 for each monkey and its upgrade paths</u>. 
@@ -491,8 +493,8 @@ string value for this path, ``'ultra juggernaut'`` and corresponding delta, lets
  - 14/16 = 0.875 > 0.85, upgrade passes
  - however, exact delta value is avoided because some reading error could  
    change output a tiny bit and then value could become 0.84 < 0.85 = no match
- - to give room for some error, a delta value is substracted to lower this 
-   exact value. From testing, substracting 0.04 from all deltas keeps good 
+ - to give room for some error, a delta value is subtracted to lower this 
+   exact value. From testing, subtracting 0.04 from all deltas keeps good 
    accuracy for the most part. In settings, this value is written as delta=4: it lowers all 
    deltas by 4 units, where unit is 0.01. Valid deltas are 0-9 (which translate 
    to values 0-0.09)
@@ -539,12 +541,12 @@ following:
     texts and save the obtained delta value. Because monkeys=all, it checks all monkeys.
  3. after it checks all listed monkeys once, it will check them again! This time it places them on opposite side of map.
     Why? Well, if you&#39;re never noticed, depending on which side of middle section you place a monkey 
-    (left or right), the monkey panel opens on the opposite side of screen. Different sides can produce slighly
+    (left or right), the monkey panel opens on the opposite side of screen. Different sides can produce slightly
     different inputs so bot will analyze both sides and save all the deltas.
  4. After both sides are checked, both compares deltas of left and right side, selects the smaller value and save it as
     final delta.
  5. To finish things, all delta values are adjusted with equal amount. Default value is 4 i.e. delta=4: this adjust
-    them by 4 units. An unit is 0.01 so with 4, bot substracts 0.04 from all values. This process is done to allow room
+    them by 4 units. An unit is 0.01 so with 4, bot subtracts 0.04 from all values. This process is done to allow room
     for error. If delta=0, exact values are used, but then even a slightest error would break the ocr process, and
     eventually, the bot.
  6. Process is now done and your upgrades_current.json file inside btd6bot/Files folder has been updated. Bot will also
@@ -571,9 +573,9 @@ or
 Make sure you have the required hero, all monkeys and their upgrade paths unlocked. For upgrade paths:
 
 - they follow the normal order of top-mid-bot e.g. ``sniper 2-0-4`` uses 2. top path and 4. bottom path upgrades
-- they state **highest crosspaths required**. Therefore you sometimes see stuff like ``2-5-5 sniper`` listed which
+- they state **highest crosspaths required**. Therefore you sometimes see paths such as ``2-5-5 sniper`` listed which
 simply means plan requires 2. top, 5. middle and 5. bottom paths. For example, such plan could use both ``2-0-5`` and
-``0-5-2`` snipers and maybe even include a few ``0-3-2``&#39;s, too.  
+``0-5-2`` snipers, and maybe even include a few ``0-3-2``&#39;s.  
 
 Remember to scroll the info panel down to see all requirements!
 
@@ -594,7 +596,7 @@ As stated under &#39;Enable custom resolution&#39;, resolutions should have aspe
 to leave in-game resolution to your **native fullscreen resolution**, but still use
 **custom resolution + windowed mode** to reduce the visible screen area.
 
-When you run ``Btd6bot`` with windowed mode, it uses the logic descripted in following image
+When you run ``Btd6bot`` with windowed mode, it uses the logic described in following image
 
 ![](docs/images/settings/ultrawide.png)
 
@@ -641,7 +643,7 @@ If you don't use 16:9 aspect ratio resolution or can't get the above ultrawide s
 coordinates for selected resolution. This will require *a lot more work* because you need to
 1. shift coordinates accordingly so bot's coordinate range fits inside border textures and any towers get placed in 
 correct positions,
-2. change locations of clickable buttons and ocr text boxex locations so that bot can properly execute all its commands
+2. change locations of clickable buttons and ocr text box locations so that bot can properly execute all its commands
 and validity checks.
 
 Full explanation:  
@@ -681,7 +683,7 @@ This section goes over all the gui windows and gives detailed explanations on ea
 
 - Each window has fixed size and cannot be adjusted (dynamic window scaling might be implemented at some point, but no
 promises)
-- Gui interracts with ``Files`` folder. Don't change data values of these files by hand unless you know what you&#39;re
+- Gui interacts with ``Files`` folder. Don't change data values of these files by hand unless you know what you&#39;re
 doing
 
     - only exception is the ``Files/map images``. Check sections for [Main](#main) or [Queue](#queue) for more info.
@@ -711,7 +713,7 @@ i.e. selected map + strategy combination. Info is stored in each plan file and c
     
     1. only letters and spaces allowed
 
-    2. only lowercase letters, speicla characters are allowed (like ``#`` in ``#ouch``, ``'`` in ``adora's temple``)
+    2. only lowercase letters, special characters are allowed (like ``#`` in ``#ouch``, ``'`` in ``adora's temple``)
 
     3. image resolution is 320x195
 
@@ -807,7 +809,7 @@ option, which was already introduced when setting up the bot first time.
     Change resolution the bot uses to determine relative mouse clicking/ocr text locations. Must match with used in-game
     resolution which should have ``16:9`` aspect ratio.
 - **Windowed mode**: 
-    If Btd6 is run in windowed mode. Btd6 must be launced with ``-popupwindow`` launch option and window cannot be moved
+    If Btd6 is run in windowed mode. Btd6 must be launched with ``-popupwindow`` launch option and window cannot be moved
     from its initial position. 
     
     Windowed mode can face issues with ocr accuracy, though. If resolution is considerably smaller, text reading errors
@@ -836,7 +838,7 @@ pixels. Width and height can be adjusted individually. Positive values shift tow
 
 - **Ocr time limit**: How long will bot attempt to search for various text flags before it gives up and attempts to
 return to main menu. Typically, this should never occur so a high value of 300 seconds or more is recommended: this 
-is especially important for apopalypse plans, as in those you can have long periods of downtime where bot attemps to 
+is especially important for apopalypse plans, as in those you can have long periods of downtime where bot attempts to 
 place/upgrade a monkey.
 
 - **Ocr frequency**: Pause interval between most ocr operations, in seconds. Naturally, every operation has base cost
@@ -846,7 +848,7 @@ processes, like farming xp/monkey money with simple strategies such dark castle 
 could set this value to even high as 0.5-1.
 
 - **Upgrade checks**: Amount of checks upgrade system performs before it presses upgrade any upgrade hotkeys again. This
-process then simply presses upgrade button -> performs N checks -> if upgrade succesful, continue; otherwise keep going
+process then simply presses upgrade button -> performs N checks -> if upgrade successful, continue; otherwise keep going
 until counter hits N+1, then press button again and repeat. In most circumstances this setting matters little, but it 
 will likely prevent the following "bug":  
 Say you want to upgrade a dart monkey from 0-0-0 to 4-0-0 in one go. If game for some
@@ -875,7 +877,7 @@ finding current round number uses substring matching.
 
 - **Auto-adjust ocr upgrade data the next time a plan is run**: <u>This was already introduced under
 [first-time setup](#update-resolution-and-enable-ocr-auto-adjust)</u>. Updates all upgrade ocr values based on current
-resolution settings. As bot uses upgrade labels to determine whether is has succesfully upgraded a monkey or has to keep
+resolution settings. As bot uses upgrade labels to determine whether is has successfully upgraded a monkey or has to keep
 on trying, these texts must be as precisely readable as possible. For upgrades, bot has three cases:
 
      1. not mixing and accepting similar strings like 'sharp shots' & 'razor sharp shots',
@@ -926,11 +928,11 @@ Then, if you stop the bot and run it again, it continues from the plan it left o
 until you close current monitoring window. When all plans are finished, run button displays 'Repeat queue' instead.
 When you press it, plan queue resets and begins running all plans in same order again.
 
-    (*) finished means plan was either *succesfully finished* or it *could not be completed within set amount of 
+    (*) finished means plan was either *successfully finished* or it *could not be completed within set amount of 
     retries*.
 
     - Also, when plan queue is finished, a success rate percentage is displayed. Furthermore, each plan name, their 
-    success status ('success'/'failed') and amount of attemps out of total if status is 'success' are also printed.
+    success status ('success'/'failed') and amount of attempts out of total if status is 'success' are also printed.
 
 - Displays round timer for current round; not 100% accurate, but still quite good and very useful for adjusting ability
 timings when new plans are created.
@@ -942,7 +944,7 @@ timings when new plans are created.
     
     1. only letters and spaces allowed
 
-    2. only lowercase letters, speicla characters are allowed (like ``#`` in ``#ouch``, ``'`` in ``adora's temple``)
+    2. only lowercase letters, special characters are allowed (like ``#`` in ``#ouch``, ``'`` in ``adora's temple``)
 
     3. image resolution is 320x195
 
@@ -1102,7 +1104,7 @@ for current plan: it will be displayed both under main and queue windows. It con
         Examples: 
 
         - if plan uses 2-0-5 sniper and 0-5-2 sniper, then you would type ``sniper 2-5-5``.
-        - uses darts at start but doesn&#39;t upgrade them -> dart 0-0-0
+        - uses darts at start but doesn't upgrade them -> dart 0-0-0
         - uses multiple 0-0-4 beast handlers to merge and create a 0-0-5 beast-> beast 0-0-5
 
         All examples combined, info sections would look like this:
@@ -1168,11 +1170,11 @@ This block is Python code. It includes
 - play function which is called for each plan
 - initialization through menu_start.load; select hero, map, difficulty and game mode
 - set a starting point to track total time
-- and finally, the main round loop: this begins from round BEGIN (value depens of difficulty and game mode) and
+- and finally, the main round loop: this begins from round BEGIN (value depends of difficulty and game mode) and
 continues until you finish final round (reach END+1). After it does checks and updates current_round value, it matches
 this to corresponding if/elif block to perform command for that round.
 
-Thus, you only need to interract with the part starting from
+Thus, you only need to interact with the part starting from
     
         if current_round == BEGIN:
             ...
