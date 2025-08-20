@@ -3,7 +3,6 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import json
-import os
 import tkinter as tk
 
 import pyautogui
@@ -430,7 +429,7 @@ class SettingsWindow:
             self.ingame_res_height_entry['state'] = 'normal'
             self.ingame_res_button['state'] = 'normal'
         else:
-            self.ingame_res_value.set(f' 0 x 0 ')
+            self.ingame_res_value.set(' 0 x 0 ')
             self.ingame_res_width_entry['state'] = 'disabled'
             self.ingame_res_height_entry['state'] = 'disabled'
             self.ingame_res_button['state'] = 'disabled'
