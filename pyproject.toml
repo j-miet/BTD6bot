@@ -14,8 +14,10 @@ exclude = [
 ]
 
 [tool.ruff.lint]
-select = ["E4"]
+select = ["E", "F", "B"]
+ignore = ["E501"]
 
 [tool.ruff.lint.per-file-ignores]
-"set_plan.py" = ["E402"]
-"gui/main_window.py" = ["E402"]
+"set_plan.py" = ["F401"]
+"_no_gui.py" = ["F401"]
+"btd6bot/gui/main_window.py" = ["F401"]

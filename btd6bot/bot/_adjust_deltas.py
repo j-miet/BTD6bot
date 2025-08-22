@@ -8,12 +8,12 @@ import time
 
 from bot import kb_mouse
 from bot.bot_vars import BotVars
-from bot.commands.monkey import Monkey, _MonkeyConstants
+from bot.commands.monkey import Monkey
+from bot.locations import get_click, get_text
 from bot.kb_mouse import ScreenRes
+from bot.menu_start import _choose_map, _choose_diff
 from bot.ocr.ocr import weak_substring_check, OcrValues
 from bot.ocr.ocr_reader import OCR_READER
-from bot.menu_start import OcrLocations, MouseLocations, _choose_map, _choose_diff
-from bot.rounds import Rounds
 from customprint import cprint
 from utils import timing
 
@@ -125,10 +125,12 @@ def _check_ocr(m: str,
     mid.sell()
     bot.sell()
 
-def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool = False) -> None:
-    # check if upgrade_current.json dictionary has all required keys and values.
-    # If not, use _ocr_upgradedata.json base values instead. This also means all monkeys are adjusted,
-    # even if list of checked monkeys was a sublist.
+def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
+    """Check if upgrade_current.json dictionary has all required keys and values.
+
+    If not, use _ocr_upgradedata.json base values instead. This also means all monkeys are adjusted,
+    even if list of checked monkeys was a sublist.
+    """
     base_dict: dict[str, Any] = {}
     current_dict: dict[str, Any] = {}
     with open(pathlib.Path(__file__).parent.parent/'Files'/'_ocr_upgradedata.json') as base:
@@ -157,11 +159,11 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
         
     monkeys: list[str] = []
     if check_monkeys == ['all'] or baseval_flag:
-        monkeys = list(_MonkeyConstants._MONKEY_NAMES[:])
+        monkeys = list(Monkey._MONKEY_NAMES[:])
         monkeys.remove('hero')
     else:
         for name in check_monkeys:
-            if name in list(_MonkeyConstants._MONKEY_NAMES):
+            if name in list(Monkey._MONKEY_NAMES):
                 monkeys.append(name)
     if monkeys == []:
         return
@@ -172,7 +174,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
     OcrValues._log_ocr_deltas = True
 
     cprint("\nSearching for main menu screen...", end='')
-    while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
+    while not weak_substring_check('Play', get_text('menu', 'menu_playtext'), OCR_READER):
         time.sleep(0.5)
     cprint(" <Menu detected>\n")
     cprint("-Updating values will take a while.\n"
@@ -183,11 +185,11 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
 
     _choose_map('spa pits')
     _choose_diff('EASY')
-    kb_mouse.click(MouseLocations.MODES['bottom_left']) # sandbox mode
+    kb_mouse.click(get_click('modes','bottom_left')) # sandbox mode
 
     start = time.time()
     cprint("\nWaiting for map screen...")
-    while not weak_substring_check('Upgrades', Rounds.UPGRADE_TEXT, OCR_READER):
+    while not weak_substring_check('Upgrades', get_text('ingame','upgrade_text'), OCR_READER):
         if time.time()-start > 20:
             cprint("Could not find map screen in 20 seconds, script halted.")
             return
@@ -243,7 +245,8 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
         win = "windowed"
     else:
         win = "fullscreen"
-    upg_dict["__identifier"] = [ScreenRes.width, ScreenRes.height, win, f"delta={delta_adjust}"]
+    upg_dict["__identifier"] = [ScreenRes._width, ScreenRes._height, ScreenRes._w_shift, ScreenRes._h_shift, 
+                                win, f"delta={delta_adjust}"]
     with open(_TEMPFILE_PATH, 'w') as f:
         json.dump(upg_dict, f, indent=2)
 
@@ -272,7 +275,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int, wipe: bool =
     time.sleep(1)
     kb_mouse.click((0.4442708333333, 0.7759259259259))
 
-    while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
+    while not weak_substring_check('Play', get_text('menu', 'menu_playtext'), OCR_READER):
         time.sleep(0.5)
     cprint("Adjusting process complete!")
 
@@ -285,22 +288,26 @@ def run() -> None:
     for args in args_list:
         if 'res=' in args:
             res_vals = args[4:].split('x')
-            ScreenRes.width, ScreenRes.height = int(res_vals[0]), int(res_vals[1])
+            ScreenRes.update_res(int(res_vals[0]), int(res_vals[1]))
         elif 'win=' in args:
             win_val = int(args[4])
             if win_val == 1:
                 BotVars.windowed = True
             elif win_val == 0:
                 BotVars.windowed = False
+        elif 'shift=' in args:
+            shift_vals = args[6:].split('x')
+            ScreenRes.update_shift(int(shift_vals[0]), int(shift_vals[1]))
         elif 'monkeys=' in args:
             monkey_list = args[8:].split(",")
         elif 'delta=' in args:
             delta_val = int(args[6:])
             if 0 <= delta_val <= 9:
-                delta = delta_val
+                delta = delta_val       
     cprint("Updating upgrade deltas with following arguments:\n" \
             f"Resolution: {res_vals[0]}x{res_vals[1]}\n"
             f"Windowed: {BotVars.windowed}\n"
+            f"Coordinate shift: {shift_vals[0]}x{shift_vals[1]}\n"
             f"Monkeys: {monkey_list}\n"
             f"Delta: {delta}\n\n"
             "=>Bot will next enter 'spa pits' map in sandbox mode.")

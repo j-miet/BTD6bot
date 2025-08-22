@@ -1,7 +1,4 @@
-"""Round time data printing and recording.
-
-Time data is for gui plotting purposes.
-"""
+"""Round time data printing and recording."""
 
 import pathlib
 import time
@@ -13,6 +10,23 @@ from customprint import cprint
 
 class PauseControl:
     pause_length: float = 0
+
+    @staticmethod
+    def pause_bot() -> None:
+        """Pauses bot execution."""
+        if BotVars.paused:
+            pause_start = time.time()
+            kb_mouse.click((0.9994791666667, 0.0))
+            kb_mouse.press_esc()
+            BotData.update_pause(BotVars.paused)
+            cprint('>>> Bot paused')
+            while BotVars.paused:
+                time.sleep(0.1)
+            PauseControl.pause_length += time.time() - pause_start
+            kb_mouse.click((0.9994791666667, 0.0))
+            kb_mouse.press_esc()
+            BotData.update_pause(BotVars.paused)
+            cprint('Bot unpaused')
 
 def _record_time(time_str: str) -> None:
     """Appends a time string to a temporary text file."""
@@ -46,22 +60,6 @@ def time_print(start: float, end: float, str: str) -> None:
             _record_time(f'{round_num},{minutes}:{seconds:02d}')
         except IndexError:
             _record_time(f'{minutes}:{seconds:02d}')
-
-def pause_bot() -> None:
-    """Pauses bot execution."""
-    if BotVars.paused:
-        pause_start = time.time()
-        kb_mouse.click((0.9994791666667, 0.0))
-        kb_mouse.press_esc()
-        BotData.update_pause(BotVars.paused)
-        cprint('>>> Bot paused')
-        while BotVars.paused:
-            time.sleep(0.1)
-        PauseControl.pause_length += time.time() - pause_start
-        kb_mouse.click((0.9994791666667, 0.0))
-        kb_mouse.press_esc()
-        BotData.update_pause(BotVars.paused)
-        cprint('Bot unpaused')
 
 def current_time() -> float:
     """Returns current time.

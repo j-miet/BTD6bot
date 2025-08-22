@@ -6,7 +6,7 @@ Can easily save create valid commands which can be copy-pasted into actual plans
 -pressing right mouse allows adding commands to commands.txt:
  >current mouse location is saved with right click
  >then you need to input a command and possible args
- >then press enter to save a nicely formated command string, assuming you gave correct arguments
+ >then press enter to save a nicely formatted command string, assuming you gave correct arguments
  --type nothing and press enter in case you pressed right mouse accidentally
 -pressing '+' will add a starting row for next rounds inputs. Round number follows ct_round_counter so you can change
  its starting value
@@ -79,7 +79,7 @@ def mouse_tracker(x: int, y: int, button: Button, pressed: bool) -> None:
 def keyboard_tracker(key_pressed: Key | KeyCode | None) -> None:
     """Keyboard input tracker.
 
-    Declares ct_round_counter variable as global so it can be actually be updated instead of reseting back to original
+    Declares ct_round_counter variable as global so it can be actually be updated instead of resetting back to original
     value. 
     Declares ct_user_input as global so it can be used outside the listener-thread; using it inside listener
     will interfere it's input, slowing it down significantly.
@@ -139,7 +139,7 @@ def add_command(comment_str: str) -> None:
     match cmd[0]:
         case 'help':
             print("<Commands>\n"
-                    "	-p: place a monkey\n"
+                    "	-m: place a monkey\n"
                     "		args:\n" 
                     "		\tvar_name, name\n"
                     "   	\texample:\n"
@@ -161,7 +161,7 @@ def add_command(comment_str: str) -> None:
                     "    	\texample:\n"
                     "    	 \t\t-t dart_name strong => dart_name.target('strong')\n"
                     "    	 \t\t-t dart_name strong p => dart_name.target('strong', x=0.1, y=0.1)\n\n"
-                    "	-trobo: change targeting on monkey/hero\n"
+                    "	-trobo: change targeting on robo monkey's second arm\n"
                     "    	\targs:\n"
                     "	  	\tvar_name, direction, clicks\n"
                     "    	\texample:\n"

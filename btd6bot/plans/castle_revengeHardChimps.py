@@ -1,25 +1,20 @@
 """
-[Hero] Sauda
+[Hero] Gwen
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
-dart 0-0-0
-glue 0-2-3
+dart 3-2-0
+tack 2-0-3
 
-sniper 1-1-0
+sniper 5-5-5
 sub 0-0-0
 
-wizard 0-3-2
-super 2-0-3
-ninja 1-4-0
-alch 4-2-0
+alch 5-2-0
 
-spike 1-3-0
-village 3-0-2
-
+village 2-0-2
 _______________________________________
-Round 40 is bad rng-wise and usually ruins the run.
-But after 40, it becomes quite minimal, although late rounds like 98 can be scary.
+On round 83 hero is manually leveled up to in order to increase consistency.
+Some late rounds like 87, 89, 90 and 95 might also cause issues if gwen's heat up timing is off.
 """
 
 from._plan_imports import *
@@ -31,165 +26,119 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
     while current_round < END+1:
         current_round = Rounds.round_check(current_round, map_start)
         if current_round == BEGIN:
-            dart1 = Monkey('dart', 0.5921875, 0.7046296296296)
-            sub1 = Monkey('sub', 0.165625, 0.2490740740741)
-        elif current_round == 7:
-            dart2 = Monkey('dart', 0.1322916666667, 0.7351851851852)
+            dart1 = Monkey('dart', 0.6260416666667, 0.2555555555556)
+            dart2 = Monkey('dart', 0.5984375, 0.5185185185185)
+            dart3 = Monkey('dart', 0.6114583333333, 0.7231481481481)
+        elif current_round == 8:
+            sub = Monkey('sub', 0.1494791666667, 0.287962962963)
         elif current_round == 9:
-            sniper = Monkey('sniper', 0.521875, 0.5240740740741)
-            sniper.target('strong')
-        elif current_round == 12:
-            hero = Hero(0.4666666666667, 0.237962962963)
+            dart4 = Monkey('dart', 0.1401041666667, 0.7287037037037)
+        elif current_round == 11:
+            sniper1 = Monkey('sniper', 0.5276041666667, 0.3981481481481)
+            sniper1.target('strong')
         elif current_round == 13:
-            wizard = Monkey('wizard', 0.5489583333333, 0.6861111111111)
-            dart1.target('strong')
+            sniper2 = Monkey('sniper', 0.5255208333333, 0.45)
+            sniper2.target('strong')
         elif current_round == 14:
-            wizard.upgrade(['0-1-0'])
+            sniper3 = Monkey('sniper', 0.5223958333333, 0.5037037037037)
+            sniper3.target('strong')
+        elif current_round == 17:
+            hero = Hero(0.5651041666667, 0.4944444444444)
+            hero.target('strong')
         elif current_round == 18:
-            spike1 = Monkey('spike', 0.128125, 0.5824074074074)
-        elif current_round == 22:
-            wizard.upgrade(['0-2-0'])
+            dart3.upgrade(['1-0-0'])
+        elif current_round == 19:
+            dart3.upgrade(['2-0-0'])
+        elif current_round == 20:
+            dart3.upgrade(['3-0-0'])
+        elif current_round == 21:
+            dart3.upgrade(['3-1-0','3-2-0'])
         elif current_round == 23:
-            sniper.upgrade(['1-0-0'])
-        elif current_round == 31:
-            ability(1,3)
-        elif current_round == 32:
-            wizard.upgrade(['0-3-0'])
+            sniper1.upgrade(['0-0-1'])
+        elif current_round == 24:
+            sniper1.upgrade(['0-1-1'])
+        elif current_round == 26:
+            sniper1.upgrade(['0-1-2'])
+        elif current_round == 27:
+            sniper1.upgrade(['0-2-2'])
+            sniper1.target('first')
+        elif current_round == 28:
+            sniper3.upgrade(['1-0-0'])
         elif current_round == 34:
-            alch = Monkey('alch', 0.5364583333333, 0.3083333333333)
-            alch.upgrade(['1-0-0'])
-            alch.target('strong')
-        elif current_round == 35:
-            ability(1,5.75)
+            ability(1,1)
+            sniper1.upgrade(['0-2-3'])
         elif current_round == 36:
-            alch.upgrade(['2-0-0','3-0-0'])
-        elif current_round == 37:
-            alch.upgrade(['3-1-0','3-2-0'])
+            ability(1,5)
         elif current_round == 38:
-            ability(1,9.75)
-        elif current_round == 39:
-            super1 = Monkey('super', 0.3572916666667, 0.387962962963)
-        elif current_round == 40:
-            forward(1)
-            ability(1,13.5)
-        elif current_round == 41:
-            forward(1)
-            village1 = Monkey('village', 0.4734375, 0.5231481481481)
-            village1.upgrade(['0-0-1','0-0-2','1-0-2'])
-            wizard.upgrade(['0-3-1','0-3-2'])
-        elif current_round == 42:
-            village2 = Monkey('village', 0.4260416666667, 0.387962962963)
-        elif current_round == 43:
-            ability(1,1.75)
-            village2.upgrade(['0-0-1','0-0-2'])
-        elif current_round == 44:
-            super1.upgrade(['0-1-0'])
-            village2.upgrade(['1-0-2'])
-            sniper.upgrade(['1-1-0'])
-            sniper.special(1)
-        elif current_round == 45:
-            super1.upgrade(['0-2-0'])
-        elif current_round == 46:
-            village2.upgrade(['2-0-2'])
-        elif current_round == 48:
-            super1.upgrade(['0-2-1','0-2-2'])
-        elif current_round == 49:
-            super1.upgrade(['0-2-3'])
-            alch.target('first')
-        elif current_round == 50:
-            ability(2,xy= (0.4171875, 0.4824074074074))
-        elif current_round == 51:
-            super2 = Monkey('super', 0.3625, 0.5268518518519)
-            super2.upgrade(['0-1-0'])
-        elif current_round == 52:
-            super2.upgrade(['0-2-0'])
-        elif current_round == 53:
-            super2.upgrade(['0-2-1'])
-        elif current_round == 54:
-            super2.upgrade(['0-2-2'])
-        elif current_round == 55:
-            super3 = Monkey('super', 0.365625, 0.4287037037037)
-        elif current_round == 57:
-            super3.upgrade(['0-1-0','0-2-0'])
-        elif current_round == 58:
-            super3.upgrade(['0-2-1','0-2-2'])
-        elif current_round == 60:
-            ability(1,8.5)
-        elif current_round == 62:
-            super3.upgrade(['0-2-3'])
-            glue = Monkey('glue', 0.528125, 0.4731481481481)
-            glue.target('strong')
-            glue.upgrade(['0-0-1','0-0-2','0-1-2'])
-        elif current_round == 63:
-            ability(1,1.75)
-            ability(3,8)
-            ability(1,13)
-        elif current_round == 64:
-            glue.upgrade(['0-1-3'])
-        elif current_round == 67:
-            super2.upgrade(['0-2-3'])
-        elif current_round == 70:
-            alch.upgrade(['4-2-0'])
-        elif current_round == 75:
-            ability(1,9)
-        elif current_round == 76:
-            ability(3,1.5)
-        elif current_round == 77:
-            ability(1,16)
-        elif current_round == 78:
-            ability(3,4.5)
-            ability(3,27)
-        elif current_round == 80:
-            ability(1,16)
-            ability(3,17)
-        elif current_round == 85:
-            alch.upgrade(['5-2-0'])
-            ability(2,xy=(0.5729166666667, 0.4064814814815))
-            ability(2,xy=(0.484375, 0.3324074074074))
-            ability(2,xy=(0.4864583333333, 0.4287037037037))
-        elif current_round == 86:
-            ability(2,xy=(0.4171875, 0.4824074074074))
-            ability(2,xy=(0.3614583333333, 0.5231481481481))
-            ability(2,xy=(0.36875, 0.4231481481481))
-        elif current_round == 87:
-            super4 = Monkey('super', 0.4885416666667, 0.4287037037037)
-            super4.upgrade(['0-1-0','0-2-0'])
-        elif current_round == 88:
-            super4.upgrade(['0-2-1','0-2-2'])
-        elif current_round == 89:
-            ninja = Monkey('ninja', 0.5625, 0.475)
-            ninja.upgrade(['0-1-0','0-2-0'])
-            ninja.special(1)
-        elif current_round == 91:
-            super4.upgrade(['0-2-3'])
-        elif current_round == 92:
-            super5 = Monkey('super', 0.4822916666667, 0.3324074074074)
-        elif current_round == 93:
-            super5.upgrade(['1-0-0','2-0-0'])
-        elif current_round == 94:
-            super5.upgrade(['2-0-1','2-0-2','2-0-3'])
-            ninja.upgrade(['1-2-0'])
-        elif current_round == 95:
-            glue.upgrade(['0-2-3'])
-            village2.upgrade(['3-0-2'])
-        elif current_round == 96:
-            click(0.49375, 0.4157407407407)
-            wait(0.5)
-            click(0.25, 0.1861111111111)
-            wait(0.5)
-            click(0.30625, 0.4768518518519)
-        elif current_round == 97:
-            super6 = Monkey('super', 0.4895833333333, 0.4287037037037)
-            super6.upgrade(['1-0-0','2-0-0','2-0-1','2-0-2'])
-        elif current_round == 98:
-            super6.upgrade(['2-0-3'])
             ability(1,3)
-            ninja.upgrade(['1-3-0'])
+        elif current_round == 39: 
+            sniper1.upgrade(['0-2-4'])
+        elif current_round == 40:
+            ability(1)
+        elif current_round == 41:
+            village = Monkey('village', 0.5005208333333, 0.3314814814815)
+            village.upgrade(['0-0-1','0-0-2'])
+            sniper2.upgrade(['0-1-0','0-2-0'])
+        elif current_round == 42:
+            sniper2.upgrade(['0-3-0'])
+            sniper2.target('first')
+        elif current_round == 43:
+            sniper2.upgrade(['0-3-1','0-3-2'])
+        elif current_round == 44:
+            alch = Monkey('alch',  0.4921875, 0.4314814814815)
+            alch.upgrade(['1-0-0','2-0-0'])
+        elif current_round == 45:
+            alch.upgrade(['3-0-0','3-1-0','3-2-0'])
+        elif current_round == 47:
+            ability(1)
+            alch.upgrade(['4-2-0'])
+        elif current_round == 50:
+            sniper2.upgrade(['0-4-2'])
+        elif current_round == 51:
+            village.upgrade(['1-0-2','2-0-2'])
+        elif current_round == 59:
+            sniper1.upgrade(['0-2-5'])
+        elif current_round == 69:
+            sniper2.upgrade(['0-5-2'])
+            sniper2.target('first')
+        elif current_round == 71:
+            sniper3.upgrade(['1-0-0','2-0-0','3-0-0','3-1-0','3-2-0'])
+        elif current_round == 75:
+            sniper3.upgrade(['4-2-0'])
+        elif current_round == 82:
+            ability(1,5)
+        elif current_round == 83:
+            click(0.5625, 0.4935185185185)
+            wait(1)
+            click(0.11875, 0.6398148148148)
+            wait(1)
+            click(0.3104166666667, 0.4425925925926)
+            ability(1,8)
+            ability(3,13)
+        elif current_round == 87:
+            ability(1,7)
+        elif current_round == 89:
+            ability(1,1)
+            alch.upgrade(['5-2-0'])
+        elif current_round == 90:
+            ability(1,2)
             ability(3)
-            ninja.upgrade(['1-4-0'])
+        elif current_round == 91:
+            sniper4 = Monkey('sniper', 0.4682291666667, 0.3861111111111)
+            sniper4.upgrade(['0-1-0','0-2-0','0-3-0','0-3-1','0-3-2'])
+            sniper5 = Monkey('sniper', 0.4869791666667, 0.4916666666667)
+        elif current_round == 92:
+            sniper5.upgrade(['0-1-0','0-2-0','0-3-0','0-3-1','0-3-2'])
+            sniper6 = Monkey('sniper', 0.4515625, 0.4898148148148)
+        elif current_round == 93:
+            sniper6.upgrade(['0-1-0','0-2-0','0-3-0','0-3-1','0-3-2'])
+        elif current_round == 95:
+            ability(1,10)
+            ability(3,12)
+            ability
         elif current_round == 99:
-            spike2 = Monkey('spike', 0.4317708333333, 0.3064814814815)
-            ability(4,2.5)
+            ability(3,1)
+            sniper3.upgrade(['5-2-0'])
+            tack = Monkey('tack', 0.5927083333333, 0.3)
         elif current_round == 100:
-            spike2.upgrade(['0-1-0','0-2-0','0-3-0','1-3-0'])
-            ability(1,6)
+            tack.upgrade(['0-0-1','0-0-2','0-0-3','1-0-3','2-0-3'])

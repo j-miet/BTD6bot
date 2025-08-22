@@ -1,9 +1,8 @@
-"""Reads hotkeys.txt to update hotkeys for monkey.py.
+"""Reads hotkeys.txt to update bot hotkeys.
 
 Pynput docs: https://pynput.readthedocs.io/en/latest/keyboard.html#pynput.keyboard.Key
 """
 
-import copy
 import pathlib
 
 from pynput.keyboard import Key
@@ -11,34 +10,42 @@ from pynput.keyboard import Key
 from utils import plan_data
 
 PYNPUT_KEYS: dict[str, Key] = {
-        'Key.alt': Key.alt,  
-        'Key.ctrl': Key.ctrl,  
-        'Key.enter': Key.enter,
-        'Key.shift': Key.shift,
-        'Key.backspace': Key.backspace,
-        'Key.tab': Key.tab,
-        'Key.delete': Key.delete,
-        'Key.home': Key.home,
-        'Key.end': Key.end,
-        'Key.page_up': Key.page_up,
-        'Key.page_down': Key.page_down,
-        'Key.up': Key.up,
-        'Key.down': Key.down,
-        'Key.left': Key.left,
-        'Key.right': Key.right,    
-        'Key.f1': Key.f1,
-        'Key.f2': Key.f2,
-        'Key.f3': Key.f3,
-        'Key.f4': Key.f4,
-        'Key.f5': Key.f5,
-        'Key.f6': Key.f6,
-        'Key.f7': Key.f7,
-        'Key.f8': Key.f8,
-        'Key.f9': Key.f9,
-        'Key.f10': Key.f10,
-        'Key.f11': Key.f11,
-        'Key.f12': Key.f12
-        }
+    'alt': Key.alt,
+    'alt_l': Key.alt_l,
+    'alt_r': Key.alt_r,
+    'alt_gr': Key.alt_gr,
+    'ctrl': Key.ctrl,
+    'ctrl_l': Key.ctrl_l,
+    'ctrl_r': Key.ctrl_r,
+    'enter': Key.enter,
+    'shift': Key.shift,
+    'shift_l': Key.shift_l,
+    'shift_r': Key.shift_r,
+    'space': Key.space,
+    'backspace': Key.backspace,
+    'tab': Key.tab,
+    'delete': Key.delete,
+    'home': Key.home,
+    'end': Key.end,
+    'page_up': Key.page_up,
+    'page_down': Key.page_down,
+    'up': Key.up,
+    'down': Key.down,
+    'left': Key.left,
+    'right': Key.right,    
+    'f1': Key.f1,
+    'f2': Key.f2,
+    'f3': Key.f3,
+    'f4': Key.f4,
+    'f5': Key.f5,
+    'f6': Key.f6,
+    'f7': Key.f7,
+    'f8': Key.f8,
+    'f9': Key.f9,
+    'f10': Key.f10,
+    'f11': Key.f11,
+    'f12': Key.f12
+}
 """Dictionary of supported pynput special keys."""
 
 def generate_hotkeys(hotkey_dict: dict[str, str | Key]) -> None:
@@ -71,5 +78,5 @@ def generate_hotkeys(hotkey_dict: dict[str, str | Key]) -> None:
     hotkey_dict.update(actual_hotkeys)
 
 hotkeys: dict[str, str | Key] = {}
-"""Dictionary of current hotkeys read from a hotkeys.txt file."""
+"""Dictionary of current hotkeys read from hotkeys.txt."""
 generate_hotkeys(hotkeys)

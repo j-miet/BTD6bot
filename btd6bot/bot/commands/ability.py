@@ -10,6 +10,7 @@ from bot import kb_mouse, times
 from bot.bot_vars import BotVars
 from bot.hotkeys import hotkeys
 from bot.rounds import Rounds
+from bot.times import PauseControl
 from customprint import cprint
 
 def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, delay: float = 0) -> None:
@@ -27,8 +28,9 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
         xy: Target coordinate, a tuple of floats. Default is None.
         delay: If value is set greater than 0, then stands for time waited before mouse is moved to location xy. If
             value is 0, which is also the default value, no cursor movement is done afterwards.
-            Only reasonable use case is when reseting Obyn's trees: bananas have short animation during which they 
-            cannot be collected, so setting a value of 1 or similar, will let bananas finish spreading animation, then moves cursor on top of tree location (which is given xy value) to collect them.
+            Only reasonable use case is when resetting Obyn's trees: bananas have short animation during which they 
+            cannot be collected, so setting a value of 1 or similar, will let bananas finish spreading animation, then 
+            moves cursor on top of tree location (which is given xy value) to collect them.
 
     Examples:
         Use ability number 2 immediately after command is processed.
@@ -51,7 +53,7 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
         >>>
             ability(2, 10, xy=(0.5, 0.5), delay=1)
     """
-    times.pause_bot()
+    PauseControl.pause_bot()
     if BotVars.defeat_status:
         return
     begin_time = Rounds.current_round_begin_time
@@ -62,19 +64,19 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
                 time.sleep(delay)
                 move_cursor(xy[0], xy[1])
             else:
-                kb_mouse.click(xy)
+                kb_mouse.click(xy, shifted=True)
         cprint(f'Ability {key} used.')
         return
     cprint(f'Using ability {key} with timer {timer}... ', end='')
     while times.current_time()-begin_time < timer:     
-        time.sleep(0.01)    # small sleep timer to avoid constant processing of time.time
+        time.sleep(0.01)
     kb_mouse.kb_input(hotkeys['ability '+str(key)])
     if xy is not None:
         if delay > 0:
             time.sleep(delay)
             move_cursor(xy[0], xy[1])
         else:
-            kb_mouse.click(xy)
+            kb_mouse.click(xy, shifted=True)
     cprint('Ability used.')
 
 def click(x: float, y: float, N: int = 1) -> None:
@@ -88,10 +90,10 @@ def click(x: float, y: float, N: int = 1) -> None:
         x: X-coordinate.
         y: Y-coordinate.
     """
-    times.pause_bot()
+    PauseControl.pause_bot()
     if BotVars.defeat_status:
         return
-    kb_mouse.click((x, y), clicks=N)
+    kb_mouse.click((x, y), clicks=N, shifted=True)
     if N > 1:
         cprint(f"Clicked at ({x}, {y}) {N} times")
     else:
@@ -99,7 +101,7 @@ def click(x: float, y: float, N: int = 1) -> None:
 
 def move_cursor(x: float, y: float) -> None:
     """Move mouse cursor to target location"""
-    times.pause_bot()
+    PauseControl.pause_bot()
     if BotVars.defeat_status:
         return
     kb_mouse.move_cursor((x, y))

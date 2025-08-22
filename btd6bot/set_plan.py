@@ -39,14 +39,17 @@ def _check_if_temp_valid() -> bool:
 
 def _flush_times_temp() -> None:
     """Flushes existing contents of Files//times_temp.txt to allow new plan time data to be saved."""
-    with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt', 'w') as _:
+    try:
+        with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt', 'w') as _:
+            ...
+    except OSError:
         ...
 
-def _read_timedata() -> dict[str, Any]:
+def _read_timedata() -> Any:
     with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as f:
         return json.load(f)
 
-def _read_guivars() -> dict[str, Any]:
+def _read_guivars() -> Any:
     with open(pathlib.Path(__file__).parent/'Files'/'gui_vars.json') as varsfile:
         return json.load(varsfile)["version"]
 

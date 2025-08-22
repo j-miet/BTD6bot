@@ -1,16 +1,4 @@
-"""Commands for controlling round time flow.
-
-Includes AutoStart class that tracks autostart status.
-
-Functions:
-__
-    sleep: avoid further commands for specified time  
-    begin: press start button twice (must be included in every plan as default is to have autostart on)  
-    change_autostart: change current autostart setting, by default autostart is always on. Calling this function 
-        reverts it, but can also change it back.  
-    end_round: click start button once; either if autostart disabled OR if button need only be pressed once for fast 
-    track (deflation) 
-"""
+"""Commands for controlling round time flow."""
 
 import time
 
@@ -18,6 +6,8 @@ from pynput.keyboard import Key
 
 from bot import kb_mouse
 from bot.bot_vars import BotVars
+from bot.hotkeys import hotkeys
+from bot.locations import get_click
 from customprint import cprint
 from utils import timing
 
@@ -25,7 +15,6 @@ class AutoStart:
     """Wrapper class for autostart values.
     
     Attributes:
-        AUTOSTART_TOGGLE (tuple[float, float], class attribute): Location of in-game menu autostart toggle button.
         autostart_status (bool, class attribute): Whether bot has autostart enabled or not. Starts with initial value 
             True. But if any plan modifies this using flow.change_autostart, it's set to False. And if value if False, 
             then after loading into a game, bot will automatically revert this to True, even if it's immediately set to 
@@ -33,8 +22,6 @@ class AutoStart:
         called_forward (bool, class attribute): Whether forward() was called during first round. Default is False, 
             which means bot will automatically call it after first round block ends.
     """
-    AUTOSTART_TOGGLE: tuple[float, float] = (0.69, 0.284)
-
     autostart_status: bool = True
     called_forward = False
 
@@ -54,7 +41,7 @@ def wait(timer: float | int = 0) -> None:
     timing.counter(timer)
     cprint(' -> Continuing.')
 
-def forward(speed: int=2) -> None:
+def forward(speed: int = 2) -> None:
     """Clicks the start button.
 
     Default value is 2, which double clicks the button, setting fast speed. This means, for fast settings, you only 
@@ -71,12 +58,12 @@ def forward(speed: int=2) -> None:
     if BotVars.defeat_status:
         return
     if speed == 1:
-        kb_mouse.kb_input(Key.space)
+        kb_mouse.kb_input(hotkeys["play/fast forward"])
         time.sleep(0.2)
     elif speed == 2:
-        kb_mouse.kb_input(Key.space)
+        kb_mouse.kb_input(hotkeys["play/fast forward"])
         time.sleep(0.2)
-        kb_mouse.kb_input(Key.space)
+        kb_mouse.kb_input(hotkeys["play/fast forward"])
     else:
         cprint("Speed value must be either 1 or 2.")
         return
@@ -102,7 +89,7 @@ def change_autostart() -> None:
     time.sleep(0.5)
     kb_mouse.kb_input(Key.esc)
     time.sleep(0.5)
-    kb_mouse.click(AutoStart.AUTOSTART_TOGGLE)
+    kb_mouse.click(get_click('ingame', 'autostart'))
     kb_mouse.kb_input(Key.esc)
     if not AutoStart.autostart_status: 
         AutoStart.autostart_status = True
@@ -114,12 +101,12 @@ def change_autostart() -> None:
 def end_round(time_limit: int = 0) -> None:
     """Used for single clicking the start button to start next round when automatic start is disabled.
 
-    Somes specific plans require that change_autostart is called. Bot cannot detect when round end without
-    autostart so you need to manually insert calls for end_round and optionally give them a max time limit after which 
-    it will force start next round.
+    Some plans require that change_autostart is called. Bot cannot detect when round end without autostart so you need 
+    to manually insert calls for end_round and optionally give them a max time limit after which it will force start 
+    next round.
 
     You should check some Expert Chimps plans inside 'plans' folder for comparison, and to understand how they use it 
-    in practise.
+    in practice.
 
     Args:
         time_limit: Waiting period before start button is clicked. Measured in seconds. 
@@ -132,5 +119,5 @@ def end_round(time_limit: int = 0) -> None:
         cprint()
     else:
         time.sleep(time_limit)
-    kb_mouse.kb_input(Key.space)
+    kb_mouse.kb_input(hotkeys["play/fast forward"])
     time.sleep(0.2)

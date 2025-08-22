@@ -56,7 +56,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 58:
             heli1.upgrade(['4-0-2'])
         elif current_round == 63:
-            village1.upgrade(['1-2-0','2-3-0'])
+            village1.upgrade(['2-2-0','2-3-0'])
         elif current_round == 64:
             glue1 = Monkey('glue', 0.1921875, 0.6370370370370)
             glue1.upgrade(['0-1-0','0-2-0','0-2-1'])

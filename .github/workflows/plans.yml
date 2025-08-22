@@ -1,0 +1,35 @@
+name: Update plan list
+
+on:
+  push:
+    branches: 
+      - dev
+    paths:
+      - .btd6bot/plans/**.py
+      - '!btd6bot/plans/_plan_imports.py'
+      - '!btd6bot/plans/__init__.py.py'
+
+jobs:
+  update-plans:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout dev repository
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.x
+      - name: Update plans
+        run: |
+          python scripts/update_plans.py
+      - name: commit and push
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+          git add docs/Plans.md
+          git commit -m "Updated plan list"
+          git push

@@ -8,12 +8,12 @@ Could implement lot of the stuff here using regular expressions but wasn't eager
 
 Issues (both old and current):
 
-Plots get laggy very quickly if too much text is added, and become slow to move around. Haven't found a solution to
+Plots become slow very quickly if too much text is added, and become slow to move around. Haven't found a solution to
 this as other backends don't fix anything. Good thing is current plots have a slider for round command scrolling which 
 behaves much better even with the lag.
 
 FIXED
-There's also a mild memory leak problem that is tied to interractive plots: every time you open a plot, it reserves 
+There's also a mild memory leak problem that is tied to interactive plots: every time you open a plot, it reserves 
 some memory for the rest of program runtime and is unable to be freed. So in theory, unless you open and close the plot 
 window for like a hundred times, it will not be an issue. But it still annoying.  
 >alas, there's an easy solution (which took way too long to implement): multiprocessing. Every time a plot is created, 
@@ -24,7 +24,7 @@ loop, just any program within same thread causes this issue). This results into 
 such as freeing any unused memory and thus is the root cause. But with multiprocessing, plotting is completely 
 separated from bot program and thus can freely operate. And even if matplotlib had memory issues under new this 
 process, it wouldn't matter because after a plot window closes, the process closes and will free any of its allocated 
-memory nontheless.
+memory nonetheless.
 
 FIXED
 >This is for older solution, when the above solution with multiprocessing wasn't used:
@@ -32,11 +32,11 @@ FIXED
 To combat the memory issue, I decided to use matplotlib's garbage collector command+ close any open window 
 objects: plt.clf() -> plt.close(). This did indeed slow the memory leak accumulation for a bit, so I kept those lines 
 of code. For some time, I didn't notice anything as I rarely used plotting function before running the bot. And when 
-I started to notice this error occuring, I suspected the problems were related to many other things, like
+I started to notice this error occurring, I suspected the problems were related to many other things, like
  -changing gui elements outside main thread (MainWindow.ocr_init),
 
  -importing modules that would be imported later in program (again, under MainWindow.ocr_init); found someone on 
- stackoverflow who descripted a similar problem and that was the cause,
+ stackoverflow who described a similar problem and that was the cause,
 
  -some kind of thread interference between tkinter and matplotlib, as both should run individual threads and preferably 
  on main thread.
@@ -86,7 +86,7 @@ def find_fre(plan: list[str]) -> int:
         
     Returns:
         An index corresponding to value len(plan)-1: len give the length, but actual indexing starts from 0, so 
-            substracting 1 gives final row.
+            subtracting 1 gives final row.
     """
     for code_row in range(14, len(plan)):   # range(len(plan)) is ok, but starting from 14 skips non-relevant code.
         if plan[code_row].find('elif current_round == ') != -1:
@@ -151,7 +151,7 @@ def append_rounds(plan: list[str], first_r: int, first_r_end: int, round_labels:
 def remove_empty_rows(plan: list[str], first_r: int, round_labels: list[str]) -> list[str]:
     """Removes round labels from all corresponding empty round blocks, preventing any empty rounds showing up in plots.
     
-    Compares two consecutive code rows: if first contains the latters when latter has "if current_round" in it, it 
+    Compares two consecutive code rows: if first contains the latter and latter has "if current_round" as substring, it 
     means the first is a round block without any code inside it. And thus, the index of first is found by splitting 
     from the '==' sign (with one space after so '== ') and removing the ':' at the end, then finding corresponding 
     round label index from list of all labels and then removing it.
@@ -178,7 +178,7 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
     
     Time plot is static and cannot be interacted with. It loads values from a json file.
 
-    Round command plot is interractive, with rounds on x-axis and round commands on y-axis: a slider is used to jump 
+    Round command plot is interactive, with rounds on x-axis and round commands on y-axis: a slider is used to jump 
     around rounds and it's updated by calling an inner function 'update' and passed as an argument to on_changed 
     method of slider. This plot will not display empty rounds i.e. rounds without actual commands, and needs the list 
     rounds_labels which does not include them.
@@ -189,14 +189,15 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
         plan_name: Current plan name, required for displaying name inside plot window.
     """
     plt.rcParams['toolbar'] = 'None'
-    plt.style.use('dark_background')    # has to be set before any text is inserted.
-    fig = plt.figure()
+    plt.style.use('dark_background') # has to be set before any text is inserted.
+    fig = plt.figure(f"[Roundplot] {plan_name}")
     plt.axis('off')
     fig.gca().get_yaxis().set_visible(False)
     fig.gca().get_xaxis().set_visible(False)
     plt.subplots_adjust(left=0.05, bottom=0.1, right=0.99, top=0.9, wspace=None, hspace=None)
     rcParams['toolbar'] = 'None'
     winmanager = plt.get_current_fig_manager()
+    winmanager.window.wm_iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico') # type: ignore
     try:
         winmanager.window.state('zoomed') # type: ignore
     except AttributeError:
@@ -209,7 +210,7 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
             time_data: dict[str, Any] = json.load(f)[plan_name]
         update_date = time_data["update_date"]
         fig.suptitle(f'Round commands and round times of current plan "{plan_name}"\n'
-                    r'Time data is updated after each succesful run (current date: ' + r"$\bf{%s}$" % update_date +'; '
+                    r'Time data is updated after each successful run (current date: ' + r"$\bf{%s}$" % update_date +'; '
                     'format is YYYY/MM/DD',
                     fontsize='medium')
         plan_rounds: list[str] = time_data["rounds"]
@@ -231,7 +232,7 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
         ax_time_legend.get_frame().set_alpha(None)
         ax_time_legend.get_frame().set_facecolor((0,0,1,0.1))
         # set_major_locator is used for setting equally spaced labels on x-axis. Currently all modes except impoppable 
-        # and chimps can fit their labels just fine, but for those two, some form of densing is required. The question 
+        # and chimps can fit their labels just fine, but for those two a denser layout is required . The question 
         # is: what line length will ensure that starting from round 6 label, equally spaced lines will land just on top 
         # of round 100 label. The answer is in this case is easy and it's 2. Why? See explanations below.
         #
@@ -251,7 +252,7 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
         # 1+kL = N => k = (N-1)/L
         # k = N-1/L > 1 AND k is integer ==> is L a factor N-1 i.e. L = (N-1)/k for some k <= K?
         #
-        # to apply this in practise: allow up to K=N-1 steps and check factors:
+        # to apply this in practice: allow up to K=N-1 steps and check factors:
         # N=40 => find all factors of N-1=39 => 39=3*13. This means:
         # 3 steps of length 13 OR 13 steps of length 3 lands exactly on top of last point.
         #
@@ -314,7 +315,7 @@ def plot_plan(plan_str: str) -> None:
 
     *Important* Plot window is created as a separate process via multiprocessing so bot stays unresponsive while window 
     is open; remember to close after you're done!  
-        -Why multiprocessing? Matplotlib has a severe memory leak issue with interractive plots: plots should run in 
+        -Why multiprocessing? Matplotlib has a severe memory leak issue with interactive plots: plots should run in 
         main thread but so does the bot. This creates issue with freeing memory after plot is closed. So far the only 
         solution that works is to create a separate process, with its own memory space and let it finish. This way 
         memory allocation is not saved under main process (the bot) and gets all freed after a window is closed.

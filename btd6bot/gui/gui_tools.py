@@ -95,4 +95,4 @@ class TextRedirector(object):
         buffered output needs to flushed. This method's only purpose is to handle the possible error with flushing 
         after Text widget is dereferenced.
         """
-        None
+        ...

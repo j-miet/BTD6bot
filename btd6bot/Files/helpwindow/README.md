@@ -4,18 +4,24 @@
 
 
 ``BTD6bot`` is a program for automating **Bloons Tower Defense 6** game.  
-It includes a simple graphical user interface (**gui**): not impressive visually, but easy to use.
+It includes a simple graphical user interface (**gui**): not visually impressive, but easy to use.
 
 **Supports only <u>single player game modes</u> accessed under the main menu &#39;Play&#39; button.**  
 Support for multiplayer/competitive modes such as races, bosses, contested territory, boss rush, etc. will not be 
 added.
 
-Bot is quite complex and has been tested pretty thoroughly. Still, you may encounter bugs.  
+Bot is quite complex and has been tested thoroughly. Still, you may encounter bugs.  
 
 Btd6 includes elements of **randomness** (**rng**), which cannot be entirely removed. On top of this, bot's text 
 detection times can vary ever so slightly which alters upgrade and ability timings etc. So if you plan to use bot to
 obtain *Chimps black medals* on harder advanced and expert maps, it could take several attempts before getting a 
-succesful run.
+successful run.
+
+**-- Warning --**  
+***Be aware that automation/botting is against Ninja Kiwi&#39;s [Terms of Service](https://ninjakiwi.com/terms) and
+imposes the risk of flagging your account for cheating, or worst case, getting it banned.  
+I&#39;m not certain how they could enforce this ruleset in a single player environment, though. If you&#39;re concerned,
+you can always run bot offline. <u>You have been warned</u>.***
 
 
 ---
@@ -24,29 +30,35 @@ Updated for Bloons TD 6 version ``49``**
   
 - For now, bot is planned to be updated after each major game update (next being update ``50``)
 - Other than that, new game plans might be added on an infrequent basis
+    - For a list of all current plans, [see this](docs/Plans.md)
+
+**[Supported display resolutions]**
+
+- Resolutions with **16:9 aspect ratio are heavily recommended** as bot can easily scale mouse/text locations between 
+similar interfaces.
+- With ultrawide resolutions, game seems to restrict in-game area into a 16:9 box and extend unused space with border
+texture. With some adjustments, bot should work just fine (but this has not been tested). 
+- For an arbitrary aspect ratio, game is likely to add or remove vertical/horizontal border textures and change 
+button/text locations during 
+gameplay. Bot has a solution for this:
+    - for borders: check manually the pixel widths/heights of border textures, then add this offset using 'in-game 
+    resolution shift' setting.
+    - for locations: record all static coordinate locations on your current resolution and replace existing custom 
+    values: <u>this requires a lot of work</u>
+
 
 **[OS support]**  
 Because of limited access to other operating systems than Windows, it's very difficult to ensure bot works on 
 all of them. Currently:
 - **Windows (10 or higher) is fully supported and thus recommended.**
 
-- **MacOS** has two major issues:
-  - Python libraries used for gui and hotkeys (``tkinter`` & ``pynput`` respectively) cause bad errors when used 
-  together.
-  - Mac uses ``16:10`` aspect ratio and lacks the support for the required ``16:9`` resolutions.
+- **MacOS**:
+  - Gui includes custom hotkeys, but these are disabled for Mac systems. Reason is Python libraries used for gui and 
+  hotkeys (``tkinter`` & ``pynput`` respectively) don't work together.
+  - Mac uses ``16:10`` aspect ratio as a baseline and lacks the support for recommended ``16:9`` resolutions. Again, 
+  this can probably be fixed by using the tricks explained above in resolution section, but it's a lot of work.
 
-  I have possible fixes in mind. However, it takes time to plan, code and test all the stuff so realistic deadline would
-   be the next game update i.e. version ``50``.
-  
-- **Linux/Unix** have not been tested.
-
-
-
-**-- Warning --**  
-***Be aware that automation/botting is againts Ninja Kiwi&#39;s [Terms of Service](https://ninjakiwi.com/terms) and
-imposes the risk of flagging your account for cheating, or worst case, getting it banned.  
-I&#39;m not certain how they could enforce this in single player environment, though. But if you&#39;re concerned,
-you can always run the bot offline. <u>You have been warned</u>.***
+- **Linux/Unix** has not been tested.
 
 
 ## Table of contents
@@ -59,7 +71,9 @@ you can always run the bot offline. <u>You have been warned</u>.***
         - [Update bot hotkeys](#update-bot-hotkeys)
         - [Settings: update resolution and enable ocr auto-adjust](#settings-update-resolution-and-enable-ocr-auto-adjust)
         - [Run the ocr adjusting process](#run-the-ocr-adjusting-process)
-- [<u>Ultrawide resolutions</u>](#ultrawide-resolutions)
+- [<u>Resolution with other than 16:9 aspect ratio</u>](#resolutions-with-other-than-169-aspect-ratios)
+    - [Ultrawide resolutions](#ultrawide-resolutions)
+    - [Any aspect ratio](#any-aspect-ratio)
 - [<u>GUI windows</u>](#gui-windows)
     - [Main](#main)
     - [Help](#help)
@@ -78,8 +92,9 @@ you can always run the bot offline. <u>You have been warned</u>.***
 
 # <u>Features</u>
 
-- [Tested on update ``49``, with ``1920x1080`` resolution + ``fullscreen``, with around ``144`` constant fps]  
-Plans for **all expert maps on chimps difficulty are included, making black medals obtainable.**
+- [Tested with ``1920x1080`` resolution + ``fullscreen``, with around ``144`` constant fps]  
+All **advanced and expert map on CHIMPS difficulty are supported**. As bot is required to finish any plan in one go, 
+this also means CHIMPS includes **black medal/border**. For all supported plans, check [this list](docs/Plans.md).
 
 - Graphical user interface, made with Python&#39;s build-in Tkinter library. Very simplified when it comes to visuals,
 but easy to use. Here are some of the properties:
@@ -127,7 +142,12 @@ content should this project no longer receive updates.
 First you need to install [Python](https://www.python.org/downloads/).  
 Most of bot was programmed in Python versions 3.12.5 or higher so **Python 3.12+** is recommended.
 
-Then, download *BTD6bot*:
+Then, download *BTD6bot*.  
+<u>Main branch is selected by default - it's the recommended way to run bot</u>:
+- ``main`` is the release branch. It has the most stable version of bot with minimal amount of bugs.
+- ``dev`` is the development branch. All upcoming features are added and tested here before they get merged into main.
+Expect this version to be less stable and include numerous bugs.  
+$~$ 
 
 Click the green [<> Code] button at the top of github page.
 
@@ -143,13 +163,17 @@ Next, external dependencies. Install the following third party packages:
     easyocr==1.7.2
     markdown==3.8
     matplotlib==3.10.1
-    numpy==1.26.4; python_version < '3.13'
-    numpy==2.2.3; python_version >= '3.13'
+    numpy==1.26.4; # if you downloaded Python 3.12 or earlier
+    numpy==2.2.3; # if you downloaded Python 3.13
     pillow==11.1.0
     pyautogui==0.9.54
     pynput==1.7.8
     pyperclip==1.9.0
     tkinterweb==4.3.1
+
+(*easyocr* library defaults to cpu for text detection/reading. **Cpu works just fine**, but if you'd prefer it to use 
+gpu instead, check out [PyTorch local install guide](https://pytorch.org/get-started/locally/) and select appropriate 
+CUDA version.)
 
 If you use Windows, an easy way to do this is to open your BTD6bot folder, then run ``reqs.bat``. 
 
@@ -357,7 +381,7 @@ Custom value is stored in a file and will be loaded back if you disable and re-e
     ![](docs/images/settings/windowed.png)
     
     If you use windowed mode in btd6 normally, it adds the bar on top of game window. Bot, however, assumes this bar
-    doesn&#39;t exist and requires game to be opened with ``-popupwindow`` option.  
+    doesn't exist and requires game to be opened with ``-popupwindow`` option.  
     If you have Btd6 steam version, go to steam library, right click on Bloons TD 6, then simply add the argument like
     shown below
 
@@ -376,8 +400,9 @@ For 1920x1080 with fullscreen enabled, it looks like this:
 It should include following parts, each separated by space:
 
  - ``res='width'x'height'``; where &#39;width&#39;, &#39;height&#39; are based on your own resolution,
- - ``win=0`` for fullscreen, ``win=1`` for windowed
- - ``monkeys=all``
+ - ``win=0`` for fullscreen, ``win=1`` for windowed,
+ - ``shift=0x0`` or some other custom value if you attempt to use a non-16:9 resolution,
+ - ``monkeys=all``,
  - ``delta=4``
  
 You can press &#39;Reset args&#39; button once, if res and win values are not immediately updated. 
@@ -415,7 +440,7 @@ Monitoring window handles the running of bot and importantly, includes the big t
 redirected into this window during bot runtime so you can have it on second monitor while main monitor is occupied by 
 game itself.
 
-Before we begin the adjusting, it&#39; would be a good time to explain why it&#39;s needed in first place. I would 
+Before we begin the adjusting, it would be a good time to explain why it&#39;s needed in first place. I would 
 recommend to read it through once, but if you don&#39;t care, skip the following wall of text.
 
 ---
@@ -429,7 +454,7 @@ complicated system are required to verify the input.
 
 The most complicated of these is the monkey upgrade system. In order to make upgrading to work properly, bot needs to
 wait until upgrading becomes possible. The easy way to program this would be just say "when command is run, upgrade
-monkey, don't check if it was succesful". But then user would need to time the upgrading exactly and this becomes
+monkey, don't check if it was successful". But then user would need to time the upgrading exactly and this becomes
 obviously annoying over time.
 
 So better but more complicated way to implement this is to allow user to queue upgrade checks. Bot will just wait until
@@ -438,26 +463,26 @@ might not upgrade at all. For this reason, upgrading process must
 
  - queue upgrades
  - perform upgrading process when asked to
- - verify the upgrade process was succesful
+ - verify the upgrade process was successful
 
 If it fails, it can either throw an error or keep trying again. The latter is how this bot works:
 
  - takes upgrade command
- - attemps to upgrade bot simply by pressing the right upgrade path hotkey
+ - attempts to upgrade bot simply by pressing the right upgrade path hotkey
  - reads the current upgrade name, matches it with actual upgrade name, then   
    compares the difference of these strings and outputs a delta parameter.
 
-    - if delta is over the threshold, upgrade was succesful
+    - if delta is over the threshold, upgrade was successful
     - if delta was below the threshold, run the cycle again until above is true
 
 This system is effective, but faces one problem: it uses same delta for ALL UPGRADES! Some upgrades might match easily,
-others being more difficult. And not only this, if two concecutive upgrade 
+others being more difficult. And not only this, if two consecutive upgrade 
 paths are similarly named, like 'sharp shots' and 'razor sharp shots', they could be confused as same. A single delta 
 value cannot universally work with all previous cases. To solve this problem, current system uses <u>individual deltas 
 for each monkey and its upgrade paths</u>. 
 
 Process is now as follows: upgrade checks monkey name and desired upgrade path, say dart 5-x-x. It then gets the actual
-string value for this path, 'ultra juggernaut' and corresponding delta, lets say 0.85. If the upgrade input text is
+string value for this path, ``'ultra juggernaut'`` and corresponding delta, lets say 0.85. If the upgrade input text is
 ``'ulta jugernaut'``, bot checks the following
 
  - actual string has 16 letters (spaces includes)
@@ -468,8 +493,8 @@ string value for this path, 'ultra juggernaut' and corresponding delta, lets say
  - 14/16 = 0.875 > 0.85, upgrade passes
  - however, exact delta value is avoided because some reading error could  
    change output a tiny bit and then value could become 0.84 < 0.85 = no match
- - to give room for some error, a delta value is substracted to lower this 
-   exact value. From testing, substracting 0.04 from all deltas keeps good 
+ - to give room for some error, a delta value is subtracted to lower this 
+   exact value. From testing, subtracting 0.04 from all deltas keeps good 
    accuracy for the most part. In settings, this value is written as delta=4: it lowers all 
    deltas by 4 units, where unit is 0.01. Valid deltas are 0-9 (which translate 
    to values 0-0.09)
@@ -516,12 +541,12 @@ following:
     texts and save the obtained delta value. Because monkeys=all, it checks all monkeys.
  3. after it checks all listed monkeys once, it will check them again! This time it places them on opposite side of map.
     Why? Well, if you&#39;re never noticed, depending on which side of middle section you place a monkey 
-    (left or right), the monkey panel opens on the opposite side of screen. Different sides can produce slighly
+    (left or right), the monkey panel opens on the opposite side of screen. Different sides can produce slightly
     different inputs so bot will analyze both sides and save all the deltas.
  4. After both sides are checked, both compares deltas of left and right side, selects the smaller value and save it as
     final delta.
  5. To finish things, all delta values are adjusted with equal amount. Default value is 4 i.e. delta=4: this adjust
-    them by 4 units. An unit is 0.01 so with 4, bot substracts 0.04 from all values. This process is done to allow room
+    them by 4 units. An unit is 0.01 so with 4, bot subtracts 0.04 from all values. This process is done to allow room
     for error. If delta=0, exact values are used, but then even a slightest error would break the ocr process, and
     eventually, the bot.
  6. Process is now done and your upgrades_current.json file inside btd6bot/Files folder has been updated. Bot will also
@@ -548,9 +573,9 @@ or
 Make sure you have the required hero, all monkeys and their upgrade paths unlocked. For upgrade paths:
 
 - they follow the normal order of top-mid-bot e.g. ``sniper 2-0-4`` uses 2. top path and 4. bottom path upgrades
-- they state **highest crosspaths required**. Therefore you sometimes see stuff like ``2-5-5 sniper`` listed which
+- they state **highest crosspaths required**. Therefore you sometimes see paths such as ``2-5-5 sniper`` listed which
 simply means plan requires 2. top, 5. middle and 5. bottom paths. For example, such plan could use both ``2-0-5`` and
-``0-5-2`` snipers and maybe even include a few ``0-3-2``&#39;s, too.  
+``0-5-2`` snipers, and maybe even include a few ``0-3-2``&#39;s.  
 
 Remember to scroll the info panel down to see all requirements!
 
@@ -560,13 +585,18 @@ If bot is able to finish a plan and returns to main menu automatically, everythi
 **----- Full tutorial ends here -----**
 -
 
-# <u>Ultrawide resolutions</u>
+# <u>Resolutions with other than 16:9 aspect ratio</u>
 
-As stated under &#39;Enable custom resolution&#39;, resolutions should have aspect ratio of 16:9. But, it is possible
+**The advice explained here has not been tested completely. It should theoretically work, but I have only ran bot on a 
+monitor with 1920x1080 native resolution.**
+
+## Ultrawide resolutions
+
+As stated under &#39;Enable custom resolution&#39;, resolutions should have aspect ratio of 16:9. But it is possible
 to leave in-game resolution to your **native fullscreen resolution**, but still use
 **custom resolution + windowed mode** to reduce the visible screen area.
 
-When you run ``Btd6bot`` with windowed mode, it uses the logic descripted in following image
+When you run ``Btd6bot`` with windowed mode, it uses the logic described in following image
 
 ![](docs/images/settings/ultrawide.png)
 
@@ -587,7 +617,7 @@ So if you have a ``3440x1440`` monitor and wish to play on this resolution, go t
 - And of course, remember to readjust ocr deltas for new resolution, as always!
 
 
-Here's a visual explanation on situation:
+Here's a visual explanation on the situation (in main menu screen, but this applies to in-game ui as well):
 
 ![](docs/images/settings/3440x1440example.png)
 
@@ -596,18 +626,64 @@ In general, for any resolution, check the following:
 
 - run BTD6 and open any map on your desired resolution
 - find out the pixel resolution of actual game screen without the borders.
-- now check if the resulting resolution has close to identical aspect ratio 16:9. In above example, it was 2560/1440 = 16/9 which is exactly right.
-- (*optional*) if required, you could repeat this for y-resolution as well. But the problem should the extra width, not height, so this probably not needed.
-One quite forced, but still an example, would be 1280x800 - if you use this in-game, you notice how it adds a wider bar on top and bottom of
+- now check if the resulting resolution has close to identical aspect ratio 16:9. In above example, it was 2560/1440 = 
+16/9 which is exactly right.
+- (*optional*) if required, you could repeat this for y-resolution as well. But the problem should the extra width, not 
+height, so this probably not needed.
+One quite forced, but still an example, would be 1280x800 - if you use this in-game, you notice how it adds a wider bar 
+on top and bottom of
 the screen.
 - Then **auto-adjust ocr values** like usual and you should be good to go.
+
+## Any aspect ratio
+
+**(Images are not included, but might be added later)**
+
+If you don't use 16:9 aspect ratio resolution or can't get the above ultrawide setup to work, final option is to adjust
+coordinates for selected resolution. This will require *a lot more work* because you need to
+1. shift coordinates accordingly so bot's coordinate range fits inside border textures and any towers get placed in 
+correct positions,
+2. change locations of clickable buttons and ocr text box locations so that bot can properly execute all its commands
+and validity checks.
+
+Full explanation:  
+Game adds horizontal or vertical borders depending of current aspect ratio and extends them based on resolution. 
+As shift is based on 16:9 aspect ratio, such as 1920x1080 resolution, 0 height means no border and 0 width means some 
+border width which gets added on each side of screen
+    - as 16:9 resolution have no borders at the top/bottom of screen, it already has the minimal border height of 0.
+    Thus, height can only get values >= 0 because other resolution can only possibly add more border.
+    - 16:9 however includes a small border on both left and right side. It's length? Depends on user's monitor base 
+    resolution and current game resolution so it cannot be determined automatically. Thus, width can get both negative
+    and positive values because on certain aspect ratios, border is smaller/is removed altogether OR is wider than base border.
+To measure border pixel width/height, use ``btd6bot/tools/show_coordinates`` tool or something similar.
+
+Unfortunately shifting can only adjust non-static coordinates (monkey/hero locations, ability targets etc.). Static 
+locations like text and button locations do change between aspect ratios and therefore must be updated manually by 
+editing the ``btd6bot/Files/custom_locations.json`` file.
+
+For 1. 
+- use ``btd6bot/tools/show_coordinates`` tool and measure the width or height of borders in pixels
+- use the *Enable in-game resolution shift* setting and set a custom value. With height (top+bottom borders) you simply
+add the height if necessary. With width, you have to just test approximate value because 16:9 resolution has a base border length
+so thinner/wider border must take this into account.
+
+For 2.
+- open ``btd6bot/Files/custom_locations.json``. You can also open ``btd6bot/bot/locations.py`` to check the info docs 
+and see what each value represents. Only in-game locations should require changes: these are the following dictionaries
+    - ``"CLICK"`` -> ``"ingame"``, ``"hero_left_menu"`` and ``"hero_right_menu"``
+    - ``"TEXT"`` -> ``"ingame"``
+- again, use the ``show_coordinates`` tool. Save coordinates and change corresponding 2-tuple or 4-tuple values.
+
+Now whenever you have the in-game resolution shift enabled, bot uses ``custom_locations.json`` coordinates instead. To
+use default ``locations.py`` values, simply disable shifting.
+
 
 # <u>GUI windows</u>
 This section goes over all the gui windows and gives detailed explanations on each.
 
 - Each window has fixed size and cannot be adjusted (dynamic window scaling might be implemented at some point, but no
 promises)
-- Gui interracts with ``Files`` folder. Don't change data values of these files by hand unless you know what you&#39;re
+- Gui interacts with ``Files`` folder. Don't change data values of these files by hand unless you know what you&#39;re
 doing
 
     - only exception is the ``Files/map images``. Check sections for [Main](#main) or [Queue](#queue) for more info.
@@ -637,7 +713,7 @@ i.e. selected map + strategy combination. Info is stored in each plan file and c
     
     1. only letters and spaces allowed
 
-    2. only lowercase letters, speicla characters are allowed (like ``#`` in ``#ouch``, ``'`` in ``adora's temple``)
+    2. only lowercase letters, special characters are allowed (like ``#`` in ``#ouch``, ``'`` in ``adora's temple``)
 
     3. image resolution is 320x195
 
@@ -660,7 +736,7 @@ i.e. selected map + strategy combination. Info is stored in each plan file and c
 
 | ![](docs/images/help/help.png) |
 |:--:|
-| *Help window, expanded to fullscreen. It displays the same README contents, however none of links are in working condition*|
+| *Help window, expanded to fullscreen. It displays the same README contents, however none of the links are in working condition*|
 
 - Help window displays the document you&#39;re currenly reading (either in web browser or inside gui help window). 
 It&#39;s meant for offline mode in case you don&#39;t have access to web
@@ -685,7 +761,7 @@ or reopening the Main window, this file gets deleted again!
 
 | ![](docs/images/queue/queue.png) |
 |:--:|
-| *Queue window with dark_dungeonsHardChimps placed in queue. When a plan is selected, its info panel is displayed.*|
+| *Queue window with dark_castleHardChimps placed in queue. When a plan is selected, its info panel is displayed.*|
 
 - Shows all existing plans and currently selected plan queue. When a plan is selected, its info panel is also displayed.
 Info texts are exactly the same you see on main window page.
@@ -733,16 +809,15 @@ option, which was already introduced when setting up the bot first time.
     Change resolution the bot uses to determine relative mouse clicking/ocr text locations. Must match with used in-game
     resolution which should have ``16:9`` aspect ratio.
 - **Windowed mode**: 
-    If Btd6 is run in windowed mode. Btd6 must be launced with ``-popupwindow`` launch option and window cannot be moved
+    If Btd6 is run in windowed mode. Btd6 must be launched with ``-popupwindow`` launch option and window cannot be moved
     from its initial position. 
     
     Windowed mode can face issues with ocr accuracy, though. If resolution is considerably smaller, text reading errors
     become more common.
-
     Therefore, **it&#39;s always recommended you use fullscreen if possible.**
 
-    However, windowed mode should be for 
-    [ultrawide resolutions or those with greater than 16:9 aspect ratio](#ultrawide-resolutions).
+    However, a special case of windowed mode is to enable support for 
+    [ultrawide resolutions](#ultrawide-resolutions).
 
 - **Game version**: 
     Current major game patch version. For example, if version is 48, 48.1, 48.2 etc. just use 48. This value is used to 
@@ -756,9 +831,14 @@ option, which was already introduced when setting up the bot first time.
 
 **(Advanced)**
 
+- **Enable in-game resolution shift**: Shifts all non-static coordinates relative to middle coordinate by given amount of 
+pixels. Width and height can be adjusted individually. Positive values shift towards mid point, negatives away from it.
+
+    It's main use is to move coordinates out of border textures when user has a non-16:9 aspect ratio resolution. See [this section](#any-aspect-ratio) of advanced resolutions guide.
+
 - **Ocr time limit**: How long will bot attempt to search for various text flags before it gives up and attempts to
 return to main menu. Typically, this should never occur so a high value of 300 seconds or more is recommended: this 
-is especially important for apopalypse plans, as in those you can have long periods of downtime where bot attemps to 
+is especially important for apopalypse plans, as in those you can have long periods of downtime where bot attempts to 
 place/upgrade a monkey.
 
 - **Ocr frequency**: Pause interval between most ocr operations, in seconds. Naturally, every operation has base cost
@@ -766,6 +846,26 @@ place/upgrade a monkey.
 makes ocr more inaccurate/slow. For normal use, keep this value around 0.01-0.1. For extended, repeating but simple
 processes, like farming xp/monkey money with simple strategies such dark castle easy/deflation - for hours - you 
 could set this value to even high as 0.5-1.
+
+- **Upgrade checks**: Amount of checks upgrade system performs before it presses upgrade any upgrade hotkeys again. This
+process then simply presses upgrade button -> performs N checks -> if upgrade successful, continue; otherwise keep going
+until counter hits N+1, then press button again and repeat. In most circumstances this setting matters little, but it 
+will likely prevent the following "bug":  
+Say you want to upgrade a dart monkey from 0-0-0 to 4-0-0 in one go. If game for some
+reason stutters even for a tenth of a second, ocr fails to read the upgraded text at the right moment. Then 0-0-0 
+becomes 1-0-0 in-game, but internally bot still sees 0-0-0. It then upgrades the monkey again, resulting into 2-0-0 but
+still bot sees 0-0-0. This of course keeps continuing until ocr time limit counter gets hit and bot will auto-quit
+current plan. Now if counter value N > 1, bot would initially perform upgrade 0-0-0 -> 1-0-0, then check this process
+N times before attempting to upgrade again. As it's unlikely such stutter happens multiple times in a row (and if it
+happens, increase the value N further), bot now confirms the upgrade on second try and updates the internal state to 
+1-0-0 as well.  
+Default value is 3. Increasing value a bit shouldn't affect bot performance nor functionality whereas decreasing it is 
+not recommended unless you're running bot on older computer.
+
+- **Use gpu in ocr**: Enables CUDA support if both operating system and gpu supports it. This will likely increase the
+speed of all ocr functions. However bot can operate just fine with cpu, and MacOS doesn't even support CUDA so this
+setting is (or at least should be) disabled by default.  
+To enable CUDA support, you must install a cuda-supported version of pytorch library.
 
 - **Enable logging**: Enabled text logging. Each time a new monitoring window is created, a new ``Logs.txt`` file is 
 created in project root folder. All the text bot prints is then simply copied into this file which is useful for 
@@ -777,7 +877,7 @@ finding current round number uses substring matching.
 
 - **Auto-adjust ocr upgrade data the next time a plan is run**: <u>This was already introduced under
 [first-time setup](#update-resolution-and-enable-ocr-auto-adjust)</u>. Updates all upgrade ocr values based on current
-resolution settings. As bot uses upgrade labels to determine whether is has succesfully upgraded a monkey or has to keep
+resolution settings. As bot uses upgrade labels to determine whether is has successfully upgraded a monkey or has to keep
 on trying, these texts must be as precisely readable as possible. For upgrades, bot has three cases:
 
      1. not mixing and accepting similar strings like 'sharp shots' & 'razor sharp shots',
@@ -796,8 +896,8 @@ on trying, these texts must be as precisely readable as possible. For upgrades, 
     The value is passed as integer 0-9 and it means it will simply subtract 0.01-0.09 from ALL DELTAS.
 
     ->one more thing: when bot performs the adjusting process, it will do it twice, first for monkeys placed on the
-    left side (which opens upgrade panel on right), then on right (which opens panel on left). Then, it will use 
-    the lower value of the two and after this, does the previously mentioned subtraction process. This is important 
+    left side (which opens upgrade panel on right), then on right (which opens panel on left). Then it will use 
+    the lower value of the two and, after this does the previously mentioned subtraction process. This is important 
     as upgrade panels of different sides can give quite different results so lower one is used as baseline.
 
 
@@ -828,23 +928,23 @@ Then, if you stop the bot and run it again, it continues from the plan it left o
 until you close current monitoring window. When all plans are finished, run button displays 'Repeat queue' instead.
 When you press it, plan queue resets and begins running all plans in same order again.
 
-    (*) finished means plan was either *succesfully finished* or it *could not be completed within set amount of 
+    (*) finished means plan was either *successfully finished* or it *could not be completed within set amount of 
     retries*.
 
     - Also, when plan queue is finished, a success rate percentage is displayed. Furthermore, each plan name, their 
-    success status ('success'/'failed') and amount of attemps out of total if status is 'success' are also printed.
+    success status ('success'/'failed') and amount of attempts out of total if status is 'success' are also printed.
 
 - Displays round timer for current round; not 100% accurate, but still quite good and very useful for adjusting ability
 timings when new plans are created.
 
-- **(Optional)** Similar to main screen, you can add map images to replace the ascii art. 
+- **(Optional)** Just like in main window, you can add map images to replace the ascii art. 
 **If you did this step for main window, no need to do it again, as same images are used here**. 
 
     To do this, have map images saved in 'Files/map images' folder and make sure they follow correct format: 
     
     1. only letters and spaces allowed
 
-    2. only lowercase letters, speicla characters are allowed (like ``#`` in ``#ouch``, ``'`` in ``adora's temple``)
+    2. only lowercase letters, special characters are allowed (like ``#`` in ``#ouch``, ``'`` in ``adora's temple``)
 
     3. image resolution is 320x195
 
@@ -1004,7 +1104,7 @@ for current plan: it will be displayed both under main and queue windows. It con
         Examples: 
 
         - if plan uses 2-0-5 sniper and 0-5-2 sniper, then you would type ``sniper 2-5-5``.
-        - uses darts at start but doesn&#39;t upgrade them -> dart 0-0-0
+        - uses darts at start but doesn't upgrade them -> dart 0-0-0
         - uses multiple 0-0-4 beast handlers to merge and create a 0-0-5 beast-> beast 0-0-5
 
         All examples combined, info sections would look like this:
@@ -1070,11 +1170,11 @@ This block is Python code. It includes
 - play function which is called for each plan
 - initialization through menu_start.load; select hero, map, difficulty and game mode
 - set a starting point to track total time
-- and finally, the main round loop: this begins from round BEGIN (value depens of difficulty and game mode) and
+- and finally, the main round loop: this begins from round BEGIN (value depends of difficulty and game mode) and
 continues until you finish final round (reach END+1). After it does checks and updates current_round value, it matches
 this to corresponding if/elif block to perform command for that round.
 
-Thus, you only need to interract with the part starting from
+Thus, you only need to interact with the part starting from
     
         if current_round == BEGIN:
             ...
@@ -1134,7 +1234,7 @@ For practical examples, check any plan file in ``btd6bot/plans`` folder.
 |-|-|-|
 | Monkey(name, pos_x, pos_y) | Places a monkey ``name`` at location (``x``,``y``). **To access commands, store it in a variable with recognizable name**. <br>All supported monkeys can be found [here](#monkey-names). | <pre>dart = Monkey('dart', 0.5, 0.5) <br>heli1 = Monkey('heli', 0.1, 0)</pre>
 | target(set_target, x, y, cpos_x, cpos_y) | Change monkey targeting to ``set_target``. For non-targetable monkeys, simply enter the target string. <br>For target options with target coordinate (x, y), pass ``x`` and ``y`` values.<br>All possible targeting options are listed [here](#targeting). | <pre>dart.target('strong')<br>heli1.target('lock', 0.1, 0.15)</pre>
-| upgrade(set_upg, cpos_x, cpos_y) | Upgrade a monkey. Upgrades are given as a list of strings ``set_upg`` of form 't-m-b' where t=top, m=middle, b=bottom<br> path i.e. they follow the usual path standard. Multiple upgrade can thus be queued in one call. <br>Make sure path is valid: cannot do ``['0-0-1','0-0-3']``. | <pre>dart.upgrade(['1-0-0']) <br>dart.upgrade(['2-0-0','2-1-0','3-1-0']) </pre>
+| upgrade(set_upg, cpos_x, cpos_y) | Upgrade a monkey. Upgrades are given as a list of strings ``set_upg`` of form 't-m-b' where t=top, m=middle, b=bottom<br> path i.e. they follow the usual path standard. Multiple upgrade can thus be queued in one call. <br>Make sure path is valid: cannot do ``['0-0-1','0-0-3']``. | <pre>dart.upgrade(['1-0-0']) <br>dart.upgrade(['2-0-0-','2-1-0','3-1-0']) </pre>
 | special(s, x, y, cpos_x, cpos_y) | Use special ability 1 or 2. Thus, ``s`` is either ``1`` or ``2``. If targetable special, give also ``x`` and ``y`` for target location. <br>Is required for moving mortar and dartling location. Special 2 is rarer: some uses would be beast handler second <br>crosspath beast location and (for heroes) Rosalia replace location. | <pre>heli.special(1, 0.1, 0.1) <br>mortar.special(1, 0.1, 0.1) <br>dartling.special(1, 0.5, 0.785) <br>sniper.special(1) <br>beast.special(2)</pre>
 | sell(cpos_x, cpos_y) | Sells current monkey. On code level, object still exists so please don&#39;t refer to it afterwards, unless you&#39;ve inserted<br> another non-sold monkey in same variable. | <pre>dart.sell()</pre>
 | target_robo(direction, clicks, cpos_x, cpos_y) | Change second arm targeting of a robo monkey. Current targeting value must be tracked manually: then, you simply <br>pass ``direction`` as ``'left'`` or ``'right'`` to click either left or right arrow direction and give amount of ``clicks`` to <br>this direction. For example, after placing a robo monkey, if first hand is on &#39;first&#39; then second is set on &#39;last&#39;. Clicking <br>left arrow once<br> changes it to &#39;close&#39;. And clicking right once would change it back to &#39;last&#39;. | <pre>super.target_robo('left', 2)</pre>
@@ -1168,7 +1268,7 @@ For practical examples, check any plan file in ``btd6bot/plans`` folder.
 **Advanced**
 -
 
-These topics are more difficult to grasp, but are necessary for creating more complex plans.
+These topics are more difficult to grasp, but necessary for creating more complex plans.
 
 - [**cpos**] ``cpos_x`` and ``cpos_y`` update current x and y positions. If map such as Geared moves your monkey
  location from previous and you need to call a command on this monkey, cpos must be used. Otherwise bot thinks the
@@ -1372,32 +1472,32 @@ You should also use a code editor like VS Code for optimal experience.
 For in-game updates, only ``bot`` and ``Files`` necessary, as only somewhat frequent additions would be new monkeys and
 heroes. 
 
-- Maps don&#39;t require any changes because bot selects a map using the plan file: if a new map called ``bloons map`` 
+- Maps don&#39;t require any changes because bot selects a map using the plan file: if a new map called ``Bloons Map`` 
 was added and you wanted to create a plan for it on *hard, standard* then simply name the plan file 
 ``bloons_mapHardStandard.py``.
 
 - For major changes, like new additions to game's ui, some bigger changes in bot code could be required. However, 
-because changes like these are too vague to be descripted under set rules, they are not covered here and each case must
+because changes like these are too vague to be described under a ruleset, they are not covered here and each case must
 be handled individually.
 
 Bot and files directory can be summed shortly:
 
 - ``bot`` contains the entire bot library which is responsible of all in-game bot actions. It includes the logic for
- menu navigation, round and defeat checks, time flow, kb and mouse controls. Also implements all bot commands used in 
- plan files, and required ocr functions.
+ menu navigation, round and defeat checks, time flow, keyboard and mouse controls, text detecing and reading etc. It also implements all bot commands used in 
+ plan files.
 
 - ``Files`` includes all the non-Python files gui and bot need. Only upgrade ocr template and hotkeys
  need to be updated.
 
-So, only files you likely need to modify are
+So only files you likely need to modify are
 
 - ``bot``
-    - ``menu_start.py``
+    - ``locations.py``
     - ``commands/monkey.py``
     - ``commands/hero.py``
 - ``Files``
-    - ``text files/hotkeys.txt``
     - ``_ocr_upgradedata.json``
+    - ``text files/hotkeys.txt``
 
 
 ## New monkeys
@@ -1406,7 +1506,7 @@ So, only files you likely need to modify are
 
     - open ``bot/commands/monkeys.py``
 
-    - under ``_MonkeyConstants`` class, find ``_MONKEY_NAMES`` constant.
+    - under ``Monkey`` class, find ``_MONKEY_NAMES`` constant.
 
     - add monkey name here. Each category is on its own line; ``hero`` is just a identifier for hero-type monkeys.
     **Make sure name is short, written as lowercase string (add ' ' around it) and related to actual monkey.** <u>It 
@@ -1415,12 +1515,12 @@ So, only files you likely need to modify are
     Example: if your monkey is called ``'test_monkey'`` and it belongs to military category, then code becomes
 
         _MONKEY_NAMES = (
-            'dart', 'boomer', 'bomb', 'tack', 'ice', 'glue',
+            'dart', 'boomer', 'bomb', 'tack', 'ice', 'glue', 'desperado',
             'sniper', 'sub', 'boat', 'ace', 'heli', 'mortar', 'dartling', 'test_monkey',
             'wizard', 'super', 'ninja', 'alch', 'druid', 'mermonkey',
             'farm', 'spike', 'village', 'engineer', 'beast',
             'hero'
-    )
+            )
 
     **Don&#39;t forget to add comma ``,`` at the end!**
 
@@ -1534,14 +1634,14 @@ So, only files you likely need to modify are
 
 1. **Hero click location in selection screen**
 
-    - open ``bot/menu_start.py``
-    - under ``MouseLocations`` class, there are constants ``HEROES`` and ``HEROES2``: these contain click locations for 
-    selecting each hero when in selection screen. Then,
+    - open ``bot/locations.py``
+    - under ``"CLICK"`` dictionary, there are dictionaries ``"heroes"`` and ``"heroes2"``: these contain hero portrait 
+    click locations for each hero when in selection screen. Then,
 
-        - If hero can be accessed without needing to scroll the selection screen down, it should be added in ``HEROES``. 
-        Currently, the last row of heroes accessably in this way are: ``Brickell``, ``Psi``, ``Geraldo``
-        - Otherwise, hero is initially hidden and screen must be scrolled down to reveal it. Currently, only ``Corvus`` 
-        requires this.
+        - If hero can be accessed without needing to scroll the selection screen down, it should be added in 
+        ``"heroes"``.
+        - Otherwise, hero is initially hidden and screen must be scrolled down to reveal it. Currently, only ``corvus`` 
+        requires this, thus located under "heroes2".
     
     - then, get the hero portrait location with coordinate tool (``tools/show_coordinates``) and add a new entry to one 
     of the lists: it needs to include

@@ -7,12 +7,12 @@ Monkey class creates a prototype of a monkey and is responsible for
 -selling them
 
 It also implements 
--checking of succesful placements and upgrades, which allows queueing up these commands beforehand, for
+-checking of successful placements and upgrades, which allows queueing up these commands beforehand, for
  example if player can't currently afford a monkey, bot keeps repeating the command until it succeeds.
 -checks for correct inputs in coordinate and targeting values. With upgrades, it only checks for non-empty
  inputs.
 
-Special abilities and selling don't have any ocr-level checks like targetting and upgrading do.
+Special abilities and selling don't have any ocr-level checks like targeting and upgrading do.
 
 Examples of this module can be found in 'plans' folder and picking any .py plan file OR checking the documentation of 
 used method.
@@ -24,82 +24,24 @@ from __future__ import annotations
 import re
 import time
 
-from pynput.keyboard import Key, KeyCode
+from pynput.keyboard import Key
 
 from bot import kb_mouse, times
 from bot.bot_vars import BotVars
 from bot.hotkeys import hotkeys
+from bot.locations import get_text, get_click
 import bot.ocr.ocr as ocr
 from bot.ocr.ocr import OcrValues
 from bot.ocr.ocr_reader import OCR_READER
 from bot.rounds import Rounds
+from bot.times import PauseControl
 from customprint import cprint
-
-class _MonkeyConstants:
-    """Wrapper for constants of Monkey class.
-
-    Type T[F] in attributes refers to tuple[float, float, float, float].
-
-    Attributes:
-        MONKEY_NAMES (tuple[str], class attribute): All monkey names.  
-
-        TOP_UPG_CURRENT_LEFTWINDOW (T[F], class attribute): Location of current top path 
-            upgrade if upgrade window opens on the left.
-        TOP_UPG_CURRENT_RIGHTWINDOW (T[F]], class attribute): Current top path upgrade if 
-            upgrade window opens on the right.
-
-        MID_UPG_CURRENT_LEFTWINDOW (T[F], class attribute): Current middle path upgrade if 
-            upgrade window opens on the left.
-        MID_UPG_CURRENT_RIGHTWINDOW (T[F], class attribute): Current middle path upgrade 
-            if upgrade  window opens on the right.
-
-        BOT_UPG_CURRENT_LEFTWINDOW (T[F], class attribute): Current bottom path upgrade if 
-            upgrade window opens on the left.
-        BOT_UPG_CURRENT_RIGHTWINDOW (T[F], class attribute): Current path bottom upgrade 
-            if upgrade  window opens on the right.
-
-        RIGHT_PANEL_SELL_LOCATION (T[F], class attribute): Sell button location if upgrade 
-            panel opens on the right.
-        LEFT_PANEL_SELL_LOCATION (T[F], class attribute): Sell button location if upgrade 
-            panel opens on the left.
-    """
-    _MONKEY_NAMES = (
-        'dart', 'boomer', 'bomb', 'tack', 'ice', 'glue', 'desperado',
-        'sniper', 'sub', 'boat', 'ace', 'heli', 'mortar', 'dartling',
-        'wizard', 'super', 'ninja', 'alch', 'druid', 'mermonkey',
-        'farm', 'spike', 'village', 'engineer', 'beast',
-        'hero'
-    )
-    _MONKEY_SPECIAL_NAMES = (
-        'ace_wing'
-    )
     
-    _TOP_UPG_CURRENT_LEFTWINDOW = (0.0333333333333, 0.3696296296296, 0.121875, 0.462037037037)
-    _TOP_UPG_CURRENT_RIGHTWINDOW = (0.6777083333333, 0.3696296296296, 0.7661458333333, 0.462037037037)
-
-    _MID_UPG_CURRENT_LEFTWINDOW = (0.0333333333333, 0.5122222222222, 0.121875, 0.5861111111111)
-    _MID_UPG_CURRENT_RIGHTWINDOW = (0.6777083333333, 0.5122222222222, 0.7661458333333, 0.5861111111111)
-
-    _BOT_UPG_CURRENT_LEFTWINDOW = (0.0333333333333, 0.6492592592593, 0.121875, 0.7231481481481)
-    _BOT_UPG_CURRENT_RIGHTWINDOW = (0.6777083333333, 0.6492592592593, 0.7661458333333, 0.7231481481481)
-
-    _RIGHT_PANEL_SELL_LOCATION = (0.7808333333333, 0.8148148148148, 0.8380208333333, 0.8703703703704)
-    _LEFT_PANEL_SELL_LOCATION = (0.141083333333, 0.808148148148, 0.1984375, 0.8638888888889)
-
-
-class Monkey(_MonkeyConstants):
-    """Monkey class: creates all placeable monkeys and implements their common behaviour.
-
-    Inherits _MonkeyConstants class which has monkey names and all required ocr locations.
+class Monkey():
+    """Monkey class: creates all placeable monkeys and implements their common behavior.
 
     Attributes:
-        name (str): Name of a Monkey. All available monkeys names:
-            'dart', 'boomer', 'bomb', 'tack', 'ice', 'glue', 'desperado',
-            'sniper', 'sub', 'boat', 'ace', 'heli', 'mortar', 'dartling',
-            'wizard', 'super', 'ninja', 'alch', 'druid', 'mermonkey',
-            'farm', 'spike', 'village', 'engineer', 'beast'.
-
-            A special name 'ace_wing' is used for aces if 'wingmonkey' monkey knowledge is enabled!  
+        name (str): Name of a Monkey.
         pos_x (float | None): X-coordinate location. Value must be on interval [0, 1), or to be more precise, 
             [0.0141, 0.8567] because left frame and monkey panel on the right. But bot takes care of invalid values, so 
             this won't be repeated under other comments (except right below, because y has different values). Also, 
@@ -110,7 +52,7 @@ class Monkey(_MonkeyConstants):
         placement_check: If bot will verify the monkey was placed. Should always use the default value True unless you 
                 know what you're doing. Use case: if placed monkey is under life/money/round hud, it can be placed 
                 there but afterwards clicking on this location does nothing because of hud. To access monkey again, you 
-                need to update its position slighly away from center and it should work again. To update monkey 
+                need to update its position slightly away from center and it should work again. To update monkey 
                 location, use cpos_x, cpos_y arguments for next command. A concrete example of above would be bloody 
                 puddles chimps plan, where sniper is placed on top of current cash display.
         panel_pos (str): Side where upgrade panel opens. This is always relative to middle x-coordinate of non-panel 
@@ -139,7 +81,7 @@ class Monkey(_MonkeyConstants):
         btd6bot (project root) -> tools -> show_coordinates or coordinate_tracker, to find coordinates.
 
     Examples:
-        Even if you never refer to a monkey after its placement, it's prefered to save it in a variable for clarity.
+        Even if you never refer to a monkey after its placement, it's preferred to save it in a variable for clarity.
 
         >>> 
             Monkey('dart', 0.15, 0.2)
@@ -177,8 +119,19 @@ class Monkey(_MonkeyConstants):
         Upgrading 3-2-0 Super to 4-2-0... Upgraded.
         Upgrading 4-2-0 Super to 5-2-0... Upgraded.
     """
-    _wingmonkey = 0
-    _elite_sniper = 0
+    _MONKEY_NAMES = (
+        'dart', 'boomer', 'bomb', 'tack', 'ice', 'glue', 'desperado',
+        'sniper', 'sub', 'boat', 'ace', 'heli', 'mortar', 'dartling',
+        'wizard', 'super', 'ninja', 'alch', 'druid', 'mermonkey',
+        'farm', 'spike', 'village', 'engineer', 'beast',
+        'hero'
+        )
+    _MONKEY_SPECIAL_NAMES = (
+        'ace_wing'
+        )
+
+    _wingmonkey: bool = False
+    _elite_sniper: bool = False
 
     def __init__(self, name: str, pos_x: float, pos_y: float, placement_check: bool = True) -> None:
         """Initializes a Monkey by passing it name and position coordinates.
@@ -237,7 +190,7 @@ class Monkey(_MonkeyConstants):
         Values 'left' and 'right' are always opposite of relative position of monkey from middle. The 'middle' value is 
         only required because different resolution could shift the small interval of middle values. Then for some 
         resolutions it could be left, for other right. However, 'middle' is a placeholder value anyway, as _place will 
-        ovewrite it and set it as one of the directional values.
+        overwrite it and set it as one of the directional values.
 
         Returns:
             "left" if monkey is on right, "right" if on left, "middle" if close to midpoint.
@@ -257,10 +210,10 @@ class Monkey(_MonkeyConstants):
             self._panel_pos = 'right'
             return True
         else:
-            if ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER):
+            if ocr.strong_delta_check('Sell', get_text('ingame', 'right_panel_sell_location'), OCR_READER):
                 self._panel_pos = 'right'
                 return True
-            elif ocr.strong_delta_check('Sell', Monkey._LEFT_PANEL_SELL_LOCATION, OCR_READER):
+            elif ocr.strong_delta_check('Sell', get_text('ingame', 'left_panel_sell_location'), OCR_READER):
                 self._panel_pos = 'left'
                 return True
         return False
@@ -280,11 +233,11 @@ class Monkey(_MonkeyConstants):
         if '-1' in init_check:
             self._error('init', init_check)
             
-    def _get_hotkey(self) -> Key | KeyCode | str:
+    def _get_hotkey(self) -> Key | str:
         """Returns keyboard hotkey of current monkey.
 
         Returns:
-            Corresponding pynput.keyboard Key, KeyCode, or a string value. If no key-like value can be returned, 
+            Corresponding pynput.keyboard Key or a string value. If no key-like value can be returned, 
                 returns False.
         """
         match self._name.lower():
@@ -349,7 +302,7 @@ class Monkey(_MonkeyConstants):
         return "Error"
     
     def _basic_monkey_targeting(self) -> str | None:
-        """Defines default targeting behaviour of monkey.
+        """Defines default targeting behavior of monkey.
 
         Returns:
             Targeting option string or None if monkey has no targeting options.
@@ -374,7 +327,7 @@ class Monkey(_MonkeyConstants):
     def _normal_targeting(self, current: str | None, target: str) -> str | tuple[str, str]:
         """Set targeting for monkey under normal targeting rules.
         
-        Most monkeys have the basic 4 targeting choises: first, last, close, and strong. 
+        Most monkeys have the basic 4 targeting choices: first, last, close, and strong. 
         This method handles targeting change for such cases.
         
         Args:
@@ -382,7 +335,7 @@ class Monkey(_MonkeyConstants):
             target: New targeting priority.     
             
         Returns:
-            'OK' string if targeting change was succesful.
+            'OK' string if targeting change was successful.
             name, target: If problems were encountered, return monkey's name and target string.
         """
         if target == 'first':
@@ -431,7 +384,7 @@ class Monkey(_MonkeyConstants):
             return
         kb_mouse.kb_input(hotkeys['special '+str(s)])
         if x is not None and y is not None:
-            kb_mouse.click((x, y))
+            kb_mouse.click((x, y), shifted=True)
 
     def _change_target(self, target: str,
                       x: float | None = None,
@@ -454,7 +407,7 @@ class Monkey(_MonkeyConstants):
 
         Returns:
             normal_targeting(current, target) value if targeting falls under that category,
-            'OK' string if any other targeting change was succesful.
+            'OK' string if any other targeting change was successful.
             name, target: If problems were encountered, return monkey's name and target string as a tuple. 
         """ 
         current = self._targeting
@@ -466,7 +419,7 @@ class Monkey(_MonkeyConstants):
             self._pos_x = cpos_x
         if cpos_y is not None:
             self._pos_y = cpos_y
-        kb_mouse.click((self._pos_x, self._pos_y))
+        kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
         if cpos_x is not None:
             self._update_panel_position(cpos_x)
         match self._name:
@@ -756,7 +709,7 @@ class Monkey(_MonkeyConstants):
         """Checks if new crosspath updates the targeting priority automatically and if so, updates targeting value.
         
         For some monkeys, like ace, if you do upgrade x-x-1 -> x-x-2, it unlocks a new targeting priority (centered 
-        path in this case) which is automatically set as current targetin priority. This method will check such cases 
+        path in this case) which is automatically set as current targeting priority. This method will check such cases 
         and handles the updating of current attributes for bot as well.
 
         This method is only called inside self._do_upgrades.
@@ -780,7 +733,7 @@ class Monkey(_MonkeyConstants):
 
         Upgrades monkey by first checking current upgrade path, then matching it to next upgrade and choosing correct
         upgrade by comparing differing values. Upgrades are passed as a list of strings which allows multiple upgrades
-        with one target method call. Ater
+        with one target method call.
         
         If monkey position has changed after initial placement (Geared/Sanctuary), use cpos to point current position.
 
@@ -789,38 +742,38 @@ class Monkey(_MonkeyConstants):
             cpos_x: If monkey's current x-coordinate position has changed, update it. Default value is None.
             cpos_y: If monkey's current y-coordinate position has changed, update it. Default value is None.
         """
-        times.pause_bot()
+        PauseControl.pause_bot()
         paths = ['upgrade top', 'upgrade mid', 'upgrade bot'] 
         if cpos_x is not None:
             self._pos_x = cpos_x
         if cpos_y is not None:
             self._pos_y = cpos_y
-        kb_mouse.click((self._pos_x, self._pos_y))
+        kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
         if cpos_x is not None:
             self._update_panel_position(cpos_x)
         start = time.time()
         counter = 0
         if self._panel_pos == 'right':
-            while not ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER):
+            while not ocr.strong_delta_check('Sell', get_text('ingame', 'right_panel_sell_location'), OCR_READER):
                 if time.time()-start > 10:
                     BotVars.defeat_status = True
                     cprint("Failed to find the upgradeable monkey.")
                     return
                 if counter == 3:
-                    kb_mouse.click((self._pos_x, self._pos_y))
+                    kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
                     if cpos_x is not None:
                         self._update_panel_position(cpos_x)
                     counter = 0
                 time.sleep(0.1)
                 counter += 1
         elif self._panel_pos == 'left':
-            while not ocr.strong_delta_check('Sell', Monkey._LEFT_PANEL_SELL_LOCATION, OCR_READER):
+            while not ocr.strong_delta_check('Sell', get_text('ingame', 'left_panel_sell_location'), OCR_READER):
                 if time.time()-start > 10:
                     BotVars.defeat_status = True
                     cprint("Failed to find the upgradeable monkey.")
                     return
                 if counter == 3:
-                    kb_mouse.click((self._pos_x, self._pos_y))
+                    kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
                     if cpos_x is not None:
                         self._update_panel_position(cpos_x)
                     counter = 0
@@ -849,19 +802,22 @@ class Monkey(_MonkeyConstants):
             button: Upgrade button, either for top, mid or bottom path.
         """
         if button == 'upgrade top':
-            self._check_upgrade(upg, button,
-                                Monkey._TOP_UPG_CURRENT_LEFTWINDOW,
-                                Monkey._TOP_UPG_CURRENT_RIGHTWINDOW,
+            self._check_upgrade(upg, 
+                                button,
+                                get_text('ingame', 'top_upg_current_leftwindow'),
+                                get_text('ingame', 'top_upg_current_rightwindow'),
                                 0)
         elif button == 'upgrade mid':
-            self._check_upgrade(upg, button,
-                                Monkey._MID_UPG_CURRENT_LEFTWINDOW,
-                                Monkey._MID_UPG_CURRENT_RIGHTWINDOW,
+            self._check_upgrade(upg, 
+                                button,
+                                get_text('ingame', 'mid_upg_current_leftwindow'),
+                                get_text('ingame', 'mid_upg_current_rightwindow'),
                                 1)
         elif button == 'upgrade bot':
-            self._check_upgrade(upg, button,
-                                Monkey._BOT_UPG_CURRENT_LEFTWINDOW,
-                                Monkey._BOT_UPG_CURRENT_RIGHTWINDOW,
+            self._check_upgrade(upg,
+                                button,
+                                get_text('ingame', 'bot_upg_current_leftwindow'),
+                                get_text('ingame', 'bot_upg_current_rightwindow'),
                                 2)
 
     def _check_upgrade(self, upg: str,
@@ -870,7 +826,7 @@ class Monkey(_MonkeyConstants):
                       current_r: tuple[float, float, float, float], 
                       upg_path: int
                       ) -> None:
-        """Keeps trying to upgrade a monkey, then sends confirmation message after a succesful attempt.
+        """Keeps trying to upgrade a monkey, then sends confirmation message after a successful attempt.
 
         Also updates _upgrade_path attribute.
 
@@ -904,7 +860,7 @@ class Monkey(_MonkeyConstants):
         levelup_check = 1
         while not upgraded:
             if levelup_check == Rounds.LEVEL_UP_CHECK_FREQUENCY:
-                kb_mouse.click((0.9994791666667, 0))
+                kb_mouse.click((0.9994791666667, 0), shifted=True)
                 levelup_check = 0
             levelup_check += 1
             if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
@@ -917,25 +873,26 @@ class Monkey(_MonkeyConstants):
             kb_mouse.kb_input(hotkeys[button])
             if self._name == 'super' and re.search("^4-[0-2]-0$|^4-0-[0-2]$|^5-[0-2]-0$|^5-0-[0-2]$", upg) is not None:
                 kb_mouse.kb_input(Key.enter)    # if upgrade is Sun Temple/True Sun God, press Enter to confirm it
-            if self._panel_pos == 'right':
-                if ocr.strong_delta_check(
-                    '_upgrade_', 
-                    (current_r[0], current_r[1], current_r[2], current_r[3]),
-                    OCR_READER,
-                    upg_match):
-                    upgraded = 1
-            elif self._panel_pos == 'left':
-                if ocr.strong_delta_check(
-                    '_upgrade_', 
-                    (current_l[0], current_l[1], current_l[2], current_l[3]),
-                    OCR_READER, 
-                    upg_match):
-                    upgraded = 1
-            if upgraded:
-                if not OcrValues._log_ocr_deltas:
-                    cprint('Upgraded.')
-                self._upgrade_path = upg
-                return
+            for _ in range(BotVars.upg_verify_limit):
+                if self._panel_pos == 'right':
+                    if ocr.strong_delta_check(
+                        '_upgrade_', 
+                        (current_r[0], current_r[1], current_r[2], current_r[3]),
+                        OCR_READER,
+                        upg_match):
+                        upgraded = 1
+                elif self._panel_pos == 'left':
+                    if ocr.strong_delta_check(
+                        '_upgrade_', 
+                        (current_l[0], current_l[1], current_l[2], current_l[3]),
+                        OCR_READER, 
+                        upg_match):
+                        upgraded = 1
+                if upgraded:
+                    if not OcrValues._log_ocr_deltas:
+                        cprint('Upgraded.')
+                    self._upgrade_path = upg
+                    return
 
     def _place(self) -> None:
         """Places a monkey to an in-game location.
@@ -960,14 +917,14 @@ class Monkey(_MonkeyConstants):
         levelup_check = 1
         while not placed:
             if OcrValues._log_ocr_deltas or not self._placement_check:
-                kb_mouse.click((0.5, 0))
+                kb_mouse.click((0.5, 0), shifted=True)
                 kb_mouse.kb_input(self._get_hotkey())
-                kb_mouse.click((self._pos_x, self._pos_y), 1)
+                kb_mouse.click((self._pos_x, self._pos_y), clicks=1, shifted=True)
                 cprint(f'{self._name.capitalize()} placed.')
                 return
-            times.pause_bot()
+            PauseControl.pause_bot()
             if levelup_check == Rounds.LEVEL_UP_CHECK_FREQUENCY:
-                kb_mouse.click((0.9994791666667, 0))
+                kb_mouse.click((0.9994791666667, 0), shifted=True)
                 levelup_check = 0
             levelup_check += 1
             if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
@@ -977,25 +934,25 @@ class Monkey(_MonkeyConstants):
                 return
             defeat_check += 1
             kb_mouse.kb_input(self._get_hotkey())
-            kb_mouse.click((self._pos_x, self._pos_y), 2)
+            kb_mouse.click((self._pos_x, self._pos_y), clicks=2, shifted=True)
             time.sleep(0.2)
             if self._panel_pos == 'right':
-                if ocr.strong_delta_check('Sell', Monkey._RIGHT_PANEL_SELL_LOCATION, OCR_READER):
+                if ocr.strong_delta_check('Sell', get_text('ingame', 'right_panel_sell_location'), OCR_READER):
                     placed = 1
             elif self._panel_pos == 'left':
-                if ocr.strong_delta_check('Sell', Monkey._LEFT_PANEL_SELL_LOCATION, OCR_READER):
+                if ocr.strong_delta_check('Sell', get_text('ingame', 'left_panel_sell_location'), OCR_READER):
                     placed = 1
             else:
                 if self._update_panel_position(self._pos_x):
                     placed = 1
             if placed:
                 kb_mouse.press_esc()
-                if Monkey._wingmonkey == 0 and self._name == 'ace_wing':
-                    Monkey._wingmonkey = 1  # detect and account for 'wingmonkey' mk if name 'ace_wing' is used.
+                if not Monkey._wingmonkey and self._name == 'ace_wing':
+                    Monkey._wingmonkey = True  # detect and account for 'wingmonkey' mk if name 'ace_wing' is used.
                 cprint(f'{self._name.capitalize()} placed.')
                 return
     
-    def special(self, s: str | int = 1,
+    def special(self, s: str | int,
                 x: float | None = None,
                 y: float | None = None,
                 cpos_x: float | None = None,
@@ -1013,7 +970,7 @@ class Monkey(_MonkeyConstants):
         If monkey position has changed after initial placement (Geared/Sanctuary), use cpos to update current position.
 
         Args:
-            s: Special ability, either 1 (most common) or 2. Strings '1' or '2' are also valid. Default value is 1.
+            s: Special ability, either 1 (most common) or 2. Strings '1' or '2' are also valid.
             x: If targetable ability, its x-coordinate. Default value is None.
             y: If targetable ability, its y-coordinate. Default value is None.
             cpos_x: If monkey's current x-coordinate position has changed, update it. Default value is None.
@@ -1111,10 +1068,10 @@ class Monkey(_MonkeyConstants):
             >>> mortar2.special(1, x=0.4, y=0.4,  cpos_x=0.05, cpos_y=0.75) # back to original location
             Mortar special 1 used.
         """
-        times.pause_bot()
+        PauseControl.pause_bot()
         if BotVars.defeat_status:
             return
-        elif s not in [1, 2, '1', '2']:
+        elif s not in (1, 2, '1', '2'):
             cprint('Wrong input value on special ability; use 1 or 2')
             return
         # current position click; used on monkey-moving maps like Geared/Sanctuary. Updates new coordinates to monkey.
@@ -1122,12 +1079,12 @@ class Monkey(_MonkeyConstants):
             self._pos_x = cpos_x
         if cpos_y is not None:
             self._pos_y = cpos_y
-        kb_mouse.click((self._pos_x, self._pos_y))
+        kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
         if cpos_x is not None:
             self._update_panel_position(cpos_x)
         kb_mouse.kb_input(hotkeys['special '+str(s)])
         if x is not None and y is not None:
-            kb_mouse.click((x, y))
+            kb_mouse.click((x, y), shifted=True)
         kb_mouse.press_esc()
         #time.sleep(0.3)
         cprint(f'{self._name.capitalize()} special {s} used.')
@@ -1164,17 +1121,17 @@ class Monkey(_MonkeyConstants):
         >>> boomerang.sell()
         Boomer sold!
         """
-        times.pause_bot()
+        PauseControl.pause_bot()
         if BotVars.defeat_status:
             return
         if cpos_x is not None:
             self._pos_x = cpos_x
         if cpos_y is not None:
             self._pos_y = cpos_y
-        kb_mouse.click((self._pos_x, self._pos_y))
+        kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
         time.sleep(0.3)
         kb_mouse.kb_input(hotkeys['sell'])
-        if self._name == 'sniper' and self._upgrade_path[2] == 5:
+        if self._name == 'sniper' and int(self._upgrade_path[2]) == 5:
             Monkey._elite_sniper = 0
         if not OcrValues._log_ocr_deltas:
             cprint(f'{self._name.capitalize()} sold!')
@@ -1337,13 +1294,13 @@ class Monkey(_MonkeyConstants):
             >>> mortar2.special(1, x=0.1, y=0.8, cpos_x=0.8, cpos_y=0.2) # finally refers back to mortar2
             Mortar special 1 used.
         """
-        times.pause_bot()
+        PauseControl.pause_bot()
         if BotVars.defeat_status:
             return
         val = self._change_target(set_target.lower(), x , y, cpos_x, cpos_y)
         if val != 'OK':
             self._error('target', set_target, val)
-        kb_mouse.press_esc()      # closes currently opened targeting window   
+        kb_mouse.press_esc() # closes currently opened targeting window   
         self._targeting = set_target.lower()
 
     def upgrade(self, set_upg: list[str], cpos_x: float | None = None, cpos_y: float | None = None) -> None:
@@ -1476,11 +1433,8 @@ class Monkey(_MonkeyConstants):
             >>> dart.upgrade(['5-2-0']) # this would work as position is the same as it was 8 rounds back.
             Upgrading 4-2-0 Dart to 5-2-0... Upgraded.
         """
-        times.pause_bot()
+        PauseControl.pause_bot()
         if BotVars.defeat_status:
-            return
-        elif self._name == 'hero':
-            cprint("Heroes cannot be upgraded.")
             return
         elif set_upg != []:
             for upg in set_upg:
@@ -1514,7 +1468,7 @@ class Monkey(_MonkeyConstants):
             cpos_x (float | None. Default = None): Updated current x-position.
             cpos_y (float | None. Default = None): Updated current y-position.
         """
-        times.pause_bot()
+        PauseControl.pause_bot()
         if BotVars.defeat_status:
             return
         if self._name != 'super':
@@ -1524,21 +1478,21 @@ class Monkey(_MonkeyConstants):
             self._pos_x = cpos_x
         if cpos_y is not None:
             self._pos_y = cpos_y
-        kb_mouse.click((self._pos_x, self._pos_y))
+        kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
         if cpos_x is not None:
             self._update_panel_position(cpos_x)
         if self._panel_pos == 'left':
             if direction == 'left':
-                kb_mouse.click((0.044, 0.294), clicks)
+                kb_mouse.click(get_click('ingame', 'target_leftpanel_leftarrow'), clicks=clicks, shifted=True)
             elif direction == 'right':
-                kb_mouse.click((0.185, 0.292), clicks)
+                kb_mouse.click(get_click('ingame', 'target_leftpanel_rightarrow'), clicks=clicks, shifted=True)
             else:
                 cprint("Could not change targeting.")
         else:
             if direction == 'left':
-                kb_mouse.click((0.680, 0.292), clicks)
+                kb_mouse.click(get_click('ingame', 'target_rightpanel_leftarrow'), clicks, shifted=True)
             elif direction == 'right':
-                kb_mouse.click((0.822, 0.292), clicks)
+                kb_mouse.click(get_click('ingame', 'target_rightpanel_rightarrow'), clicks, shifted=True)
             else:
                 cprint("Could not change targeting.")
         kb_mouse.press_esc()
@@ -1553,7 +1507,7 @@ class Monkey(_MonkeyConstants):
             cpos_x (float | None. Default = None): Updated current x-position.
             cpos_y (float | None. Default = None): Updated current y-position.
         """
-        times.pause_bot()
+        PauseControl.pause_bot()
         if BotVars.defeat_status:
             return
         if self._name != 'beast':
@@ -1563,11 +1517,11 @@ class Monkey(_MonkeyConstants):
             self._pos_x = cpos_x
         if cpos_y is not None:
             self._pos_y = cpos_y
-        kb_mouse.click((self._pos_x, self._pos_y))
+        kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
         if cpos_x is not None:
             self._update_panel_position(cpos_x)
         kb_mouse.kb_input(hotkeys["merge beast"])
-        kb_mouse.click((x,y))
+        kb_mouse.click((x,y), shifted=True)
         time.sleep(0.5)
         kb_mouse.press_esc()
         time.sleep(0.1)
@@ -1582,7 +1536,7 @@ class Monkey(_MonkeyConstants):
             cpos_x (float | None. Default = None): Updated current x-position.
             cpos_y (float | None. Default = None): Updated current y-position.
         """
-        times.pause_bot()
+        PauseControl.pause_bot()
         if BotVars.defeat_status:
             return
         if self._name != 'ace':
@@ -1592,10 +1546,10 @@ class Monkey(_MonkeyConstants):
             self._pos_x = cpos_x
         if cpos_y is not None:
             self._pos_y = cpos_y
-        kb_mouse.click((self._pos_x, self._pos_y))
+        kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
         if cpos_x is not None:
             self._update_panel_position(cpos_x)
         kb_mouse.kb_input(hotkeys["centered path"])
-        kb_mouse.click((x,y))
+        kb_mouse.click((x,y), shifted=True)
         kb_mouse.press_esc()
         cprint("Ace center location updated.") 
