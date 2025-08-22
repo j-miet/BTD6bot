@@ -24,12 +24,12 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
     while current_round < END+1:
         current_round = Rounds.round_check(current_round, map_start)
         if current_round == BEGIN:     
-            hero = Hero(0.3015625000000, 0.5851851851852)
+            hero = Hero(0.3848958333333, 0.4333333333333)
         elif current_round == 8:
-            sniper1 = Monkey('sniper', 0.1177083333333,	0.7277777777778)
+            sniper1 = Monkey('sniper', 0.3692708333333, 0.3250000000000)
             sniper1.target('strong')
         elif current_round == 15:
-            heli1 = Monkey('heli', 0.1406250000000, 0.6018518518519)
+            heli1 = Monkey('heli', 0.5135416666667, 0.4037037037037)
         elif current_round == 19:
             heli1.upgrade(['1-0-0'])
         elif current_round == 21:
@@ -37,12 +37,12 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 27:
             heli1.upgrade(['3-0-0'])
         elif current_round == 31:
-            village1 = Monkey('village', 0.2171875000000, 0.6592592592593)
+            village1 = Monkey('village', 0.4375000000000, 0.4148148148148)
             village1.upgrade(['0-1-0'])
         elif current_round == 35:
             village1.upgrade(['0-2-0'])
         elif current_round == 36:
-            heli2 = Monkey('heli', 0.1755208333333, 0.7916666666667)
+            heli2 = Monkey('heli', 0.4458333333333, 0.2842592592593)
         elif current_round == 37:
             heli2.upgrade(['1-0-0','2-0-0'])
         elif current_round == 38:
@@ -59,7 +59,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 63:
             village1.upgrade(['2-3-0'])
         elif current_round == 64:
-            glue1 = Monkey('glue', 0.2718750000000, 0.6342592592593)
+            glue1 = Monkey('glue', 0.3786458333333, 0.3759259259259)
             glue1.upgrade(['0-1-0','0-2-0','0-2-1','0-2-2'])
         elif current_round == 65:
             glue1.upgrade(['0-2-2'])
