@@ -205,12 +205,13 @@ $RECYCLE.BIN/
 .vscode
 Logs.txt
 btd6bot/.sandbox
-btd6bot/Files/ocr temp/strong_new.png
-btd6bot/Files/ocr temp/strong_text.png
-btd6bot/Files/ocr temp/weak_new.png
+btd6bot/Files/text files/guihotkeys.txt
+btd6bot/Files/text files/hotkeys.txt
+btd6bot/Files/text files/queue_list.txt
 btd6bot/Files/map images
 btd6bot/Files/time_data-backup.json
 btd6bot/Files/times_temp.txt
+btd6bot/Files/upgrades_current.json
 tools/strong_ocr_test/strong_new.png
 tools/strong_ocr_test/strong_text.png
 tools/weak_ocr_test/weak_new.png
