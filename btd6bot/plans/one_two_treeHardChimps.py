@@ -73,10 +73,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             village1.upgrade(['2-3-0'])
         elif current_round == 65:
             glue1 = Monkey('glue', 0.4286458333, 0.2527777778)
-            glue1.upgrade(['0-1-0'])
-            glue1.upgrade(['0-2-0'])
-            glue1.upgrade(['0-2-1'])
-            glue1.upgrade(['0-2-2'])
+            glue1.upgrade(['0-1-0','0-2-0','0-2-1','0-2-2'])
         elif current_round == 68:
             glue1.upgrade(['0-2-3'])
         elif current_round == 84:

@@ -115,7 +115,6 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             wait(15)
             hero.special(2, x=0.1869791666667, y=0.6222222222222, cpos_x=0.2703125, cpos_y=0.8296296296296)
             heli1 = Monkey('heli', 0.4348958333333, 0.837962962963)
-            heli1.target('lock')
             heli1.special(1, 0.1354166666667, 0.5527777777778)
             end_round(3)
         elif current_round == 35:

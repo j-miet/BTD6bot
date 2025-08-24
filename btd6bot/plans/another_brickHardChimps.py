@@ -37,7 +37,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 21:
             hero.target('first')
             heli = Monkey('heli', 0.7223958333333, 0.0787037037037)
-            heli.target('lock', 0.2484375, 0.4138888888889)
+            heli.special(1, 0.2484375, 0.4138888888889)
         elif current_round == 23:
             hero.target('strong')
         elif current_round == 25:
