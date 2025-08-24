@@ -309,7 +309,7 @@ class Monkey():
         """
         match self._name:
             case 'heli':
-                return 'follow'
+                return 'follow' # this value is used internally: bot sets heli to 'lock' targeting immediately after
             case 'ace' | 'ace_wing':
                 return 'circle'
             case 'mortar':
@@ -368,18 +368,17 @@ class Monkey():
                 kb_mouse.kb_input(hotkeys['target change'], 1)
         else:
             return self._name, target
-        cprint(f"{self._name.capitalize()} targeting set to '{target}'.")
         return 'OK'
     
     def _change_target_special(self, s: str | int, x: float | None = None, y: float | None = None) -> None:
-        """Similar to actual special method, but is only called in _change_target.
+        """Similar to actual special method, but is only called under _change_target and _place methods.
 
         Args:
             s: Special ability, either 1 (most common) or 2. Can also pass strings '1' or '2'.
             x: If targetable ability, its x-coordinate. Default value is None.
             y: If targetable ability, its y-coordinate. Default value is None.
         """
-        if s not in [1, 2, '1', '2']:
+        if s not in {1, 2, '1', '2'}:
             cprint("Wrong input value on special ability; use 1/'1' or 2/'2'")
             return
         kb_mouse.kb_input(hotkeys['special '+str(s)])
@@ -702,7 +701,6 @@ class Monkey():
                     return self._name, target
             case _:
                 return self._normal_targeting(current, target)
-        cprint(f"{self._name.capitalize()} targeting set to '{target}'.")
         return 'OK'
     
     def _update_auto_target_paths(self, upg_path: str, path_index: int) -> None:
@@ -912,7 +910,7 @@ class Monkey():
             return
         cprint(f'Placing {self._name.capitalize()}...', end=' ')
         total_time = times.current_time()
-        placed = 0
+        placed: bool = False
         defeat_check = 1
         levelup_check = 1
         while not placed:
@@ -938,17 +936,21 @@ class Monkey():
             time.sleep(0.2)
             if self._panel_pos == 'right':
                 if ocr.strong_delta_check('Sell', get_text('ingame', 'right_panel_sell_location'), OCR_READER):
-                    placed = 1
+                    placed = True
             elif self._panel_pos == 'left':
                 if ocr.strong_delta_check('Sell', get_text('ingame', 'left_panel_sell_location'), OCR_READER):
-                    placed = 1
+                    placed = True
             else:
                 if self._update_panel_position(self._pos_x):
-                    placed = 1
+                    placed = True
             if placed:
-                kb_mouse.press_esc()
+                if self._name == 'heli': # set targeting to 'lock' and move heli on top of placement location
+                    kb_mouse.kb_input(hotkeys['target change'], 1)
+                    self._change_target_special(1, self._pos_x, self._pos_y)
+                    self._targeting = 'lock'
                 if not Monkey._wingmonkey and self._name == 'ace_wing':
                     Monkey._wingmonkey = True  # detect and account for 'wingmonkey' mk if name 'ace_wing' is used.
+                kb_mouse.press_esc()
                 cprint(f'{self._name.capitalize()} placed.')
                 return
     
@@ -1300,6 +1302,8 @@ class Monkey():
         val = self._change_target(set_target.lower(), x , y, cpos_x, cpos_y)
         if val != 'OK':
             self._error('target', set_target, val)
+        else:
+            cprint(f"{self._name.capitalize()} targeting set to '{set_target.lower()}'.")
         kb_mouse.press_esc() # closes currently opened targeting window   
         self._targeting = set_target.lower()
 
