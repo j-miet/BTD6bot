@@ -1,3 +1,14 @@
+# Custom paths
+.vscode
+Logs.txt
+btd6bot/.sandbox
+btd6bot/Files/map images
+btd6bot/Files/time_data-backup.json
+btd6bot/Files/times_temp.txt
+tools/strong_ocr_test/strong_new.png
+tools/strong_ocr_test/strong_text.png
+tools/weak_ocr_test/weak_new.png
+
 # Created by https://www.toptal.com/developers/gitignore/api/windows,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,python
 
@@ -200,18 +211,3 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,python
-
-# Custom
-.vscode
-Logs.txt
-btd6bot/.sandbox
-btd6bot/Files/text files/guihotkeys.txt
-btd6bot/Files/text files/hotkeys.txt
-btd6bot/Files/text files/queue_list.txt
-btd6bot/Files/map images
-btd6bot/Files/time_data-backup.json
-btd6bot/Files/times_temp.txt
-btd6bot/Files/upgrades_current.json
-tools/strong_ocr_test/strong_new.png
-tools/strong_ocr_test/strong_text.png
-tools/weak_ocr_test/weak_new.png
