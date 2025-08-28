@@ -150,7 +150,7 @@ class Rounds:
                 return
             else:
                 kb_mouse.click((0.999, 0.01))    # click away if round 100 insta pop-up.
-                time.sleep(1)
+                time.sleep(0.5)
         BotData.set_data(current_round=Rounds.end_round+1)
         final_round_end = times.current_time()
         times.time_print(final_round_start, final_round_end, f'Round {final_round}')

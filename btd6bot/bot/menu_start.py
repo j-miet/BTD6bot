@@ -112,6 +112,7 @@ def _choose_map(map_name: str) -> bool:
             else:
                 loop = False
                 break
+    time.sleep(0.5)
     map_str = map_name.replace('_', ' ')
     kb_mouse.click(get_click('menu', 'menu_play'))
     start = time.time()
