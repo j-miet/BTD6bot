@@ -120,7 +120,7 @@ def begin_round() -> int:
             if start == 'exit':
                 os.kill(os.getpid(), signal.SIGTERM)
             elif start == 'delete':
-                with open(pathlib.Path(__file__).parent/'commands.txt', 'w') as f:
+                with open(pathlib.Path(__file__).parent/'commands.txt', 'w') as _:
                     print("commands.txt contents deleted.")
             elif int(start) in range(1, 101):
                 return int(start)
@@ -184,7 +184,7 @@ def add_command(comment_str: str) -> None:
                     "    	\targs:\n"
                     "	 	\tvar_name, target_str, x, y.\n"
                     "    	\texample:\n"
-                   	"    	 \t\t-tcp dart_name first 0.5 0.6 (assuming mouse location is (0.1, 0.1))\n"
+                    "        \t\t-tcp dart_name first 0.5 0.6 (assuming mouse location is (0.1, 0.1))\n"
                     "			=> dart_name.target('first', x=0.5, y=0.6, cpos_x=0.1, cpos_y=0.1)\n\n"
                     "	-scp: use special ability of monkey/hero by first updating its current position\n"
                     "    	\targs:\n"
@@ -194,7 +194,7 @@ def add_command(comment_str: str) -> None:
                     "       	\t\t=> dart_name.upgrade(1, x=0.1, y=0.2, cpos_x=0.5, cpos_y=0.6)\n\n"
                     "	-c: general commands (not monkey/hero specific)\n"
                     "    	\t-this just writes the text you type. Used for general commands such as\n"
-                   	"        \tbegin()/begin('normal')\n" 
+                    "        \tbegin()/begin('normal')\n" 
                     "        \tchange_autostart()\n" 
                     "        \tend_round(20)\n" 
                     "        \tability(1,5)\n"
@@ -202,7 +202,7 @@ def add_command(comment_str: str) -> None:
                     "	-l: coordinate location (x,y)\n"
                     "    	\t-can be used with 'click' command, for example.\n"
 					"\n"
-                	"--typing anything else as first argument does nothing.\n")
+                    "--typing anything else as first argument does nothing.\n")
             return
         case '-m':
             if len(cmd[1:]) < 2:
