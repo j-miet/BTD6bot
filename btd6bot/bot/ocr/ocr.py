@@ -69,8 +69,12 @@ class OcrValues:
 
     @staticmethod
     def _get_current_upgradedata() -> Any:
-        with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'upgrades_current.json') as f:
-            return json.load(f)    
+        try:
+            with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'upgrades_current.json') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'_ocr_upgradedata.json') as f:
+                return json.load(f)
     OCR_UPGRADEDATA = _get_current_upgradedata()
 
     @staticmethod

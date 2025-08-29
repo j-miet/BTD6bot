@@ -135,8 +135,11 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
     current_dict: dict[str, Any] = {}
     with open(pathlib.Path(__file__).parent.parent/'Files'/'_ocr_upgradedata.json') as base:
         base_dict = json.load(base)
-    with open(pathlib.Path(__file__).parent.parent/'Files'/'upgrades_current.json') as current:
-        current_dict = json.load(current)
+    try:
+        with open(pathlib.Path(__file__).parent.parent/'Files'/'upgrades_current.json') as current:
+            current_dict = json.load(current)
+    except FileNotFoundError:
+        ...
     base_keys = base_dict.keys()
     current_keys = current_dict.keys()
     baseval_flag = 0

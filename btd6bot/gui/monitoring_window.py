@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 import json
 import os
+import shutil
 import sys
 import threading
 import time
@@ -319,8 +320,15 @@ class MonitoringWindow:
 
     def _res_check(self, customres: bool, resolution_val: tuple[int, ...], windowed: bool, w: int, h: int,
                    ingame_shift: bool, shift_val: tuple[int, ...]) -> None:
-        with open(gui_paths.FILES_PATH/'upgrades_current.json') as f:
-            identifier: list[int | str] = json.load(f)["__identifier"]
+        try:
+            with open(gui_paths.FILES_PATH/'upgrades_current.json') as f:
+                identifier: list[int | str] = json.load(f)["__identifier"]
+        except FileNotFoundError:
+            print("***\nupgrades_current.json couldn't not be found, creating one with default values\n"
+                "You should perform ocr auto-adjust before continuing\n***\n")
+            shutil.copy2(gui_paths.FILES_PATH/'_ocr_upgradedata.json', gui_paths.FILES_PATH/'upgrades_current.json')
+            with open(gui_paths.FILES_PATH/'upgrades_current.json') as f:
+                identifier: list[int | str] = json.load(f)["__identifier"]
         issue_flag = 0
         if customres:
             if list(resolution_val) != identifier[0:2]:
