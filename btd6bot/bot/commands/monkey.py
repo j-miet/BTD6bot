@@ -53,7 +53,7 @@ class Monkey():
                 know what you're doing. Use case: if placed monkey is under life/money/round hud, it can be placed 
                 there but afterwards clicking on this location does nothing because of hud. To access monkey again, you 
                 need to update its position slightly away from center and it should work again. To update monkey 
-                location, use cpos_x, cpos_y arguments for next command. A concrete example of above would be bloody 
+                location, use cpos argument for next command. A concrete example of above would be bloody 
                 puddles chimps plan, where sniper is placed on top of current cash display.
         panel_pos (str): Side where upgrade panel opens. This is always relative to middle x-coordinate of non-panel 
             screen i.e. somewhere around 0.42-0.44. Panel opens to the opposite side of this relative position e.g. 
@@ -388,8 +388,7 @@ class Monkey():
     def _change_target(self, target: str,
                       x: float | None = None,
                       y: float | None = None,
-                      cpos_x: float | None = None,
-                      cpos_y: float | None = None
+                      cpos: tuple[float, float] | None = None,
                       ) -> str | tuple[str, str]:
         """Changes monkey's (not hero's) targeting.
         Standard (first, last, close, strong) and non-standard cases have been accounted for, even those unlocking
@@ -401,8 +400,7 @@ class Monkey():
             target: New targeting priority.
             x: If targeting priority needs coordinates (e.g. dartling/heli), its x-coordinate. Default value is None.
             y: If targeting priority needs coordinates (e.g. dartling/heli), its y-coordinate. Default value is None.
-            cpos_x: If monkey's current x-coordinate position has changed, update it. Default value is None.
-            cpos_y: If monkey's current y-coordinate position has changed, update it. Default value is None.
+            cpos: If monkey's current coordinate position has changed, update it. Default value is None.     
 
         Returns:
             normal_targeting(current, target) value if targeting falls under that category,
@@ -414,13 +412,12 @@ class Monkey():
             cprint(f'Already set to {target.capitalize()}.')
             kb_mouse.press_esc()
             return 'OK'
-        if cpos_x is not None:
-            self._pos_x = cpos_x
-        if cpos_y is not None:
-            self._pos_y = cpos_y
+        if cpos is not None:
+            self._pos_x = cpos[0]
+            self._pos_y = cpos[1]
         kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
-        if cpos_x is not None:
-            self._update_panel_position(cpos_x)
+        if cpos is not None:
+            self._update_panel_position(cpos[0])
         match self._name:
             case 'farm':
                 return self._name, target
@@ -726,7 +723,7 @@ class Monkey():
             self._targeting = 'elite'
             Monkey._elite_sniper = 1
 
-    def _do_upgrades(self, upgrade_list: list[str], cpos_x: float | None = None, cpos_y: float | None = None) -> None:
+    def _do_upgrades(self, upgrade_list: list[str], cpos: tuple[float, float] | None = None) -> None:
         """Handles the choosing of correct upgrade path and verifies the process.
 
         Upgrades monkey by first checking current upgrade path, then matching it to next upgrade and choosing correct
@@ -737,18 +734,16 @@ class Monkey():
 
         Args:
             upgrade_list: List of upgrade path strings.
-            cpos_x: If monkey's current x-coordinate position has changed, update it. Default value is None.
-            cpos_y: If monkey's current y-coordinate position has changed, update it. Default value is None.
+            cpos: If monkey's current coordinate position has changed, update it. Default value is None.
         """
         PauseControl.pause_bot()
         paths = ['upgrade top', 'upgrade mid', 'upgrade bot'] 
-        if cpos_x is not None:
-            self._pos_x = cpos_x
-        if cpos_y is not None:
-            self._pos_y = cpos_y
+        if cpos is not None:
+            self._pos_x = cpos[0]
+            self._pos_y = cpos[1]
         kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
-        if cpos_x is not None:
-            self._update_panel_position(cpos_x)
+        if cpos is not None:
+            self._update_panel_position(cpos[0])
         start = time.time()
         counter = 0
         if self._panel_pos == 'right':
@@ -759,8 +754,8 @@ class Monkey():
                     return
                 if counter == 3:
                     kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
-                    if cpos_x is not None:
-                        self._update_panel_position(cpos_x)
+                    if cpos is not None:
+                        self._update_panel_position(cpos[0])
                     counter = 0
                 time.sleep(0.1)
                 counter += 1
@@ -772,8 +767,8 @@ class Monkey():
                     return
                 if counter == 3:
                     kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
-                    if cpos_x is not None:
-                        self._update_panel_position(cpos_x)
+                    if cpos is not None:
+                        self._update_panel_position(cpos[0])
                     counter = 0
                 time.sleep(0.1)
                 counter += 1
@@ -957,8 +952,7 @@ class Monkey():
     def special(self, s: str | int,
                 x: float | None = None,
                 y: float | None = None,
-                cpos_x: float | None = None,
-                cpos_y: float | None = None
+                cpos: tuple[float, float] | None = None,
                 ) -> None:
         """Uses special target button of current monkey and sets possible target location, if necessary.
 
@@ -975,8 +969,7 @@ class Monkey():
             s: Special ability, either 1 (most common) or 2. Strings '1' or '2' are also valid.
             x: If targetable ability, its x-coordinate. Default value is None.
             y: If targetable ability, its y-coordinate. Default value is None.
-            cpos_x: If monkey's current x-coordinate position has changed, update it. Default value is None.
-            cpos_y: If monkey's current y-coordinate position has changed, update it. Default value is None.
+            cpos: If monkey's current coordinate position has changed, update it. Default value is None.
 
         Examples:
 
@@ -1051,8 +1044,8 @@ class Monkey():
             used to relocate bloon/XXXL trap, etc.
 
             Finally, if your monkey has changed its position from original (maybe you're playing Geared or Sanctuary 
-            maps), you can add additional cpos_x and cpos_y arguments to update position. Remember that cpos updates 
-            the monkey location, not the target location!
+            maps), you can add additional cpos argument to update position. Remember that cpos updates the monkey 
+            location, not the target location!
             >>> mortar2 = Monkey('mortar', 0.05, 0.75)
             Placing Mortar... Mortar placed.
             >>> mortar2.special(1, x=0.25, y=0.25)    # this refers to previous monkey location (0.05, 0.75)
@@ -1066,8 +1059,8 @@ class Monkey():
             ability can be even used.
             __
             >>> 
-                mortar2.special(1, x=0.3, y=0.3, cpos_x=0.3, cpos_y=0.85) # points to nothing at (0.3, 0.85)
-            >>> mortar2.special(1, x=0.4, y=0.4,  cpos_x=0.05, cpos_y=0.75) # back to original location
+                mortar2.special(1, x=0.3, y=0.3, cpos=(0.3, 0.85)) # points to nothing at (0.3, 0.85)
+            >>> mortar2.special(1, x=0.4, y=0.4,  cpos=(0.05, 0.75)) # back to original location
             Mortar special 1 used.
         """
         PauseControl.pause_bot()
@@ -1077,29 +1070,26 @@ class Monkey():
             cprint('Wrong input value on special ability; use 1 or 2')
             return
         # current position click; used on monkey-moving maps like Geared/Sanctuary. Updates new coordinates to monkey.
-        if cpos_x is not None:
-            self._pos_x = cpos_x
-        if cpos_y is not None:
-            self._pos_y = cpos_y
+        if cpos is not None:
+            self._pos_x = cpos[0]
+            self._pos_y = cpos[1]
         kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
-        if cpos_x is not None:
-            self._update_panel_position(cpos_x)
+        if cpos is not None:
+            self._update_panel_position(cpos[0])
         kb_mouse.kb_input(hotkeys['special '+str(s)])
         if x is not None and y is not None:
             kb_mouse.click((x, y), shifted=True)
         kb_mouse.press_esc()
-        #time.sleep(0.3)
         cprint(f'{self._name.capitalize()} special {s} used.')
 
-    def sell(self, cpos_x: float | None = None, cpos_y: float | None = None) -> None:
+    def sell(self, cpos: tuple[float, float] | None = None) -> None:
         """Sells this monkey.
 
         Doesn't actually delete the bot monkey object so please don't refer to it afterwards - unless you've created a 
         new monkey and stored it in same variable.
         
         Args:
-            cpos_x: If monkey's current x-coordinate position has changed, update it. Default value is None.
-            cpos_y: If monkey's current y-coordinate position has changed, update it. Default value is None.
+            cpos: If monkey's current coordinate position has changed, update it. Default value is None.
 
         Examples
         --
@@ -1126,10 +1116,9 @@ class Monkey():
         PauseControl.pause_bot()
         if BotVars.defeat_status:
             return
-        if cpos_x is not None:
-            self._pos_x = cpos_x
-        if cpos_y is not None:
-            self._pos_y = cpos_y
+        if cpos is not None:
+            self._pos_x = cpos[0]
+            self._pos_y = cpos[1]
         kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
         time.sleep(0.3)
         kb_mouse.kb_input(hotkeys['sell'])
@@ -1141,8 +1130,7 @@ class Monkey():
     def target(self, set_target: str,
                x: float | None = None,
                y: float | None = None,
-               cpos_x: float | None = None,
-               cpos_y: float | None = None
+               cpos: tuple[float, float] | None = None
                ) -> None:
         """Changes targeting priority of a monkey.
 
@@ -1156,15 +1144,13 @@ class Monkey():
         If monkey needs coordinate position for its targeting e.g. dartling gun direction, heli position etc., use x 
         and y values.
 
-        If monkey position has changed after initial placement (Geared/Sanctuary), use cpos_x and cpos_y to update 
-        current position.
+        If monkey position has changed after initial placement (Geared/Sanctuary), use cpos to update current position.
 
         Args:
             set_target: New targeting priority.
             x: If targeting priority needs coordinates, its x-coordinate. Default value is None.
             y: If targeting priority needs coordinates, its y-coordinate. Default value is None.
-            cpos_x: If monkey's current x-coordinate position has changed, update it. Default value is None.
-            cpos_y: If monkey's current y-coordinate position has changed, update it. Default value is None.
+            cpos: If monkey's current coordinate position has changed, update it. Default value is None.
 
         Targeting options
         --
@@ -1280,26 +1266,25 @@ class Monkey():
             target other monkey abilities etc. You should use 'target' and 'special' in sync, as most targetable 
             abilities can only be accessed with 'special' - and some only with 'special' as we saw with mortar.
 
-            Use cpos_x and cpos_y to update monkey location if it has changed from previous (e.g. map is 
-            Geared or Sanctuary). Unlike with upgrade command, special uses no ocr and thus can't verify where cpos
-            in pointing to.
+            Use cpos to update monkey location if it has changed from previous (e.g. map is Geared or Sanctuary). 
+            Unlike with upgrade command, special uses no ocr and thus can't verify where cpos in pointing to.
             >>> mortar2 = Monkey('mortar', 0.8, 0.2)
             Placing Mortar... Mortar placed.
             >>> glue = Monkey('glue', 0.8, 0.4)
             Placing Glue... Glue placed.
             >>> mortar2.special(1, x=0.5, y=0.5) # this would refer to location (0.8, 0.2)
             Mortar special 1 used.
-            >>> mortar2.special(1, x=0.5, y=0.5, cpos_x=0.8, cpos_y=0.4) # refers to location of glue monkey.
+            >>> mortar2.special(1, x=0.5, y=0.5, cpos=(0.8, 0.4)) # refers to location of glue monkey.
             Mortar special 1 used.
             >>> mortar2.special(1, x=0.5, y=0.5) # cpos updates location so still refers to glue at (0.8, 0.4)
             Mortar special 1 used.
-            >>> mortar2.special(1, x=0.1, y=0.8, cpos_x=0.8, cpos_y=0.2) # finally refers back to mortar2
+            >>> mortar2.special(1, x=0.1, y=0.8, cpos=(0.8, 0.2)) # finally refers back to mortar2
             Mortar special 1 used.
         """
         PauseControl.pause_bot()
         if BotVars.defeat_status:
             return
-        val = self._change_target(set_target.lower(), x , y, cpos_x, cpos_y)
+        val = self._change_target(set_target.lower(), x , y, cpos)
         if val != 'OK':
             self._error('target', set_target, val)
         else:
@@ -1307,7 +1292,7 @@ class Monkey():
         kb_mouse.press_esc() # closes currently opened targeting window   
         self._targeting = set_target.lower()
 
-    def upgrade(self, set_upg: list[str], cpos_x: float | None = None, cpos_y: float | None = None) -> None:
+    def upgrade(self, set_upg: list[str], cpos: tuple[float, float] | None = None) -> None:
         """Upgrades current monkey.
 
         Upgrades are passed a list, which allows to queue multiple upgrades in one call. But even if you need just one 
@@ -1317,8 +1302,7 @@ class Monkey():
         done in order 0-0-0 -> 1-0-0 -> 2-0-0. And if you have multiple choices, like with 0-3-2, then you can 
         obviously have many different paths to get there; just remember to do upgrades in logical order.
 
-        If monkey position has changed after initial placement (Geared/Sanctuary), use cpos_x and cpos_y to update 
-        current position.
+        If monkey position has changed after initial placement (Geared/Sanctuary), use cpos to update current position.
 
         Args:
             set_upg: List of upgrade path strings. Each string is of form 'x-y-z' where 
@@ -1327,8 +1311,7 @@ class Monkey():
 
                 >at most one of x,y,z is 5 and one of remaining paths can be at most 2
                 (max path is 5, crosspath max is 2).          
-            cpos_x: If monkey's current x-coordinate position has changed, update it. Default value is None.
-            cpos_y: If monkey's current y-coordinate position has changed, update it. Default value is None.
+            cpos: If monkey's current coordinate position has changed, update it. Default value is None.
 
         Examples:
             For a single upgrade, you still need the list brackets []
@@ -1402,16 +1385,16 @@ class Monkey():
             Upgrading 2-4-0 Ice to 2-5-0... Upgraded.
 
             On some specific maps, like Geared or Sanctuary, monkey positions change over time. Bot only knows the 
-            original/previous location, so you must update this by passing cpos_x and cpos_y (=current position)
-            arguments. After you enter new coordinates with cpos_x, cpos_y, these values are also set as current pos_x 
-            and pos_y values. Just be careful where you update cpos, as it could point to wrong location and break the
-            upgrading process as ocr can't find the correct upgrade string.
+            original/previous location, so you must update this by passing cpos (=current position) argument. After you 
+            enter new coordinates with cpos, these values are also set as current pos_x and pos_y values. Just be 
+            careful where you update cpos, as it could point to wrong location and break the upgrading process as ocr 
+            can't find the correct upgrade string.
             >>> engi = Monkey('engineer', 0.45, 0.9)
             Placing Engineer... Engineer placed.
             >>> 
-                engi.upgrade(['1-0-0'], cpos_x=0.5, cpos_y=0.9) # this actually points to previous 1-0-1 bomb
+                engi.upgrade(['1-0-0'], cpos=(0.5, 0.9)) # this actually points to previous 1-0-1 bomb
             
-            >>> engi.upgrade(['1-0-0'], cpos_x=0.45, cpos_y=0.9) # this works as point to right location
+            >>> engi.upgrade(['1-0-0'], cpos=(0.45, 0.9)) # this works as point to right location
             Upgrading 0-0-0 Engineer to 1-0-0... Upgraded.
 
             >...a round later, engineer monkey has somehow moved to location (0.75, 0.9)...
@@ -1419,17 +1402,17 @@ class Monkey():
             >>> 
             engi.upgrade(['1-1-0']) # still refers to location (0.5, 0.9) i.e. the bomb monkey
 
-            >>> engi.upgrade(['1-1-0', '2-1-0'], cpos_x=0.45, cpos_y=0.9)
+            >>> engi.upgrade(['1-1-0', '2-1-0'], cpos=(0.45, cpos=0.9))
             Upgrading 1-0-0 Engineer to 1-1-0... Upgraded.
             Upgrading 1-1-0 Engineer to 2-1-0... Upgraded.
 
-            If location hasn't changed since last upgrade, you can leave the cpos arguments out. Or you could add them 
+            If location hasn't changed since last upgrade, you can leave the cpos argument out. Or you could add them 
             anyway even if position has not yet changed, but would like to now current locations clearly after each 
-            step. You can check the sanctuaryHardChimps.py plan in plans folder for an actual use case of cpos args.
+            step. You can check the sanctuaryHardChimps.py plan in plans folder for an actual use case of cpos arg.
            
             Now if map was Geared, for example, then after 8 rounds, a monkey returns to its original position.
 
-            >>> dart.upgrade(['4-2-0'], cpos_x=0.75, cpos_y=0.9)
+            >>> dart.upgrade(['4-2-0'], cpos=(0.75, 0.9))
             Upgrading 3-2-0 Dart to 4-2-0... Upgraded.
 
             >...dart is in position (0.75, 0.9) and 8 rounds pass...
@@ -1447,15 +1430,14 @@ class Monkey():
                             "^[0-2]-0-[0-5]$|^0-[0-2]-[0-5]$", upg) is None:
                     self._error('upgrade', upg, set_upg)
                     return
-            self._do_upgrades(set_upg, cpos_x, cpos_y)
+            self._do_upgrades(set_upg, cpos)
         else:
             self._error('upgrade_list', set_upg)
 
     def target_robo(self, 
                     direction: str, 
                     clicks: int, 
-                    cpos_x: float | None = None,
-                    cpos_y: float | None = None
+                    cpos: tuple[float, float] | None = None
                     ) -> None:
         """Changes robo monkey second arm targeting.
         
@@ -1469,8 +1451,7 @@ class Monkey():
         Args:
             direction (str): Either 'left' or 'right' depending which targeting direction you'd wish to click.
             clicks (int): Total amout of clicks.
-            cpos_x (float | None. Default = None): Updated current x-position.
-            cpos_y (float | None. Default = None): Updated current y-position.
+            cpos (tuple[float, float] | None. Default = None): Updated current position.
         """
         PauseControl.pause_bot()
         if BotVars.defeat_status:
@@ -1478,13 +1459,12 @@ class Monkey():
         if self._name != 'super':
             cprint('This monkey is not a super monkey.')
             return
-        if cpos_x is not None:
-            self._pos_x = cpos_x
-        if cpos_y is not None:
-            self._pos_y = cpos_y
+        if cpos is not None:
+            self._pos_x = cpos[0]
+            self._pos_y = cpos[1]
         kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
-        if cpos_x is not None:
-            self._update_panel_position(cpos_x)
+        if cpos is not None:
+            self._update_panel_position(cpos[0])
         if self._panel_pos == 'left':
             if direction == 'left':
                 kb_mouse.click(get_click('ingame', 'target_leftpanel_leftarrow'), clicks=clicks, shifted=True)
@@ -1502,14 +1482,13 @@ class Monkey():
         kb_mouse.press_esc()
         cprint("Changed robo monkey second arm targeting.")
 
-    def merge(self, x: float, y: float, cpos_x: float | None = None, cpos_y: float | None = None) -> None:
+    def merge(self, x: float, y: float, cpos: tuple[float, float] | None = None) -> None:
         """Merges this beast handler into another.
 
         Args:
             x (float): X-position of beast handler you merge into.
             y (float): Y-position of beast handler you merge into.
-            cpos_x (float | None. Default = None): Updated current x-position.
-            cpos_y (float | None. Default = None): Updated current y-position.
+            cpos (tuple[float, float] | None. Default = None): Updated current position.
         """
         PauseControl.pause_bot()
         if BotVars.defeat_status:
@@ -1517,13 +1496,12 @@ class Monkey():
         if self._name != 'beast':
             cprint("This monkey is not a beast handler.")
             return
-        if cpos_x is not None:
-            self._pos_x = cpos_x
-        if cpos_y is not None:
-            self._pos_y = cpos_y
+        if cpos is not None:
+            self._pos_x = cpos[0]
+            self._pos_y = cpos[1]
         kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
-        if cpos_x is not None:
-            self._update_panel_position(cpos_x)
+        if cpos is not None:
+            self._update_panel_position(cpos[0])
         kb_mouse.kb_input(hotkeys["merge beast"])
         kb_mouse.click((x,y), shifted=True)
         time.sleep(0.5)
@@ -1531,14 +1509,13 @@ class Monkey():
         time.sleep(0.1)
         cprint("Beast merged.") 
 
-    def center(self, x: float, y: float, cpos_x: float | None = None, cpos_y: float | None = None) -> None:
+    def center(self, x: float, y: float, cpos: tuple[float, float] | None = None) -> None:
         """Change monkey ace centered path location.
 
         Args:
             x (float): X-coordinate.
             y (float): Y-coordinate.
-            cpos_x (float | None. Default = None): Updated current x-position.
-            cpos_y (float | None. Default = None): Updated current y-position.
+            cpos (tuple[float, float] | None. Default = None): Updated current position.
         """
         PauseControl.pause_bot()
         if BotVars.defeat_status:
@@ -1546,13 +1523,12 @@ class Monkey():
         if self._name != 'ace':
             cprint("Can only be used on ace.")
             return
-        if cpos_x is not None:
-            self._pos_x = cpos_x
-        if cpos_y is not None:
-            self._pos_y = cpos_y
+        if cpos is not None:
+            self._pos_x = cpos[0]
+            self._pos_y = cpos[1]
         kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
-        if cpos_x is not None:
-            self._update_panel_position(cpos_x)
+        if cpos is not None:
+            self._update_panel_position(cpos[0])
         kb_mouse.kb_input(hotkeys["centered path"])
         kb_mouse.click((x,y), shifted=True)
         kb_mouse.press_esc()
