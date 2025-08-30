@@ -11,7 +11,7 @@ alch 5-2-1
 spike 2-0-5
 village 2-0-2
 _______________________________________
-'No Harvest' achievement can be obtained as no corn is removed
+No corn is removed which unlocks 'No Harvest' achievement.
 """
 
 from._plan_imports import *

@@ -10,8 +10,6 @@ boat 5-0-2
 
 village 4-2-0
 _______________________________________
-Copy of hauntedHardChimps:
-    - tower position changed
 """
 
 from._plan_imports import *

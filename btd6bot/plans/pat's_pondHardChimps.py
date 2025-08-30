@@ -74,10 +74,10 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             alch.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0'])
         elif current_round == 61:
             village.upgrade(['3-1-0','3-2-0'])
-        elif current_round == 73:
-            tack.upgrade(['2-0-5'])
-        elif current_round == 87:
+        elif current_round == 81:
             alch.upgrade(['5-0-0'])
+        elif current_round == 87:
+            tack.upgrade(['2-0-5'])
         elif current_round == 89:
             village.upgrade(['4-2-0'])
         elif current_round == 91:

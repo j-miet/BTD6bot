@@ -43,6 +43,10 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             druid1.upgrade(['1-0-0'])
         elif current_round == 18:
             druid1.upgrade(['2-0-0'])
+        elif current_round == 21:
+            sniper1.target('first')
+        elif current_round == 22:
+            sniper1.target('strong')
         elif current_round == 23:
             desp1.upgrade(['0-1-0'])
         elif current_round == 26:

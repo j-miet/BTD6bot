@@ -132,4 +132,4 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             ability(5,2)
             village.upgrade(['3-0-2'])
         elif current_round == 100:
-            ability(3,10)
+            ability(3,8)

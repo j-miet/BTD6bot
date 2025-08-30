@@ -84,6 +84,8 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             ace3.upgrade(['2-0-1','2-0-2','2-0-3'])
         elif current_round == 93:
             ability(2,3)
+        elif current_round == 94:
+            wait(11) # prevents bot from misinterpreting end of round too early, otherwise round 95 ability timing fails
         elif current_round == 95:
             ability(2,10)
         elif current_round == 96:

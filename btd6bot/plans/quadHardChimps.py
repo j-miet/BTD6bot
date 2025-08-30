@@ -89,7 +89,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             ability(1, 2.25)
         elif current_round == 41:
             sniper_tl.upgrade(['1-1-0'])
-            sniper_tl.special()
+            sniper_tl.special(1)
             spike_bl.upgrade(['1-0-0', '1-0-1', '1-0-2'])
             spike_bl.target('smart')
         elif current_round == 43:
