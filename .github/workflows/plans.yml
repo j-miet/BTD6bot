@@ -5,7 +5,7 @@ on:
     branches: 
       - dev
     paths:
-      - .btd6bot/plans/**.py
+      - 'btd6bot/plans/**.py'
       - '!btd6bot/plans/_plan_imports.py'
       - '!btd6bot/plans/__init__.py.py'
 
