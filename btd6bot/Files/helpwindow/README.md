@@ -10,9 +10,9 @@ It includes a simple graphical user interface (**gui**): not visually impressive
 Support for multiplayer/competitive modes such as races, bosses, contested territory, boss rush, etc. will not be 
 added.
 
-Bot is quite complex and has been tested thoroughly. Still, you may encounter bugs.  
+Bot is quite complex and has been tested thoroughly, but you may still encounter bugs.  
 
-Btd6 includes elements of **randomness** (**rng**), which cannot be entirely removed. On top of this, bot's text 
+Btd6 includes elements of **randomness** (**rng**), which cannot be removed entirely. On top of this, bot's text 
 detection times can vary ever so slightly which alters upgrade and ability timings etc. So if you plan to use bot to
 obtain *Chimps black medals* on harder advanced and expert maps, it could take several attempts before getting a 
 successful run.
@@ -26,11 +26,11 @@ you can always run bot offline. <u>You have been warned</u>.***
 
 ---
 **[Update status]    
-Updated for Bloons TD 6 version ``49``**
+Updated for Bloons TD 6 version ``50``**
   
-- For now, bot is planned to be updated after each major game update (next being update ``50``)
+- For now, bot is planned to be updated after each major game update
 - Other than that, new game plans might be added on an infrequent basis
-    - For a list of all current plans, [see this](docs/Plans.md)
+    - All available plans are listed [here](docs/Plans.md)
 
 **[Supported display resolutions]**
 
@@ -54,9 +54,9 @@ all of them. Currently:
 
 - **MacOS**:
   - Gui includes custom hotkeys, but these are disabled for Mac systems. Reason is Python libraries used for gui and 
-  hotkeys (``tkinter`` & ``pynput`` respectively) don't work together.
+  hotkeys (``tkinter`` & ``pynput`` respectively) don't work together. Bot can also be run without gui by using ``-no-gui`` command line argument.
   - Mac uses ``16:10`` aspect ratio as a baseline and lacks the support for recommended ``16:9`` resolutions. Again, 
-  this can probably be fixed by using the tricks explained above in resolution section, but it's a lot of work.
+  this can probably be fixed by using the tricks explained above in resolution section, but it's a cumbersome task.
 
 - **Linux/Unix** has not been tested.
 
@@ -94,7 +94,7 @@ all of them. Currently:
 
 - [Tested with ``1920x1080`` resolution + ``fullscreen``, with around ``144`` constant fps]  
 All **advanced and expert map on CHIMPS difficulty are supported**. As bot is required to finish any plan in one go, 
-this also means CHIMPS includes **black medal/border**. For all supported plans, check [this list](docs/Plans.md).
+this also means CHIMPS includes **black medal/border**.
 
 - Graphical user interface, made with Python&#39;s build-in Tkinter library. Very simplified when it comes to visuals,
 but easy to use. Here are some of the properties:
@@ -1221,7 +1221,7 @@ For examples, see *dark_castleEasyDeflation.py* and *infernalMediumApopalypse.py
 With commands, you can make bot to do stuff during rounds.
 
     
-For now, you can ignore cpos_x and cpos_y arguments; they are only needed for maps with changing positions e.g. Geared
+For now, you can ignore cpos argument; they are only needed for maps with changing positions e.g. Geared
 and Sanctuary. There are also other important topics you should be aware of; all of them are explained later in 
 [Advanced](#advanced) section.
 
@@ -1233,13 +1233,13 @@ For practical examples, check any plan file in ``btd6bot/plans`` folder.
 | Command (with arguments)      | Description | Examples |
 |-|-|-|
 | Monkey(name, pos_x, pos_y) | Places a monkey ``name`` at location (``x``,``y``). **To access commands, store it in a variable with recognizable name**. <br>All supported monkeys can be found [here](#monkey-names). | <pre>dart = Monkey('dart', 0.5, 0.5) <br>heli1 = Monkey('heli', 0.1, 0)</pre>
-| target(set_target, x, y, cpos_x, cpos_y) | Change monkey targeting to ``set_target``. For non-targetable monkeys, simply enter the target string. <br>For target options with target coordinate (x, y), pass ``x`` and ``y`` values.<br>All possible targeting options are listed [here](#targeting). | <pre>dart.target('strong')<br>heli1.target('lock', 0.1, 0.15)</pre>
-| upgrade(set_upg, cpos_x, cpos_y) | Upgrade a monkey. Upgrades are given as a list of strings ``set_upg`` of form 't-m-b' where t=top, m=middle, b=bottom<br> path i.e. they follow the usual path standard. Multiple upgrade can thus be queued in one call. <br>Make sure path is valid: cannot do ``['0-0-1','0-0-3']``. | <pre>dart.upgrade(['1-0-0']) <br>dart.upgrade(['2-0-0-','2-1-0','3-1-0']) </pre>
-| special(s, x, y, cpos_x, cpos_y) | Use special ability 1 or 2. Thus, ``s`` is either ``1`` or ``2``. If targetable special, give also ``x`` and ``y`` for target location. <br>Is required for moving mortar and dartling location. Special 2 is rarer: some uses would be beast handler second <br>crosspath beast location and (for heroes) Rosalia replace location. | <pre>heli.special(1, 0.1, 0.1) <br>mortar.special(1, 0.1, 0.1) <br>dartling.special(1, 0.5, 0.785) <br>sniper.special(1) <br>beast.special(2)</pre>
-| sell(cpos_x, cpos_y) | Sells current monkey. On code level, object still exists so please don&#39;t refer to it afterwards, unless you&#39;ve inserted<br> another non-sold monkey in same variable. | <pre>dart.sell()</pre>
-| target_robo(direction, clicks, cpos_x, cpos_y) | Change second arm targeting of a robo monkey. Current targeting value must be tracked manually: then, you simply <br>pass ``direction`` as ``'left'`` or ``'right'`` to click either left or right arrow direction and give amount of ``clicks`` to <br>this direction. For example, after placing a robo monkey, if first hand is on &#39;first&#39; then second is set on &#39;last&#39;. Clicking <br>left arrow once<br> changes it to &#39;close&#39;. And clicking right once would change it back to &#39;last&#39;. | <pre>super.target_robo('left', 2)</pre>
-| merge(x, y, cpos_x, cpos_y) | Merge this beast with another at location (``x``, ``y``) i.e. target beast gets the benefit of merging, this one becomes idle. | <pre>beast.merge(0.5, 0.5)</pre>
-| center(x, y, cpos_x, cpos_y) | Change x-x-2 ace center path location to (``x``, ``y``). | <pre>ace.center(0.45, 0.35)</pre>
+| target(set_target, x, y, cpos) | Change monkey targeting to ``set_target``. For non-targetable monkeys, simply enter the target string. <br>For target options with target coordinate (x, y), pass ``x`` and ``y`` values.<br>All possible targeting options are listed [here](#targeting). | <pre>dart.target('strong')<br>heli1.target('lock', 0.1, 0.15)</pre>
+| upgrade(set_upg, cpos) | Upgrade a monkey. Upgrades are given as a list of strings ``set_upg`` of form 't-m-b' where t=top, m=middle, b=bottom<br> path i.e. they follow the usual path standard. Multiple upgrade can thus be queued in one call. <br>Make sure path is valid: cannot do ``['0-0-1','0-0-3']``. | <pre>dart.upgrade(['1-0-0']) <br>dart.upgrade(['2-0-0-','2-1-0','3-1-0']) </pre>
+| special(s, x, y, cpos) | Use special ability 1 or 2. Thus, ``s`` is either ``1`` or ``2``. If targetable special, give also ``x`` and ``y`` for target location. <br>Is required for moving mortar and dartling location. Special 2 is rarer: some uses would be beast handler second <br>crosspath beast location and (for heroes) Rosalia replace location. | <pre>heli.special(1, 0.1, 0.1) <br>mortar.special(1, 0.1, 0.1) <br>dartling.special(1, 0.5, 0.785) <br>sniper.special(1) <br>beast.special(2)</pre>
+| sell(cpos) | Sells current monkey. On code level, object still exists so please don&#39;t refer to it afterwards, unless you&#39;ve inserted<br> another non-sold monkey in same variable. | <pre>dart.sell()</pre>
+| target_robo(direction, clicks, cpos) | Change second arm targeting of a robo monkey. Current targeting value must be tracked manually: then, you simply <br>pass ``direction`` as ``'left'`` or ``'right'`` to click either left or right arrow direction and give amount of ``clicks`` to <br>this direction. For example, after placing a robo monkey, if first hand is on &#39;first&#39; then second is set on &#39;last&#39;. Clicking <br>left arrow once<br> changes it to &#39;close&#39;. And clicking right once would change it back to &#39;last&#39;. | <pre>super.target_robo('left', 2)</pre>
+| merge(x, y, cpos) | Merge this beast with another at location (``x``, ``y``) i.e. target beast gets the benefit of merging, this one becomes idle. | <pre>beast.merge(0.5, 0.5)</pre>
+| center(x, y, cpos) | Change x-x-2 ace center path location to (``x``, ``y``). | <pre>ace.center(0.45, 0.35)</pre>
 
 **Heroes**
 -
@@ -1249,8 +1249,8 @@ For practical examples, check any plan file in ``btd6bot/plans`` folder.
 | Hero(pos_x, pos_y) | Places a hero at location (``x``,``y``). **To access commands, store it in a variable with recognizable name**. <br>All available heroes are listed [here](#heroes-1). | <pre>hero = Hero(0.5, 0.5)</pre>
 | target<br> special<br>sell | Works exactly the same as with Monkey, see the table above. | <pre>hero.target('last')<br>hero.special(2, 0.1, 0.1)<br>hero.sell()</pre>
 | force_target() | Currently, only use is to update internal targeting flag for bot when ``Etienne`` hits level ``11``: because bot is unable to <br>track hero xp, it cannot auto-update divide & conquer to zone control. If you use ``Etienne`` and plan to change his <br>targeting after lvl 11, you must call this command at the beginning of the round he reaches this milestone; otherwise <br>bot and game have different targeting value which could cause issues. | <pre>hero.force_target() </pre>
-| shop(item, target_x, target_y, cpos_x, cpos_y) | Use Geraldo&#39;s shop ``item`` at location (``target_x``, ``target_y``). Item is given as an integer 1-16: first item being top left, <br>last being bottom right, order of items is left to right, top to bottom. This means first row is items 1-4, second 5-8, <br>third 9-12, fourth 13-16 | <pre>hero.shop(10, 0.5, 0.5)</pre>
-| spellbook(spells, cpos_x, cpos_y) | Use Corvus&#39;s spellbook. Similar to Geraldo&#39;s shop, but ``spells`` takes a **list** of integers 1-16; order still the same <br>(left to right, top to bottom). You can pass multiple integers to chain spells. | <pre>hero.spellbook([1])<br>hero.spellbook([20, 6, 2, 3])</pre>
+| shop(item, target_x, target_y, cpos) | Use Geraldo&#39;s shop ``item`` at location (``target_x``, ``target_y``). Item is given as an integer 1-16: first item being top left, <br>last being bottom right, order of items is left to right, top to bottom. This means first row is items 1-4, second 5-8, <br>third 9-12, fourth 13-16 | <pre>hero.shop(10, 0.5, 0.5)</pre>
+| spellbook(spells, cpos) | Use Corvus&#39;s spellbook. Similar to Geraldo&#39;s shop, but ``spells`` takes a **list** of integers 1-16; order still the same <br>(left to right, top to bottom). You can pass multiple integers to chain spells. | <pre>hero.spellbook([1])<br>hero.spellbook([20, 6, 2, 3])</pre>
 
 **General**
 -
@@ -1270,9 +1270,9 @@ For practical examples, check any plan file in ``btd6bot/plans`` folder.
 
 These topics are more difficult to grasp, but necessary for creating more complex plans.
 
-- [**cpos**] ``cpos_x`` and ``cpos_y`` update current x and y positions. If map such as Geared moves your monkey
+- [**cpos**] ``cpos`` updates current x and y positions. If map such as Geared moves your monkey
  location from previous and you need to call a command on this monkey, cpos must be used. Otherwise bot thinks the
-monkey is still at previous location which of course will break it. To use cpos, simply add ``cpos_x=..., cpos_y=...`` 
+monkey is still at previous location which of course will break it. To use cpos, simply add ``cpos=(x, y)`` 
 arguments at the end and insert the new location coordinate. 
     - Note that cpos will also update this as current coordinate, so if monkey has not changes it&#39;s position since 
     last cpos command, you don&#39;t need to add them again. 
@@ -1305,7 +1305,7 @@ execution.
     performed:
 
         sniper3 = Monkey('sniper', 0.1619791666667, 0.0268518518519, placement_check=False)
-        sniper3.target('strong', cpos_x=0.1291666666667, cpos_y=0.0601851851852)
+        sniper3.target('strong', cpos=(0.1291666666667, 0.0601851851852))
     
     Here, as you can see, sniper ignores the placement check, and next target command updates the (x,y) position of 
     sniper by moving slightly left and up from initial x and y coordinates.
@@ -1326,7 +1326,7 @@ execution.
     argument keyword. For example, in map Geared, you placed a dart monkey, just like in code above. Now, you want to 
     change its &#39;first&#39; to &#39;strong&#39;, but to do this, you need to update its current position because gear
     has moved since it&#39;s initial placement. So maybe the new position is (0.45, 0.3). To update dart position, the
-    cpos_x, cpos_y arguments are needed. Now, target command has syntax ``target(set_target, x, y, cpos_x, cpos_y)`` 
+    cpos argument is needed. Now, target command has syntax ``target(set_target, x, y, cpos)`` 
     which means if you write
 
         dart.target('strong', 0.45, 0.3)
@@ -1342,7 +1342,7 @@ execution.
 
     Because x and y values are not needed for dart, command needs to be provided with argument names:
 
-        dart.target('strong', cpos_x=0.45, cpos_y=0.3)
+        dart.target('strong', cpos=(0.45, 0.3))
 
     This would do what we originally wanted. Of course, something like
 
@@ -1350,7 +1350,7 @@ execution.
 
     would also work in sense, because it does the same as
 
-        dart.target('strong', x=0.2, y=0.3, cpos_x=0.45, cpos_y=0.3)
+        dart.target('strong', x=0.2, y=0.3, cpos=(0.45, 0.3))
     
     but again, bot would set the target location of 0-0-0 dart at (0.2, 0.3). Luckily, it would cause no harm, but is 
     not what was intended.
@@ -1395,13 +1395,13 @@ Use these values when placing a new monkey with ``Monkey(name, pos_x, pos_y)`` c
 -
 
  Hero for current plan is selected based on ``[Hero]`` value inside the plan file info panel.  
-*In the following table, Heroes are categorized by their xp multiplier.*
+*In the following table, Heroes are categorized by their xp ratio. Higher ratio means slower xp gain.*
 
 | x1            | x1.425        | x1.5          | x1.71
 |-|-|-|-|
 | Etienne       | Brickell      | Benjamin      | Adora
 | Geraldo       | Corvus        | Psi           | Churchill
-| Gwen          | Ezili
+| Gwen          | Ezili         | Silas         |
 | Obyn          | Pat
 | Quincy        | Rosalia
 | Striker       | Sauda
@@ -1409,7 +1409,7 @@ Use these values when placing a new monkey with ``Monkey(name, pos_x, pos_y)`` c
 **Targeting**
 -
 
-Use ``target(set_target, x, y, cpos_x, cpos_y)`` to change targeting.
+Use ``target(set_target, x, y, cpos)`` to change targeting.
 
 
 | Basic (**1**)     | heli          | ace                   | sniper            | mortar (**4**)| dartling          | spike (**6**)
@@ -1437,9 +1437,9 @@ status is reverted back to ``0``.
 **5**: Dartling guns behave a bit differently and require both ``target`` and ``special`` commands for (re)targeting. 
 Some other monkeys, like ``heli`` can benefit from this as well.
 - For ``dartling``, use ``target('locked', x, y)`` the first time to set direction. 
-- For ``heli``, use ``target('lock', x, y)`` the first time to set hover position.
+- For ``heli``, bot automatically calls ``target('lock', x, y)`` the first time to set hover position to where helipad was placed.
 
-To retarget either of monkeys, you must use ``special(1, x, y)`` instead. This is because bot has been programmed to 
+To retarget either of monkeys in their locked state, you must use ``special(1, x, y)`` instead. This is because bot has been programmed to 
 require new targeting value to be different from current e.g. you can&#39;t set a monkey on ``first`` if it already has
 this value. Therefore, when trying set dartling/heli to ``locked``/``lock`` respectively, same rule applies.
 
@@ -1498,6 +1498,7 @@ So only files you likely need to modify are
 - ``Files``
     - ``_ocr_upgradedata.json``
     - ``text files/hotkeys.txt``
+    - ``custom_locations.json``
 
 
 ## New monkeys
@@ -1650,6 +1651,7 @@ So only files you likely need to modify are
         2. **click location as a tuple**.  
         Note that hero locations **can change between updates so you might need to change location of other heroes as 
         well.**
+    - (*optional*) update hero dictionary in ``Files/custom_locations.json``
 
 This in in fact the only mandatory step for adding heroes. However, if hero uses custom targeting options 
 (other than **first**, **close**, **last**, **strong**) or requires custom commands 
