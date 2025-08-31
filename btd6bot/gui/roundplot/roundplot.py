@@ -211,7 +211,7 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
         update_date = time_data["update_date"]
         fig.suptitle(f'Round commands and round times of current plan "{plan_name}"\n'
                     r'Time data is updated after each successful run (current date: ' + r"$\bf{%s}$" % update_date +'; '
-                    'format is YYYY/MM/DD',
+                    'format is YYYY/MM/DD)',
                     fontsize='medium')
         plan_rounds: list[str] = time_data["rounds"]
         plan_times: list[str] = time_data["times"]
