@@ -96,7 +96,7 @@ all of them. Currently:
 All **advanced and expert map on CHIMPS difficulty are supported**. As bot is required to finish any plan in one go, 
 this also means CHIMPS includes **black medal/border**.
 
-- Graphical user interface, made with Python&#39;s build-in Tkinter library. Very simplified when it comes to visuals,
+- Graphical user interface, made with Python&#39;s build-in Tkinter library. Very simple when it comes to visuals,
 but easy to use. Here are some of the properties:
 
     - set bot hotkeys
@@ -109,7 +109,7 @@ but easy to use. Here are some of the properties:
     For gui images and in-depth look on all features, see [GUI windows](#gui-windows) section.
 
   <u>Bot can also be run without gui by using ``-no-gui`` command line argument</u>. This version shares settings with 
-  gui version so ideally you change settings in gui, close it and then run no-gui one after.
+  gui version so ideally you change settings in gui, then close it and run no-gui one after.
  
 - Support for various resolutions settings:
 
