@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import signal
+import sys
 import threading
 import time
 
@@ -115,9 +116,10 @@ class NoGui:
                 if self.bot_thread_active:
                     gui_tools.terminate_thread(self.bot_thread)
 
-        kb_listener = pynput.keyboard.Listener(on_press = exit)
-        kb_listener.daemon = True
-        kb_listener.start()
+        if sys.platform != 'darwin':
+            kb_listener = pynput.keyboard.Listener(on_press = exit)
+            kb_listener.daemon = True
+            kb_listener.start()
 
         with open(Path(__file__).parent/'Files'/'gui_vars.json') as f:
             if json.load(f)["logging"]:
