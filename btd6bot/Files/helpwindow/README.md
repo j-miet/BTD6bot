@@ -30,7 +30,7 @@ Updated for Bloons TD 6 version ``50``**
   
 - For now, bot is planned to be updated after each major game update
 - New game plans might also get added on an infrequent basis
-  - All available plans are listed [here](docs/Plans.md)
+    - All available plans are listed [here](docs/Plans.md)
 
 **[Supported display resolutions]**
 
@@ -53,13 +53,8 @@ all of them. Currently:
 - **Windows (10 or higher) is fully supported and thus recommended.**
 
 - **MacOS**:
-<<<<<<< HEAD
-  - Gui includes custom hotkeys, but these are disabled for Mac systems. Reason is Python libraries used for gui and 
-  hotkeys (``tkinter`` & ``pynput`` respectively) don't work together. Bot can also be run without gui by using ``-no-gui`` command line argument.
-=======
   - Custom gui-only hotkeys are disabled for Mac systems. Reason is Python libraries used for gui and 
   hotkeys (``tkinter`` & ``pynput`` respectively) interfere with each other due to them running on same main thread. 
->>>>>>> 8b09894ad57a42c7d5afd0f504261bd8aa04c0e6
   - Mac uses ``16:10`` aspect ratio as a baseline and lacks the support for recommended ``16:9`` resolutions. Again, 
   this can probably be fixed by using the tricks explained above in resolution section, but it's a cumbersome task.
 
@@ -101,7 +96,7 @@ all of them. Currently:
 All **advanced and expert map on CHIMPS difficulty are supported**. As bot is required to finish any plan in one go, 
 this also means CHIMPS includes **black medal/border**.
 
-- Graphical user interface, made with Python&#39;s build-in Tkinter library. Very simplified when it comes to visuals,
+- Graphical user interface, made with Python&#39;s build-in Tkinter library. Very simple when it comes to visuals,
 but easy to use. Here are some of the properties:
 
     - set bot hotkeys
@@ -114,7 +109,7 @@ but easy to use. Here are some of the properties:
     For gui images and in-depth look on all features, see [GUI windows](#gui-windows) section.
 
   <u>Bot can also be run without gui by using ``-no-gui`` command line argument</u>. This version shares settings with 
-  gui version so ideally you change settings in gui, close it and then run no-gui one after.
+  gui version so ideally you change settings in gui, then close it and run no-gui one after.
  
 - Support for various resolutions settings:
 
@@ -1231,11 +1226,7 @@ For examples, see *dark_castleEasyDeflation.py* and *infernalMediumApopalypse.py
 With commands, you can make bot to do stuff during rounds.
 
     
-<<<<<<< HEAD
-For now, you can ignore cpos argument; they are only needed for maps with changing positions e.g. Geared
-=======
 For now, you can ignore ``cpos`` argument; it's mostly needed for maps with changing positions e.g. Geared
->>>>>>> 8b09894ad57a42c7d5afd0f504261bd8aa04c0e6
 and Sanctuary. There are also other important topics you should be aware of; all of them are explained later in 
 [Advanced](#advanced) section.
 
@@ -1287,11 +1278,7 @@ These topics are more difficult to grasp, but necessary for creating more comple
 - [**cpos**] ``cpos`` updates current x and y positions. If map such as Geared moves your monkey
  location from previous and you need to call a command on this monkey, cpos must be used. Otherwise bot thinks the
 monkey is still at previous location which of course will break it. To use cpos, simply add ``cpos=(x, y)`` 
-<<<<<<< HEAD
-arguments at the end and insert the new location coordinate. 
-=======
 argument at the end and insert the new location coordinate. 
->>>>>>> 8b09894ad57a42c7d5afd0f504261bd8aa04c0e6
     - Note that cpos will also update this as current coordinate, so if monkey has not changes it&#39;s position since 
     last cpos command, you don&#39;t need to add them again. 
     
@@ -1455,13 +1442,6 @@ status is reverted back to ``0``.
 **5**: Dartling guns behave a bit differently and require both ``target`` and ``special`` commands for (re)targeting. 
 Some other monkeys, like ``heli`` can benefit from this as well.
 - For ``dartling``, use ``target('locked', x, y)`` the first time to set direction. 
-<<<<<<< HEAD
-- For ``heli``, bot automatically calls ``target('lock', x, y)`` the first time to set hover position to where helipad was placed.
-
-To retarget either of monkeys in their locked state, you must use ``special(1, x, y)`` instead. This is because bot has been programmed to 
-require new targeting value to be different from current e.g. you can&#39;t set a monkey on ``first`` if it already has
-this value. Therefore, when trying set dartling/heli to ``locked``/``lock`` respectively, same rule applies.
-=======
 - For ``heli``, bot automatically calls ``target('lock', x, y)`` the first time to set hover position to where helipad 
 was placed.
 
@@ -1469,7 +1449,6 @@ To retarget either of monkeys in their locked state, you must use ``special(1, x
 been programmed to require new targeting value to be different from current e.g. you can&#39;t set a monkey on ``first`` 
 if it already has this value. Therefore, when trying set dartling/heli to ``locked``/``lock`` respectively, same rule 
 applies.
->>>>>>> 8b09894ad57a42c7d5afd0f504261bd8aa04c0e6
 
 **6**: Requires ``x-x-2+ spike``. With ``set``, you can set initial location with ``target('set', x, y)`` and must 
 use ``special(1, x, y)`` afterwards.
