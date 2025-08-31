@@ -29,8 +29,8 @@ you can always run bot offline. <u>You have been warned</u>.***
 Updated for Bloons TD 6 version ``50``**
   
 - For now, bot is planned to be updated after each major game update
-- Other than that, new game plans might be added on an infrequent basis
-    - All available plans are listed [here](docs/Plans.md)
+- New game plans might also get added on an infrequent basis
+  - All available plans are listed [here](docs/Plans.md)
 
 **[Supported display resolutions]**
 
@@ -53,8 +53,13 @@ all of them. Currently:
 - **Windows (10 or higher) is fully supported and thus recommended.**
 
 - **MacOS**:
+<<<<<<< HEAD
   - Gui includes custom hotkeys, but these are disabled for Mac systems. Reason is Python libraries used for gui and 
   hotkeys (``tkinter`` & ``pynput`` respectively) don't work together. Bot can also be run without gui by using ``-no-gui`` command line argument.
+=======
+  - Custom gui-only hotkeys are disabled for Mac systems. Reason is Python libraries used for gui and 
+  hotkeys (``tkinter`` & ``pynput`` respectively) interfere with each other due to them running on same main thread. 
+>>>>>>> 8b09894ad57a42c7d5afd0f504261bd8aa04c0e6
   - Mac uses ``16:10`` aspect ratio as a baseline and lacks the support for recommended ``16:9`` resolutions. Again, 
   this can probably be fixed by using the tricks explained above in resolution section, but it's a cumbersome task.
 
@@ -92,7 +97,7 @@ all of them. Currently:
 
 # <u>Features</u>
 
-- [Tested with ``1920x1080`` resolution + ``fullscreen``, with around ``144`` constant fps]  
+- [Tested on ``1920x1080`` resolution + ``fullscreen``, with around ``144`` constant fps]  
 All **advanced and expert map on CHIMPS difficulty are supported**. As bot is required to finish any plan in one go, 
 this also means CHIMPS includes **black medal/border**.
 
@@ -107,6 +112,9 @@ but easy to use. Here are some of the properties:
     - see all the printed text that bot outputs during runtime, etc.
  
     For gui images and in-depth look on all features, see [GUI windows](#gui-windows) section.
+
+  <u>Bot can also be run without gui by using ``-no-gui`` command line argument</u>. This version shares settings with 
+  gui version so ideally you change settings in gui, close it and then run no-gui one after.
  
 - Support for various resolutions settings:
 
@@ -654,7 +662,8 @@ border width which gets added on each side of screen
     Thus, height can only get values >= 0 because other resolution can only possibly add more border.
     - 16:9 however includes a small border on both left and right side. It's length? Depends on user's monitor base 
     resolution and current game resolution so it cannot be determined automatically. Thus, width can get both negative
-    and positive values because on certain aspect ratios, border is smaller/is removed altogether OR is wider than base border.
+    and positive values because on certain aspect ratios, border is smaller/is removed altogether OR is wider than base 
+    border.
 To measure border pixel width/height, use ``btd6bot/tools/show_coordinates`` tool or something similar.
 
 Unfortunately shifting can only adjust non-static coordinates (monkey/hero locations, ability targets etc.). Static 
@@ -664,8 +673,8 @@ editing the ``btd6bot/Files/custom_locations.json`` file.
 For 1. 
 - use ``btd6bot/tools/show_coordinates`` tool and measure the width or height of borders in pixels
 - use the *Enable in-game resolution shift* setting and set a custom value. With height (top+bottom borders) you simply
-add the height if necessary. With width, you have to just test approximate value because 16:9 resolution has a base border length
-so thinner/wider border must take this into account.
+add the height if necessary. With width, you have to just test approximate value because 16:9 resolution has a base 
+border length so thinner/wider border must take this into account.
 
 For 2.
 - open ``btd6bot/Files/custom_locations.json``. You can also open ``btd6bot/bot/locations.py`` to check the info docs 
@@ -834,7 +843,8 @@ option, which was already introduced when setting up the bot first time.
 - **Enable in-game resolution shift**: Shifts all non-static coordinates relative to middle coordinate by given amount of 
 pixels. Width and height can be adjusted individually. Positive values shift towards mid point, negatives away from it.
 
-    It's main use is to move coordinates out of border textures when user has a non-16:9 aspect ratio resolution. See [this section](#any-aspect-ratio) of advanced resolutions guide.
+    It's main use is to move coordinates out of border textures when user has a non-16:9 aspect ratio resolution. See 
+    [this section](#any-aspect-ratio) of advanced resolutions guide.
 
 - **Ocr time limit**: How long will bot attempt to search for various text flags before it gives up and attempts to
 return to main menu. Typically, this should never occur so a high value of 300 seconds or more is recommended: this 
@@ -1221,7 +1231,11 @@ For examples, see *dark_castleEasyDeflation.py* and *infernalMediumApopalypse.py
 With commands, you can make bot to do stuff during rounds.
 
     
+<<<<<<< HEAD
 For now, you can ignore cpos argument; they are only needed for maps with changing positions e.g. Geared
+=======
+For now, you can ignore ``cpos`` argument; it's mostly needed for maps with changing positions e.g. Geared
+>>>>>>> 8b09894ad57a42c7d5afd0f504261bd8aa04c0e6
 and Sanctuary. There are also other important topics you should be aware of; all of them are explained later in 
 [Advanced](#advanced) section.
 
@@ -1273,7 +1287,11 @@ These topics are more difficult to grasp, but necessary for creating more comple
 - [**cpos**] ``cpos`` updates current x and y positions. If map such as Geared moves your monkey
  location from previous and you need to call a command on this monkey, cpos must be used. Otherwise bot thinks the
 monkey is still at previous location which of course will break it. To use cpos, simply add ``cpos=(x, y)`` 
+<<<<<<< HEAD
 arguments at the end and insert the new location coordinate. 
+=======
+argument at the end and insert the new location coordinate. 
+>>>>>>> 8b09894ad57a42c7d5afd0f504261bd8aa04c0e6
     - Note that cpos will also update this as current coordinate, so if monkey has not changes it&#39;s position since 
     last cpos command, you don&#39;t need to add them again. 
     
@@ -1437,13 +1455,24 @@ status is reverted back to ``0``.
 **5**: Dartling guns behave a bit differently and require both ``target`` and ``special`` commands for (re)targeting. 
 Some other monkeys, like ``heli`` can benefit from this as well.
 - For ``dartling``, use ``target('locked', x, y)`` the first time to set direction. 
+<<<<<<< HEAD
 - For ``heli``, bot automatically calls ``target('lock', x, y)`` the first time to set hover position to where helipad was placed.
 
 To retarget either of monkeys in their locked state, you must use ``special(1, x, y)`` instead. This is because bot has been programmed to 
 require new targeting value to be different from current e.g. you can&#39;t set a monkey on ``first`` if it already has
 this value. Therefore, when trying set dartling/heli to ``locked``/``lock`` respectively, same rule applies.
+=======
+- For ``heli``, bot automatically calls ``target('lock', x, y)`` the first time to set hover position to where helipad 
+was placed.
 
-**6**: Requires ``x-x-2+ spike``. With ``set``, you can set initial location with ``target('set', x, y)`` and must use ``special(1, x, y)`` afterwards.
+To retarget either of monkeys in their locked state, you must use ``special(1, x, y)`` instead. This is because bot has 
+been programmed to require new targeting value to be different from current e.g. you can&#39;t set a monkey on ``first`` 
+if it already has this value. Therefore, when trying set dartling/heli to ``locked``/``lock`` respectively, same rule 
+applies.
+>>>>>>> 8b09894ad57a42c7d5afd0f504261bd8aa04c0e6
+
+**6**: Requires ``x-x-2+ spike``. With ``set``, you can set initial location with ``target('set', x, y)`` and must 
+use ``special(1, x, y)`` afterwards.
 
 
 
@@ -1483,8 +1512,8 @@ be handled individually.
 Bot and files directory can be summed shortly:
 
 - ``bot`` contains the entire bot library which is responsible of all in-game bot actions. It includes the logic for
- menu navigation, round and defeat checks, time flow, keyboard and mouse controls, text detecing and reading etc. It also implements all bot commands used in 
- plan files.
+ menu navigation, round and defeat checks, time flow, keyboard and mouse controls, text detecing and reading etc. It 
+ also implements all bot commands used in plan files.
 
 - ``Files`` includes all the non-Python files gui and bot need. Only upgrade ocr template and hotkeys
  need to be updated.
