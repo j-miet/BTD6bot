@@ -171,7 +171,6 @@ class Hero(Monkey):
                     return self._name, target
             case _:
                 return self._normal_targeting(current, target)   
-        cprint(f"{self._name.capitalize()} targeting set to '{target}'.")
         return 'OK'
 
     @override
@@ -291,6 +290,8 @@ class Hero(Monkey):
         val = self._change_hero_target(set_target.lower(), x, y, cpos)
         if val != 'OK':
             self._error('target', set_target, val)
+        else:
+            cprint(f"{self._name.capitalize()} targeting set to '{set_target.lower()}'.")
         kb_mouse.press_esc()
         self._targeting = set_target.lower()
 
