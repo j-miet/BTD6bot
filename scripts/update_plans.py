@@ -77,6 +77,37 @@ def capitalize(string_val: str) -> str:
             result = ''.join(to_list)
     return result
 
+def sort_by_strat(strat: str) -> int:
+    match strat:
+        case "Easy-Standard":
+            return 0
+        case "Easy-Primary":
+            return 1
+        case "Easy-Deflation":
+            return 2
+        case "Medium-Standard":
+            return 3
+        case "Medium-Military":
+            return 4
+        case "Medium-Apopalypse":
+            return 5
+        case "Medium-Reverse":
+            return 6
+        case "Hard-Standard":
+            return 7
+        case "Hard-Magic":
+            return 8
+        case "Hard-Double_hp":
+            return 9
+        case "Hard-Half_cash":
+            return 10
+        case "Hard-Alternate":
+            return 11
+        case "Hard-Impoppable":
+            return 12
+        case "Hard-Chimps":
+            return 13
+    
 
 INFO = f'''# Supported game plans (Last updated {datetime.date.today()})
 
@@ -116,16 +147,20 @@ with open(Path(__file__).parent.parent/'docs/Plans.md', 'w') as plansfile:
     
     for plan in plans_dict.keys():
         plansfile.write(f'### {capitalize(plan)}\n')
-        for strat in plans_dict[plan]:
+        plans_ordered = []
+        for plan_strat in plans_dict[plan]:
+            plans_ordered.append(plan_strat)
+        plans_ordered.sort(key=sort_by_strat)
+        for strat in plans_ordered:
             if 'Easy' in strat and easy_check:
-                    plansfile.write('- Easy\n')
-                    easy_check = False
+                plansfile.write('- Easy\n')
+                easy_check = False
             elif 'Medium' in strat and medium_check:
-                    plansfile.write('- Medium\n')
-                    medium_check = False
+                plansfile.write('- Medium\n')
+                medium_check = False
             elif 'Hard' in strat and hard_check:
-                    plansfile.write('- Hard\n')
-                    hard_check = False
+                plansfile.write('- Hard\n')
+                hard_check = False
             else:
                 ...
             strat_split = strat.split('-')
