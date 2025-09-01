@@ -1000,7 +1000,7 @@ it has stayed the same to this day.
 3. <u>Game mode</u>
 
     - same as with difficulty: first letter is capitalized, rest lowercase.
-    - only special syntax is Double HP moabs, which includes underscore.
+    - two modes have special syntax which include underscores: Double HP moabs and Half Cash
 
     Game modes for each difficulty:
     |Easy  | Medium | Hard |
@@ -1008,7 +1008,7 @@ it has stayed the same to this day.
     |Standard | Standard | Standard|
     |Primary | Military | Magic |
     |Deflation | Apopalypse | Double_hp |
-    | | Reverse   | Halfcash |
+    | | Reverse   | Half_cash |
     | | | Alternate|
     | | | Impoppable|
     | | | Chimps |
