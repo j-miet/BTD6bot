@@ -18,7 +18,6 @@ alch 4-2-1
 
 village 3-2-2
 _______________________________________
-Minimal rng involved: round 23 is the most common to fail although still relatively rare.
 """
 
 from._plan_imports import *
@@ -47,7 +46,10 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 9:
             end_round(9)
         elif current_round == 10:
+            wait(10)
+            forward(1)
             sniper1 = Monkey('sniper', 0.3651041666667, 0.1805555555556)
+            forward(1)
             end_round(7)
         elif current_round == 11:
             dart3 = Monkey('dart', 0.4817708333333, 0.525)
@@ -63,7 +65,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 14:
             wait(12)
             sniper3 = Monkey('sniper', 0.1619791666667, 0.0268518518519, placement_check=False)
-            sniper3.target('strong', cpos_x=0.1291666666667, cpos_y=0.0601851851852)
+            sniper3.target('strong', cpos=(0.1291666666667, 0.0601851851852))
             end_round()
         elif current_round == 15:
             sub2.upgrade(['1-0-0'])
@@ -93,11 +95,13 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             dart6 = Monkey('dart', 0.3604166666667, 0.6972222222222)
             dart6.target('strong')
             dart3.target('strong')
+            sniper2.target('first')
             end_round()
         elif current_round == 23:
             sniper2.upgrade(['0-1-0'])
             end_round(4)
         elif current_round == 24:
+            sniper2.target('strong')
             end_round(5)
         elif current_round == 25:
             end_round(10)
@@ -140,19 +144,21 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 37:
             end_round(17)
         elif current_round == 38:
+            hero.special(1, 0.3119791666667, 0.3703703703704)
             end_round(12)
         elif current_round == 39:
-            ability(1,8)
+            wait(8)
             alch1 = Monkey('alch', 0.6104166666667, 0.2324074074074)
             glue1 = Monkey('glue', 0.26875, 0.3564814814815)
             glue1.upgrade(['1-0-0','1-1-0'])
-            glue2 = Monkey('glue', 0.2510416666667, 0.312037037037)
+            glue2 = Monkey('glue', 0.2432291666667, 0.4888888888889)
             glue2.upgrade(['1-0-0','1-1-0'])
-            glue2.target('last')
             alch1.upgrade(['1-0-0','2-0-0','3-0-0'])
             end_round()
         elif current_round == 40:
-            end_round(5)
+            ability(1)
+            wait(5)
+            end_round()
         elif current_round == 41:
             village1 = Monkey('village', 0.31875, 0.2037037037037)
             village1.upgrade(['0-0-1','0-0-2'])
@@ -163,6 +169,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             change_autostart()
             sniper2.upgrade(['0-2-2'])
         elif current_round == 44:
+            hero.special(1, 0.4026041666667, 0.2046296296296)
             sniper2.upgrade(['0-3-2'])
             alch2 = Monkey('alch', 0.3666666666667, 0.0759259259259)
         elif current_round == 45:

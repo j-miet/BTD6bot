@@ -56,16 +56,18 @@ def test_update_time_data(mocker):
     assert mock_timedata.call_count == 1
     assert mock_guivars.call_count == 1
 
-def test_save_to_json(mocker, capsys):
+def test_save_to_json(mocker):
     mock_open = mocker.patch("set_plan.open", mocker.mock_open())
+    mock_load = mocker.patch("set_plan.json.load")
     mock_update_time_data = mocker.patch("set_plan._update_time_data")
     mock_json_dump = mocker.patch("set_plan.json.dump")
 
     set_plan._save_to_json("monkey_meadowMediumMilitary")
 
     mock_update_time_data.assert_called_once()
-    mock_open.assert_called_once()
-    mock_json_dump.assert_called_once()
+    mock_load.assert_called_once()
+    assert mock_open.call_count == 3
+    assert mock_json_dump.call_count == 2
 
 @pytest.mark.parametrize("plan_name, plan_docs, hero_str", [
     ("monkey_meadowEasyPrimary",

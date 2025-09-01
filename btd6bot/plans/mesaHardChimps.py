@@ -38,7 +38,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 10:
             sniper2 = Monkey('sniper', 0.5973958333333, 0.5574074074074)
             sniper2.target('strong')
-        elif current_round == 14:
+        elif current_round == 13:
             hero = Hero(0.5619791666667, 0.3703703703704)
         elif current_round == 15:
             wizard = Monkey('wizard', 0.5140625, 0.4666666666667)

@@ -41,7 +41,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
         elif current_round == 8:
             boomer1 = Monkey('boomer', 0.6911458333333, 0.3444444444444)
             boomer1.target('last')
-            boomer1.special()
+            boomer1.special(1)
             boat.target('first')
             end_round()
         elif current_round == 9:

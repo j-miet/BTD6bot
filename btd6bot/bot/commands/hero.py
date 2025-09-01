@@ -7,11 +7,14 @@ Examples of this module can be found in 'plans' folder and picking any .py plan 
 """
 
 import time
+from typing import override
 
-from bot import kb_mouse, times
+from bot import kb_mouse
 from bot.bot_vars import BotVars
 from bot.commands.monkey import Monkey
 from bot.hotkeys import hotkeys
+from bot.locations import get_click
+from bot.times import PauseControl
 from customprint import cprint
 
 class Hero(Monkey):
@@ -26,28 +29,9 @@ class Hero(Monkey):
     QUINCY or anything similar. As always, if you're unsure then open any existing plan .py file and check how it's 
     done there.
 
-    All supported hero names (these must be found under menu_start.py):
-        quincy
-        gwen
-        striker
-        obyn
-        rosalia
-        churchill
-        benjamin
-        pat
-        ezili
-        adora
-        etienne
-        sauda
-        brickell
-        psi
-        geraldo
-        corvus
+    All supported hero name can be found under locations.py -> CLICK -> heroes/heroes2
 
     Attributes:
-        HERO_LEFT_MENU (tuple[tuple[float, float]], class attribute): Hero item locations if panel is on the left. Used 
-            for Geraldo shop/Corvus spellbook.
-        HERO_RIGHT_MENU (tuple[tuple[float, float]], class attribute): Hero item locations if panel is on the right.
         current_plan_hero_name (str, class attribute, class attribute): Hero name in current plan. If you use hero 
             outside a plan file, you must set a value of this variable with Hero.current_plan_hero_name = ...
         
@@ -89,42 +73,6 @@ class Hero(Monkey):
         >>> hero.sell()
         Hero sold!
     """
-    HERO_LEFT_MENU = (
-        (0.0453125, 0.1712962962963),
-        (0.0932291666667, 0.1712962962963),
-        (0.1432291666667, 0.1712962962963),
-        (0.1901041666667, 0.1712962962963),
-        (0.0453125, 0.3268518518519),
-        (0.0932291666667, 0.3268518518519),
-        (0.1432291666667, 0.3268518518519),
-        (0.1901041666667, 0.3268518518519),
-        (0.0453125, 0.4638888888889),
-        (0.0932291666667, 0.4638888888889),
-        (0.1432291666667, 0.4638888888889),
-        (0.1901041666667, 0.4638888888889),
-        (0.0453125, 0.6101851851852),
-        (0.0932291666667, 0.6101851851852),
-        (0.1432291666667, 0.6101851851852),
-        (0.1901041666667, 0.6101851851852)
-    )
-    HERO_RIGHT_MENU = (
-        (0.6817708333333, 0.175),
-        (0.7307291666667, 0.175),
-        (0.7786458333333, 0.175),
-        (0.8255208333333, 0.175),
-        (0.6817708333333, 0.325),
-        (0.7307291666667, 0.325),
-        (0.7786458333333, 0.325),
-        (0.8255208333333, 0.325),
-        (0.6817708333333, 0.4657407407407),
-        (0.7307291666667, 0.4657407407407),
-        (0.7786458333333, 0.4657407407407),
-        (0.8255208333333, 0.4657407407407),
-        (0.6817708333333, 0.6083333333333),
-        (0.7307291666667, 0.6083333333333),
-        (0.7786458333333, 0.6083333333333),
-        (0.8255208333333, 0.6083333333333)
-    )
     current_plan_hero_name: str | None = None # if you need Hero class without existing plan, modify this variable.
 
     def __init__(self, pos_x: float, pos_y: float) -> None:
@@ -164,7 +112,7 @@ class Hero(Monkey):
             self.special(1)
 
     def _basic_hero_target(self) -> str | None:
-        """Defines default hero targeting behaviour.
+        """Defines default hero targeting behavior.
 
         Returns:
             Targeting option string or None if hero has no targeting options.
@@ -180,8 +128,7 @@ class Hero(Monkey):
     def _change_hero_target(self, target: str,
                            x: float | None = None,  # currently no hero has a targeting mode requiring coordinates.
                            y: float | None = None,
-                           cpos_x: float | None = None,
-                           cpos_y: float | None = None
+                           cpos: tuple[float, float] | None = None,
                            ) -> str | tuple[str, str]:
         """Changes hero's current targeting.
 
@@ -189,20 +136,18 @@ class Hero(Monkey):
             set_target: New targeting priority.
             x: If targeting priority needs coordinates, its x-coordinate. Default value is None.
             y: If targeting priority needs coordinates, its y-coordinate. Default value is None.
-            cpos_x: If hero's current x-coordinate position has changed, update it. Default value is None.
-            cpos_y: If hero's current y-coordinate position has changed, update it. Default value is None.
+            cpos: If hero's current coordinate position has changed, update it. Default value is None.
         """
         current = self._targeting
         if target == current:
             cprint(f'Target already set to {current.capitalize()}.')
             return 'OK'
-        if cpos_x is not None:
-            self._pos_x = cpos_x
-        if cpos_y is not None:
-            self._pos_y = cpos_y
-        kb_mouse.click((self._pos_x, self._pos_y))
-        if cpos_x is not None:
-            self._update_panel_position(cpos_x)
+        if cpos is not None:
+            self._pos_x = cpos[0]
+            self._pos_y = cpos[1]
+        kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
+        if cpos is not None:
+            self._update_panel_position(cpos[0])
         match self._hero_name:
             case 'benjamin':
                 cprint('???')
@@ -226,23 +171,25 @@ class Hero(Monkey):
                     return self._name, target
             case _:
                 return self._normal_targeting(current, target)   
-        cprint(f"{self._name.capitalize()} targeting set to '{target}'.")
         return 'OK'
 
-    def upgrade(self, upg_list: list[str], cpos_x: float | None = None, cpos_y: float | None = None) -> None:
-        """Overrides method to prevent causing errors - you can't upgrade heroes!
+    @override
+    def upgrade(self, upg_list: list[str], cpos: tuple[float, float] | None = None) -> None:
+        """Overrides upgrade method of Monkey to prevent calling 'upgrade' of superclass Monkey. 
         
-        Overrides upgrade method of Monkey to prevent calling 'upgrade' of superclass Monkey. As upgrading heroes is 
-        not possible, all this method does is print a message "Can't upgrade heroes".
+        As upgrading heroes is  not possible, all this method does is print a message "Can't upgrade heroes".
         """
-        cprint("Can't upgrade heroes.")
+        PauseControl.pause_bot()
+        if BotVars.defeat_status:
+            return
+        cprint("Can't upgrade a hero monkey.")
 
     def force_target(self) -> None:
         """Force targeting priority of a hero without checks.
         
         Currently, its only use is to set Etienne's Zone Control status for bot: bot doesn't know when Etienne 
         hits lvl 11 and won't update targeting priority to match in-game value. So user must call this command 
-        inside the round block where Etienne reaches lvl 11 - otherwise some unintended behaviour could occur
+        inside the round block where Etienne reaches lvl 11 - otherwise some unintended behavior could occur
         should user want to change targeting later.
         """
         if self._hero_name == 'etienne':
@@ -254,8 +201,7 @@ class Hero(Monkey):
     def target(self, set_target: str,
               x: float | None = None,
               y: float | None = None,
-              cpos_x: float | None = None,
-              cpos_y: float | None = None
+              cpos: tuple[float, float] | None = None,
               ) -> None:
         """Change targetting priority of a hero.
         
@@ -265,8 +211,7 @@ class Hero(Monkey):
             set_target: New targeting priority.
             x: If targeting priority needs coordinates, its x-coordinate. Default value is None.
             y: If targeting priority needs coordinates, its y-coordinate. Default value is None.
-            cpos_x: If hero's current x-coordinate position has changed, update it. Default value is None. 
-            cpos_y: If hero's current y-coordinate position has changed, update it. Default value is None.
+            cpos: If hero's current coordinate position has changed, update it. Default value is None. 
 
         Targeting options
         --
@@ -304,11 +249,11 @@ class Hero(Monkey):
             Hero sold!
 
             If you play a map like Geared or Sanctuary, hero location may change over time. To point to its new 
-            location, use cpos_x, cpos_y:
+            location, use cpos
             >>> 
                 hero = Hero(0.25, 0.75)
                 hero.target('strong')    # this refers to location (0.25, 0.75)
-                hero.target('first', cpos_x=0.5, cpos_y=0.25) # this would refer to hero at (0.5, 0.25s)
+                hero.target('first', cpos=(0.5, 0.25)) # this would refer to hero at (0.5, 0.25)
 
             *IMPORTANT* if you use 'ETIENNE' as hero:
             You need to *manually* update targeting status of 'zone' (i.e. Zone Control) after Etienne hits level 12. 
@@ -339,20 +284,21 @@ class Hero(Monkey):
 
             Do not use this force_target in any other situation.            
         """
-        times.pause_bot()
+        PauseControl.pause_bot()
         if BotVars.defeat_status:
             return
-        val = self._change_hero_target(set_target.lower(), x, y, cpos_x, cpos_y)
+        val = self._change_hero_target(set_target.lower(), x, y, cpos)
         if val != 'OK':
             self._error('target', set_target, val)
+        else:
+            cprint(f"{self._name.capitalize()} targeting set to '{set_target.lower()}'.")
         kb_mouse.press_esc()
         self._targeting = set_target.lower()
 
     def shop(self, item: int,
             target_x: float | None,
             target_y: float | None,
-            cpos_x: float | None = None,
-            cpos_y: float | None = None
+            cpos: tuple[float, float] | None = None,
             ) -> None:
         """Use Geraldo's shop items at selected location.
         
@@ -378,37 +324,34 @@ class Hero(Monkey):
             item: Selected shop item.
             target_x: Item target location x-coordinate.
             target_y: Item target location y-coordinate.
-            cpos_x: Updated current x-coordinate position.
-            cpos_y: Updated current y-coordinate position.
+            cpos: Updated current coordinate position.
         """
-        times.pause_bot()
+        PauseControl.pause_bot()
         if BotVars.defeat_status:
             return
         elif self._hero_name == 'geraldo':
-            if cpos_x is not None:
-                self._pos_x = cpos_x
-            if cpos_y is not None:
-                self._pos_y = cpos_y
-            kb_mouse.click((self._pos_x, self._pos_y))
+            if cpos is not None:
+                self._pos_x = cpos[0]
+                self._pos_y = cpos[1]
+            kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
             time.sleep(0.2)
-            if cpos_x is not None:
-                self._update_panel_position(cpos_x)
+            if cpos is not None:
+                self._update_panel_position(cpos[0])
             if self._panel_pos == 'left':
-                kb_mouse.click(Hero.HERO_LEFT_MENU[item-1])
+                kb_mouse.click(get_click('hero_left_menu', str(item)), shifted=True)
             elif self._panel_pos == 'right':
-                kb_mouse.click(Hero.HERO_RIGHT_MENU[item-1])
+                kb_mouse.click(get_click('hero_right_menu', str(item)), shifted=True)
             kb_mouse.move_cursor((0.45, 0.01))
-            kb_mouse.click((target_x, target_y))
+            kb_mouse.click((target_x, target_y), shifted=True)
             kb_mouse.press_esc()
             cprint(f"Geraldo item {item} used.")
 
     def spellbook(self, spells: list[int],
-            cpos_x: float | None = None,
-            cpos_y: float | None = None
+            cpos: tuple[float, float] | None = None,
             ) -> None:
         """Use Corvus's spells.
         
-        Spells are passed as a list of integers in range 1-16. List of spells:  
+        Spells are passed as a list of integers with values in range 1-16. List of spells:  
         1: Spear  
         2: Aggression  
         3: Malevolence  
@@ -428,25 +371,23 @@ class Hero(Monkey):
 
         Args:
             item: Selected spell in spellbook.
-            cpos_x: Updated current x-coordinate position.
-            cpos_y: Updated current y-coordinate position.
+            cpos: Updated current coordinate position.
         """
-        times.pause_bot()
+        PauseControl.pause_bot()
         if BotVars.defeat_status:
             return
         elif self._hero_name == 'corvus':
-            if cpos_x is not None:
-                self._pos_x = cpos_x
-            if cpos_y is not None:
-                self._pos_y = cpos_y
-            kb_mouse.click((self._pos_x, self._pos_y))
-            if cpos_x is not None:
-                self._update_panel_position(cpos_x)
+            if cpos is not None:
+                self._pos_x = cpos[0]
+                self._pos_y = cpos[1]
+            kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
+            if cpos is not None:
+                self._update_panel_position(cpos[0])
             for spell in spells:       
                 if self._panel_pos == 'left':
-                    kb_mouse.click(Hero.HERO_LEFT_MENU[spell-1])
+                    kb_mouse.click(get_click('hero_left_menu', str(spell)), shifted=True)
                 elif self._panel_pos == 'right':
-                    kb_mouse.click(Hero.HERO_RIGHT_MENU[spell-1])
+                    kb_mouse.click(get_click('hero_right_menu', str(spell)), shifted=True)
                 self.special(2)
                 cprint(f"Corvus spell {spell} used.")
             kb_mouse.press_esc()

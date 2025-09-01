@@ -16,7 +16,7 @@ engi 5-2-0
 spike 4-0-5
 _______________________________________
 Some rounds can get skipped because bot incorrectly detects different value.
-This should mostly happen in early/mid game and thus not affecting later rounds where ability timings are necessary.
+This should mostly happen in early/mid game and thus not affect later rounds where ability timings are important.
 """
 
 from._plan_imports import *
@@ -44,7 +44,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             spike1 = Monkey('spike', 0.6869791666667, 0.0342592592593)
         elif current_round == 21:
             druid1 = Monkey('druid', 0.1473958333333, 0.0481481481481, False)
-            druid1.target('strong', cpos_x=0.1328125, cpos_y=0.0592592592593)
+            druid1.target('strong', cpos=(0.1328125, 0.0592592592593))
         elif current_round == 22:
             druid1.upgrade(['0-1-0'])
         elif current_round == 25:
@@ -74,7 +74,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             ability(2, xy=(0.7255208333333, 0.0722222222222))
             wait(1)
             alch1 = Monkey('alch', 0.7265625, 0.05, False)
-            alch1.upgrade(['1-0-0','2-0-0','3-0-0'], cpos_x=0.7239583333333, cpos_y=0.075)
+            alch1.upgrade(['1-0-0','2-0-0','3-0-0'], cpos=(0.7239583333333, 0.075))
         elif current_round == 43:
             village1.upgrade(['1-0-2','2-0-2'])
         elif current_round == 49:
@@ -88,25 +88,25 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             engi1.upgrade(['5-2-0'])
         elif current_round == 84:
             ability(2, xy=(0.6895833333333, 0.0490740740741))
-            spike1 = Monkey('spike', 0.6875, 0.0416666666667)
-            spike1.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-0-5','1-0-5','2-0-5'])
-            spike1.target('close')
+            spike2 = Monkey('spike', 0.6875, 0.0416666666667)
+            spike2.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-0-5','1-0-5','2-0-5'])
+            spike2.target('smart')
         elif current_round == 85:
             village2 = Monkey('village', 0.3046875, 0.05, False)
-            village2.upgrade(['0-0-1','0-0-2'], cpos_x=0.3041666666667, cpos_y=0.062962962963)
+            village2.upgrade(['0-0-1','0-0-2'], cpos=(0.3041666666667, 0.062962962963))
         elif current_round == 86:
             druid3 = Monkey('druid', 0.3911458333333, 0.0490740740741)
             druid3.upgrade(['1-0-0','2-0-0','3-0-0','3-0-1','3-0-2'])
         elif current_round == 88:
             druid3.upgrade(['4-0-2'])
             glue1 = Monkey('glue', 0.2567708333333, 0.0490740740741, False)
-            glue1.target('strong', cpos_x=0.2598958333333, cpos_y=0.0740740740741)
+            glue1.target('strong', cpos=(0.2598958333333, 0.0740740740741))
             glue1.upgrade(['0-0-1','0-0-2'])
         elif current_round == 89:
             glue1.upgrade(['0-0-3','0-1-3'])
         elif current_round == 91:
             alch2 = Monkey('alch', 0.2234375, 0.0416666666667, False)
-            alch2.target('strong', cpos_x=0.2140625, cpos_y=0.0824074074074)
+            alch2.target('strong', cpos=(0.2140625, 0.0824074074074))
             alch2.upgrade(['0-1-0','0-2-0','0-3-0','1-3-0'])
         elif current_round == 92:
             village2.upgrade(['1-0-2','2-0-2'])
@@ -134,8 +134,8 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             druid6.upgrade(['1-0-0','2-0-0','3-0-0','3-0-1','3-0-2','4-0-2'])
         elif current_round == 99:
             sniper1.target('strong')
-            alch = Monkey('alch', 0.4625, 0.05)
-            alch.upgrade(['0-1-0','0-2-0','0-3-0'])
+            alch3 = Monkey('alch', 0.4625, 0.05)
+            alch3.upgrade(['0-1-0','0-2-0','0-3-0'])
         elif current_round == 100:
             ability(2, 5, xy=(0.246875, 0.0675925925926))
             ability(3)

@@ -1,8 +1,0 @@
-Images are no longer created. To enable images for debugging/testing purposes, go to ocr.py and use the commented code.
-
-# This folder contains temporary ocr image files
-  These files are:
-    strong_new.png
-    strong_text.png
-    weak_new.png
-  Images gets updated frequently as ocr takes screenshots and read texts from them in order to make decisions.

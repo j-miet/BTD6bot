@@ -89,7 +89,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             ability(1, 2.25)
         elif current_round == 41:
             sniper_tl.upgrade(['1-1-0'])
-            sniper_tl.special()
+            sniper_tl.special(1)
             spike_bl.upgrade(['1-0-0', '1-0-1', '1-0-2'])
             spike_bl.target('smart')
         elif current_round == 43:
@@ -204,7 +204,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             tack_top.upgrade(['2-0-5'])
         elif current_round == 97:
             heli = Monkey('heli', 0.2885416666667, 0.5824074074074)
-            heli.target('lock', 0.3083333333333, 0.7111111111111)
+            heli.special(1, 0.3083333333333, 0.7111111111111)
             ice_top = Monkey('ice', 0.4723958333333, 0.3342592592593)
         elif current_round == 98:
             ability(1, 8)

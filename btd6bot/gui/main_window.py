@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 
 import json
 import os
-import shutil
 import signal
 import sys
 import threading
@@ -16,6 +15,7 @@ from tkinter import ttk
 import pynput
 from pynput.keyboard import Key, KeyCode
 
+from bot.bot_vars import BotVars
 from gui.guihotkeys import GuiHotkeys
 import gui.gui_tools as gui_tools
 from gui.help_window import HelpWindow
@@ -37,21 +37,20 @@ class MainWindow:
     Places main window frame inside root. All GUI windows need the main thread which is tied to this root:
     if this thread is terminated, all other windows and their respective threads will also close.
 
-    Static Methods:
-    --
-    exit ((Key | KeyCode | str) -> None): Terminates program when EXIT_HOTKEY press is detected. Is 
-        targeted by 'kb_listener' thread object.
-
     Attributes:
-        MAP_IMAGES (list[str], class attribute): List of all map image names.
-        EXIT_HOTKEY (pynput.Key, class attribute): Hotkey for stopping the entire program at any moment. Current: F11.
-        kb_listener (pynput.keyboard.Listener, class attribute): Pynput keyboard listener to track key presses for 
-            'exit'. Listener is a thread object so it can track inputs at all times and is terminated only after entire 
-            program is closed.
+        kb_listener (pynput.keyboard.Listener, class attribute): 
+            Pynput keyboard listener to track key presses for gui hotkey tracking function. Listener is a thread object 
+            so it can track inputs at all times and is terminated only after entire program is closed.
 
-        root (tk.Tk): A tkinter.root object for placing the main window.
-        reader_init (bool): Tracks ocr reader initialization status. Starts as False, and after   
-            initialization, remains True for the rest of program runtime.
+            Listener thread is not started on Mac operating systems as it appears to interfere with keyboard controller,
+            crashing entire program. As controller is responsible for handling all keyboards inputs it must be
+            prioritized which unfortunately leaves gui hotkeys unavailable.
+
+        root (tk.Tk): 
+            A tkinter.root object for placing the main window.
+        reader_init (bool): 
+            Tracks ocr reader initialization status. Starts as False, and after initialization, remains True for the 
+            rest of program runtime.
         init_button_first_time (bool): Tracks if initialization button has been pressed or not. This is important as 
             otherwise opening and closing windows/toggling button On then Off, could enable button access prematurely.
         replay (tk.StringVar): StringVar to set On/Off value for a replay mode button.
@@ -63,7 +62,7 @@ class MainWindow:
             plan file located in 'plans' folder using current current_map and current_strat values.
         current_strat (str): Currently selected strategy based on current_map.
         strat_box (ttk.Combobox): Dropdown menu of all strategies for currently selected map.
-        mapscreen_text_str (str): Default string text to display in place of mapscreen.
+        mapscreen_text_str (str): Default string text to display in place of map screen.
         mapscreen (tk.Label): Label used for displaying current map image. Images are stored and loaded from 
             'map images' folder. If no image is found, insert mapscreen_text_str into label instead.
         help_button (tk.Button): Opens a separate help window.
@@ -80,13 +79,14 @@ class MainWindow:
         start_button (tk.Button): Button object which opens a separate MonitoringWindow for running the bot.
     """
     try:
-        MAP_IMAGES = os.listdir(gui_paths.MAP_IMAGES_PATH)
+        _MAP_IMAGES = os.listdir(gui_paths.MAP_IMAGES_PATH)
     except FileNotFoundError:
         ...
+    GuiHotkeys.update_guihotkeys()
 
     @staticmethod
-    def exit(key: Key | KeyCode | None) -> None:
-        """Program termination via hotkey.
+    def _hotkey_tracker(key: Key | KeyCode | None) -> None:
+        """Handles gui hotkey states.
 
         It's important to not put any pausing functions inside this (time.sleep() or similar) as it will cause all 
         keyboard inputs to lag during program runtime.
@@ -101,11 +101,15 @@ class MainWindow:
         elif key == GuiHotkeys.pause_hotkey:
             GuiHotkeys.pause_status = 1
 
-    # listener thread object sends keyboard inputs to exit function
-    GuiHotkeys.update_guihotkeys()
-    kb_listener = pynput.keyboard.Listener(on_press = exit)
-    kb_listener.daemon = True
-    kb_listener.start()
+    # Listener thread object sends keyboard inputs to _hotkey_tracker function. 
+    # If user operating system is MacOS, gui hotkeys must be disabled in order to avoid errors with keyboard controller 
+    # used in bot\kb_mouse.py
+    # Should other Listener objects exist, make sure to disable them on any unsupported OS and implement alternate
+    # systems in place.
+    if sys.platform != 'darwin':
+        kb_listener = pynput.keyboard.Listener(on_press = _hotkey_tracker)
+        kb_listener.daemon = True
+        kb_listener.start()    
 
     def __init__(self, root: tk.Tk) -> None:
         """Initialize main window using the passed tkinter root.
@@ -130,30 +134,41 @@ class MainWindow:
         self.replay = tk.StringVar(value='Off')
         self.queue = tk.StringVar(value='Off')
 
-        mainframe = tk.Frame(root, borderwidth=5, relief='groove', padx=15, pady=15)
+        mainframe = tk.Frame(root, 
+                             borderwidth=5, 
+                             relief='groove', 
+                             padx=15, 
+                             pady=15)
         mainframe.columnconfigure(0, weight=1)
         mainframe.rowconfigure(0, weight=1)
         mainframe.grid(sticky='nwes')
         mainframe.bind("<ButtonRelease-1>", lambda _: self.root.focus())
         
         self.current_map = 'dark castle'
-        self.maps_box = ttk.Combobox(mainframe, state='readonly', values=self.get_maps())
+        self.maps_box = ttk.Combobox(mainframe, 
+                                     state='readonly', 
+                                     values=self.get_maps())
         self.maps_box.grid(column=0, row=5, sticky='sw', pady=10)
         self.maps_box.bind("<<ComboboxSelected>>", lambda _: self.update_mapconfig())
         self.maps_box.bind("<<ComboboxSelected>>", lambda _: self.root.focus(), add='+')
         self.maps_box.set(self.current_map)     # initialize with default value
 
-        info_window_scroll = ttk.Scrollbar(mainframe, orient='vertical')
+        info_window_scroll = ttk.Scrollbar(mainframe, 
+                                           orient='vertical')
         info_window_scroll.grid(column=2, row=3, rowspan=2, sticky="nsw")
 
-        self.info_window = tk.Text(mainframe, height=9, yscrollcommand=info_window_scroll.set, 
+        self.info_window = tk.Text(mainframe,
+                                   height=9, 
+                                   yscrollcommand=info_window_scroll.set, 
                                    font=("Times New Roman", 11),
-                                wrap=tk.WORD, relief='sunken')
+                                   wrap=tk.WORD, relief='sunken')
         self.info_window.grid(column=0, columnspan=2, row=3, rowspan=2)
         info_window_scroll.configure(command=self.info_window.yview)
 
         self.current_strat = 'Easy-Standard'
-        self.strat_box = ttk.Combobox(mainframe, state='readonly', values=self.get_strats())
+        self.strat_box = ttk.Combobox(mainframe, 
+                                      state='readonly', 
+                                      values=self.get_strats())
         self.strat_box.grid(column=1, row=5, sticky='sw', pady=10)
         self.strat_box.bind("<<ComboboxSelected>>", lambda _: self.update_stratconfig())
         self.strat_box.bind("<<ComboboxSelected>>", lambda _: self.root.focus(), add='+')
@@ -176,57 +191,108 @@ class MainWindow:
         style.configure('Style.TButton', font='TkFixedFont')
         try:
             map_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'dark castle.png')
-            self.mapscreen = ttk.Label(mainframe, image=map_image, compound='top', anchor='nw', relief='sunken', 
-                                      justify='left', style='Style.TButton')
+            self.mapscreen = ttk.Label(mainframe, 
+                                       image=map_image, 
+                                       compound='top', 
+                                       anchor='nw', 
+                                       relief='sunken', 
+                                       justify='left', 
+                                       style='Style.TButton')
             # Save image reference; otherwise Python garbage collection destroys it.
             # For some reason, image is not recognized as an attribute of Label. Thus type ignore to avoid mypy errors.
             self.mapscreen.image = map_image # type: ignore
             self.mapscreen.grid(column=0, row=0, columnspan=3, rowspan=3, sticky='nw')
         except (FileNotFoundError, tk.TclError):
-            self.mapscreen = ttk.Label(mainframe, relief='sunken', style='Style.TButton', justify='left')
+            self.mapscreen = ttk.Label(mainframe, 
+                                       relief='sunken', 
+                                       style='Style.TButton', 
+                                       justify='left')
             self.mapscreen.grid(column=0, row=0, columnspan=2, rowspan=3)
             # Text generated with 'Graceful' font on https://patorjk.com/software/taag
             # Picture is self-made.
             self.mapscreen['text'] = self.mapscreen_text_str
 
-        self.help_button= tk.Button(mainframe, text="Help", height=2, width=5, command=self.help_window, padx=20,
+        self.help_button= tk.Button(mainframe, 
+                                    text="Help", 
+                                    height=2, 
+                                    width=5, 
+                                    command=self.help_window, 
+                                    padx=20,
                                     pady=5)
         self.help_button.grid(column=2, row=0, padx=30, pady=10, sticky='nwe')
 
-        self.settings_button= tk.Button(mainframe, text="Settings", height=2, width=5,
-                                        command=self.settings_window, padx=20, pady=5)
+        self.settings_button= tk.Button(mainframe, 
+                                        text="Settings", 
+                                        height=2, 
+                                        width=5,
+                                        command=self.settings_window, 
+                                        padx=20, 
+                                        pady=5)
         self.settings_button.grid(column=3, row=0, pady=10, sticky='nwe')
 
-        self.hotkey_button = tk.Button(mainframe, text="Set\nhotkeys", height=2, width=5, command=self.hotkey_window,
-                                       padx=20, pady=5)
+        self.hotkey_button = tk.Button(mainframe, 
+                                       text="Set\nhotkeys", 
+                                       height=2, 
+                                       width=5, 
+                                       command=self.hotkey_window,
+                                       padx=20, 
+                                       pady=5)
         self.hotkey_button.grid(column=3, row=1, pady=10, sticky='we')
 
-        self.queueoptions_button = tk.Button(mainframe, text="Queue mode\nmaplist", height=2, width=5, 
-                                             command=self.queue_mode_window, padx=20, pady=5)
+        self.queueoptions_button = tk.Button(mainframe, 
+                                             text="Queue mode\nmaplist", 
+                                             height=2, 
+                                             width=5, 
+                                             command=self.queue_mode_window, 
+                                             padx=20, 
+                                             pady=5)
         self.queueoptions_button.grid(column=3, row=2, pady=10, sticky='wes') 
 
-        self.collection_toggle = tk.Checkbutton(mainframe, text='Collection Event', anchor='e', 
-                                                variable=self.collection, offvalue='Off', onvalue='On', pady=10,
+        self.collection_toggle = tk.Checkbutton(mainframe, 
+                                                text='Collection Event', 
+                                                anchor='e', 
+                                                variable=self.collection, 
+                                                offvalue='Off', 
+                                                onvalue='On', 
+                                                pady=10,
                                                 state='disabled')
         self.collection_toggle.grid(column=3, row=4, sticky='ne')
 
-        self.queue_toggle = tk.Checkbutton(mainframe, text='Queue mode', anchor='e', variable=self.queue,
-                                           command=self.queue_mode_check, offvalue='Off', onvalue='On', pady=10,
+        self.queue_toggle = tk.Checkbutton(mainframe, 
+                                           text='Queue mode', 
+                                           anchor='e', 
+                                           variable=self.queue,
+                                           command=self.queue_mode_check, 
+                                           offvalue='Off', 
+                                           onvalue='On', 
+                                           pady=10,
                                            state='disabled')
         self.queue_toggle.grid(column=3, row=4, sticky='e')
 
-        self.replay_toggle = tk.Checkbutton(mainframe, text='Replay mode', anchor='e', variable=self.replay,
-                                            offvalue='Off', onvalue='On', pady=10,
+        self.replay_toggle = tk.Checkbutton(mainframe, 
+                                            text='Replay mode', 
+                                            anchor='e', 
+                                            variable=self.replay,
+                                            offvalue='Off', 
+                                            onvalue='On', 
+                                            pady=10,
                                             state='disabled')
         self.replay_toggle.grid(column=3, row=4, sticky='se')
 
-        # lambda is required to pass a function call with args under 'command'.
-        self.monitor_plot_button = tk.Button(mainframe, text='Show plot', height=1, state='normal',
+        self.monitor_plot_button = tk.Button(mainframe, 
+                                             text='Show plot', 
+                                             height=1, 
+                                             state='normal',
                                              command=lambda: roundplot.plot_plan(self.get_original()))
         self.monitor_plot_button.grid(column=2, row=5, sticky='e', padx=55)
 
-        self.start_button = tk.Button(mainframe, text="Initialize bot", height=2, command=self.monitoring_window,
-                                      state='active', padx=10, pady=0)
+        self.start_button = tk.Button(mainframe, 
+                                      text="Initialize bot", 
+                                      height=2, 
+                                      command=self.monitoring_window,
+                                      state='active', 
+                                      padx=10, 
+                                      pady=0)
         self.start_button.grid(column=3, row=5, sticky='e')
     
         if sys.platform == "darwin": # adjust gui element placements if macOS
@@ -249,17 +315,10 @@ class MainWindow:
             self.start_button.grid(column=3, row=6, sticky='e')
 
         self._delete_readme_html()
-        self._autoupdate_readme()
 
     def _delete_readme_html(self) -> None:
         if os.path.exists(gui_paths.FILES_PATH/'helpwindow'/'README.html'):
             os.remove(gui_paths.FILES_PATH/'helpwindow'/'README.html')
-
-    def _autoupdate_readme(self) -> None:
-        try:
-            shutil.copy(gui_paths.ROOT.parent/'README.md', gui_paths.FILES_PATH/'helpwindow'/'README.md')
-        except FileNotFoundError:
-            print("Could not update Files/helpwindow/README.md")
 
     def get_maps(self) -> list[str]:
         """Get all map names.
@@ -292,9 +351,8 @@ class MainWindow:
             if self.maps_box.get() == map_name:
                 self.current_map = map_name
                 try:
-                    temp = tk.PhotoImage(
-                        file=gui_paths.MAP_IMAGES_PATH/
-                                MainWindow.MAP_IMAGES[MainWindow.MAP_IMAGES.index(self.current_map+'.png')])
+                    temp = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/
+                                        MainWindow._MAP_IMAGES[MainWindow._MAP_IMAGES.index(self.current_map+'.png')])
                     self.mapscreen['text'] = ''
                     self.mapscreen.configure(image=temp)
                     self.mapscreen.image = temp # type: ignore 
@@ -309,7 +367,7 @@ class MainWindow:
                 self.current_strat = self.MAP_NAMES_AND_STRATS_DICT[map_name][0]
                 self.info_window.insert('end', '')
                 self.update_stratconfig()
-                return
+
     
     def update_stratconfig(self) -> None:
         """Updates current strat value and possible map info screen if available."""
@@ -389,6 +447,16 @@ class MainWindow:
         Initialization process takes several seconds as the ocr model is loaded into memory: afterwards, all initially 
         disabled buttons are enabled and free to use. Current init label window is destroyed at the end.
         """
+        try:
+            with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+                gpu_enabled: bool = json.load(f)["use_gpu"]
+            if gpu_enabled:
+                BotVars.use_gpu = True
+            else:
+                BotVars.use_gpu = False
+        except json.decoder.JSONDecodeError:
+            print("use_gpu value not found in gui_vars.json, defaulting to CPU.")
+            BotVars.use_gpu = False
         from bot.ocr.ocr_reader import OCR_READER
         init_win.destroy()
         self.start_button['state'] = 'active'
@@ -447,7 +515,9 @@ class MainWindow:
             self.start_button.configure(state='disabled')
             return
         self.start_button.configure(state='disabled')
-        monitoringwindow = MonitoringWindow(self.choose_mode(), self.replay.get(), self.queue.get(),
+        monitoringwindow = MonitoringWindow(self.choose_mode(), 
+                                            self.replay.get(), 
+                                            self.queue.get(),
                                             self.collection.get())
         monitoringthread = threading.Thread(target=self.is_monitoringwindow, 
                                             args=[monitoringwindow.get_monitoringwindow(),
@@ -481,9 +551,9 @@ class MainWindow:
             old_stdout: Original standard output stream.
         """
         while True:
-            while not current_monitoringwin.winfo_exists():
+            if not current_monitoringwin.winfo_exists():
                 gui_tools.terminate_thread(MonitoringWindow.current_bot_thread)
-                sys.stdout =  old_stdout # return to original output stream
+                sys.stdout = old_stdout # return to original output stream
                 if self.queue.get() == 'On':
                     self.start_button.configure(state='disabled')
                     with open(gui_paths.QUEUE_LIST_PATH) as f:
@@ -512,7 +582,7 @@ class MainWindow:
             current_options: Current QueueModeWindow object.
         """
         while True:
-            while not current_options.winfo_exists():
+            if not current_options.winfo_exists():
                 self.queueoptions_button.configure(state='active')
                 if self.queue.get() == 'On':
                     self.start_button.configure(state='disabled')
@@ -557,7 +627,7 @@ class MainWindow:
             current_hotket: Current HotkeyWindow object.
         """
         while True:
-            while not current_hotkey.winfo_exists():
+            if not current_hotkey.winfo_exists():
                 if HotkeyWindow.input_key_listener.is_alive():
                     HotkeyWindow.input_key_listener.stop()
                 self.hotkey_button.configure(state='active')
@@ -577,7 +647,6 @@ class MainWindow:
     def help_window(self) -> None:
         """Open help window which operates on its own thread."""
         self.help_button.configure(state='disabled')
-        #self.start_button.configure(state='disabled')
         helpwindow = HelpWindow()
         helpwindowthread = threading.Thread(target=self.is_helpwindow, args=[helpwindow.get_helpwindow()])
         helpwindowthread.daemon = True
@@ -590,7 +659,7 @@ class MainWindow:
             current_help: Current HelpWindow object.
         """
         while True:
-            while not current_help.winfo_exists():
+            if not current_help.winfo_exists():
                 self._delete_readme_html()
                 self.help_button.configure(state='active')
                 if self.queue.get() == 'On':
@@ -603,7 +672,6 @@ class MainWindow:
                 elif self.reader_init:
                     self.start_button.configure(state='active')
                 return
-            #self.start_button.configure(state='disabled')
             time.sleep(0.01)
      
     def settings_window(self) -> None:
@@ -622,7 +690,7 @@ class MainWindow:
             current_settings: Current SettingsWindow object.
         """
         while True:
-            while not current_settings.winfo_exists():
+            if not current_settings.winfo_exists():
                 self.settings_button.configure(state='active')
                 if self.queue.get() == 'On':
                     self.start_button.configure(state='disabled')

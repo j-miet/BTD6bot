@@ -1,10 +1,10 @@
 [Supported keys]
--letters (a-z), digits (0-9) and other keys that input text symbols (+-* etc.)
+-letters (a-z), digits (0-9) and other keys that input text symbols (+ - * etc.)
 -numpad keys 0-9: these will show as <96> for num0, <97> for num1, etc. up to <105> for num9.
 -following special/modifier keys:
-  alt, ctrl, enter, shift, backspace, tab, delete, home, end
-  page up, page down, directional keys (up, down, left, right), F keys (F1-F12)
-  >these keys are displayed in 'Key.keyname' format.
+  ctrl, ctrl_l, ctrl_r, enter, space, shift, shift_l, shift_r, backspace, tab, delete, home, 
+  end, page_up, page_down, up, down, left, right, f1-f12
+  ## alt, alt_l, alt_r, alt_gr are all supported, but only alt_l seems to register ##
 
 [How to set a hotkey]
 -Click the hotkey row from panel that you'd like to modify - row is now highlighted.
@@ -14,17 +14,17 @@
 ## Some keys might not get displayed correctly, but should still work ##
 
 [Hotkey explanations]
--Most hotkey meanings should be easy to interpret but here's a breakdown:
- 'dart monkey',..., 'beast handler' are monkeys + 'hero' stands, unsuprisingly, for hero.                       
+Most hotkey meanings should be easy to interpret but here's a breakdown:
+ 'dart monkey',..., 'beast handler' are monkeys + 'hero' stands, unsurprisingly, for hero.                       
  'upgrade ...' are for the corresponding upgrade paths.  
  'target change' and 'target reverse' change targeting forward and backward, respectively.                        
  'special 1' and 'special 2' are special ability hotkeys. 
  'sell' for tower selling, 'play' for pressing the play/fast forward button.  
  'ability ...' for abilities 1-10.
  'merge beast' for beast handler merging.
- 'centered path' for switching ace center location.
+ 'centered path' for switching center location for x-x-2+ aces.
 
-[Custom hotkeys]
+[Custom gui hotkeys]
  'pause' pauses the bot during plan execution, 
  'start-stop' begins or stops (and resets) the current bot loop,
  'exit' stop entire program and closes all gui windows.

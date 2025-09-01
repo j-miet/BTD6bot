@@ -1,22 +1,27 @@
 """Welcome to BTD6bot!"""
 
+import pathlib
 import sys
 import tkinter as tk
 
-import _no_gui
+from _no_gui import NoGui
 from gui.main_window import MainWindow
     
-def main() -> None:
-    """Creates a root window for GUI and passes it to MainWindow constructor.
+def main(argv: list[str]) -> None:
+    """Main function.
 
-    In order to make GUI objects appear onscreen and get updated constantly, root.mainloop is called.
+    Args:
+        argv (list[str]): Command line argument list. Only supported custom arg is '-nogui' which runs BTD6bot in 
+            gui-free mode.
     """
-    root = tk.Tk()
-    MainWindow(root)
-    root.mainloop()
+    if len(argv) > 1 and argv[1] == '-nogui':
+        nogui = NoGui()
+        nogui.run()
+    else:
+        root = tk.Tk()
+        root.iconbitmap(pathlib.Path(__file__).parent/'Files'/"btd6bot.ico")
+        MainWindow(root)
+        root.mainloop()
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == '-nogui':
-        _no_gui.run()
-    else:
-        main()
+    main(sys.argv)

@@ -2,6 +2,8 @@
   "__identifier": [
     1920,
     1080,
+    0,
+    0,
     "fullscreen",
     "delta=4"
   ],
@@ -831,7 +833,7 @@
   ],
   "dartling x-x-2": [
     "powerful darts",
-    0.53
+    0.92
   ],
   "dartling x-x-3": [
     "buckshot",
@@ -919,7 +921,7 @@
   ],
   "super 4-x-x": [
     "sun temple",
-    0.53
+    0.96
   ],
   "super 5-x-x": [
     "true sun god",
@@ -1102,8 +1104,8 @@
     0.92
   ],
   "druid 5-x-x": [
-    "superstorm",
-    0.81
+    "monarch of storms",
+    0.89
   ],
   "druid x-1-x": [
     "thorn swarm",

@@ -6,7 +6,7 @@ Can easily save create valid commands which can be copy-pasted into actual plans
 -pressing right mouse allows adding commands to commands.txt:
  >current mouse location is saved with right click
  >then you need to input a command and possible args
- >then press enter to save a nicely formated command string, assuming you gave correct arguments
+ >then press enter to save a nicely formatted command string, assuming you gave correct arguments
  --type nothing and press enter in case you pressed right mouse accidentally
 -pressing '+' will add a starting row for next rounds inputs. Round number follows ct_round_counter so you can change
  its starting value
@@ -79,7 +79,7 @@ def mouse_tracker(x: int, y: int, button: Button, pressed: bool) -> None:
 def keyboard_tracker(key_pressed: Key | KeyCode | None) -> None:
     """Keyboard input tracker.
 
-    Declares ct_round_counter variable as global so it can be actually be updated instead of reseting back to original
+    Declares ct_round_counter variable as global so it can be actually be updated instead of resetting back to original
     value. 
     Declares ct_user_input as global so it can be used outside the listener-thread; using it inside listener
     will interfere it's input, slowing it down significantly.
@@ -120,7 +120,7 @@ def begin_round() -> int:
             if start == 'exit':
                 os.kill(os.getpid(), signal.SIGTERM)
             elif start == 'delete':
-                with open(pathlib.Path(__file__).parent/'commands.txt', 'w') as f:
+                with open(pathlib.Path(__file__).parent/'commands.txt', 'w') as _:
                     print("commands.txt contents deleted.")
             elif int(start) in range(1, 101):
                 return int(start)
@@ -139,7 +139,7 @@ def add_command(comment_str: str) -> None:
     match cmd[0]:
         case 'help':
             print("<Commands>\n"
-                    "	-p: place a monkey\n"
+                    "	-m: place a monkey\n"
                     "		args:\n" 
                     "		\tvar_name, name\n"
                     "   	\texample:\n"
@@ -161,7 +161,7 @@ def add_command(comment_str: str) -> None:
                     "    	\texample:\n"
                     "    	 \t\t-t dart_name strong => dart_name.target('strong')\n"
                     "    	 \t\t-t dart_name strong p => dart_name.target('strong', x=0.1, y=0.1)\n\n"
-                    "	-trobo: change targeting on monkey/hero\n"
+                    "	-trobo: change targeting on robo monkey's second arm\n"
                     "    	\targs:\n"
                     "	  	\tvar_name, direction, clicks\n"
                     "    	\texample:\n"
@@ -184,7 +184,7 @@ def add_command(comment_str: str) -> None:
                     "    	\targs:\n"
                     "	 	\tvar_name, target_str, x, y.\n"
                     "    	\texample:\n"
-                   	"    	 \t\t-tcp dart_name first 0.5 0.6 (assuming mouse location is (0.1, 0.1))\n"
+                    "        \t\t-tcp dart_name first 0.5 0.6 (assuming mouse location is (0.1, 0.1))\n"
                     "			=> dart_name.target('first', x=0.5, y=0.6, cpos_x=0.1, cpos_y=0.1)\n\n"
                     "	-scp: use special ability of monkey/hero by first updating its current position\n"
                     "    	\targs:\n"
@@ -194,7 +194,7 @@ def add_command(comment_str: str) -> None:
                     "       	\t\t=> dart_name.upgrade(1, x=0.1, y=0.2, cpos_x=0.5, cpos_y=0.6)\n\n"
                     "	-c: general commands (not monkey/hero specific)\n"
                     "    	\t-this just writes the text you type. Used for general commands such as\n"
-                   	"        \tbegin()/begin('normal')\n" 
+                    "        \tbegin()/begin('normal')\n" 
                     "        \tchange_autostart()\n" 
                     "        \tend_round(20)\n" 
                     "        \tability(1,5)\n"
@@ -202,7 +202,7 @@ def add_command(comment_str: str) -> None:
                     "	-l: coordinate location (x,y)\n"
                     "    	\t-can be used with 'click' command, for example.\n"
 					"\n"
-                	"--typing anything else as first argument does nothing.\n")
+                    "--typing anything else as first argument does nothing.\n")
             return
         case '-m':
             if len(cmd[1:]) < 2:

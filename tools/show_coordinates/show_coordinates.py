@@ -23,7 +23,6 @@ def scalar_position(real_x: float, real_y: float) -> tuple[float, float]:
     Returns:
         scalar_x, scalar_y: Converted scalar coordinates as a tuple.
     """
-    ACCURACY= 13
     res_x, res_y = pyautogui.size()
     scalar_x, scalar_y = round(real_x / res_x, ACCURACY), round(real_y / res_y, ACCURACY)
     return scalar_x, scalar_y
@@ -51,7 +50,7 @@ def kb(key: Key | KeyCode | None) -> None:
     Asterisk ('*'): copies current mouse location in pixels to clipboard.
     F8: Terminate script instantly.
 
-    Args:c
+    Args:
         key: Latest keyboard key pressed.
     """
     if key == Key.f8:

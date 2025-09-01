@@ -37,7 +37,7 @@ def play(rounds: tuple[str, str, str, int, int, str]) -> None:
             ability(1,4.5)
         elif current_round == 16:
             heli = Monkey('heli', 0.8151041666667, 0.512037037037)    
-            heli.target('lock', 0.4411458333333, 0.5527777777778)
+            heli.special(1, 0.4411458333333, 0.5527777777778)
         elif current_round == 20:
             heli.upgrade(['1-0-0'])
         elif current_round == 21:
