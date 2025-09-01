@@ -178,7 +178,7 @@ def _choose_mode(m: str) -> None:
         kb_mouse.click(get_click('modes', 'top_left'))
     elif m in {'DEFLATION', 'APOPALYPSE', 'DOUBLE_HP'}:
         kb_mouse.click(get_click('modes', 'top_middle'))
-    elif m == 'HALFCASH':
+    elif m == 'HALF_CASH':
         kb_mouse.click(get_click('modes', 'top_right'))
     elif m in {'REVERSE', 'ALTERNATE'}:
         kb_mouse.click(get_click('modes', 'bottom_left'))
