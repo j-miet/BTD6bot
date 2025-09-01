@@ -1,4 +1,4 @@
-# Supported game plans (Last updated 2025-08-31)
+# Supported game plans (Last updated 2025-09-01)
 
 - this list is auto-updated using ``scripts/update_plans.py``
 - all implemented plans are listed. Each game mode includes
@@ -308,6 +308,28 @@
 			
 ### Dark Castle
 - Easy
+	- [Standard](../btd6bot/plans/dark_castleEasyStandard.py)
+
+			[Hero] Obyn
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			sub 2-0-4
+			
+			ninja 4-0-2
+			alch 3-0-0
+			_______________________________________
+			
+	- [Primary](../btd6bot/plans/dark_castleEasyPrimary.py)
+
+			[Hero] Quincy
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-2-4
+			boomer 0-4-2
+			_______________________________________
+			
 	- [Deflation](../btd6bot/plans/dark_castleEasyDeflation.py)
 
 			[Hero] Gwen
@@ -321,26 +343,17 @@
 			village 2-2-0
 			_______________________________________
 			
-	- [Primary](../btd6bot/plans/dark_castleEasyPrimary.py)
-
-			[Hero] Quincy
-			[Monkey Knowledge] -
-			-------------------------------------------------------------
-			===Monkeys & upgrades required===
-			dart 0-2-4
-			boomer 0-4-2
-			_______________________________________
-			
-	- [Standard](../btd6bot/plans/dark_castleEasyStandard.py)
+- Medium
+	- [Military](../btd6bot/plans/dark_castleMediumMilitary.py)
 
 			[Hero] Obyn
 			[Monkey Knowledge] -
 			-------------------------------------------------------------
 			===Monkeys & upgrades required===
-			sub 2-0-4
-			
-			ninja 4-0-2
-			alch 3-0-0
+			sniper 2-3-5
+			sub 2-0-2
+			boat 4-2-0
+			mortar 0-2-3
 			_______________________________________
 			
 - Hard
@@ -556,14 +569,6 @@
 			
 ### Glacial Trail
 - Easy
-	- [Primary](../btd6bot/plans/glacial_trailEasyPrimary.py)
-
-			[Hero] Silas
-			[Monkey Knowledge] -
-			-------------------------------------------------------------
-			ice 4-2-4
-			_______________________________________
-			
 	- [Standard](../btd6bot/plans/glacial_trailEasyStandard.py)
 
 			[Hero] Sauda
@@ -581,44 +586,13 @@
 			_______________________________________
 			Derived from glacial_trailHardChimps.
 			
-- Hard
-	- [Chimps](../btd6bot/plans/glacial_trailHardChimps.py)
+	- [Primary](../btd6bot/plans/glacial_trailEasyPrimary.py)
 
-			[Hero] Sauda
+			[Hero] Silas
 			[Monkey Knowledge] -
 			-------------------------------------------------------------
-			===Monkeys & upgrades required===
-			dart 5-2-0
-			ice 5-2-0
-			glue 0-2-4
-			
-			sub 0-4-0
-			mortar 0-2-3
-			
-			alch 4-2-0
-			druid 1-3-0
-			
-			spike 2-0-5
-			engineer 5-2-0
+			ice 4-2-4
 			_______________________________________
-			
-	- [Standard](../btd6bot/plans/glacial_trailHardStandard.py)
-
-			[Hero] Sauda
-			[Monkey Knowledge] -
-			-------------------------------------------------------------
-			===Monkeys & upgrades required===
-			dart 5-2-0
-			
-			mortar 0-2-3
-			
-			alch 3-0-0
-			druid 1-3-0
-			
-			spike 2-0-5
-			engineer 4-2-0
-			_______________________________________
-			Derived from glacial_trailHardChimps.
 			
 - Medium
 	- [Standard](../btd6bot/plans/glacial_trailMediumStandard.py)
@@ -638,6 +612,45 @@
 			engineer 4-2-0
 			_______________________________________
 			Derived from glacial_trailHardChimps.
+			
+- Hard
+	- [Standard](../btd6bot/plans/glacial_trailHardStandard.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 5-2-0
+			
+			mortar 0-2-3
+			
+			alch 3-0-0
+			druid 1-3-0
+			
+			spike 2-0-5
+			engineer 4-2-0
+			_______________________________________
+			Derived from glacial_trailHardChimps.
+			
+	- [Chimps](../btd6bot/plans/glacial_trailHardChimps.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 5-2-0
+			ice 5-2-0
+			glue 0-2-4
+			
+			sub 0-4-0
+			mortar 0-2-3
+			
+			alch 4-2-0
+			druid 1-3-0
+			
+			spike 2-0-5
+			engineer 5-2-0
+			_______________________________________
 			
 ### Hedge
 - Hard
@@ -699,6 +712,26 @@
 			    - tower position changed
 			
 ### Infernal
+- Medium
+	- [Apopalypse](../btd6bot/plans/infernalMediumApopalypse.py)
+
+			[Hero] Psi
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-2
+			bomb 2-0-4
+			
+			sniper 0-2-2
+			sub 2-0-4
+			
+			alch 3-0-0
+			druid 1-3-0
+			
+			village 0-2-0
+			_______________________________________
+			Apopalypse round rng might fail you. Should work after a few tries, though.
+			
 - Hard
 	- [Chimps](../btd6bot/plans/infernalHardChimps.py)
 
@@ -719,26 +752,6 @@
 			_______________________________________
 			-Apache prime for dps  
 			-Pre-Emptive Strike for ddts, late game moab damage, and round 100.
-			
-- Medium
-	- [Apopalypse](../btd6bot/plans/infernalMediumApopalypse.py)
-
-			[Hero] Psi
-			[Monkey Knowledge] -
-			-------------------------------------------------------------
-			===Monkeys & upgrades required===
-			dart 0-0-2
-			bomb 2-0-4
-			
-			sniper 0-2-2
-			sub 2-0-4
-			
-			alch 3-0-0
-			druid 1-3-0
-			
-			village 0-2-0
-			_______________________________________
-			Apopalypse round rng might fail you. Should work after a few tries, though.
 			
 ### Kartsndarts
 - Hard
@@ -1106,43 +1119,6 @@
 			_______________________________________
 			Derived from sanctuary_HardChimps.
 			
-- Hard
-	- [Chimps](../btd6bot/plans/sanctuaryHardChimps.py)
-
-			[Hero] Psi
-			[Monkey Knowledge] -
-			---------------------------------------------------------------
-			===Monkeys & upgrades required===
-			dart 0-0-1
-			boomer 5-0-2
-			glue 5-2-0
-			
-			sniper 4-2-2
-			
-			alch 4-0-1
-			mermonkey 2-0-5
-			
-			village 3-2-0
-			_______________________________________
-			-Has some rng, but you should be able to succeed within a few attempts.
-			
-	- [Standard](../btd6bot/plans/sanctuaryHardStandard.py)
-
-			[Hero] Psi
-			[Monkey Knowledge] -
-			---------------------------------------------------------------
-			===Monkeys & upgrades required===
-			dart 0-0-0
-			
-			sniper 1-5-5
-			sub 2-0-2
-			
-			alch 4-2-0
-			
-			village 2-0-2
-			_______________________________________
-			Some lives will be lost in early game.
-			
 - Medium
 	- [Standard](../btd6bot/plans/sanctuaryMediumStandard.py)
 
@@ -1162,6 +1138,43 @@
 			village 3-2-0
 			_______________________________________
 			Derived from sanctuary_HardChimps.
+			
+- Hard
+	- [Standard](../btd6bot/plans/sanctuaryHardStandard.py)
+
+			[Hero] Psi
+			[Monkey Knowledge] -
+			---------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			
+			sniper 1-5-5
+			sub 2-0-2
+			
+			alch 4-2-0
+			
+			village 2-0-2
+			_______________________________________
+			Some lives will be lost in early game.
+			
+	- [Chimps](../btd6bot/plans/sanctuaryHardChimps.py)
+
+			[Hero] Psi
+			[Monkey Knowledge] -
+			---------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-1
+			boomer 5-0-2
+			glue 5-2-0
+			
+			sniper 4-2-2
+			
+			alch 4-0-1
+			mermonkey 2-0-5
+			
+			village 3-2-0
+			_______________________________________
+			-Has some rng, but you should be able to succeed within a few attempts.
 			
 ### Spa Pits
 - Hard
