@@ -1,12 +1,21 @@
 """
-[Hero]
+[Hero] Silas
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
-*list all monkeys + their highest crosspaths here*
-Example: sniper 5-3-1 means plan uses tier 5 top path, tier 3 middle path, and tier 1 bottom path for snipers.
+tack 2-0-5
+ice 5-2-5
+desperado 0-0-0
+
+sniper 0-1-0
+
+alch 5-0-0
+druid 1-3-0
+mermonkey 4-2-0
+
+village 3-3-2
 _______________________________________
-possible RNG pre-round 40
+Possible RNG pre-round 40
 """
 
 from._plan_imports import *
