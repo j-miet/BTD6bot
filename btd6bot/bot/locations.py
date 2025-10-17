@@ -32,9 +32,11 @@ _DEFAULT_LOCATIONS: dict[str, Any] = {
             "heroscreen_scroll": (0.1401041666667, 0.5731481481481),
             "hero_select": (0.5734375, 0.5592592592593),
             "menu_play": (0.5, 0.8657407407407),
+            "collection_bonusrewards": (0.7026041666667, 0.0444444444444),
             "search_map": (0.0395833333333, 0.1518518518519),
             "search_map_bar": (0.4338541666667, 0.0462962962963),
             "choose_map": (0.2817708333333, 0.3055555555556),
+            "choose_map_bl": (0.2765625, 0.6148148148148),
             "save_overwrite": (0.5984375, 0.6842592592593),
             "collection_event": (0.5, 0.63),
             "collection_continue": (0.4953125, 0.9240740740741),
@@ -114,6 +116,7 @@ _DEFAULT_LOCATIONS: dict[str, Any] = {
         "menu": {
             "menu_playtext": (0.4560416666667, 0.932962962963, 0.55875, 0.9914814814815),
             "map_searchtext": (0.4140625, 0.0203703703704, 0.4651041666667, 0.0537037037037),
+            "map_namebotleft": (0.1901041666667, 0.4666666666667, 0.3703125, 0.5),
             "collection_collect": (0.43, 0.59, 0.534375, 0.6453703703704)
         },    
         "ingame": {
@@ -157,12 +160,17 @@ CLICK (2-tuple):
             Herp select button.
         menu_play:
             Menu play button.
+        collection_bonusrewards:
+            After opening map search map button (see below), a reward button opens to the right of search bar. This 
+            button displays all maps with bonus rewards during collection events.
         search_map:
             Map screen search button i.e. the looking glass icon. 
         search_map_bar:
             Map screen search bar.
         choose_map:
             Upper left map location. After searching any map, it appears at this same location.
+        choose_map_bl:
+            Location of the bottom left map image.
         save_override:
             After selecting difficulty
         collection_event:
@@ -216,6 +224,9 @@ TEXT (4-tuple):
             Start menu "Play" text.
         map_searchtext:
             Location of text "search" inside map search bar.
+        map_namebotleft:
+            Name of the map in bottom left location. Required for selecting the current bonus rewards in collection 
+            event farm mode.
         collection_collect:
             Collect event "collect" button text.
 
