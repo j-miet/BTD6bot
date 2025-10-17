@@ -10,7 +10,7 @@ _______________________________________
 
 from._plan_imports import *
 
-def play(rounds: tuple[str, str, str, int, int, str]) -> None:
+def play(rounds):
     BEGIN, END = menu_start.load(*rounds)
     current_round = BEGIN-1
     map_start = time()
