@@ -53,9 +53,10 @@ class MainWindow:
             rest of program runtime.
         init_button_first_time (bool): Tracks if initialization button has been pressed or not. This is important as 
             otherwise opening and closing windows/toggling button On then Off, could enable button access prematurely.
+        collection (tk.StringVar): StringVar to set On/Off value for collection event mode button.
+        farming (tk.StringVar): Enable/disable farm mode.
         replay (tk.StringVar): StringVar to set On/Off value for a replay mode button.
         queue (tk.StringVar): StringVar to set On/Off value for a queue mode button.
-        collection (tk.StringVar): StringVar to set On/Off value for collection event mode button.
         current_map (str): Currently selected map.
         maps_box (ttk.Combobox): Dropdown menu of all maps.
         info_window (tk.Text): Displays plan information based on current map and strategy. Info is read from current 
@@ -129,8 +130,8 @@ class MainWindow:
         self.reader_init = False
         self.init_button_first_time = True
 
-        # variables to check if replay/queue/collection mode is enabled
         self.collection = tk.StringVar(value='Off')
+        self.farming = tk.StringVar(value='Off')
         self.replay = tk.StringVar(value='Off')
         self.queue = tk.StringVar(value='Off')
 
@@ -251,12 +252,22 @@ class MainWindow:
         self.collection_toggle = tk.Checkbutton(mainframe, 
                                                 text='Collection Event', 
                                                 anchor='e', 
-                                                variable=self.collection, 
+                                                variable=self.collection,
+                                                command=self.collection_mode_check,
                                                 offvalue='Off', 
                                                 onvalue='On', 
-                                                pady=10,
                                                 state='disabled')
-        self.collection_toggle.grid(column=3, row=4, sticky='ne')
+        self.collection_toggle.grid(column=3, row=3, sticky='se', pady=(1,1))
+
+        self.collection_farm_toggle = tk.Checkbutton(mainframe, 
+                                                     text='Farm mode', 
+                                                     anchor='e', 
+                                                     variable=self.farming,
+                                                     command=self.farming_mode_check,
+                                                     offvalue='Off', 
+                                                     onvalue='On', 
+                                                     state='disabled')
+        self.collection_farm_toggle.grid(column=3, row=4, sticky='ne', pady=(1,2))
 
         self.queue_toggle = tk.Checkbutton(mainframe, 
                                            text='Queue mode', 
@@ -265,9 +276,8 @@ class MainWindow:
                                            command=self.queue_mode_check, 
                                            offvalue='Off', 
                                            onvalue='On', 
-                                           pady=10,
                                            state='disabled')
-        self.queue_toggle.grid(column=3, row=4, sticky='e')
+        self.queue_toggle.grid(column=3, row=4, sticky='e', pady=(2,2))
 
         self.replay_toggle = tk.Checkbutton(mainframe, 
                                             text='Replay mode', 
@@ -275,9 +285,8 @@ class MainWindow:
                                             variable=self.replay,
                                             offvalue='Off', 
                                             onvalue='On', 
-                                            pady=10,
                                             state='disabled')
-        self.replay_toggle.grid(column=3, row=4, sticky='se')
+        self.replay_toggle.grid(column=3, row=4, sticky='se', pady=(2,5))
 
         self.monitor_plot_button = tk.Button(mainframe, 
                                              text='Show plot', 
@@ -518,7 +527,8 @@ class MainWindow:
         monitoringwindow = MonitoringWindow(self.choose_mode(), 
                                             self.replay.get(), 
                                             self.queue.get(),
-                                            self.collection.get())
+                                            self.collection.get(),
+                                            self.farming.get())
         monitoringthread = threading.Thread(target=self.is_monitoringwindow, 
                                             args=[monitoringwindow.get_monitoringwindow(),
                                                   monitoringwindow.get_old_output()],
@@ -704,3 +714,24 @@ class MainWindow:
                 return
             self.start_button.configure(state='disabled')
             time.sleep(0.01)
+
+    def collection_mode_check(self) -> None:
+        """Disables and enabled farm mode toggle depending on collection mode toggle."""
+        if self.collection.get() == 'On':
+            self.collection_farm_toggle.configure(state='active')
+        else:
+            self.farming_mode_check()
+            self.collection_farm_toggle.configure(state='disabled')
+            self.collection_farm_toggle.deselect()
+
+    def farming_mode_check(self) -> None:
+        if self.farming.get() == 'On' and self.collection.get() == 'On':
+            self.queue.set('Off')
+            self.replay.set('Off')
+            self.queueoptions_button.configure(state='disabled')
+            self.queue_toggle.configure(state='disabled')
+            self.replay_toggle.configure(state='disabled')
+        else:
+            self.queueoptions_button.configure(state='active')
+            self.queue_toggle.configure(state='active')
+            self.replay_toggle.configure(state='active')
