@@ -22,7 +22,7 @@ def play(rounds):
     current_round = BEGIN-1
     map_start = time()
     while current_round < END+1:
-        current_round = Rounds.round_check(current_round, map_start)
+        current_round = Rounds.round_check(current_round, map_start, rounds[2])
         if current_round == BEGIN:     
             hero = Hero(0.6989583333333, 0.5916666666667)
         elif current_round == 8:

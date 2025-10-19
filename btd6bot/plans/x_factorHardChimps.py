@@ -25,7 +25,7 @@ def play(rounds):
     current_round = BEGIN-1
     map_start = time()
     while current_round < END+1:
-        current_round = Rounds.round_check(current_round, map_start)
+        current_round = Rounds.round_check(current_round, map_start, rounds[2])
         if current_round == BEGIN:
             dart1 = Monkey('dart', 0.70625, 0.2490740740741)
             dart2 = Monkey('dart', 0.1875, 0.1935185185185)
