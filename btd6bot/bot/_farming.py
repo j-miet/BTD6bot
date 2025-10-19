@@ -10,6 +10,21 @@ from bot.ocr.ocr import weak_substring_check, strong_delta_check
 from bot.ocr.ocr_reader import OCR_READER
 from customprint import cprint
 
+_MAPNAMES = {'glacial trail', 
+             'dark dungeons', 
+             'sanctuary', 
+             'ravine', 
+             'flooded valley', 
+             'infernal',
+             'bloody puddles', 
+             'workshop', 
+             'quad', 
+             'dark castle', 
+             'muddy puddles', 
+             '#ouch'
+            }
+"""All expert maps"""
+
 def select_rewardmap() -> str:
     """Selects map with bonus rewards."""
     loop: bool = True
@@ -21,30 +36,19 @@ def select_rewardmap() -> str:
             else:
                 loop = False
                 break
-    time.sleep(0.4)
+    time.sleep(0.75)
     kb_mouse.click(get_click('menu', 'menu_play'))
     time.sleep(0.4)
     kb_mouse.click(get_click('menu', 'search_map'))
     time.sleep(0.4)
     kb_mouse.click(get_click('menu', 'collection_bonusrewards'))
-    time.sleep(0.5)
+    time.sleep(0.75)
     cprint('Selecting map with bonus rewards...')
-    for mapname in ('glacial trail', 
-                    'dark dungeons', 
-                    'sanctuary', 
-                    'ravine', 
-                    'flooded valley', 
-                    'infernal',
-                    'bloody puddles', 
-                    'workshop', 
-                    'quad', 
-                    'dark castle', 
-                    'muddy puddles', 
-                    '#ouch'):
+    for mapname in  _MAPNAMES:
         if not strong_delta_check(mapname, get_text('menu', 'map_namebotleft'), OCR_READER):
-            time.sleep(0.3)
+            ...
         else:
-            cprint(f"Next map is <{mapname}>.")
+            cprint(f"Next map ----> {mapname}\n")
             return mapname
     kb_mouse.press_esc()
     time.sleep(0.5)
@@ -66,7 +70,7 @@ def select_defaulthero(hero_name: str = 'sauda') -> None:
             else:
                 loop = False
                 break
-    cprint(f"Selecting default hero {hero_name.capitalize()}")
+    cprint(f"Selecting default hero {hero_name.capitalize()}...", end=' ')
     kb_mouse.click(get_click('menu', 'hero_window'))
     start: float = time.time()
     loop = True
