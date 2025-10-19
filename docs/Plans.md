@@ -1,4 +1,4 @@
-# Supported game plans (Last updated 2025-09-01)
+# Supported game plans (Last updated 2025-10-19)
 
 - this list is auto-updated using ``scripts/update_plans.py``
 - all implemented plans are listed. Each game mode includes
@@ -310,7 +310,7 @@
 - Easy
 	- [Standard](../btd6bot/plans/dark_castleEasyStandard.py)
 
-			[Hero] Obyn
+			[Hero] Sauda
 			[Monkey Knowledge] -
 			-------------------------------------------------------------
 			===Monkeys & upgrades required===
@@ -1108,16 +1108,14 @@
 - Easy
 	- [Standard](../btd6bot/plans/sanctuaryEasyStandard.py)
 
-			[Hero] Psi
+			[Hero] -
 			[Monkey Knowledge] -
 			---------------------------------------------------------------
 			===Monkeys & upgrades required===
-			dart 0-0-1
-			boomer 4-0-2
+			druid 1-3-0
 			
-			sniper 3-1-2
+			sniper 2-2-4
 			_______________________________________
-			Derived from sanctuary_HardChimps.
 			
 - Medium
 	- [Standard](../btd6bot/plans/sanctuaryMediumStandard.py)
