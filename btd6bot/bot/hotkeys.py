@@ -67,7 +67,7 @@ def generate_hotkeys(hotkey_dict: dict[str, str | Key]) -> None:
         text_line_split = text_line.split('=')
         h_keys.append(text_line_split[0].rstrip())
         h_values.append(text_line_split[1].lstrip())
-    hotkeys_dict: dict[str, str] = {k : h for (k, h) in zip(h_keys, h_values)}
+    hotkeys_dict: dict[str, str] = {k : h for (k, h) in zip(h_keys, h_values, strict=True)}
 
     actual_hotkeys: dict[str, str | Key] = {}
     for key, val in hotkeys_dict.items():

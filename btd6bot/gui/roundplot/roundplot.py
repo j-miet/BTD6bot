@@ -272,7 +272,7 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
                         'Order of command execution is top to bottom. Rounds without commands are not included.',
                         fontsize='medium')
     ax_rounds.get_yaxis().set_visible(False)
-    for (x, r) in zip(round_labels, rounds):
+    for (x, r) in zip(round_labels, rounds, strict=True):
         lines = ''
         ax_rounds.bar(x, height=0.1, width=0) # width=0 prevents drawing a visible bar
         if len(r) > 19:
