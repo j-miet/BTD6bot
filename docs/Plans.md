@@ -67,6 +67,19 @@
 - [X Factor](#x-factor)
 
 ### #Ouch
+- Easy
+	- [Standard](../btd6bot/plans/#ouchEasyStandard.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			
+			sniper 1-2-4
+			boat 3-2-0
+			_______________________________________
+			
 - Hard
 	- [Chimps](../btd6bot/plans/#ouchHardChimps.py)
 
@@ -150,6 +163,19 @@
 			_______________________________________
 			
 ### Bloody Puddles
+- Easy
+	- [Standard](../btd6bot/plans/bloody_puddlesEasyStandard.py)
+
+			[Hero] -
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			
+			sniper 1-2-4
+			sub 2-0-2
+			_______________________________________
+			
 - Hard
 	- [Chimps](../btd6bot/plans/bloody_puddlesHardChimps.py)
 
@@ -375,6 +401,23 @@
 			_______________________________________
 			
 ### Dark Dungeons
+- Easy
+	- [Standard](../btd6bot/plans/dark_dungeonsEasyStandard.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 1-3-0
+			tack 2-0-4
+			
+			alch 3-0-0
+			druid 1-3-0
+			
+			spike 0-0-2
+			engineer 1-0-0
+			_______________________________________
+			
 - Hard
 	- [Chimps](../btd6bot/plans/dark_dungeonsHardChimps.py)
 
@@ -489,6 +532,17 @@
 			Should issues rise with 99 => 100 transition, solution is to use manual round ending with end_round() command. With it enabled, bot won't begin to search for the next round until countdown ends.
 			
 ### Flooded Valley
+- Easy
+	- [Standard](../btd6bot/plans/flooded_valleyEasyStandard.py)
+
+			[Hero] -
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			sub 0-2-1
+			boat 5-0-2
+			_______________________________________
+			
 - Hard
 	- [Chimps](../btd6bot/plans/flooded_valleyHardChimps.py)
 
@@ -712,6 +766,17 @@
 			    - tower position changed
 			
 ### Infernal
+- Easy
+	- [Standard](../btd6bot/plans/infernalEasyStandard.py)
+
+			[Hero] -
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			sniper 0-2-4
+			heli 3-0-2
+			_______________________________________
+			
 - Medium
 	- [Apopalypse](../btd6bot/plans/infernalMediumApopalypse.py)
 
@@ -907,6 +972,22 @@
 			_______________________________________
 			
 ### Muddy Puddles
+- Easy
+	- [Standard](../btd6bot/plans/muddy_puddlesEasyStandard.py)
+
+			[Hero] -
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-1
+			
+			sniper 1-2-3
+			sub 2-0-3
+			ace 2-0-3
+			
+			alch 3-0-0
+			_______________________________________
+			
 - Hard
 	- [Chimps](../btd6bot/plans/muddy_puddlesHardChimps.py)
 
@@ -1031,6 +1112,18 @@
 			_______________________________________
 			
 ### Quad
+- Easy
+	- [Standard](../btd6bot/plans/quadEasyStandard.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			
+			sniper 1-2-4
+			_______________________________________
+			
 - Hard
 	- [Chimps](../btd6bot/plans/quadHardChimps.py)
 
@@ -1061,6 +1154,22 @@
 			Round 100 has unfortunately some rng as well.
 			
 ### Ravine
+- Easy
+	- [Standard](../btd6bot/plans/ravineEasyStandard.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			---------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 1-3-1
+			
+			druid 1-3-0
+			
+			sniper 0-2-4
+			
+			spike 0-0-2
+			_______________________________________
+			
 - Hard
 	- [Chimps](../btd6bot/plans/ravineHardChimps.py)
 
@@ -1375,6 +1484,22 @@
 			    - tower position changed
 			
 ### Workshop
+- Easy
+	- [Standard](../btd6bot/plans/workshopEasyStandard.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			tack 2-0-4
+			
+			alch 3-0-1
+			druid 2-3-0
+			
+			spike 3-0-2
+			_______________________________________
+			
 - Hard
 	- [Chimps](../btd6bot/plans/workshopHardChimps.py)
 
