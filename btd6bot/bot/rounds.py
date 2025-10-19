@@ -269,7 +269,13 @@ class Rounds:
                         return Rounds.end_round+1
                     if '/' in round_value[1]:
                         try:
-                            if int(round_value[1].split('/')[0]) > current_round:
+                            if int(round_value[1].split('/')[0]) >= current_round:
+                                break
+                        except ValueError:
+                            ...
+                    elif BotVars.current_event_status == 'On' and '7' in round_value[1]:
+                        try:
+                            if int(round_value[1].split('7')[0]) >= current_round:
                                 break
                         except ValueError:
                             ...
