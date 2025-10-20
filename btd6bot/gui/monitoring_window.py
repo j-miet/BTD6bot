@@ -120,7 +120,7 @@ class MonitoringWindow:
                             " main menu screen opened\n"
                             "------\n"
                             "~Press 'Run'/your 'start-stop' hotkey to start bot!\n"
-                            "~Press 'Stop'/'start-'stop' again to stop and reset\n current plan."
+                            "~Press 'Stop'/'start-stop' again to stop and reset\n current plan."
                             " In order to play plan again, return to\n main menu screen, then press 'Run' again.\n"
                             "~To pause/unpause bot, press your 'pause' hotkey.\n Bot can only be paused during maps "
                             "i.e. when it's not\n navigating menu screens, but pauses as soon as it\n becomes " 
@@ -140,7 +140,7 @@ class MonitoringWindow:
                                         text='Round timer', 
                                         relief='sunken',
                                         font=os_font)
-        self.roundtime_label.grid(column=0, row=4, sticky='sw', padx=(10,0))
+        self.roundtime_label.grid(column=0, row=4, sticky='sw', padx=10)
 
         self.roundtime_display = tk.Label(self.monitoringwindow, 
                                           width=8, 
@@ -506,21 +506,14 @@ class MonitoringWindow:
             cprint("Collection event farming mode enabled.\n" \
                    "Bot keeps farming expert maps with bonus rewards on Easy, Standard.\n"
                    "Monkey knowledge is not required.\n"
-                   "Sauda is used as hero, make sure you own her.\n")
+                   "Only Sauda is required as hero, make sure you have her unlocked.\n")
             set_plan.select_defaulthero()
-            failurecount: int = 0
             while True:
                 rewardmap: str = set_plan.select_rewardmap()
                 if rewardmap == '':
-                    cprint("Couldn't detect a map with bonus rewards")
-                    cprint('Trying again...')
+                    cprint('\n#####Unable to continue farming loop, bot terminated#####')
                     self.monitor_run_button['text'] = 'Run'
-                    failurecount += 1
-                    if failurecount == 3:
-                        cprint('\n#####Bot terminated#####')
-                        break
-                    continue
-                failurecount = 0
+                    return
                 rewardplan: str = rewardmap.replace(' ', '_')+'EasyStandard'
                 try:
                     self.monitor_mapscreen.destroy()
