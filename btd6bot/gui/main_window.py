@@ -1,8 +1,12 @@
-"""Contains MainWindow class responsible for operating entire GUI."""
+"""Contains MainWindow class responsible for operating entire GUI.
+
+Also includes a MainWindowCombobox class which requires a MainWindow instance as argument.
+"""
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+import itertools as it
 import json
 import os
 import signal
@@ -30,6 +34,41 @@ from utils import plan_data
 
 if TYPE_CHECKING:
     from typing import Any, TextIO
+
+class MainWindowCombobox(ttk.Combobox):
+    """Custom combobox class specifically made for MainWindow class.
+
+    It adds a letter-based search for faster map selection when using combobox elements which also auto-updates info 
+    panel (both text+image) without requiring the user to press enter afterwards like normal combobox does.
+    
+    Searching algorithm simply selects items i.e. maps or strats by their first letter when combobox is opened and 
+    user presses any key.
+
+    Original:
+    https://stackoverflow.com/questions/53848622/how-to-bind-keypress-event-for-combobox-drop-out-menu-in-tkinter-python-3-7/53864105#53864105
+    """
+    def __init__(self, mainwindow: MainWindow, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.mainwindow = mainwindow
+        pd = self.tk.call('ttk::combobox::PopdownWindow', self) #get popdownWindow reference 
+        lb = pd + '.f.l' #get popdown listbox
+        self._bind(('bind', lb),"<KeyPress>",self.popup_key_pressed,None)
+
+    def popup_key_pressed(self,evt):
+        values = self.cget("values")
+        for i in it.chain(range(self.current() + 1,len(values)),range(0,self.current())):
+            if evt.char.lower() == values[i][0].lower():
+                self.current(i)
+                self.icursor(i)
+                self.tk.eval(evt.widget + ' selection clear 0 end') #clear current selection
+                self.tk.eval(evt.widget + ' selection set ' + str(i)) #select new element
+                self.tk.eval(evt.widget + ' see ' + str(i)) #spin combobox popdown for selected element will be visible
+                if self._name == 'mapbox':
+                    self.mainwindow.update_mapconfig() # auto-update map info panel when for currently selected element
+                elif self._name == 'stratbox':
+                    self.mainwindow.update_stratconfig()
+                return
+
 
 class MainWindow:
     """GUI main window.
@@ -146,9 +185,11 @@ class MainWindow:
         mainframe.bind("<ButtonRelease-1>", lambda _: self.root.focus())
         
         self.current_map = 'dark castle'
-        self.maps_box = ttk.Combobox(mainframe, 
-                                     state='readonly', 
-                                     values=self.get_maps())
+        self.maps_box = MainWindowCombobox(mainwindow=self,
+                                           master=mainframe, 
+                                           state='readonly', 
+                                           values=self.get_maps(),
+                                           name='mapbox')
         self.maps_box.grid(column=0, row=5, sticky='sw', pady=10)
         self.maps_box.bind("<<ComboboxSelected>>", lambda _: self.update_mapconfig())
         self.maps_box.bind("<<ComboboxSelected>>", lambda _: self.root.focus(), add='+')
@@ -167,9 +208,11 @@ class MainWindow:
         info_window_scroll.configure(command=self.info_window.yview)
 
         self.current_strat = 'Easy-Standard'
-        self.strat_box = ttk.Combobox(mainframe, 
-                                      state='readonly', 
-                                      values=self.get_strats())
+        self.strat_box = MainWindowCombobox(mainwindow=self,
+                                            master=mainframe, 
+                                            state='readonly', 
+                                            values=self.get_strats(),
+                                            name='stratbox')
         self.strat_box.grid(column=1, row=5, sticky='sw', pady=10)
         self.strat_box.bind("<<ComboboxSelected>>", lambda _: self.update_stratconfig())
         self.strat_box.bind("<<ComboboxSelected>>", lambda _: self.root.focus(), add='+')
