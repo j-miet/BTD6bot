@@ -108,7 +108,6 @@ def select_rewardmap() -> str:
     import bot._farming
     mapname: str = bot._farming.select_rewardmap()
     if mapname == '':
-        cprint("Map name could not be identified.")
         return ''
     return mapname
 
