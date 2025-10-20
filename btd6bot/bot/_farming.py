@@ -44,12 +44,16 @@ def select_rewardmap() -> str:
     kb_mouse.click(get_click('menu', 'collection_bonusrewards'))
     time.sleep(0.75)
     cprint('Selecting map with bonus rewards...')
-    for mapname in  _MAPNAMES:
-        if not strong_delta_check(mapname, get_text('menu', 'map_namebotleft'), OCR_READER):
-            ...
-        else:
-            cprint(f"Next map ----> {mapname}\n")
-            return mapname
+    failurelimit: int = 5
+    for check in range(failurelimit):
+        for mapname in _MAPNAMES:
+            if not strong_delta_check(mapname, get_text('menu', 'map_namebotleft'), OCR_READER):
+                ...
+            else:
+                cprint(f"Next map ----> {mapname}\n")
+                return mapname
+        if check < failurelimit:
+            cprint(f"Failed to detect bonus reward map, retrying [Attempt {check+1}/{failurelimit}]")
     kb_mouse.press_esc()
     time.sleep(0.5)
     return ''
