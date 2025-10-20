@@ -265,8 +265,15 @@ def _start_plan() -> None:
             timer -= 1
     cprint()
     cprint('--> *Bot running*')
-
-def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, hero: str) -> tuple[int, int]:
+            
+def load(map_name: str, 
+         diff: str, 
+         mode: str, 
+         begin_round: int, 
+         end_round: int, 
+         hero: str, 
+         farm: bool = False
+         ) -> tuple[int, int]:
     """Sets up pre-game conditions for the plan by choosing correct hero, map, difficulty and game mode.
 
     Updates begin and end rounds for bot.rounds.
@@ -278,25 +285,27 @@ def load(map_name: str, diff: str, mode: str, begin_round: int, end_round: int, 
         begin_round: First round of selected game mode.
         end_round: Final round of selected game mode.
         hero: Hero name.
+        farm: ...
 
     Returns:
         Begin and end rounds.
     """
     _update_external_variables(begin_round, end_round)
-    cprint('Searching for main menu screen...')
     loop: bool = True
-    while loop:
-        for letter in ('p','l','a','y'):
-            if not weak_substring_check(letter, get_text('menu', 'menu_playtext'), OCR_READER):
-                time.sleep(0.3)
-            else:
-                loop = False
-                break
-    _start_plan()
-    if not _choose_hero(hero):
-        return 0, 0
-    if not _choose_map(map_name):
-        return 0, 0
+    if not farm:
+        cprint('Searching for main menu screen...')
+        while loop:
+            for letter in ('p','l','a','y'):
+                if not weak_substring_check(letter, get_text('menu', 'menu_playtext'), OCR_READER):
+                    time.sleep(0.3)
+                else:
+                    loop = False
+                    break
+        _start_plan()
+        if not _choose_hero(hero):
+            return 0, 0
+        if not _choose_map(map_name):
+            return 0, 0
     _choose_diff(diff)
     _choose_mode(mode)
     return begin_round, end_round

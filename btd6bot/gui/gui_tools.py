@@ -7,8 +7,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import ctypes
 from sys import platform
-
 from tkinter import TclError
+
 if TYPE_CHECKING:
     from threading import Thread
     from tkinter import Text

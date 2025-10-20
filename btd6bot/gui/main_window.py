@@ -1,8 +1,12 @@
-"""Contains MainWindow class responsible for operating entire GUI."""
+"""Contains MainWindow class responsible for operating entire GUI.
+
+Also includes a MainWindowCombobox class which requires a MainWindow instance as argument.
+"""
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
+import itertools as it
 import json
 import os
 import signal
@@ -31,6 +35,41 @@ from utils import plan_data
 if TYPE_CHECKING:
     from typing import Any, TextIO
 
+class MainWindowCombobox(ttk.Combobox):
+    """Custom combobox class specifically made for MainWindow class.
+
+    It adds a letter-based search for faster map selection when using combobox elements which also auto-updates info 
+    panel (both text+image) without requiring the user to press enter afterwards like normal combobox does.
+    
+    Searching algorithm simply selects items i.e. maps or strats by their first letter when combobox is opened and 
+    user presses any key.
+
+    Original:
+    https://stackoverflow.com/questions/53848622/how-to-bind-keypress-event-for-combobox-drop-out-menu-in-tkinter-python-3-7/53864105#53864105
+    """
+    def __init__(self, mainwindow: MainWindow, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.mainwindow = mainwindow
+        pd = self.tk.call('ttk::combobox::PopdownWindow', self) #get popdownWindow reference 
+        lb = pd + '.f.l' #get popdown listbox
+        self._bind(('bind', lb),"<KeyPress>",self.popup_key_pressed,None)
+
+    def popup_key_pressed(self,evt):
+        values = self.cget("values")
+        for i in it.chain(range(self.current() + 1,len(values)),range(0,self.current())):
+            if evt.char.lower() == values[i][0].lower():
+                self.current(i)
+                self.icursor(i)
+                self.tk.eval(evt.widget + ' selection clear 0 end') #clear current selection
+                self.tk.eval(evt.widget + ' selection set ' + str(i)) #select new element
+                self.tk.eval(evt.widget + ' see ' + str(i)) #spin combobox popdown for selected element will be visible
+                if self._name == 'mapbox':
+                    self.mainwindow.update_mapconfig() # auto-update map info panel when for currently selected element
+                elif self._name == 'stratbox':
+                    self.mainwindow.update_stratconfig()
+                return
+
+
 class MainWindow:
     """GUI main window.
 
@@ -53,9 +92,10 @@ class MainWindow:
             rest of program runtime.
         init_button_first_time (bool): Tracks if initialization button has been pressed or not. This is important as 
             otherwise opening and closing windows/toggling button On then Off, could enable button access prematurely.
+        collection (tk.StringVar): StringVar to set On/Off value for collection event mode button.
+        farming (tk.StringVar): Enable/disable farm mode.
         replay (tk.StringVar): StringVar to set On/Off value for a replay mode button.
         queue (tk.StringVar): StringVar to set On/Off value for a queue mode button.
-        collection (tk.StringVar): StringVar to set On/Off value for collection event mode button.
         current_map (str): Currently selected map.
         maps_box (ttk.Combobox): Dropdown menu of all maps.
         info_window (tk.Text): Displays plan information based on current map and strategy. Info is read from current 
@@ -129,8 +169,8 @@ class MainWindow:
         self.reader_init = False
         self.init_button_first_time = True
 
-        # variables to check if replay/queue/collection mode is enabled
         self.collection = tk.StringVar(value='Off')
+        self.farming = tk.StringVar(value='Off')
         self.replay = tk.StringVar(value='Off')
         self.queue = tk.StringVar(value='Off')
 
@@ -145,9 +185,11 @@ class MainWindow:
         mainframe.bind("<ButtonRelease-1>", lambda _: self.root.focus())
         
         self.current_map = 'dark castle'
-        self.maps_box = ttk.Combobox(mainframe, 
-                                     state='readonly', 
-                                     values=self.get_maps())
+        self.maps_box = MainWindowCombobox(mainwindow=self,
+                                           master=mainframe, 
+                                           state='readonly', 
+                                           values=self.get_maps(),
+                                           name='mapbox')
         self.maps_box.grid(column=0, row=5, sticky='sw', pady=10)
         self.maps_box.bind("<<ComboboxSelected>>", lambda _: self.update_mapconfig())
         self.maps_box.bind("<<ComboboxSelected>>", lambda _: self.root.focus(), add='+')
@@ -166,9 +208,11 @@ class MainWindow:
         info_window_scroll.configure(command=self.info_window.yview)
 
         self.current_strat = 'Easy-Standard'
-        self.strat_box = ttk.Combobox(mainframe, 
-                                      state='readonly', 
-                                      values=self.get_strats())
+        self.strat_box = MainWindowCombobox(mainwindow=self,
+                                            master=mainframe, 
+                                            state='readonly', 
+                                            values=self.get_strats(),
+                                            name='stratbox')
         self.strat_box.grid(column=1, row=5, sticky='sw', pady=10)
         self.strat_box.bind("<<ComboboxSelected>>", lambda _: self.update_stratconfig())
         self.strat_box.bind("<<ComboboxSelected>>", lambda _: self.root.focus(), add='+')
@@ -251,12 +295,22 @@ class MainWindow:
         self.collection_toggle = tk.Checkbutton(mainframe, 
                                                 text='Collection Event', 
                                                 anchor='e', 
-                                                variable=self.collection, 
+                                                variable=self.collection,
+                                                command=self.collection_mode_check,
                                                 offvalue='Off', 
                                                 onvalue='On', 
-                                                pady=10,
                                                 state='disabled')
-        self.collection_toggle.grid(column=3, row=4, sticky='ne')
+        self.collection_toggle.grid(column=3, row=3, sticky='se', pady=(1,1))
+
+        self.collection_farm_toggle = tk.Checkbutton(mainframe, 
+                                                     text='Farm mode', 
+                                                     anchor='e', 
+                                                     variable=self.farming,
+                                                     command=self.farming_mode_check,
+                                                     offvalue='Off', 
+                                                     onvalue='On', 
+                                                     state='disabled')
+        self.collection_farm_toggle.grid(column=3, row=4, sticky='ne', pady=(1,2))
 
         self.queue_toggle = tk.Checkbutton(mainframe, 
                                            text='Queue mode', 
@@ -265,9 +319,8 @@ class MainWindow:
                                            command=self.queue_mode_check, 
                                            offvalue='Off', 
                                            onvalue='On', 
-                                           pady=10,
                                            state='disabled')
-        self.queue_toggle.grid(column=3, row=4, sticky='e')
+        self.queue_toggle.grid(column=3, row=4, sticky='e', pady=(2,2))
 
         self.replay_toggle = tk.Checkbutton(mainframe, 
                                             text='Replay mode', 
@@ -275,9 +328,8 @@ class MainWindow:
                                             variable=self.replay,
                                             offvalue='Off', 
                                             onvalue='On', 
-                                            pady=10,
                                             state='disabled')
-        self.replay_toggle.grid(column=3, row=4, sticky='se')
+        self.replay_toggle.grid(column=3, row=4, sticky='se', pady=(2,5))
 
         self.monitor_plot_button = tk.Button(mainframe, 
                                              text='Show plot', 
@@ -518,7 +570,8 @@ class MainWindow:
         monitoringwindow = MonitoringWindow(self.choose_mode(), 
                                             self.replay.get(), 
                                             self.queue.get(),
-                                            self.collection.get())
+                                            self.collection.get(),
+                                            self.farming.get())
         monitoringthread = threading.Thread(target=self.is_monitoringwindow, 
                                             args=[monitoringwindow.get_monitoringwindow(),
                                                   monitoringwindow.get_old_output()],
@@ -704,3 +757,24 @@ class MainWindow:
                 return
             self.start_button.configure(state='disabled')
             time.sleep(0.01)
+
+    def collection_mode_check(self) -> None:
+        """Disables and enabled farm mode toggle depending on collection mode toggle."""
+        if self.collection.get() == 'On':
+            self.collection_farm_toggle.configure(state='active')
+        else:
+            self.farming_mode_check()
+            self.collection_farm_toggle.configure(state='disabled')
+            self.collection_farm_toggle.deselect()
+
+    def farming_mode_check(self) -> None:
+        if self.farming.get() == 'On' and self.collection.get() == 'On':
+            self.queue.set('Off')
+            self.replay.set('Off')
+            self.queueoptions_button.configure(state='disabled')
+            self.queue_toggle.configure(state='disabled')
+            self.replay_toggle.configure(state='disabled')
+        else:
+            self.queueoptions_button.configure(state='active')
+            self.queue_toggle.configure(state='active')
+            self.replay_toggle.configure(state='active')

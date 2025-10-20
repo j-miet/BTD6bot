@@ -22,12 +22,12 @@ Still, should work quite consistently with minimal rng.
 
 from._plan_imports import *
 
-def play(rounds: tuple[str, str, str, int, int, str]) -> None:
+def play(rounds):
     BEGIN, END = menu_start.load(*rounds)
     current_round = BEGIN-1
     map_start = time()
     while current_round < END+1:
-        current_round = Rounds.round_check(current_round, map_start)
+        current_round = Rounds.round_check(current_round, map_start, rounds[2])
         if current_round == BEGIN:
             dart1 = Monkey('dart', 0.4317708333333, 0.8555555555556)
             dart2 = Monkey('dart', 0.2640625, 0.5018518518519)

@@ -26,7 +26,7 @@ you can always run bot offline. <u>You have been warned</u>.***
 
 ---
 **[Update status]    
-Updated for Bloons TD 6 version ``50``**
+Updated for Bloons TD 6 version ``51``**
   
 - For now, bot is planned to be updated after each major game update
 - New game plans might also get added on an infrequent basis
@@ -705,6 +705,10 @@ doing
 i.e. selected map + strategy combination. Info is stored in each plan file and can be freely customized.
 - Has toggle buttons for
     - collection event mode: this will check if pop-up window appears after a plan is finished and collects the rewards
+    - farm mode: can only be toggled on with collection event mode. Bot will farm <u>expert maps on Easy, Standard</u> 
+    and always selects the current map with bonus rewards. This loop continues until user stops it manually (or if some
+    fatal error happens which bot is unable to handle). Farming does not require any monkey knowledge and only hero used
+    is Sauda.
     - queue mode: loads all listed plans from queue mode maplist and plays them one after another
     - replay mode: replays current plan or queue of plans until bot is manually stopped. If used with queue of plans,
      plays all plans once, then start over again from first one.
@@ -1062,7 +1066,7 @@ Now, open your plan file. It looks like this:
         current_round = BEGIN-1
         map_start = time()
         while current_round < END+1:
-            current_round = Rounds.round_check(current_round, map_start)
+            current_round = Rounds.round_check(current_round, map_start, rounds[2])
             if current_round == BEGIN:     
                 ...
 >
@@ -1085,7 +1089,7 @@ placeholder text from info section. Now contents should look like similar to thi
         current_round = BEGIN-1
         map_start = time()
         while current_round < END+1:
-            current_round = Rounds.round_check(current_round, map_start)
+            current_round = Rounds.round_check(current_round, map_start, rounds[2])
             if current_round == BEGIN:     
                 ...
 >
@@ -1165,7 +1169,7 @@ Now that you know what the info panel is, let us have a look at the main body:
         current_round = BEGIN-1
         map_start = time()
         while current_round < END+1:
-            current_round = Rounds.round_check(current_round, map_start)
+            current_round = Rounds.round_check(current_round, map_start, rounds[2])
             if current_round == BEGIN:     
                 ...
 

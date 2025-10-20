@@ -479,6 +479,7 @@ class SettingsWindow:
             self.resolution_height_entry['state'] = 'normal'
             self.resolution_button['state'] = 'normal'
         elif self.resolution.get() == 'Off':
+            self.windowed_toggle.deselect()
             self.windowed_toggle['state'] = 'disabled'
             gui_vars_dict["check_resolution"] = False
             gui_vars_dict["windowed"] = False
@@ -547,6 +548,8 @@ class SettingsWindow:
             gui_vars_dict["logging"] = False
             gui_vars_dict["delta_ocrtext"] = False
             gui_vars_dict["substring_ocrtext"] = False
+            self.delta_ocrtext_toggle.deselect()
+            self.substring_ocrtext_toggle.deselect()
             self.delta_ocrtext_toggle['state'] = 'disabled'
             self.substring_ocrtext_toggle['state'] = 'disabled'
         with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:

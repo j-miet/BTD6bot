@@ -20,12 +20,12 @@ _______________________________________
 
 from._plan_imports import *
 
-def play(rounds: tuple[str, str, str, int, int, str]) -> None:
+def play(rounds):
     BEGIN, END = menu_start.load(*rounds)
     current_round = BEGIN-1
     map_start = time()
     while current_round < END+1:
-        current_round = Rounds.round_check(current_round, map_start)
+        current_round = Rounds.round_check(current_round, map_start, rounds[2])
         if current_round == BEGIN:
             dart1 = Monkey('dart', 0.3744791666667, 0.8175925925926)
             sub1 = Monkey('sub', 0.5848958333333, 0.7657407407407)

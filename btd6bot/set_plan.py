@@ -95,8 +95,29 @@ def _save_to_json(plan_name: str) -> None:
         json.dump(new_times, f, indent=2)
 
 def run_delta_adjust() -> None:
+    # internal imports bot._adjust_deltas and bot._farming should only be loaded after the first function call
+    # in order to prevent ocr reader's auto-initialization
     import bot._adjust_deltas
     bot._adjust_deltas.run()
+
+def select_defaulthero() -> None:
+    import bot._farming
+    bot._farming.select_defaulthero()
+
+def select_rewardmap() -> str:
+    import bot._farming
+    mapname: str = bot._farming.select_rewardmap()
+    if mapname == '':
+        return ''
+    return mapname
+
+def run_farming_mode(rewardplan: str) -> bool:
+    import bot._farming
+    bot._farming.click_rewardmap()
+    val = plan_setup(rewardplan, True)
+    if not val:
+        return False
+    return True
 
 def get_rounds(difficulty: str, gamemode: str) -> tuple[int, int]:
     """Returns begin and end rounds based on difficulty + game mode.
@@ -171,7 +192,7 @@ def get_hero_name_from_plan(plan_name: str) -> str:
             return line[6:].strip()
     return '-'
 
-def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str, int, int, str]) -> None:
+def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str, int, int, str, bool]) -> None:
     """Runs the plan file with given information.
 
     Also handles time recording for round plots.
@@ -180,7 +201,7 @@ def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str,
         plan_name: Name of current plan.
         plan_module: Importlib module of current plan.
         info: All information required for a plan. Components are: map name, difficulty, game mode, 
-            begin round, end round, hero name.
+            begin round, end round, hero name, farming mode status.
     """
     try:
         _flush_times_temp()
@@ -190,23 +211,31 @@ def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str,
     except BotError as err:
         cprint(err)
 
-def plan_setup(plan: str) -> None:
+def plan_setup(plan: str, farming: bool = False) -> bool:
     """Handles and passes map, strategy and round settings to correct map module.
 
     Matches to correct map module, fetches plan info and passes these to plan_run function.
 
     Args:
         plan: Raw string of current plan name.
+        farming: Whether farming mode is on or not.
+    
+    Returns:
+        Boolean False if an error occured, otherwise True
     """
     try:
         plan_module = importlib.import_module(name='plans.'+plan)
     except ModuleNotFoundError:
         cprint(f'Plan file {plan}.py doesn\'t exist OR invalid module import somewhere under bot package.')
-        return
+        return False
     try:
         info = get_plan_info(plan)
     except SetPlanError as e:
          cprint(f'{plan} - ', end='')
          cprint(e)
-         return
-    plan_run(plan, plan_module, (*info, get_hero_name_from_plan(plan)))
+         return False
+    if farming:
+        plan_run(plan, plan_module, (*info, '-', True))
+    else:
+        plan_run(plan, plan_module, (*info, get_hero_name_from_plan(plan), False))
+    return True

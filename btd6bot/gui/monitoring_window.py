@@ -51,6 +51,7 @@ class MonitoringWindow:
         queue_val (str): String with On/Off value for queue mode button.
         collection (str): String with On/Off value to both display collection event status and update corresponding 
             value to gui_vars.json.
+        farming (str): String value to determine if bot is launched in normal or collection event farming mode.
         current_plans (list[str]): List of currently unfinished plans. When bot is run, all_plans contents are copied
             into this. Then after finishing a plan, it gets removed from this list. Here finishing means plan was either
             completed successfully, or failed to finish within given amount of retries.  
@@ -60,6 +61,7 @@ class MonitoringWindow:
             matter if there's a single or multiple plans.
         plans_status (list[str]): Stores status of completed plans. If queue mode is enabled, its contents are used for
             not only displaying successfully finished plans, but also any unsuccessful ones.
+        roundtime (tk.StringVar): Variable storing current round timer value.
         monitoringwindow (tk.Toplevel): Window where other gui elements can be inserted.
         textbox (tk.Text): Text object that is responsible of displaying all text output during bot runtime.
         old_stdout (TextIO | Any): Original standard output stream. Program will return to it if MonitoringWindow is 
@@ -77,7 +79,7 @@ class MonitoringWindow:
     """
     current_bot_thread: threading.Thread
 
-    def __init__(self, all_plans_list: list[str], replay: str, queue: str, collection: str) -> None:
+    def __init__(self, all_plans_list: list[str], replay: str, queue: str, collection: str, farming: str) -> None:
         """Initialize monitoring window by passing it the plans list and replay/queue mode checks.
 
         Args:
@@ -89,8 +91,11 @@ class MonitoringWindow:
         self.replay_val = replay
         self.queue_val = queue
         self.collection_val = collection
+        self.farming = farming
         self.current_plans: list[str] = []
         self.plans_status: list[str] = []
+        self.roundtime = tk.StringVar(value='-')
+        self.runs = tk.IntVar(value=0)
 
         self.monitoringwindow = tk.Toplevel()
         self.monitoringwindow.title("Bot Monitoring Window")
@@ -115,7 +120,7 @@ class MonitoringWindow:
                             " main menu screen opened\n"
                             "------\n"
                             "~Press 'Run'/your 'start-stop' hotkey to start bot!\n"
-                            "~Press 'Stop'/'start-'stop' again to stop and reset\n current plan."
+                            "~Press 'Stop'/'start-stop' again to stop and reset\n current plan."
                             " In order to play plan again, return to\n main menu screen, then press 'Run' again.\n"
                             "~To pause/unpause bot, press your 'pause' hotkey.\n Bot can only be paused during maps "
                             "i.e. when it's not\n navigating menu screens, but pauses as soon as it\n becomes " 
@@ -137,15 +142,15 @@ class MonitoringWindow:
                                         font=os_font)
         self.roundtime_label.grid(column=0, row=4, sticky='sw', padx=10)
 
-        self.roundtime = tk.StringVar(value='-')
-
         self.roundtime_display = tk.Label(self.monitoringwindow, 
                                           width=8, 
                                           height=3, 
                                           relief='sunken', 
                                           textvariable=self.roundtime, 
                                           font=os_font)
-        self.roundtime_display.grid(column=0, row=4, sticky='s')
+        self.roundtime_display.grid(column=0, row=4, sticky='s', padx=10)
+        if self.farming == 'On':
+            self.roundtime_display.grid_configure(padx=(70,0))
 
         scroll = tk.Scrollbar(self.monitoringwindow, orient='vertical')
         scroll.grid(column=3, row=0, rowspan=4, sticky='ns')
@@ -188,6 +193,15 @@ class MonitoringWindow:
                                                    justify='left')
                 self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
                 self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
+        elif self.farming == 'On':
+            self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
+                                               compound='top', 
+                                               anchor='nw',
+                                               style='Style.TButton', 
+                                               justify='left')
+            self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+            self.monitor_mapscreen.configure(image='')
+            self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
         else:
             try:
                 photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(self.all_plans[0])+'.png'))
@@ -219,20 +233,23 @@ class MonitoringWindow:
                                                 pady=10)
         if guivars_adjust:
             self.monitor_infobox_current['text'] = 'Current\n'+plan_data.info_display('spa_pitsEasySandbox')
+        elif self.farming == 'On':
+            self.monitor_infobox_current['text'] = 'Current\n'+'-'*12
         self.monitor_infobox_current.grid(column=4, row=2, sticky='nw')
 
-        self.monitor_infobox_next = tk.Label(self.monitoringwindow, 
-                                             width=20, 
-                                             height=5, 
-                                             text='-'*12, 
-                                             anchor='nw',
-                                             relief='sunken', 
-                                             justify='left', 
-                                             padx=10, 
-                                             pady=10)
-        self.monitor_infobox_next.grid(column=4, row=3, sticky='nw')
-        if len(self.all_plans) > 1:
-            self.monitor_infobox_next.config(text='Next\n'+plan_data.info_display(self.all_plans[1]))
+        if self.farming == 'Off':
+            self.monitor_infobox_next = tk.Label(self.monitoringwindow, 
+                                                 width=20, 
+                                                 height=5, 
+                                                 text='-'*12, 
+                                                 anchor='nw',
+                                                 relief='sunken', 
+                                                 justify='left', 
+                                                 padx=10, 
+                                                 pady=10)
+            self.monitor_infobox_next.grid(column=4, row=3, sticky='nw')
+            if len(self.all_plans) > 1:
+                self.monitor_infobox_next.config(text='Next\n'+plan_data.info_display(self.all_plans[1]))
 
         monitor_collection_text = tk.Label(self.monitoringwindow, 
                                            text='Collection event: '+str(self.collection_val),
@@ -242,19 +259,43 @@ class MonitoringWindow:
         monitor_collection_text.grid(column=5, row=2, sticky='ne')
         self._update_collection_status()
 
-        monitor_queuemode_text = tk.Label(self.monitoringwindow, 
-                                          text='Queue mode: '+str(self.queue_val),             
-                                          relief='sunken', 
-                                          padx=10, 
-                                          pady=10)
-        monitor_queuemode_text.grid(column=5, row=2, sticky='se')
+        if self.farming == 'On':
+            self.runs_label = tk.Label(self.monitoringwindow, 
+                                        width=15, 
+                                        height=3, 
+                                        text='Runs completed', 
+                                        relief='sunken',
+                                        font=os_font)
+            self.runs_label.grid(column=1, row=4, sticky='sw', padx=10)
 
-        monitor_replay_text = tk.Label(self.monitoringwindow, 
-                                       text='Replay mode: '+str(self.replay_val),
-                                       relief='sunken', 
-                                       padx=10, 
-                                       pady=10)
-        monitor_replay_text.grid(column=5, row=3, sticky='e', pady=10)
+            self.runs_display = tk.Label(self.monitoringwindow, 
+                                         width=8, 
+                                         height=3, 
+                                         relief='sunken', 
+                                         textvariable=self.runs, 
+                                         font=os_font)
+            self.runs_display.grid(column=1, row=4, sticky='s', padx=(75,0))
+
+            monitor_farming_text = tk.Label(self.monitoringwindow, 
+                                            text='Farm mode: On',             
+                                            relief='sunken', 
+                                            padx=10, 
+                                            pady=10)
+            monitor_farming_text.grid(column=5, row=2, sticky='e')
+        else:
+            monitor_queuemode_text = tk.Label(self.monitoringwindow, 
+                                              text='Queue mode: '+str(self.queue_val),             
+                                              relief='sunken', 
+                                              padx=10, 
+                                              pady=10)
+            monitor_queuemode_text.grid(column=5, row=2, sticky='se')
+
+            monitor_replay_text = tk.Label(self.monitoringwindow, 
+                                           text='Replay mode: '+str(self.replay_val),
+                                           relief='sunken', 
+                                           padx=10, 
+                                           pady=10)
+            monitor_replay_text.grid(column=5, row=3, sticky='e', pady=10)
 
         # create the initial placeholder thread for MainWindow.is_monitoringwindow.
         self.bot_thread = threading.Thread()
@@ -416,6 +457,9 @@ class MonitoringWindow:
     def _run_bot(self) -> None:
         """Checks if replay mode is enabled/disabled and runs the sequence of plans listed in self.all_plans.
 
+        Will also check resolution settings, ocr adjusting and farm mode conditions, and performs additional steps
+        depending on these conditions.
+
         Queue mode enabled/disabled check is already done before creating MonitorScreen object so queue check is not
         needed again.
         """
@@ -458,6 +502,35 @@ class MonitoringWindow:
             return
         if os.path.exists(gui_paths.FILES_PATH/'.temp_upg_deltas.json'):
             os.remove(gui_paths.FILES_PATH/'.temp_upg_deltas.json')
+        if self.farming == 'On':
+            cprint("Collection event farming mode enabled.\n" \
+                   "Bot keeps farming expert maps with bonus rewards on Easy, Standard.\n"
+                   "Monkey knowledge is not required.\n"
+                   "Only Sauda is required as hero, make sure you have her unlocked.\n")
+            set_plan.select_defaulthero()
+            while True:
+                rewardmap: str = set_plan.select_rewardmap()
+                if rewardmap == '':
+                    cprint('\n#####Unable to continue farming loop, bot terminated#####')
+                    self.monitor_run_button['text'] = 'Run'
+                    return
+                rewardplan: str = rewardmap.replace(' ', '_')+'EasyStandard'
+                try:
+                    self.monitor_mapscreen.destroy()
+                    new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/f'{rewardmap}.png')
+                    self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
+                                                       image=new_image, 
+                                                       compound='top', 
+                                                       anchor='nw', 
+                                                       justify='left')
+                    self.monitor_mapscreen.image = new_image # type: ignore
+                    self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+                except tk.TclError:
+                    self.monitor_mapscreen.configure(image='')
+                    self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
+                self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display(rewardplan))
+                set_plan.run_farming_mode(rewardplan)
+                self.runs.set(self.runs.get()+1)
         if self.replay_val == 'On':
             while True:
                 self._run_plans(retries_val)

@@ -1,71 +1,46 @@
 """
-[Hero] Psi
+[Hero] -
 [Monkey Knowledge] -
 ---------------------------------------------------------------
 ===Monkeys & upgrades required===
-dart 0-0-1
-boomer 4-0-2
+druid 1-3-0
 
-sniper 3-1-2
+sniper 2-2-4
 _______________________________________
-Derived from sanctuary_HardChimps.
 """
 
 from._plan_imports import *
 
-def play(rounds: tuple[str, str, str, int, int, str]) -> None:
+def play(rounds):
     BEGIN, END = menu_start.load(*rounds)
     current_round = BEGIN-1
     map_start = time()
     while current_round < END+1:
         current_round = Rounds.round_check(current_round, map_start, rounds[2])
         if current_round == BEGIN:
-            sniper_bot1 = Monkey('sniper', 0.6453125, 0.762037037037)
-            sniper_bot2 = Monkey('sniper', 0.6651041666667, 0.8074074074074)
-            sniper_bot2.target('strong')
+            sniper1 = Monkey('sniper', 0.6161458333333, 0.7648148148148)
+            sniper2 = Monkey('sniper', 0.6505208333333, 0.7925925925926)
+            sniper2.target('strong')
         elif current_round == 3:
-            sniper_bot3 = Monkey('sniper', 0.7536458333333, 0.8796296296296)
-        elif current_round == 7:
-            dart_left2 = Monkey('dart', 0.3348958333333, 0.4546296296296)
-        elif current_round == 8:
-            dart_right2 = Monkey('dart', 0.6302083333333, 0.4342592592593)
+            sniper3 = Monkey('sniper', 0.7567708333333, 0.9324074074074)
+        elif current_round == 6:
+            druid = Monkey('druid', 0.2328125, 0.4416666666667)
         elif current_round == 10:
-            sniper1 = Monkey('sniper', 0.4072916666667, 0.0611111111111)
-        elif current_round == 14:
-            hero = Hero(0.3833333333333, 0.1064814814815)
-            hero.target('strong')
-        elif current_round == 17:
-            boomerang = Monkey('boomer', 0.5, 0.2546296296296)
-        elif current_round == 18:
-            boomerang.upgrade(['1-0-0', '1-0-1', '2-0-1'], cpos=(0.425, 0.275))
-        elif current_round == 20:
-            sniper1.upgrade(['0-0-1'], cpos=(0.40625, 0.0564814814815))
-        elif current_round == 21:
-            sniper1.upgrade(['1-0-1'], cpos=(0.488, 0.025))
-            sniper1.target('strong')
-        elif current_round == 23:
-            ability(1, 1)
-            sniper1.target('first', cpos=(0.333, 0.0354814814815))
-        elif current_round == 24:
-            boomerang.upgrade(['3-0-1'], cpos=(0.4260416666667, 0.2722222222222))
-        elif current_round == 26:
-            sniper1.upgrade(['1-0-2'], cpos=(0.4104166666667, 0.0592592592593))
+            druid.upgrade(['0-1-0'], cpos=(0.1307291666667, 0.287962962963))
+        elif current_round == 12:
+            druid.upgrade(['0-2-0','0-3-0'], cpos=(0.1359375, 0.2990740740741))
+        elif current_round == 13:
+            druid.upgrade(['1-3-0'], cpos=(0.1619791666667, 0.3842592592593))
+            druid.target('strong')
+        elif current_round == 16:
+            sniper1.upgrade(['0-1-0','0-2-0'], cpos=(0.7234375, 0.8194444444444))
+        elif current_round == 19:
+            sniper1.upgrade(['0-2-1','0-2-2'], cpos=(0.6567708333333, 0.7824074074074))
         elif current_round == 27:
-            sniper2 = Monkey('sniper', 0.3895833333333, 0.0444444444444)
-        elif current_round == 28:
-            sniper2.upgrade(['1-0-0', '1-1-0'], cpos=(0.4645833333333, 0.0574074074074))
-        elif current_round == 30:
-            sniper1.target('strong', cpos=(0.4104166666667, 0.0592592592593))
-        elif current_round == 31:
-            ability(1, 1)
-            sniper1.target('first', cpos=(0.333, 0.0354814814815))
-        elif current_round == 35:
-            boomerang.upgrade(['4-0-1', '4-0-2'], cpos=(0.35, 0.2564814814815))
-        elif current_round == 36:
-            sniper1.upgrade(['2-0-2'], cpos=(0.4104166666667, 0.0592592592593))
+            sniper1.upgrade(['0-2-3'], cpos=(0.7619791666667, 0.8509259259259))
+        elif current_round == 34:
+            sniper1.upgrade(['0-2-4'], cpos=(0.7203125, 0.825))
         elif current_round == 38:
-            ability(1, 1)
+            sniper2.upgrade(['1-0-0','1-0-1','1-0-2','1-0-3'], cpos=(0.7619791666667, 0.8601851851852))
         elif current_round == 39:
-            sniper1.upgrade(['3-0-2'], cpos=(0.333, 0.0354814814815))
-        elif current_round == 40: 
-            ability(1, 1)
+            sniper2.upgrade(['2-0-3'], cpos=(0.8026041666667, 0.8953703703704))
