@@ -1,4 +1,4 @@
-# Supported game plans (Last updated 2025-10-19)
+# Supported game plans (Last updated 2025-10-20)
 
 - this list is auto-updated using ``scripts/update_plans.py``
 - all implemented plans are listed. Each game mode includes
@@ -38,6 +38,7 @@
 - [Infernal](#infernal)
 - [Kartsndarts](#kartsndarts)
 - [Last Resort](#last-resort)
+- [Lost Crevasse](#lost-crevasse)
 - [Luminous Cove](#luminous-cove)
 - [Mesa](#mesa)
 - [Middle Of The Road](#middle-of-the-road)
@@ -859,6 +860,28 @@
 			_______________________________________
 			Some rounds can get skipped because bot incorrectly detects different value.
 			This should mostly happen in early/mid game and thus not affect later rounds where ability timings are important.
+			
+### Lost Crevasse
+- Hard
+	- [Chimps](../btd6bot/plans/lost_crevasseHardChimps.py)
+
+			[Hero] Silas
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			tack 2-0-5
+			ice 5-2-5
+			desperado 0-0-0
+			
+			sniper 0-1-0
+			
+			alch 5-0-0
+			druid 1-3-0
+			mermonkey 4-2-0
+			
+			village 3-3-2
+			_______________________________________
+			Possible RNG pre-round 40
 			
 ### Luminous Cove
 - Hard
