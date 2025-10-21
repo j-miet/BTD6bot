@@ -38,7 +38,7 @@ jobs:
           $SourceDiff = $diff | Where-Object { $_ -match 'docs/Plans.md'}
           $HasDiff = $SourceDiff.Length -gt 0
 
-          Write-Host "::set-output name=plans_changed::$HasDiff"
+          Write-Host "plans_changed=$HasDiff" >> $env:GITHUB_OUTPUT
       - name: commit and push
         shell: pwsh
         if: steps.check_plans.outputs.plans_changed == 'True'
