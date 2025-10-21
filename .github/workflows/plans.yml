@@ -1,3 +1,6 @@
+# For checking if files are modified:
+# https://www.meziantou.net/executing-github-actions-jobs-or-steps-only-when-specific-files-change.htm
+
 name: Update plan list
 
 on:
@@ -27,9 +30,9 @@ jobs:
         run: |
           python scripts/update_plans.py
       - name: Check if Plans.md was modified
+        shell: pwsh
         id: check_plans
         run: |
-          # Original: https://www.meziantou.net/executing-github-actions-jobs-or-steps-only-when-specific-files-change.htm
           $diff = git diff --name-only HEAD^ HEAD
 
           $SourceDiff = $diff | Where-Object { $_ -match 'docs/Plans.md'}
@@ -37,6 +40,7 @@ jobs:
 
           Write-Host "::set-output name=plans_changed::$HasDiff"
       - name: commit and push
+        shell: pwsh
         if: steps.check_plans.outputs.plans_changed == 'True'
         run: |
           git config --global user.name "${GITHUB_ACTOR}"
