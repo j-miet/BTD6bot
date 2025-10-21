@@ -19,7 +19,7 @@ def play(rounds):
     while current_round < END+1:
         current_round = Rounds.round_check(current_round, map_start, rounds[2])
         if current_round == BEGIN:
-            hero = Hero(0.14, 0.351)
+            hero = Hero(0.14, 0.35)
             hero.target('strong')
         elif current_round == 2:
             ninja1 = Monkey('ninja', 0.19529, 0.48333)
