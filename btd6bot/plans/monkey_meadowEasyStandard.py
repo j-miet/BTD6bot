@@ -22,7 +22,7 @@ def play(rounds):
             hero = Hero(0.14, 0.35)
             hero.target('strong')
         elif current_round == 2:
-            ninja1 = Monkey('ninja', 0.19529, 0.48333)
+            ninja1 = Monkey('ninja', 0.19529, 0.48332)
         elif current_round == 4: 
             ninja1.upgrade(['1-0-0'])
         elif current_round == 8:

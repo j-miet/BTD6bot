@@ -173,19 +173,21 @@ Next, external dependencies. Install the following third party packages:
     pynput==1.7.8
     pyperclip==1.9.0
     tkinterweb==4.3.1
+    tkinterweb-tkhtml==1.0
 
-(*easyocr* library defaults to cpu for text detection/reading. **Cpu works just fine**, but if you'd prefer it to use 
+*easyocr* library defaults to cpu for text detection/reading. **Cpu works just fine**, but if you'd prefer it to use 
 gpu instead, check out [PyTorch local install guide](https://pytorch.org/get-started/locally/) and select appropriate 
-CUDA version.)
+CUDA version.
 
-If you use Windows, an easy way to do this is to open your BTD6bot folder, then run ``reqs.bat``. 
+If you use Windows, an easy way to install dependencies is to open your BTD6bot folder, then run ``reqs.bat``. 
 
 If this isn&#39;t working/you use another OS: open command terminal, change your current directory to 
 ``<your path>/btd6bot`` where you installed BTD6bot, then type
 ``pip install -r requirements.txt``.
 
-[Note] Exact version as listed above might not be required, but are always recommended. For pynput however, versions
-above 1.7.8 cause a fatal error when any gui hotkeys are used.
+[**Note**] Exact versions as listed above might not be required, but are always recommended. For *pynput* and *tkinterweb-tkhtml* however they are mandatory:
+ - pynput 1.7.8 causes a fatal error if any gui hotkey is used
+ - tkinterweb-tkhtml 2.0 raises ImportError if tkinterweb library is imported
 
 
 # <u>First-time setup</u>
