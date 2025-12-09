@@ -28,9 +28,8 @@ class NoGui:
         self.replay: bool = False
         self.bot_thread: threading.Thread
         self.bot_thread_active = False
-        self.INFO_MESSAGE = ('*This version does not currently support collection event/queue/replay modes. To change '
-            'any settings/hotkeys,\n'
-            'use the gui version, make changes there and they will be shared with this version.\n'
+        self.INFO_MESSAGE = ('To change any settings/hotkeys, use the gui version, make changes there and they will\n' 
+            'be shared with this version.\n'
             'Gui hotkeys \'start-stop\', \'exit\' and \'pause\' also work.\n'
             '/////////\n'
             '--Commands--\n'
@@ -50,7 +49,7 @@ class NoGui:
     def _toggle_modes(self) -> None:
         while 1:
             input_str = input("Change event and replay modes on/off by typing 'event' or 'replay'." 
-                            " Type 'back' to return to main ui\n=>")
+                            " Type 'back' to return to main ui.\n[modes]=>")
             match input_str:
                 case 'event':
                     if BotVars.current_event_status == 'On': 
@@ -133,7 +132,7 @@ class NoGui:
         cprint('Model loaded.')
         print(self.INFO_MESSAGE)
         while 1:
-            user_input = cinput('=>')
+            user_input = cinput('[btd6bot]=>')
             if len(user_input) == 0:
                 ...
             elif user_input.lower() == 'help':
