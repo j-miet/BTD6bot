@@ -418,11 +418,13 @@ class Monkey():
         kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
         if cpos is not None:
             self._update_panel_position(cpos[0])
+        if self._name == 'sniper' and self._targeting == 'elite' and not Monkey._elite_sniper:
+            self._targeting = 'first'
         match self._name:
             case 'farm':
                 return self._name, target
             case 'sniper':
-                if Monkey._elite_sniper == 1:
+                if Monkey._elite_sniper:
                     if target == 'first':
                         if current == 'last':
                             kb_mouse.kb_input(hotkeys['target reverse'], 1)
@@ -721,7 +723,7 @@ class Monkey():
             self._targeting = 'pursuit'
         elif self._name == 'sniper' and i == 1 and int(u[2*i]) == 5:
             self._targeting = 'elite'
-            Monkey._elite_sniper = 1
+            Monkey._elite_sniper = True
 
     def _do_upgrades(self, upgrade_list: list[str], cpos: tuple[float, float] | None = None) -> None:
         """Handles the choosing of correct upgrade path and verifies the process.
@@ -1123,7 +1125,7 @@ class Monkey():
         time.sleep(0.3)
         kb_mouse.kb_input(hotkeys['sell'])
         if self._name == 'sniper' and int(self._upgrade_path[2]) == 5:
-            Monkey._elite_sniper = 0
+            Monkey._elite_sniper = False
         if not OcrValues._log_ocr_deltas:
             cprint(f'{self._name.capitalize()} sold!')
 
