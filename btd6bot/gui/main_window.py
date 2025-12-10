@@ -34,6 +34,7 @@ from utils import plan_data
 
 if TYPE_CHECKING:
     from typing import Any, TextIO
+    from tkinter import Event
 
 class MainWindowCombobox(ttk.Combobox):
     """Custom combobox class specifically made for MainWindow class.
@@ -50,24 +51,54 @@ class MainWindowCombobox(ttk.Combobox):
     def __init__(self, mainwindow: MainWindow, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.mainwindow = mainwindow
-        pd = self.tk.call('ttk::combobox::PopdownWindow', self) #get popdownWindow reference 
-        lb = pd + '.f.l' #get popdown listbox
-        self._bind(('bind', lb),"<KeyPress>",self.popup_key_pressed,None)
 
-    def popup_key_pressed(self,evt):
+        pd = self.tk.call('ttk::combobox::PopdownWindow', self) # get popdownWindow reference 
+        lb = pd + '.f.l' # get popdown listbox
+        self._bind(('bind', lb), "<KeyPress>", self.comboboxsearch, None)
+
+    def _updateselection(self, i: int, event: Event) -> None:
+        self.current(i)
+        self.icursor(i)
+        self.tk.eval(event.widget + ' selection clear 0 end') # clear current selection
+        self.tk.eval(event.widget + ' selection set ' + str(i)) # select new element
+        self.tk.eval(event.widget + ' see ' + str(i)) # spin combobox popdown for selected element will be
+
+    def comboboxsearch(self, event: Event) -> str:
+        """Implements custom combobox behavior.
+
+        Using keyword string "break" as return value disables current widget's (= this combobox) default behavior.
+        Importantly, moving up and down with arrow keys which interferes with custom letter-based search and
+        messes up index tracking. Disabling this and making Custom "Up", "Down" and "Return" (= pressing Enter) events 
+        fixes this.
+        """
         values = self.cget("values")
-        for i in it.chain(range(self.current() + 1,len(values)),range(0,self.current())):
-            if evt.char.lower() == values[i][0].lower():
-                self.current(i)
-                self.icursor(i)
-                self.tk.eval(evt.widget + ' selection clear 0 end') #clear current selection
-                self.tk.eval(evt.widget + ' selection set ' + str(i)) #select new element
-                self.tk.eval(evt.widget + ' see ' + str(i)) #spin combobox popdown for selected element will be visible
-                if self._name == 'mapbox':
-                    self.mainwindow.update_mapconfig() # auto-update map info panel when for currently selected element
-                elif self._name == 'stratbox':
-                    self.mainwindow.update_stratconfig()
+        match event.keysym:
+            case "Return":
+                try:
+                    self.focus_displayof() # 'Enter' to unfocus combobox. Throws KeyError which must be handled.
+                except KeyError:
+                    ...
                 return
+            case "Up":
+                if self.current() <= 0:
+                    return
+                i: int = self.current()-1
+                self._updateselection(i, event)
+            case "Down":
+                if self.current() >= len(values)-1:
+                    return
+                i: int = self.current()+1
+                self._updateselection(i, event)
+            case _:
+                for i in it.chain(range(self.current() + 1,len(values)), range(0,self.current())):
+                    if event.char.lower() == values[i][0].lower():
+                        self._updateselection(i, event)
+                        break
+        if self._name == 'mapbox':
+            self.mainwindow.update_mapconfig() # auto-update map info panel when for currently selected element
+        elif self._name == 'stratbox':
+            self.mainwindow.update_stratconfig()
+        return "break"
 
 
 class MainWindow:
