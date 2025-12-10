@@ -67,9 +67,8 @@ class MainWindowCombobox(ttk.Combobox):
         """Implements custom combobox behavior.
 
         Using keyword string "break" as return value disables current widget's (= this combobox) default behavior.
-        Importantly, moving up and down with arrow keys which interferes with custom letter-based search and
-        messes up index tracking. Disabling this and making Custom "Up", "Down" and "Return" (= pressing Enter) events 
-        fixes this.
+        Importantly, moving up and down with arrow keys interferes with custom letter-based search and messes up index 
+        tracking. Disabling this and making Custom "Up", "Down" and "Return" (= pressing Enter) events fixes this.
         """
         values = self.cget("values")
         match event.keysym:
@@ -241,8 +240,7 @@ class MainWindow:
         self.current_strat = 'Easy-Standard'
         self.strat_box = MainWindowCombobox(mainwindow=self,
                                             master=mainframe, 
-                                            state='readonly', 
-                                            values=self.get_strats(),
+                                            state='readonly',
                                             name='stratbox')
         self.strat_box.grid(column=1, row=5, sticky='sw', pady=10)
         self.strat_box.bind("<<ComboboxSelected>>", lambda _: self.update_stratconfig())
@@ -398,10 +396,28 @@ class MainWindow:
             self.start_button.grid(column=3, row=6, sticky='e')
 
         self._delete_readme_html()
+        self.update_mapconfig()
+        self.update_stratconfig()
 
     def _delete_readme_html(self) -> None:
         if os.path.exists(gui_paths.FILES_PATH/'helpwindow'/'README.html'):
             os.remove(gui_paths.FILES_PATH/'helpwindow'/'README.html')
+
+    def _reorder_strats(self, strategies: list[str]) -> list[str]:
+        filter = {"Easy": 1, "Medium": 2, "Hard": 3} # change plan list order: Easy first then Medium and last Hard
+        strats: list[str] = strategies.copy()
+        current: int
+        for i in range(0, len(strats)-1):
+            strat_current: str = strats[i].split('-')[0]
+            strat_next: str = strats[i+1].split('-')[0]
+            try:
+                if filter[strat_current] > filter[strat_next]:
+                    current = strats[i]
+                    strats[i] = strats[i+1]
+                    strats[i+1] = current
+            except KeyError:
+                ...
+        return strats
 
     def get_maps(self) -> list[str]:
         """Get all map names.
@@ -451,7 +467,6 @@ class MainWindow:
                 self.info_window.insert('end', '')
                 self.update_stratconfig()
 
-    
     def update_stratconfig(self) -> None:
         """Updates current strat value and possible map info screen if available."""
         for maps in self.MAP_NAMES_AND_STRATS_DICT.keys():
@@ -459,7 +474,8 @@ class MainWindow:
                 strats_for_map = []
                 for strats in self.MAP_NAMES_AND_STRATS_DICT[maps]:
                     strats_for_map.append(strats)
-                    self.strat_box.configure(values=strats_for_map)
+                all_strats: list[str] = self._reorder_strats(strats_for_map)
+                self.strat_box.configure(values=all_strats)
         self.current_strat = self.strat_box.get()
         self.show_mapinfo()
 
