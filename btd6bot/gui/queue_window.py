@@ -107,20 +107,20 @@ class QueueModeWindow:
                                    command=self.remove_plan, 
                                    width=10, 
                                    font=os_font)
-        self.delbutton.grid(column=0, row=2, sticky="w", padx=(11,0))
+        self.delbutton.grid(column=0, row=2, sticky="w", padx=(11,0),pady=(5,0))
         self.queue_optionwindow.bind("r", lambda _: self.remove_plan())
         self.delall_button = tk.Button(self.queue_optionwindow, 
                                        text='Remove all', 
                                        command=self.remove_allcurrentplans, 
                                        width=10, 
                                        font=os_font)
-        self.delall_button.grid(column=0, row=2, sticky="e", padx=(11,0))
+        self.delall_button.grid(column=0, row=2, sticky="e", padx=(11,0), pady=(5,0))
         self.addbutton = tk.Button(self.queue_optionwindow, 
                                    text='Add (a)', 
                                    command=self.add_plan, 
                                    width=10, 
                                    font=os_font)
-        self.addbutton.grid(column=3, row=2, sticky="w", padx=(11,0))
+        self.addbutton.grid(column=3, row=2, sticky="w", padx=(11,0), pady=(5,0))
         self.queue_optionwindow.bind("a", lambda _: self.add_plan())
 
         self.all_searchbartext = tk.StringVar(value="")
@@ -131,26 +131,43 @@ class QueueModeWindow:
         self.all_searchbar.grid(column=3, row=2, sticky="e")
         self.all_searchbar.insert(0, "search plans...")
         self.all_searchbar.bind('<FocusIn>', lambda _: self._clear_entry())
-        self.all_searchbar.config(fg='grey')
+        self.all_searchbar.bind('<FocusOut>', lambda _: self._set_defaultmessage())
+        self.all_searchbar.config(fg='gray')
 
         self.read_queue_list()
         self.read_allplans_list()
+        self.all_searchbar.setvar(value="")
 
     def _clear_entry(self) -> None:
         if self.all_searchbar.get() == 'search plans...':
             self.all_searchbar.delete(0, "end")
             self.all_searchbar.config(fg='black')
 
+    def _set_defaultmessage(self) -> None:
+        if self.all_searchbar.get() == '':
+            self.all_searchbar.insert(0, "search plans...")
+            self.all_searchbar.config(fg='gray')
+            self.read_allplans_list()
+
     def _callback_all(self) -> None:
-        searchtext = self.all_searchbartext.get()
+        searchtext = self.all_searchbartext.get().lower()
+        if searchtext == "search plans..." and self.all_searchbar.cget("fg") == "gray":
+            searchtext = ""
         all_plans = plan_data.read_plans()
         matching_plans: list[str] = []
         for plan_name in all_plans:
-            if searchtext in plan_name:
-                matching_plans.append(plan_name)
+            plan_strat: str = plan_data.return_strategy(plan_name).split('-')
+            if (searchtext in plan_name.lower() or 
+                searchtext in plan_name.lower().replace('_', ' ') or
+                searchtext in plan_data.return_map(plan_name)+" "+plan_strat[0].lower()+" "+plan_strat[1].lower()):
+                    matching_plans.append(plan_name)
         self.allplans.delete(0, "end")
+        with open(gui_paths.QUEUE_LIST_PATH) as file_read:
+            listed_plans_raw = file_read.readlines()
+            listed_plans = plan_data.list_format(listed_plans_raw)
         for i in range(0, len(matching_plans)):
-            self.allplans.insert(i, matching_plans[i])
+            if matching_plans[i] not in listed_plans:
+                self.allplans.insert(i, matching_plans[i])
 
     def update_planinfo(self) -> None:
         """Updates plan info panel based on selected name."""
@@ -256,12 +273,15 @@ class QueueModeWindow:
         self.myplans.insert(tk.END, selected_plan)
         with open(gui_paths.QUEUE_LIST_PATH, 'a') as file_append:
             file_append.write(self.allplans.get(index[0])+'\n')
+        self._callback_all()
 
     def remove_allcurrentplans(self) -> None:  
         """Remove all currently selected plans from queue."""
         self.myplans.delete(0, "end")
         with open(gui_paths.QUEUE_LIST_PATH, 'w') as _:
             ...
+        self._callback_all()
+        
 
     def remove_plan(self) -> None:
         """Remove a plan from current queue."""
@@ -276,6 +296,7 @@ class QueueModeWindow:
         with open(gui_paths.QUEUE_LIST_PATH, 'w') as file_write:
             for line in listed:
                 file_write.write(line)
+        self._callback_all()
             
     def read_queue_list(self) -> None:
         """Load an existing list of queued plans.
@@ -300,10 +321,14 @@ class QueueModeWindow:
             self.myplans.insert(i, listed_plans[i])
 
     def read_allplans_list(self) -> None:
-        """Load a list of all existing plans."""
-        all_plans = plan_data.read_plans()
-        for i in range(0, len(all_plans)):
-            self.allplans.insert(i, all_plans[i])
+        """Load a list of all existing plans which are not selected in current query."""
+        with open(gui_paths.QUEUE_LIST_PATH) as file_read:
+            listed_plans_raw = file_read.readlines()
+            listed_plans = plan_data.list_format(listed_plans_raw)
+        found_plans = plan_data.read_plans()
+        for i in range(0, len(found_plans)):
+            if found_plans[i] not in listed_plans:
+                self.allplans.insert(i, found_plans[i])
 
     def get_optionwindow(self) -> tk.Toplevel:
         """Get current option window.
