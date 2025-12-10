@@ -258,6 +258,7 @@ class MonitoringWindow:
                                            pady=10)
         monitor_collection_text.grid(column=5, row=2, sticky='ne')
         self._update_collection_status()
+        self._update_farming_status()
 
         if self.farming == 'On':
             self.runs_label = tk.Label(self.monitoringwindow, 
@@ -342,6 +343,9 @@ class MonitoringWindow:
 
     def _update_collection_status(self) -> None:
         BotVars.current_event_status = self.collection_val
+
+    def _update_farming_status(self) -> None:
+        BotVars.current_farming_status = self.farming
 
     def _stop_or_run(self) -> None:
         """Handles current bot thread termination and opening of new ones."""
@@ -503,20 +507,17 @@ class MonitoringWindow:
         if os.path.exists(gui_paths.FILES_PATH/'.temp_upg_deltas.json'):
             os.remove(gui_paths.FILES_PATH/'.temp_upg_deltas.json')
         if self.farming == 'On':
-            cprint("Collection event farming mode enabled.\n" \
-                   "Bot keeps farming expert maps with bonus rewards on Easy, Standard.\n"
-                   "Monkey knowledge is not required.\n"
-                   "Only Sauda is required as hero, make sure you have her unlocked.\n")
+            set_plan.farming_print()
             set_plan.select_defaulthero()
             while True:
-                rewardmap: str = set_plan.select_rewardmap()
-                if rewardmap == '':
+                rewardplan: str = set_plan.select_rewardplan()
+                if rewardplan == '':
                     cprint('\n#####Unable to continue farming loop, bot terminated#####')
                     self.monitor_run_button['text'] = 'Run'
                     return
-                rewardplan: str = rewardmap.replace(' ', '_')+'EasyStandard'
                 try:
                     self.monitor_mapscreen.destroy()
+                    rewardmap: str = plan_data.return_map(rewardplan)
                     new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/f'{rewardmap}.png')
                     self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
                                                        image=new_image, 
@@ -529,8 +530,8 @@ class MonitoringWindow:
                     self.monitor_mapscreen.configure(image='')
                     self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
                 self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display(rewardplan))
-                set_plan.run_farming_mode(rewardplan)
-                self.runs.set(self.runs.get()+1)
+                if not set_plan.run_farming_mode(rewardplan):
+                    self.runs.set(self.runs.get()+1)
         if self.replay_val == 'On':
             while True:
                 self._run_plans(retries_val)

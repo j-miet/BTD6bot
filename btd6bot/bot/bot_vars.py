@@ -26,6 +26,8 @@ class BotVars:
         current_event_status (str, class attribute): Whether collection event checks are enabled or not. In api.
             menu, bot needs to know current collection event status. To make passing of this value from gui to all the 
             way there, it's stored here and imported instead. Has values 'On' or 'Off', with default being 'Off'.
+        current_farming_status (str, class attribute): If collection event farming is enabled or not. When enabled, bot
+            automatically loops collection event reward maps. Has values 'On' or 'Off', default is 'Off'.
 
         time_recording_status (bool, class attribute): Whether the bot will record current map times for plotting 
             purposes, or not. Bot will always display time values during runtime, but with this setting as True, it 
@@ -52,6 +54,7 @@ class BotVars:
     print_substring_ocrtext: bool = False
 
     current_event_status: str = 'Off'
+    current_farming_status: str = "Off"
 
     # internal parameters; do not change their initial values manually
     time_recording_status: bool = True

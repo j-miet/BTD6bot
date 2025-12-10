@@ -100,24 +100,26 @@ def run_delta_adjust() -> None:
     import bot._adjust_deltas
     bot._adjust_deltas.run()
 
+def farming_print() -> None:
+    """Print message when farming mode is enabled."""
+    cprint("Collection event farming mode enabled.\n" \
+            "Bot keeps farming expert maps with bonus rewards on Easy, Standard.\n"
+            "Monkey knowledge is not required.\n"
+            "Only Sauda is required as hero, make sure you have her unlocked.\n")
+
 def select_defaulthero() -> None:
     import bot._farming
     bot._farming.select_defaulthero()
 
-def select_rewardmap() -> str:
+def select_rewardplan() -> str:
     import bot._farming
-    mapname: str = bot._farming.select_rewardmap()
-    if mapname == '':
-        return ''
-    return mapname
+    planname: str = bot._farming.select_rewardplan()
+    return planname
 
 def run_farming_mode(rewardplan: str) -> bool:
     import bot._farming
     bot._farming.click_rewardmap()
-    val = plan_setup(rewardplan, True)
-    if not val:
-        return False
-    return True
+    return plan_setup(rewardplan, True)
 
 def get_rounds(difficulty: str, gamemode: str) -> tuple[int, int]:
     """Returns begin and end rounds based on difficulty + game mode.
