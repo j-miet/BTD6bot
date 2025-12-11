@@ -40,8 +40,8 @@ class Rounds:
             means bot will open esc menu and exit manually.
         escsettings_checked (bool, class attribute): Whether automatic game settings check has been performed once.
     """    
-    DEFEAT_CHECK_FREQUENCY = 12
-    LEVEL_UP_CHECK_FREQUENCY = 30
+    DEFEAT_CHECK_FREQUENCY: int = 12
+    LEVEL_UP_CHECK_FREQUENCY: int = 30
 
     begin_round: int = 0
     end_round: int = 0
@@ -249,9 +249,9 @@ class Rounds:
         else:
             if not AutoStart.called_forward:
                 forward()
-            total_time = times.current_time()
-            defeat_check = 1
-            levelup_check = 1
+            total_time: float = times.current_time()
+            defeat_check: int = 1
+            levelup_check: int = 1
             while True:
                 round_value = strong_substring_check(str(current_round)+'/'+str(Rounds.end_round), 
                                                      get_text('ingame', 'current_round'), 
