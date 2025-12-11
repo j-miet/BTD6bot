@@ -114,7 +114,7 @@ def play(rounds):
             wait(1)
             click(0.3104166666667, 0.4425925925926)
             ability(1,8)
-            ability(3,13)
+            ability(2,13)
         elif current_round == 87:
             ability(1,7)
         elif current_round == 89:
@@ -122,7 +122,7 @@ def play(rounds):
             alch.upgrade(['5-2-0'])
         elif current_round == 90:
             ability(1,2)
-            ability(3)
+            ability(2)
         elif current_round == 91:
             sniper4 = Monkey('sniper', 0.4682291666667, 0.3861111111111)
             sniper4.upgrade(['0-1-0','0-2-0','0-3-0','0-3-1','0-3-2'])
@@ -134,10 +134,10 @@ def play(rounds):
             sniper6.upgrade(['0-1-0','0-2-0','0-3-0','0-3-1','0-3-2'])
         elif current_round == 95:
             ability(1,10)
-            ability(3,12)
+            ability(2,12)
             ability
         elif current_round == 99:
-            ability(3,1)
+            ability(2,1)
             sniper3.upgrade(['5-2-0'])
             tack = Monkey('tack', 0.5927083333333, 0.3)
         elif current_round == 100:

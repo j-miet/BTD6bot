@@ -185,7 +185,7 @@ def play(rounds):
             glue1.target('strong')
             glue2.target('strong')
         elif current_round == 60:
-            ability(3,3.75)
+            ability(2,3.75)
         elif current_round == 61:
             sniper2.upgrade(['0-5-2'])
             sniper2.target('first')
@@ -260,13 +260,13 @@ def play(rounds):
             boomer2.target('strong')
             boomer2.upgrade(['0-0-1','0-0-2','0-0-3','1-0-3','2-0-3'])
         elif current_round == 93:
-            ability(3,2.5)
+            ability(2,2.5)
             boomer2.upgrade(['2-0-4'])
         elif current_round == 94: 
             ice1.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-1-0'])
         elif current_round == 95:
             village1.upgrade(['3-0-2'])
-            ability(3,12)
+            ability(2,12)
         elif current_round == 96:
             glue4 = Monkey('glue', 0.5703125, 0.6453703703704)
             glue4.target('strong')
@@ -285,4 +285,4 @@ def play(rounds):
             alch6 = Monkey('alch', 0.3359375, 0.4231481481481)
         elif current_round == 100:
             alch6.upgrade(['1-0-0','2-0-0','3-0-0','3-1-0','3-2-0'])
-            ability(3,7.5)
+            ability(2,7.5)
