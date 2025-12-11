@@ -9,8 +9,8 @@ class GuiHotkeys():
     pause_hotkey: Key | str
     start_stop_hotkey: Key | str
 
-    start_stop_status = 0
-    pause_status = 0
+    start_stop_status: bool = False
+    pause_status: bool = False
 
     @staticmethod
     def update_guihotkeys() -> None:

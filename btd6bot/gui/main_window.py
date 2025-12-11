@@ -167,9 +167,9 @@ class MainWindow:
         if key == GuiHotkeys.exit_hotkey or (isinstance(key, KeyCode) and key.char == GuiHotkeys.exit_hotkey): 
             os.kill(os.getpid(), signal.SIGTERM)
         elif key == GuiHotkeys.start_stop_hotkey:
-            GuiHotkeys.start_stop_status = 1
+            GuiHotkeys.start_stop_status = True
         elif key == GuiHotkeys.pause_hotkey:
-            GuiHotkeys.pause_status = 1
+            GuiHotkeys.pause_status = True
 
     # Listener thread object sends keyboard inputs to _hotkey_tracker function. 
     # If user operating system is MacOS, gui hotkeys must be disabled in order to avoid errors with keyboard controller 
@@ -196,8 +196,8 @@ class MainWindow:
         self.root.maxsize(655,442)
         self.MAP_NAMES_AND_STRATS_DICT = plan_data.return_maps_and_strats(plan_data.read_plans())
 
-        self.reader_init = False
-        self.init_button_first_time = True
+        self.reader_init: bool = False
+        self.init_button_first_time: bool = True
 
         self.collection = tk.StringVar(value='Off')
         self.farming = tk.StringVar(value='Off')
@@ -214,7 +214,7 @@ class MainWindow:
         mainframe.grid(sticky='nwes')
         mainframe.bind("<ButtonRelease-1>", lambda _: self.root.focus())
         
-        self.current_map = 'dark castle'
+        self.current_map: str = 'dark castle'
         self.maps_box = MainWindowCombobox(mainwindow=self,
                                            master=mainframe, 
                                            state='readonly', 
@@ -237,7 +237,7 @@ class MainWindow:
         self.info_window.grid(column=0, columnspan=2, row=3, rowspan=2)
         info_window_scroll.configure(command=self.info_window.yview)
 
-        self.current_strat = 'Easy-Standard'
+        self.current_strat: str = 'Easy-Standard'
         self.strat_box = MainWindowCombobox(mainwindow=self,
                                             master=mainframe, 
                                             state='readonly',
@@ -245,7 +245,6 @@ class MainWindow:
         self.strat_box.grid(column=1, row=5, sticky='sw', pady=10)
         self.strat_box.bind("<<ComboboxSelected>>", lambda _: self.update_stratconfig())
         self.strat_box.bind("<<ComboboxSelected>>", lambda _: self.root.focus(), add='+')
-        self.strat_box.set(self.current_strat)
         self.show_mapinfo() # initialize info_window with default value 
 
         self.mapscreen_text_str = (r" ___  _____  ___    __  _          _    "+"\n"
@@ -398,6 +397,7 @@ class MainWindow:
         self._delete_readme_html()
         self.update_mapconfig()
         self.update_stratconfig()
+        self.strat_box.set(self.current_strat)
 
     def _delete_readme_html(self) -> None:
         if os.path.exists(gui_paths.FILES_PATH/'helpwindow'/'README.html'):
@@ -425,7 +425,7 @@ class MainWindow:
         Returns:
             names: List of all map names parsed from files in 'plans' folder.
         """
-        names = []
+        names: list[str] = []
         for m in self.MAP_NAMES_AND_STRATS_DICT.keys():
             names.append(m)
         return names
@@ -436,7 +436,7 @@ class MainWindow:
         Returns:
             strats: List of all strategy names parsed from files in 'plans' folder.
         """
-        strats = []
+        strats: list[str] = []
         for s in self.MAP_NAMES_AND_STRATS_DICT[self.current_map]:
             strats.append(s)
         self.show_mapinfo()

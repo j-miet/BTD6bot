@@ -36,7 +36,7 @@ class QueueModeWindow:
         self.queue_optionwindow.minsize(930,400)
         self.queue_optionwindow.maxsize(930,400)
 
-        self.current_plan = ''
+        self.current_plan: str = ''
         self.myplanslabel = tk.Label(self.queue_optionwindow, 
                                      text='Current queue', 
                                      font=os_font)

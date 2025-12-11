@@ -315,8 +315,8 @@ class MonitoringWindow:
                 BotVars.logging = True
             else:
                 BotVars.logging = False
-        GuiHotkeys.start_stop_status = 0
-        GuiHotkeys.pause_status = 0
+        GuiHotkeys.start_stop_status = False
+        GuiHotkeys.pause_status = False
         # listener thread object sends keyboard inputs to _bot_hotkey method
         self.bot_hk_listener = threading.Thread(target=self._bot_hotkey)
         self.bot_hk_listener.daemon = True
@@ -374,36 +374,36 @@ class MonitoringWindow:
             shutil.copy2(gui_paths.FILES_PATH/'_ocr_upgradedata.json', gui_paths.FILES_PATH/'upgrades_current.json')
             with open(gui_paths.FILES_PATH/'upgrades_current.json') as f:
                 identifier: list[int | str] = json.load(f)["__identifier"]
-        issue_flag = 0
+        issue_flag: bool = False
         if customres:
             if list(resolution_val) != identifier[0:2]:
                 cprint("-"*55+"\n"
                         ">Ocr data resolution differs from display resolution:\n"
                         " Ocr resolution:", identifier[0], identifier[1], "\n"
                         " Display resolution:", resolution_val[0], resolution_val[1])
-                issue_flag = 1
+                issue_flag = True
         else:
             if list((w, h)) != identifier[0:2]:
                 cprint("-"*55+"\n"
                         ">Ocr data resolution differs from display resolution:\n"
                         " Ocr resolution:", identifier[0], identifier[1], "\n"
                         " Display resolution:", w, h)
-                issue_flag = 1
+                issue_flag = True
         if identifier[4] == "fullscreen" and windowed:
             cprint("-"*55+"\n"
                     ">Ocr data supports fullscreen, but you use\n windowed mode.")
-            issue_flag = 1
+            issue_flag = True
         elif identifier[4] == "windowed" and not windowed:
             cprint("-"*55+"\n"
                     ">Ocr data supports windowed mode, but you use\n fullscreen mode.")
-            issue_flag = 1
+            issue_flag = True
         if ingame_shift and list(shift_val) != identifier[2:4]:
             cprint("-"*55+"\n"
                     ">Ocr data coordinate shift differs from current value:\n"
                     " Ocr shift:", identifier[3], identifier[3], "\n"
                     " Current shift:", shift_val[0], shift_val[1])
-            issue_flag = 1
-        if issue_flag == 1:
+            issue_flag = True
+        if issue_flag:
             cprint(55*"-"+"\n"
                     "-->> Issues detected; see above. <<--\n" \
                     "They don't prevent bot from starting, but are very likely to cause problems with ocr text "
@@ -441,7 +441,7 @@ class MonitoringWindow:
             self.current_plans = self.all_plans[:]
         while self.current_plans != []:
             BotData.victory = False
-            attempt_number = 1
+            attempt_number: int = 1
             while attempt_number <= retries:
                 self._plantest_print(self.current_plans[0], attempt_number, retries)
                 self._execute(self.current_plans, 0)
@@ -588,13 +588,13 @@ class MonitoringWindow:
             key: Latest keyboard key the user has pressed. 
         """
         while self.monitoringwindow.winfo_exists():
-            if GuiHotkeys.start_stop_status == 1:
-                GuiHotkeys.start_stop_status = 0
+            if GuiHotkeys.start_stop_status == True:
+                GuiHotkeys.start_stop_status = False
                 self._stop_or_run()
                 time.sleep(1)
-            elif GuiHotkeys.pause_status == 1:
+            elif GuiHotkeys.pause_status == True:
                 BotVars.paused = not BotVars.paused
-                GuiHotkeys.pause_status = 0
+                GuiHotkeys.pause_status = False
             time.sleep(0.1)
         else:
             gui_tools.terminate_thread(self.bot_hk_listener)

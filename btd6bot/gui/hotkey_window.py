@@ -190,13 +190,11 @@ class HotkeyWindow:
             key: Latest keyboard key the user has pressed.
             selected_row: Number of currently selected row: top row is 0, increases downwards.
         """
-        previous_key_begin = HotkeyWindow.hotkey_list[selected_row].split(' = ')[0]
+        previous_key_begin: str = HotkeyWindow.hotkey_list[selected_row].split(' = ')[0]
         key_pressed: str = str(key)
         if 'Key.' in key_pressed:
             key_pressed = key_pressed.replace("Key.", "")
-            if key_pressed in PYNPUT_KEYS.keys():
-                ... # continue as usual
-            else:
+            if key_pressed not in PYNPUT_KEYS.keys():
                 self.input_key.stop()
                 self.sethotkeybutton.configure(state='active')
                 return
@@ -211,7 +209,6 @@ class HotkeyWindow:
 
     def read_hotkeys(self) -> None:
         """Read all hotkeys from hotkey_list and insert them to Listbox object."""
-        index = 0
         for index in range(0, len(HotkeyWindow.hotkey_list)):
             self.hotkeyoptionlist.insert(index, HotkeyWindow.hotkey_list[index])
     
@@ -230,7 +227,6 @@ class HotkeyWindow:
 
     def read_guihotkeys(self) -> None:
         """Read all gui hotkeys from guihotkey_list and insert them to Listbox object."""
-        index = 0
         for index in range(0, len(HotkeyWindow.guihotkey_list)):
             self.guihotkeyoptionlist.insert(index, HotkeyWindow.guihotkey_list[index])
 
