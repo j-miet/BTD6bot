@@ -1,7 +1,6 @@
 """Contains QueueModeWindow class."""
 
 from __future__ import annotations
-import json
 
 import json
 import tkinter as tk

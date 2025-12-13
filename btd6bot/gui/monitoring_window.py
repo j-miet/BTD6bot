@@ -588,11 +588,11 @@ class MonitoringWindow:
             key: Latest keyboard key the user has pressed. 
         """
         while self.monitoringwindow.winfo_exists():
-            if GuiHotkeys.start_stop_status == True:
+            if GuiHotkeys.start_stop_status:
                 GuiHotkeys.start_stop_status = False
                 self._stop_or_run()
                 time.sleep(1)
-            elif GuiHotkeys.pause_status == True:
+            elif GuiHotkeys.pause_status:
                 BotVars.paused = not BotVars.paused
                 GuiHotkeys.pause_status = False
             time.sleep(0.1)
