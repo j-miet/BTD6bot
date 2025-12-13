@@ -95,7 +95,7 @@ def find_fre(plan: list[str]) -> int:
 
 
 def append_rounds(plan: list[str], first_r: int, first_r_end: int, round_labels: list[str]
-                  ) -> tuple[list[str], list[str]] | tuple[list[list[str]], list[str]]:
+                  ) -> tuple[list[list[str]], list[str]]:
     """Adds all round labels and their respective round commands into different lists.
     
     Both lists are filled in order: each index points to a specific round label in round_label and to a list of round 
@@ -106,7 +106,7 @@ def append_rounds(plan: list[str], first_r: int, first_r_end: int, round_labels:
     tuple of rounds and labels is returned. 
 
     Args:
-        plan: Currently selected plan after unused code rows are removed.
+        plan: Currently selected plan as raw text after unused code rows are removed.
         first_r: Row number of where first round starts in plan.
         first_r_end: Row number where first round block ends in plan.
         round_labels: List of round numbers.
@@ -117,7 +117,7 @@ def append_rounds(plan: list[str], first_r: int, first_r_end: int, round_labels:
             in the plan that have commands included; empty rounds (rounds with commands #, '...' or no code at all) are 
             excluded.
     """
-    temp = []
+    temp: list[str] = []
     temp2: list[list[str]] = []
     rounds: list[list[str]] = []
     if len(plan)-1 == first_r_end:  # if plan has only first round block, nothing else.
@@ -126,15 +126,15 @@ def append_rounds(plan: list[str], first_r: int, first_r_end: int, round_labels:
         rounds.append(temp)  # adds all commands of a round as a sublist
         return rounds, round_labels
     else:
-        current_r = first_r_end+1   # points to first 'elif current_round == ...' line.
-        for index in range(first_r+1, current_r):   # everything included on the first round
+        current_r = first_r_end+1  # points to first 'elif current_round == ...' line.
+        for index in range(first_r+1, current_r): # everything included on the first round
             temp.append(plan[index])
         rounds.append(temp)  # adds all commands from a round as a sublist
         round_labels.append(plan[current_r].split('== ')[1][:-1])  # remove ':' at the end by not including index -1.
         for line in plan[current_r+1:]: # then rounds between first and last, last included
             if line.startswith('elif current_round =='):
-                templist = []
-                round_labels.append(line.split('== ')[1][:-1])  # separate round number
+                templist: list[str] = []
+                round_labels.append(line.split('== ')[1][:-1]) # separate round number
                 next_line = plan.index(line)
                 for index in range(current_r+1, next_line):
                     templist.append(plan[index])
@@ -173,7 +173,7 @@ def remove_empty_rows(plan: list[str], first_r: int, round_labels: list[str]) ->
                 ...
     return new_labels
 
-def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name: str) -> None:
+def plot(round_labels: list[str], rounds: list[list[str]], plan_name: str) -> None:
     """Creates subplots to plot round commands and time spent, for each round.
     
     Time plot is static and cannot be interacted with. It loads values from a json file.
@@ -185,7 +185,7 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
    
     Args:
         round_labels: A list of all round numbers where corresponding round has at least one command.
-        rounds: A list containing either commands of a single round, or list of all round commands, each an inner list.
+        rounds: A list containing lists of each round's commands, each an inner list.
         plan_name: Current plan name, required for displaying name inside plot window.
     """
     plt.rcParams['toolbar'] = 'None'
@@ -210,11 +210,11 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
             time_data: dict[str, Any] = json.load(f)[plan_name]
         update_date = time_data["update_date"]
         fig.suptitle(f'Round commands and round times of current plan "{plan_name}"\n'
-                    r'Time data is updated after each successful run (current date: ' + r"$\bf{%s}$" % update_date +'; '
-                    'format is YYYY/MM/DD)',
+                    r'Time data is updated after each successful run -> last updated: ' + r"$\bf{%s}$" % update_date +
+                    ' (format is YYYY/MM/DD)',
                     fontsize='medium')
-        plan_rounds: list[str] = time_data["rounds"]
-        plan_times: list[str] = time_data["times"]
+        plan_rounds: list[str] = list(time_data["roundtimes"].keys())
+        plan_times: list[str] = list(time_data["roundtimes"].values())
         plan_times_in_seconds: list[int] = []
         for t in plan_times:
             t_str = t.split(':')
@@ -234,16 +234,16 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
         # set_major_locator is used for setting equally spaced labels on x-axis. Currently all modes except impoppable 
         # and chimps can fit their labels just fine, but for those two a denser layout is required . The question 
         # is: what line length will ensure that starting from round 6 label, equally spaced lines will land just on top 
-        # of round 100 label. The answer is in this case is easy and it's 2. Why? See explanations below.
+        # of round 100 label. The answer is in this case is easy and it's 2. See explanations below.
         #
-        # x-axis has N rounds => it takes N-1 steps to traverse from first point to last if step length=1.
+        # x-axis has N rounds => it takes N-1 steps to traverse from first point to last if step length = 1.
         # Then plt.MaxNLocator(K, nums), in this context, answers the following question:
         # what is the shortest integer step length L that can reach from first point to last in up to K steps,
-        # and L is an element of 'nums' (=all allowed step lengths, up to 10)
+        # and L is an element of 'nums' (= all allowed step lengths, up to 10)
         #
         # >A mathematical formulation:
         # L>=1, K <= N-1
-        # smallest value of L such that kL >= N with k<=K <=> L=N/n >= N/K. And as L is to be an integer, choose
+        # smallest value of L such that kL >= N with k<=K <=> L = N/n >= N/K. And as L is to be an integer, choose
         # ceil(N/K). Then find min{a in 'nums' : a >= ceil(N/K)}
         #
         # so if N=40, K=9, nums=[2,3,6,7] => ceil(N-1/K) = 5, but 5 not in nums, thus next smallest is 6.
@@ -259,7 +259,7 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
         # >currently, only problematic rounds are the longest: impoppable and chimps both have 95 rounds, and fitting 
         # all 95 one after another won't do -> this means factor 1 won't suffice so find the next smallest:
         # N=95, N-1=94 has factors 2, 47, 94. So 2 happens to be next, and it's also the only one being <= 10.
-        if len(plan_rounds)  == 95:
+        if len(plan_rounds) == 95:
             ax_time.xaxis.set_major_locator(MaxNLocator(len(plan_rounds)-1, steps=[2]))
     except KeyError:
         ax_time = fig.add_subplot(2,1,1)
@@ -269,13 +269,13 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
     # Axis 'round commands'
     ax_rounds = fig.add_subplot(2,5,(7,9))
     ax_rounds.set_title('Round commands - '
-                        'Order of command execution is top to bottom. Rounds without commands are not included.',
+                        'Order of execution is top to bottom. Rounds with no commands are not included.',
                         fontsize='medium')
     ax_rounds.get_yaxis().set_visible(False)
     for (x, r) in zip(round_labels, rounds, strict=True):
-        lines = ''
+        lines: str = ''
         ax_rounds.bar(x, height=0.1, width=0) # width=0 prevents drawing a visible bar
-        if len(r) > 19:
+        if len(r) > 19: # if round has too many commands: display first 14, add ellipsis, then display final two
             for text_line in range(0, 14):
                 lines += r[text_line]+'\n'
             lines += '.\n.\n.\n'
@@ -302,11 +302,26 @@ def plot(round_labels: list[str], rounds: list[str] | list[list[str]], plan_name
 
     def _update(val: float) -> None:
         # Updates rounds axis (=in this case, round text position) based on current slider position.
-        pos = val
+        pos: float = val
         ax_rounds.axis((pos+0.08, pos+0.35, -1.0, 2.0))
         fig.canvas.draw_idle()
 
+    def _rounds_scroll(event):
+        # Update rounds axis a single step forward/backward when user scrolls mouse wheel up/down respectively.
+        pos: float = round_slider.val
+        pos_up: float = pos + round_slider.valstep
+        pos_down: float = pos - round_slider.valstep
+        if event.button == 'up' and pos_up <= slider_max_val:
+            round_slider.set_val(pos_up)
+            ax_rounds.axis((pos_up+0.08, pos_up+0.35, -1.0, 2.0))
+            fig.canvas.draw_idle()
+        elif event.button == 'down' and pos_down >= slider_min_val-0.08:
+            round_slider.set_val(pos_down)
+            ax_rounds.axis((pos_down+0.08, pos_down+0.35, -1.0, 2.0))
+            fig.canvas.draw_idle()
+
     round_slider.on_changed(_update)
+    round_slider.connect_event('scroll_event', _rounds_scroll)   
     plt.show()
 
 
@@ -352,9 +367,9 @@ def plot_plan(plan_str: str) -> None:
     else:
         first_round_num, final_round_num = get_rounds(strat_name[0].upper(), strat_name[1].upper())
 
-    first_round = get_plan.index('if current_round == BEGIN:')
-    first_round_end = find_fre(get_plan)
-    round_labels = [str(first_round_num)]
+    first_round: int = get_plan.index('if current_round == BEGIN:')
+    first_round_end: int = find_fre(get_plan)
+    round_labels: list[str] = [str(first_round_num)]
     rounds, round_labels = append_rounds(get_plan, first_round, first_round_end, round_labels)
     round_labels = remove_empty_rows(get_plan, first_round, round_labels)
     if round_labels[-1] == 'END':
