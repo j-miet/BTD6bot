@@ -20,14 +20,12 @@ def test_update_time_data(mocker):
     mock_timedata.return_value = {
         "logsEasyStandard": {"update_date": "2025/01/01",
                                 "version": 1,
-                                "rounds": ["1", "2", "3", "4", "5"],
-                                "times": ["0:08", "0:12", "0:02", "0:22", "0:15"],
+                                "roundtimes": {"1": "0:08", "2": "0:12", "3": "0:02", "4": "0:22", "5": "0:15"},
                                 "time_total": "0:59"},
         "quadHardImpoppable": {"update_date": "2025/05/20",
                                 "version": 48,
-                                "rounds": ["10", "11", "12", "13", "14"],
-                                "times": ["0:24", "0:32", "0:42", "0:12", "0:11"],
-                                "time_total": "2:01"}
+                                "roundtimes": {"10": "0:24", "11": "0:32", "12": "0:42", "13": "0:12", "14": "0:11"},
+                                "time_total": "2:01"},
     }
     mock_guivars = mocker.patch("set_plan._read_guivars")
     mock_datetime = mocker.patch("set_plan.datetime.date")
@@ -38,18 +36,15 @@ def test_update_time_data(mocker):
     assert set_plan._update_time_data("monkey_meadowMediumMilitary") == {
         "logsEasyStandard": {"update_date": "2025/01/01",
                                 "version": 1,
-                                "rounds": ["1", "2", "3", "4", "5"],
-                                "times": ["0:08", "0:12", "0:02", "0:22", "0:15"],
+                                "roundtimes": {"1": "0:08", "2": "0:12", "3": "0:02", "4": "0:22", "5": "0:15"},
                                 "time_total": "0:59"},
         "quadHardImpoppable": {"update_date": "2025/05/20",
                                 "version": 48,
-                                "rounds": ["10", "11", "12", "13", "14"],
-                                "times": ["0:24", "0:32", "0:42", "0:12", "0:11"],
+                                "roundtimes": {"10": "0:24", "11": "0:32", "12": "0:42", "13": "0:12", "14": "0:11"},
                                 "time_total": "2:01"},
         "monkey_meadowMediumMilitary": {"update_date": date_string,
                                         "version": version,
-                                        "rounds": ["1", "2", "3"],
-                                        "times": ["0:12", "0:05", "0:30"],
+                                        "roundtimes": {"1": "0:12", "2": "0:05", "3": "0:30"},
                                         "time_total": "0:47"}
     }
     assert mock_temptime.call_count == 1
