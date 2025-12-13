@@ -58,12 +58,11 @@ def _update_time_data(plan_name: str) -> dict[str, Any]:
     with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt') as f:
         times_contents = f.readlines()
     times_contents = plan_data.list_format(times_contents)
-    rounds_list = []
-    times_list = []
+    roundstimes_dict = {}
+
     for r_time in times_contents[:-1]:
         round_num, round_time = r_time.split(',')
-        rounds_list.append(round_num)
-        times_list.append(round_time)
+        roundstimes_dict[round_num] = round_time
     time_total = times_contents[-1]
     current_json: dict[str, Any] = _read_timedata()
     current_version: dict[str, Any] = _read_guivars()
@@ -71,8 +70,7 @@ def _update_time_data(plan_name: str) -> dict[str, Any]:
     data_dict = {
         "update_date": date,
         "version": current_version,
-        "rounds": rounds_list,
-        "times": times_list,
+        "roundtimes": roundstimes_dict,
         "time_total": time_total
         }
     if plan_name not in current_json.keys():
@@ -86,7 +84,7 @@ def _save_to_json(plan_name: str) -> None:
     
     Should only be called by plan_run.
     """
-    new_times = _update_time_data(plan_name)
+    new_times = dict(sorted(_update_time_data(plan_name).items()))
     with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as timef:
         current_times: dict[str, Any] = json.load(timef)
     with open(pathlib.Path(__file__).parent/'Files'/'time_data-backup.json', 'w') as timef:
