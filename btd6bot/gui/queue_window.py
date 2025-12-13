@@ -3,6 +3,7 @@
 from __future__ import annotations
 import json
 
+import json
 import tkinter as tk
 from tkinter import ttk
 
@@ -54,19 +55,22 @@ class QueueModeWindow:
         currentplans_scroll.configure(command=self.myplans.yview)
 
         self.up = tk.Button(self.queue_optionwindow, 
-                            text=u'\u2191', 
-                            width=1, 
+                            text=u'\u2191\n\n(u)', 
+                            width=2, 
                             height=5, 
                             command=self.move_up,
                             font=os_font)
-        self.up.grid(column=2, row=1, sticky='n')
+        self.up.grid(column=2, row=1, sticky='n', padx=(2,0))
+        self.queue_optionwindow.bind("u", lambda _: self.move_up())
+
         self.down = tk.Button(self.queue_optionwindow, 
-                              text=u'\u2193', 
-                              width=1, 
+                              text=u'(d)\n\n\u2193', 
+                              width=2, 
                               height=5, 
                               command=self.move_down,
                               font=os_font)
-        self.down.grid(column=2, row=1, sticky='s')
+        self.down.grid(column=2, row=1, sticky='s', padx=(2,0))
+        self.queue_optionwindow.bind("d", lambda _: self.move_down())
     
         allplans_scroll = ttk.Scrollbar(self.queue_optionwindow, 
                                         orient='vertical')
@@ -149,18 +153,56 @@ class QueueModeWindow:
             self.all_searchbar.config(fg='gray')
             self.read_allplans_list()
 
+    def _get_plansearchresult(self, searchtext: str) -> list[str]:
+        """Add custom search tools.
+        
+        Commands:
+            *v{OPERATOR}{VERSION} {TEXT}
+            - {OPERATOR} has values "<", ">", "="
+            - {VERSION} is any integer
+            - {TEXT} is arbitrary text string
+            Searches all plans with specific game version {VERSION} and using {TEXT} to filter items. Space between
+            {VERSION} and {TEXT} is required.
+
+            EXAMPLES:  
+                *v=50 => has a single space after 50; this finds all plans with game version equal to 50
+                *v<51 hard => find all plans with version less than 51 and on hard difficulty
+                *v>51 dark castle easy => find all plans with version 51 or higher on dark castle, on easy difficulty
+        """
+        plans_all = plan_data.read_plans()
+        plans_found: list[str] = []
+        if searchtext[0:2] == "*v" and len(searchtext) >= 5 and searchtext.find(' ') != -1: # *v command
+            versioncheck, search = searchtext.split(' ', 1)
+            versioncompare: str = versioncheck[2]
+            versionnumber: int = int(versioncheck[3:])
+            ver: int
+            timedata: dict[str, str | int | list[str]]
+            with open(gui_paths.FILES_PATH/"time_data.json") as planfile:
+                timedata = json.load(planfile)
+            for plan_name in plans_all:
+                ver = timedata[plan_name]["version"]
+                plan_strat: str = plan_data.return_strategy(plan_name).split('-')
+                if (search in plan_name.lower() or 
+                    search in plan_name.lower().replace('_', ' ') or
+                    search in plan_data.return_map(plan_name)+" "+plan_strat[0].lower()+" "+plan_strat[1].lower()):
+                    if ((versioncompare == "<" and ver < versionnumber) or
+                        (versioncompare == ">" and ver > versionnumber) or
+                        (versioncompare == "=" and ver == versionnumber)):
+                        plans_found.append(plan_name)
+        else:
+            for plan_name in plans_all:
+                plan_strat: str = plan_data.return_strategy(plan_name).split('-')
+                if (searchtext in plan_name.lower() or 
+                    searchtext in plan_name.lower().replace('_', ' ') or
+                    searchtext in plan_data.return_map(plan_name)+" "+plan_strat[0].lower()+" "+plan_strat[1].lower()):
+                    plans_found.append(plan_name)
+        return plans_found
+
     def _callback_all(self) -> None:
         searchtext = self.all_searchbartext.get().lower()
         if searchtext == "search plans..." and self.all_searchbar.cget("fg") == "gray":
             searchtext = ""
-        all_plans = plan_data.read_plans()
-        matching_plans: list[str] = []
-        for plan_name in all_plans:
-            plan_strat: str = plan_data.return_strategy(plan_name).split('-')
-            if (searchtext in plan_name.lower() or 
-                searchtext in plan_name.lower().replace('_', ' ') or
-                searchtext in plan_data.return_map(plan_name)+" "+plan_strat[0].lower()+" "+plan_strat[1].lower()):
-                    matching_plans.append(plan_name)
+        matching_plans = self._get_plansearchresult(searchtext)
         self.allplans.delete(0, "end")
         with open(gui_paths.QUEUE_LIST_PATH) as file_read:
             listed_plans_raw = file_read.readlines()
@@ -168,6 +210,36 @@ class QueueModeWindow:
         for i in range(0, len(matching_plans)):
             if matching_plans[i] not in listed_plans:
                 self.allplans.insert(i, matching_plans[i])
+
+    def _highlight_allplans_entry(self, index: int) -> None:
+        self.allplans.select_clear(0, "end")
+        if self.allplans.size() == 0:
+            self.info_window['state'] = 'normal'
+            self.info_window.delete(1.0, tk.END)
+            self.info_window['state'] = 'disabled'
+            return
+        elif index < self.allplans.size()-1:
+            self.allplans.select_set(index)
+            self.allplans.activate(index)
+        else:
+            self.allplans.select_set(index-1)
+            self.allplans.activate(index-1)
+        self.update_planinfo()
+
+    def _highlight_myplans_entry(self, index: int) -> None:
+        self.myplans.select_clear(0, "end")
+        if self.myplans.size() == 0:
+            self.info_window['state'] = 'normal'
+            self.info_window.delete(1.0, tk.END)
+            self.info_window['state'] = 'disabled'
+            return
+        elif index < self.myplans.size()-1:
+            self.myplans.select_set(index)
+            self.myplans.activate(index)
+        else:
+            self.myplans.select_set(index-1)
+            self.myplans.activate(index-1)
+        self.update_planinfo()
 
     def update_planinfo(self) -> None:
         """Updates plan info panel based on selected name."""
@@ -274,6 +346,7 @@ class QueueModeWindow:
         with open(gui_paths.QUEUE_LIST_PATH, 'a') as file_append:
             file_append.write(self.allplans.get(index[0])+'\n')
         self._callback_all()
+        self._highlight_allplans_entry(index[0])
 
     def remove_allcurrentplans(self) -> None:  
         """Remove all currently selected plans from queue."""
@@ -282,7 +355,6 @@ class QueueModeWindow:
             ...
         self._callback_all()
         
-
     def remove_plan(self) -> None:
         """Remove a plan from current queue."""
         index = self.myplans.curselection() # type: ignore
@@ -297,6 +369,7 @@ class QueueModeWindow:
             for line in listed:
                 file_write.write(line)
         self._callback_all()
+        self._highlight_myplans_entry(index[0])
             
     def read_queue_list(self) -> None:
         """Load an existing list of queued plans.
