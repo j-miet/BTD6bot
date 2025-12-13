@@ -842,17 +842,18 @@ class Monkey():
                 upgrade paths which ocr needs to identify and handle separately.
         """
         c_path = self._upgrade_path
-        if upg_path == 0:
-            upg_match = self._name+' '+str(int(c_path[0])+1)+'-x-x'
-        elif upg_path == 1:
-            upg_match = self._name+' x-'+str(int(c_path[2])+1)+'-x'
-        elif upg_path == 2:
-            upg_match = self._name+' x-x-'+str(int(c_path[4])+1)
+        match upg_path:
+            case 0:
+                upg_match = self._name+' '+str(int(c_path[0])+1)+'-x-x'
+            case 1:
+                upg_match = self._name+' x-'+str(int(c_path[2])+1)+'-x'
+            case 2:
+                upg_match = self._name+' x-x-'+str(int(c_path[4])+1)
 
         total_time = times.current_time()
-        upgraded = 0
-        defeat_check = 1
-        levelup_check = 1
+        upgraded: bool = False
+        defeat_check: int = 1
+        levelup_check: int = 1
         while not upgraded:
             if levelup_check == Rounds.LEVEL_UP_CHECK_FREQUENCY:
                 kb_mouse.click((0.9994791666667, 0), shifted=True)
@@ -875,14 +876,14 @@ class Monkey():
                         (current_r[0], current_r[1], current_r[2], current_r[3]),
                         OCR_READER,
                         upg_match):
-                        upgraded = 1
+                        upgraded = True
                 elif self._panel_pos == 'left':
                     if ocr.strong_delta_check(
                         '_upgrade_', 
                         (current_l[0], current_l[1], current_l[2], current_l[3]),
                         OCR_READER, 
                         upg_match):
-                        upgraded = 1
+                        upgraded = True
                 if upgraded:
                     if not OcrValues._log_ocr_deltas:
                         cprint('Upgraded.')
@@ -908,8 +909,9 @@ class Monkey():
         cprint(f'Placing {self._name.capitalize()}...', end=' ')
         total_time = times.current_time()
         placed: bool = False
-        defeat_check = 1
-        levelup_check = 1
+        first_check: bool = True
+        defeat_check: int = 1
+        levelup_check: int = 1
         while not placed:
             if OcrValues._log_ocr_deltas or not self._placement_check:
                 kb_mouse.click((0.5, 0), shifted=True)
@@ -928,8 +930,14 @@ class Monkey():
                 cprint(f'**Failed to place {self._name.capitalize()}**')
                 return
             defeat_check += 1
-            kb_mouse.kb_input(self._get_hotkey())
-            kb_mouse.click((self._pos_x, self._pos_y), clicks=2, shifted=True)
+
+            if first_check:
+                first_check = False
+                kb_mouse.kb_input(self._get_hotkey())
+                kb_mouse.click((self._pos_x, self._pos_y), clicks=2, shifted=True)
+            else:
+                kb_mouse.click((0.999, 0), shifted=True) 
+                kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
             time.sleep(0.2)
             if self._panel_pos == 'right':
                 if ocr.strong_delta_check('Sell', get_text('ingame', 'right_panel_sell_location'), OCR_READER):
@@ -939,7 +947,7 @@ class Monkey():
                     placed = True
             else:
                 if self._update_panel_position(self._pos_x):
-                    placed = True
+                    placed = True  
             if placed:
                 if self._name == 'heli': # set targeting to 'lock' and move heli on top of placement location
                     kb_mouse.kb_input(hotkeys['target change'], 1)
@@ -950,6 +958,11 @@ class Monkey():
                 kb_mouse.press_esc()
                 cprint(f'{self._name.capitalize()} placed.')
                 return
+            # previous 'if first_check' and this combined should prevent erroneous placement loop if a lag spike occurs 
+            # after placing a tower, but bot fails to verify the placement
+            if not first_check:
+                kb_mouse.kb_input(self._get_hotkey())
+                kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
     
     def special(self, s: str | int,
                 x: float | None = None,
