@@ -171,7 +171,6 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
     if monkeys == []:
         return
     
-    BotVars.check_gamesettings = True
     BotVars.print_delta_ocrtext = True
     BotVars.checking_time_limit = 10
     OcrValues._log_ocr_deltas = True

@@ -38,7 +38,7 @@ class Rounds:
         exit_type (str, class attribute): Identifier for bot to select how to properly exit back to main menu. Default
             value is 'defeat', which means bot return to menu via defeat screen. Another possibility is 'manual' which
             means bot will open esc menu and exit manually.
-        escsettings_checked (bool, class attribute): Whether automatic game settings check has been performed once.
+        escsettings_check (bool, class attribute): Perform automatic escape menu game settings check.
     """    
     DEFEAT_CHECK_FREQUENCY: int = 12
     LEVEL_UP_CHECK_FREQUENCY: int = 30
@@ -48,11 +48,11 @@ class Rounds:
     current_round_begin_time: float = 0
 
     exit_type: str = 'defeat'
-    escsettings_checked: bool = False
+    escsettings_check: bool = True
 
     @staticmethod
     def _check_gamesettings() -> None:
-        if not Rounds.escsettings_checked:
+        if Rounds.escsettings_check:
             kb_mouse.press_esc()
             time.sleep(0.5)
             dragdrop = get_pixelcolor(*get_click('ingame', 'dragdrop'))
@@ -72,7 +72,7 @@ class Rounds:
                 cprint("Enabled 'auto start'")
                 time.sleep(0.5)
             kb_mouse.press_esc()
-            Rounds.escsettings_checked = True
+            Rounds.escsettings_check = False
 
     @staticmethod
     def _defeat_return(exit_str: str) -> None:
@@ -86,7 +86,7 @@ class Rounds:
             time.sleep(0.5)
             kb_mouse.click(get_click('ingame','defeat_home_button_first_round'))
         bot.menu_return.returned(False)
-        Rounds.escsettings_checked = False
+        Rounds.escsettings_check = True
         cprint('\nPlan failed.\n')
 
     @staticmethod
@@ -196,8 +196,7 @@ class Rounds:
         cprint('--> Running...')
         kb_mouse.click((0.999, 0.01))  # closes any difficulty info pop-up window after entering a game.
         time.sleep(1)
-        if BotVars.check_gamesettings:
-            Rounds._check_gamesettings()
+        Rounds._check_gamesettings()
         if not AutoStart.autostart_status:
             change_autostart()
 

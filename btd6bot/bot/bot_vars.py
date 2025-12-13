@@ -34,9 +34,6 @@ class BotVars:
             will also save their values in a txt file. Then, after a plan finishes, time data is stored and can be seen
             under 'Show plot' button in gui. Default value is True: bot will always update time values after successful
             completion of a plan.
-        check_gamesettings (bool, class attribute): Whether bot checks the in-game esc settings and auto-updated them.
-            Default is True: when bot is run first time, setting are always checked. Afterwards, they are only checked
-            after bot detects defeat and makes sure defeat was not caused by wrong settings.
         paused (bool, class attribute): Is bot paused or not. Default is False, should only be modified internally by
             bot.
         defeat_status (bool, class attribute): If bot detected an issue and cannot continue, it sets this value to True.
@@ -58,6 +55,5 @@ class BotVars:
 
     # internal parameters; do not change their initial values manually
     time_recording_status: bool = True
-    check_gamesettings: bool = True
     paused: bool = False
     defeat_status: bool = False
