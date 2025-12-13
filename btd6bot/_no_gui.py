@@ -34,7 +34,7 @@ class NoGui:
             '/////////\n'
             '--Commands--\n'
             'help = displays this message again\n'
-            'modes = toggle on event and replay modes\n'
+            'modes = toggle on event, farming and replay modes\n'
             'adjust = if ocr adjust setting is enabled, runs adjusting process\n'
             'plans = lists all available plans.\n'
             'run plan_name = run the plan plan_name <- replace this with an existing plan name.\n'
@@ -47,9 +47,10 @@ class NoGui:
         self.PLANS = utils.plan_data.read_plans()
 
     def _toggle_modes(self) -> None:
-        while 1:
-            input_str = input("Change event and replay modes on/off by typing 'event' or 'replay'." 
-                            " Type 'back' to return to main ui.\n[modes]=>")
+        print("Change event and replay modes on/off by typing 'event', 'farming' or 'replay'." 
+                " Type 'back' to return to main ui.")
+        while True:
+            input_str: str = input("[modes]=>")
             match input_str:
                 case 'event':
                     if BotVars.current_event_status == 'On': 
@@ -57,6 +58,16 @@ class NoGui:
                     else:
                         BotVars.current_event_status = 'On'
                     cprint(f"Event status: {BotVars.current_event_status}.")
+                case 'farming':
+                    if BotVars.current_farming_status == 'On':
+                        BotVars.current_farming_status = 'Off'
+                    else:
+                        BotVars.current_farming_status = 'On'
+                        BotVars.current_event_status = 'On'
+                    cprint(f"Farming status: {BotVars.current_farming_status}.")
+                    if BotVars.current_farming_status == 'On' and self.replay:
+                        self.replay = False
+                        cprint("Event status set to On (farming mode requires this); Replay status set to Off.")
                 case 'replay':
                     self.replay = not self.replay
                     cprint(f"Replay status: {self.replay}.")
@@ -64,6 +75,9 @@ class NoGui:
                     return
 
     def _run_queue(self) -> None:
+        if BotVars.current_farming_status == 'On':
+            cprint("Can't use queue mode while farming mode is enabled.")
+            return
         with open(Path(__file__).parent/'Files'/'text files'/'queue_list.txt') as f:
             queued_plans: list[str] = f.readlines()
         if len(queued_plans) > 0:
@@ -142,11 +156,22 @@ class NoGui:
             elif user_input.lower() == 'adjust':
                 self._perform_autoadjust()
             elif user_input.lower() == 'plans':
-                print('All available plans: \n')
+                print('\n<All available plans>')
                 for p in self.PLANS:
                     print(p)
-            elif len(user_input.split()) == 2 and user_input.split()[0].lower() == 'run':
-                self._run_plan(user_input.split()[1])
+            elif user_input.split()[0].lower() == 'run':
+                if BotVars.current_farming_status == 'On':
+                    set_plan.farming_print()
+                    set_plan.select_defaulthero()
+                    while True:
+                        rewardplan: str = set_plan.select_rewardplan()
+                        if rewardplan == '':
+                            cprint('\n#####Unable to continue farming loop, bot terminated#####')
+                            return
+                        else:
+                            set_plan.run_farming_mode(rewardplan)
+                elif len(user_input.split()) == 2:
+                    self._run_plan(user_input.split()[1])
             elif user_input.lower() == 'queue':
                 self._run_queue()
             elif user_input.lower() == 'exit':
