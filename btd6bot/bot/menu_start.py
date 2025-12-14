@@ -203,6 +203,7 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
     """
     BotVars.ingame_res_enabled = False
     ScreenRes.update_shift(0, 0)
+    ScreenRes.update_winpos(-1, -1)
     OcrValues._log_ocr_deltas = False
     bot.hotkeys.generate_hotkeys(bot.hotkeys.hotkeys)
     Rounds.begin_round, Rounds.end_round = begin_r, end_r
@@ -225,13 +226,23 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
             ScreenRes.update_res(resolution_val[0], resolution_val[1])
         else:
             ScreenRes.update_res(ScreenRes.BASE_RES[0], ScreenRes.BASE_RES[1])
+        
         ingameres_val: bool = gui_vars_dict["check_ingame_resolution"]
         if ingameres_val:
             ingame_shift_val: tuple[int, ...] = tuple(map(int, gui_vars_dict["ingame_res_shift"].split('x')))
             ScreenRes.update_shift(ingame_shift_val[0], ingame_shift_val[1])
             locations.update_customlocations()
             cprint("#Custom location values loaded.")  
+        
         windowed_val: bool = gui_vars_dict["windowed"]
+        if windowed_val:
+            winpos_val: str = gui_vars_dict["windowed_position"]
+            if winpos_val == '-':
+                ScreenRes.update_winpos(-1, -1)
+            else:
+                winpos: tuple[int, ...] = tuple(map(int, gui_vars_dict["windowed_position"].split('x')))
+                ScreenRes.update_winpos(winpos[0], winpos[1])
+
         time_limit_val: int = gui_vars_dict["checking_time_limit"]
         frequency_val: float = gui_vars_dict["ocr_frequency"]
         verify_limit: int = gui_vars_dict["upg_verify_limit"]

@@ -295,7 +295,7 @@ def get_text(category: str, value: str) -> Any:
         value (str): Value of dictionary, a 4-tuple
     
     Returns:
-        A 2-tuple value
+        A 4-tuple value
     """
     if BotVars.ingame_res_enabled:
         return _custom_locations["TEXT"][category][value]

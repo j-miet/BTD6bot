@@ -287,6 +287,7 @@ def run() -> None:
     args_list = gui_vars_adjust_args.split()
     monkey_list: list[str]
     delta: int
+    winpos: str
     for args in args_list:
         if 'res=' in args:
             res_vals = args[4:].split('x')
@@ -297,6 +298,14 @@ def run() -> None:
                 BotVars.windowed = True
             elif win_val == 0:
                 BotVars.windowed = False
+        elif 'winpos=' in args:
+            if args[7] == '-':
+                winpos = 'centered'
+                ScreenRes.update_winpos(-1, -1)
+            else:
+                winpos_vals = args[7:].split('x')
+                winpos = winpos_vals[0]+'x'+winpos_vals[1]
+                ScreenRes.update_winpos(int(winpos_vals[0]), int(winpos_vals[1]))
         elif 'shift=' in args:
             shift_vals = args[6:].split('x')
             ScreenRes.update_shift(int(shift_vals[0]), int(shift_vals[1]))
@@ -309,6 +318,7 @@ def run() -> None:
     cprint("Updating upgrade deltas with following arguments:\n" \
             f"Resolution: {res_vals[0]}x{res_vals[1]}\n"
             f"Windowed: {BotVars.windowed}\n"
+            f"  -Window top-left position: {winpos}\n"
             f"Coordinate shift: {shift_vals[0]}x{shift_vals[1]}\n"
             f"Monkeys: {monkey_list}\n"
             f"Delta: {delta}\n\n"

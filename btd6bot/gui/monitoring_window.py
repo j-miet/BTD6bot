@@ -406,7 +406,7 @@ class MonitoringWindow:
         if issue_flag:
             cprint(55*"-"+"\n"
                     "-->> Issues detected; see above. <<--\n" \
-                    "They don't prevent bot from starting, but are very likely to cause problems with ocr text "
+                    "They don't prevent bot from running, but are very likely to cause problems with ocr text "
                     "detection.\n"+
                     27*" "+".\n"+
                     27*" "+".\n"+
@@ -473,6 +473,7 @@ class MonitoringWindow:
         customres: bool = gui_vars_dict["check_resolution"]
         resolution_val: tuple[int, ...] = tuple(map(int, gui_vars_dict["custom_resolution"].split('x')))
         windowed: bool = gui_vars_dict["windowed"]
+        winpos: str = gui_vars_dict["windowed_position"]
         ingame_shift: bool = gui_vars_dict["check_resolution"]
         shift_val: tuple[int, ...] = tuple(map(int, gui_vars_dict["ingame_res_shift"].split('x')))
         retries_val: int = gui_vars_dict["retries"]
@@ -482,7 +483,16 @@ class MonitoringWindow:
             self._res_check(customres, resolution_val, windowed, w, h, ingame_shift, shift_val)
         if customres:
             cprint('[Custom Resolution] '+str(resolution_val[0])+'x'+str(resolution_val[1])+'\n'
-                    '[Windowed] '+str(windowed)+'\n')
+                    '[Windowed] '+str(windowed))
+            if windowed:
+                wintext: str
+                if winpos == '-':
+                    wintext = 'centered'
+                else:
+                    wintemp = winpos.split('x')
+                    wintext = wintemp[0].strip()+'x'+wintemp[1].strip()
+                cprint('[Window position] '+wintext)
+            cprint()
         else:
             w, h = pyautogui.size()
             cprint('[Resolution] '+str(w)+'x'+str(h)+'\n')

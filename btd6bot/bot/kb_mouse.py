@@ -30,6 +30,7 @@ class ScreenRes:
     BASE_RES: tuple[int, int] = pyautogui.size()
     _controller: pynput.keyboard.Controller = Controller()
     _width, _height = pyautogui.size()
+    _win_w, _win_h = -1, -1
     _w_shift, _h_shift = 0, 0
 
     @staticmethod
@@ -37,6 +38,16 @@ class ScreenRes:
         """Updates screen resolution."""
         ScreenRes._width = w
         ScreenRes._height = h
+
+    @staticmethod
+    def update_winpos(w: int, h: int) -> None:
+        """Updates windowed top-left coordinate position."""
+        ScreenRes._win_w = w
+        ScreenRes._win_h = h
+
+    @staticmethod
+    def get_winpos() -> tuple[int, int]:
+        return ScreenRes._win_w, ScreenRes._win_h
 
     @staticmethod
     def update_shift(w_pixels: int, h_pixels: int) -> None:
@@ -73,14 +84,20 @@ def pixel_position(xy: tuple[float | None, float | None],
         if ignore_windowed:
             x, y = round(ScreenRes.BASE_RES[0]*xy[0]), round(ScreenRes.BASE_RES[1]*xy[1])
         elif BotVars.windowed:
-            if BotVars.ingame_res_enabled and shifted:
-                x = round((ScreenRes._width-2*ScreenRes._w_shift)*xy[0]+
-                          (ScreenRes.BASE_RES[0]-ScreenRes._width)/2 + ScreenRes._w_shift)
-                y = round((ScreenRes._height-2*ScreenRes._h_shift)*xy[1]+
-                          (ScreenRes.BASE_RES[1]-ScreenRes._height)/2 + ScreenRes._h_shift)
-            else:
-                x = round(ScreenRes._width*xy[0] + (ScreenRes.BASE_RES[0] - ScreenRes._width)/2)
-                y = round(ScreenRes._height*xy[1] + (ScreenRes.BASE_RES[1] - ScreenRes._height)/2)
+            if ScreenRes.get_winpos() != (-1, -1) and not (BotVars.ingame_res_enabled and shifted):
+                x = round(ScreenRes._win_w + ScreenRes._width*xy[0])
+                y = round(ScreenRes._win_h + ScreenRes._height*xy[1])
+            elif ScreenRes.get_winpos() != (-1, -1) and BotVars.ingame_res_enabled and shifted:
+                x = round(ScreenRes._win_w + ScreenRes._w_shift + (ScreenRes._width-2*ScreenRes._w_shift)*xy[0])
+                y = round(ScreenRes._win_h + ScreenRes._h_shift + (ScreenRes._height-2*ScreenRes._h_shift)*xy[1])
+            elif ScreenRes.get_winpos() == (-1, -1) and BotVars.ingame_res_enabled and shifted:
+                x = round((ScreenRes.BASE_RES[0]-ScreenRes._width)/2 + ScreenRes._w_shift +
+                            (ScreenRes._width-2*ScreenRes._w_shift)*xy[0])
+                y = round((ScreenRes.BASE_RES[1]-ScreenRes._height)/2 + ScreenRes._h_shift +
+                            (ScreenRes._height-2*ScreenRes._h_shift)*xy[1])
+            else: # window position unchanged (= centered) and coordinates not shifted
+                x = round((ScreenRes.BASE_RES[0] - ScreenRes._width)/2 + ScreenRes._width*xy[0])
+                y = round((ScreenRes.BASE_RES[1] - ScreenRes._height)/2 + ScreenRes._height*xy[1])
         else:
             if BotVars.ingame_res_enabled and shifted:
                 x = round((ScreenRes._width-2*ScreenRes._w_shift)*xy[0] + ScreenRes._w_shift)
