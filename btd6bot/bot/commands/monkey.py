@@ -167,19 +167,20 @@ class Monkey():
             other: Additional text string, string list or string tuple, not required. Default value is ''.
         """
         obj = error_object 
-        if type == 'init':
-            if obj[0] == '-1':
-                cprint(f'\nNAME ERROR "{obj[0]}": monkey name not found.')
-            if obj[1] == '-1':
-                cprint(f'\nPOS_X ERROR {obj[1]}: x-coordinate must be within interval [0,1).')
-            if obj[2] == '-1':
-                cprint(f'\nPOS_Y ERROR {obj[2]}: y-coordinate must be within interval [0,1).')
-        elif type == 'target':
-            cprint(f'\nTARGET ERROR "{obj}": {obj} is not a valid targeting for {other}.')
-        elif type == 'upgrade_list':
-            cprint('\nUPGRADE LIST ERROR: upgrade list is empty.')
-        elif type == 'upgrade':
-            cprint(f'\nUPGRADE PATH ERROR: upgrade path {obj} in current upgrade list {other} is invalid.')
+        match type:
+            case 'init':
+                if obj[0] == '-1':
+                    cprint(f'\nNAME ERROR "{obj[0]}": monkey name not found.')
+                if obj[1] == '-1':
+                    cprint(f'\nPOS_X ERROR {obj[1]}: x-coordinate must be within interval [0,1).')
+                if obj[2] == '-1':
+                    cprint(f'\nPOS_Y ERROR {obj[2]}: y-coordinate must be within interval [0,1).')
+            case 'target':
+                cprint(f'\nTARGET ERROR "{obj}": {obj} is not a valid targeting for {other}.')
+            case 'upgrade_list':
+                cprint('\nUPGRADE LIST ERROR: upgrade list is empty.')
+            case 'upgrade':
+                cprint(f'\nUPGRADE PATH ERROR: upgrade path {obj} in current upgrade list {other} is invalid.')
         time.sleep(1)
         BotVars.defeat_status = True
         cprint('\n**An Error has occured. Current game state treated as Defeat**')
@@ -739,18 +740,20 @@ class Monkey():
             cpos: If monkey's current coordinate position has changed, update it. Default value is None.
         """
         PauseControl.pause_bot()
-        paths = ['upgrade top', 'upgrade mid', 'upgrade bot'] 
+        CHECK_TIMELIMIT: int = 15
+        paths = ('upgrade top', 'upgrade mid', 'upgrade bot')
+        start = time.time()
+        counter: int = 0
+
         if cpos is not None:
             self._pos_x = cpos[0]
             self._pos_y = cpos[1]
         kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
         if cpos is not None:
             self._update_panel_position(cpos[0])
-        start = time.time()
-        counter = 0
         if self._panel_pos == 'right':
             while not ocr.strong_delta_check('Sell', get_text('ingame', 'right_panel_sell_location'), OCR_READER):
-                if time.time()-start > 10:
+                if time.time()-start > CHECK_TIMELIMIT:
                     BotVars.defeat_status = True
                     cprint("Failed to find the upgradeable monkey.")
                     return
@@ -763,7 +766,7 @@ class Monkey():
                 counter += 1
         elif self._panel_pos == 'left':
             while not ocr.strong_delta_check('Sell', get_text('ingame', 'left_panel_sell_location'), OCR_READER):
-                if time.time()-start > 10:
+                if time.time()-start > CHECK_TIMELIMIT:
                     BotVars.defeat_status = True
                     cprint("Failed to find the upgradeable monkey.")
                     return
@@ -841,7 +844,12 @@ class Monkey():
             upg_path: Integer for upgrade path: 0 = top, 1 = middle, 2 = bot. Is necessary for some special monkey 
                 upgrade paths which ocr needs to identify and handle separately.
         """
-        c_path = self._upgrade_path
+        total_time = times.current_time()
+        upgraded: bool = False
+        defeat_check: int = 1
+        levelup_check: int = 1
+        c_path: str = self._upgrade_path
+
         match upg_path:
             case 0:
                 upg_match = self._name+' '+str(int(c_path[0])+1)+'-x-x'
@@ -850,10 +858,6 @@ class Monkey():
             case 2:
                 upg_match = self._name+' x-x-'+str(int(c_path[4])+1)
 
-        total_time = times.current_time()
-        upgraded: bool = False
-        defeat_check: int = 1
-        levelup_check: int = 1
         while not upgraded:
             if levelup_check == Rounds.LEVEL_UP_CHECK_FREQUENCY:
                 kb_mouse.click((0.9994791666667, 0), shifted=True)
@@ -906,12 +910,14 @@ class Monkey():
         """
         if BotVars.defeat_status:
             return
-        cprint(f'Placing {self._name.capitalize()}...', end=' ')
+
         total_time = times.current_time()
         placed: bool = False
         first_check: bool = True
         defeat_check: int = 1
         levelup_check: int = 1
+
+        cprint(f'Placing {self._name.capitalize()}...', end=' ')
         while not placed:
             if OcrValues._log_ocr_deltas or not self._placement_check:
                 kb_mouse.click((0.5, 0), shifted=True)
