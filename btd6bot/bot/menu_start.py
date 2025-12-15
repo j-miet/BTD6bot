@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import json
 import pathlib
+import sys
 import time
 
 import pyautogui
@@ -32,6 +33,8 @@ from customprint import cprint
 
 if TYPE_CHECKING:
     from typing import Any
+if sys.platform == 'win32':
+    import win32gui
 
 
 def _scroll_down_heroes() -> None:
@@ -195,7 +198,7 @@ def _reset_global_targeting() -> None:
 def _update_external_variables(begin_r: int, end_r: int) -> None:
     """Initializes all external class-level variables used within bot package.
     
-    This function should only be called by menu.load.
+    This function should only be called by 'load'.
 
     Args:
         begin_r: First round.
@@ -237,8 +240,13 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
         windowed_val: bool = gui_vars_dict["windowed"]
         if windowed_val:
             winpos_val: str = gui_vars_dict["windowed_position"]
-            if winpos_val == '-':
-                ScreenRes.update_winpos(-1, -1)
+            if winpos_val == 'auto' and sys.platform == 'win32':
+                ScreenRes.update_winpos(-2, -2)
+                winrect = win32gui.GetWindowRect(ScreenRes._phandle)
+                ScreenRes.update_res(winrect[2]-winrect[0], winrect[3]-winrect[1]) # auto-update window res
+            elif winpos_val == 'centered':
+                # ScreenRes.update_winpos(-1, -1) is already called earlier
+                ...
             else:
                 winpos: tuple[int, ...] = tuple(map(int, gui_vars_dict["windowed_position"].split('x')))
                 ScreenRes.update_winpos(winpos[0], winpos[1])

@@ -17,6 +17,8 @@ from customprint import cprint
 if sys.platform == 'darwin':
     pyautogui.FAILSAFE = True
 else:
+    if sys.platform == 'win32':
+        import win32gui
     pyautogui.FAILSAFE = False
 
 class ScreenRes:
@@ -33,6 +35,9 @@ class ScreenRes:
     _win_w, _win_h = -1, -1
     _w_shift, _h_shift = 0, 0
 
+    if sys.platform == 'win32':
+        _phandle: int = win32gui.FindWindow(None, "BloonsTD6")
+
     @staticmethod
     def update_res(w: int, h: int) -> None:
         """Updates screen resolution."""
@@ -47,6 +52,14 @@ class ScreenRes:
 
     @staticmethod
     def get_winpos() -> tuple[int, int]:
+        """Returns winpos location.
+
+        Normal values (x, y) where x, y >= 0
+        
+        Special values:
+            (-1, -1): windowed with centered position
+            (-2, -2): windowed with automatic position; Windows OS only
+        """
         return ScreenRes._win_w, ScreenRes._win_h
 
     @staticmethod
@@ -84,6 +97,10 @@ def pixel_position(xy: tuple[float | None, float | None],
         if ignore_windowed:
             x, y = round(ScreenRes.BASE_RES[0]*xy[0]), round(ScreenRes.BASE_RES[1]*xy[1])
         elif BotVars.windowed:
+            if ScreenRes.get_winpos() == (-2, -2) and sys.platform == 'win32':
+                # if OS is windows, bot can automatically get window location
+                winrect = win32gui.GetWindowRect(ScreenRes._phandle)
+                ScreenRes.update_winpos(winrect[0], winrect[1])
             if ScreenRes.get_winpos() != (-1, -1) and not (BotVars.ingame_res_enabled and shifted):
                 x = round(ScreenRes._win_w + ScreenRes._width*xy[0])
                 y = round(ScreenRes._win_h + ScreenRes._height*xy[1])
@@ -95,7 +112,7 @@ def pixel_position(xy: tuple[float | None, float | None],
                             (ScreenRes._width-2*ScreenRes._w_shift)*xy[0])
                 y = round((ScreenRes.BASE_RES[1]-ScreenRes._height)/2 + ScreenRes._h_shift +
                             (ScreenRes._height-2*ScreenRes._h_shift)*xy[1])
-            else: # window position unchanged (= centered) and coordinates not shifted
+            else: # window position centered and coordinates not shifted
                 x = round((ScreenRes.BASE_RES[0] - ScreenRes._width)/2 + ScreenRes._width*xy[0])
                 y = round((ScreenRes.BASE_RES[1] - ScreenRes._height)/2 + ScreenRes._height*xy[1])
         else:

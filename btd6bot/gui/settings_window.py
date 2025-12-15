@@ -1,6 +1,7 @@
 """Contains SettingsWindow class."""
 
 from __future__ import annotations
+import sys
 from typing import TYPE_CHECKING
 import json
 import tkinter as tk
@@ -122,15 +123,15 @@ class SettingsWindow:
                                                font=os_font)
         self.resolution_width_entry.grid(column=0, row=2, sticky='e', pady=(1,10), padx=(21,31))
         self.resolution_width_entry.insert(0, "width")
-        self.resolution_width_entry.bind('<FocusIn>', lambda _: self._clear_entry())
-        self.resolution_width_entry.config(fg='grey')
+        self.resolution_width_entry.bind('<FocusIn>', lambda _: self._clear_entry("resw"))
+        self.resolution_width_entry.config(fg='gray')
         self.resolution_height_entry = tk.Entry(self.settings_window, 
                                                 width=10, 
                                                 font=os_font)
         self.resolution_height_entry.grid(column=1, row=2, sticky='w', pady=(1,10), padx=(1,31))
         self.resolution_height_entry.insert(0, "height")
-        self.resolution_height_entry.bind('<FocusIn>', lambda _: self._clear_entry())
-        self.resolution_height_entry.config(fg='grey')
+        self.resolution_height_entry.bind('<FocusIn>', lambda _: self._clear_entry("resh"))
+        self.resolution_height_entry.config(fg='gray')
         self.resolution_button = tk.Button(self.settings_window, 
                                            text="Update resolution", 
                                            anchor='w', 
@@ -153,7 +154,7 @@ class SettingsWindow:
         self.windowed_toggle.grid(column=0, row=3, columnspan=4, sticky='nw')
 
         self.windowed_label = tk.Label(self.settings_window, 
-                                text='(Optional) Set window top left coordinate if not centered', 
+                                text='Set window top left coordinate (more info: Help -> Settings)', 
                                 font=os_font)
         self.windowed_label.grid(column=0, row=4, sticky='sw', columnspan=3, padx=(22,1), pady=(1,10))
         windowed_current_value = tk.Label(self.settings_window, 
@@ -167,15 +168,15 @@ class SettingsWindow:
                                             font=os_font)
         self.windowed_width_entry.grid(column=0, row=5, sticky='e', pady=(1,10), padx=(24,31))
         self.windowed_width_entry.insert(0, "width")
-        self.windowed_width_entry.bind('<FocusIn>', lambda _: self._clear_entry())
-        self.windowed_width_entry.config(fg='grey')
+        self.windowed_width_entry.bind('<FocusIn>', lambda _: self._clear_entry("winw"))
+        self.windowed_width_entry.config(fg='gray')
         self.windowed_height_entry = tk.Entry(self.settings_window, 
                                             width=10, 
                                             font=os_font)
         self.windowed_height_entry.grid(column=1, row=5, sticky='w', pady=(1,10), padx=(4,31))
         self.windowed_height_entry.insert(0, "height")
-        self.windowed_height_entry.bind('<FocusIn>', lambda _: self._clear_entry())
-        self.windowed_height_entry.config(fg='grey')
+        self.windowed_height_entry.bind('<FocusIn>', lambda _: self._clear_entry("winh"))
+        self.windowed_height_entry.config(fg='gray')
         self.windowed_button = tk.Button(self.settings_window, 
                                         text="Update location", 
                                         anchor='w', 
@@ -259,15 +260,15 @@ class SettingsWindow:
                                                font=os_font)
         self.ingame_res_width_entry.grid(column=0, row=10, sticky='e', pady=(1,10), padx=(21,31))
         self.ingame_res_width_entry.insert(0, "width")
-        self.ingame_res_width_entry.bind('<FocusIn>', lambda _: self._clear_entry())
-        self.ingame_res_width_entry.config(fg='grey')
+        self.ingame_res_width_entry.bind('<FocusIn>', lambda _: self._clear_entry("ingamew"))
+        self.ingame_res_width_entry.config(fg='gray')
         self.ingame_res_height_entry = tk.Entry(self.settings_window, 
                                                 width=10, 
                                                 font=os_font)
         self.ingame_res_height_entry.grid(column=1, row=10, sticky='w', pady=(1,10), padx=(1,31))
         self.ingame_res_height_entry.insert(0, "height")
-        self.ingame_res_height_entry.bind('<FocusIn>', lambda _: self._clear_entry())
-        self.ingame_res_height_entry.config(fg='grey')
+        self.ingame_res_height_entry.bind('<FocusIn>', lambda _: self._clear_entry("ingameh"))
+        self.ingame_res_height_entry.config(fg='gray')
         self.ingame_res_button = tk.Button(self.settings_window, 
                                            text="Update shift value", 
                                            anchor='w', 
@@ -421,23 +422,23 @@ class SettingsWindow:
 
         self.update_variables()
 
-    def _clear_entry(self) -> None:
-        if self.resolution_width_entry.get() == 'width':
+    def _clear_entry(self, id: str) -> None:
+        if id == "resw" and 'width' in self.resolution_width_entry.get():
             self.resolution_width_entry.delete(0, "end")
             self.resolution_width_entry.config(fg='black')
-        elif self.resolution_height_entry.get() == 'height':
+        elif id == "resh" and 'height' in self.resolution_height_entry.get():
             self.resolution_height_entry.delete(0, "end")
             self.resolution_height_entry.config(fg='black')
-        if self.ingame_res_width_entry.get() == 'width':
+        elif id == "ingamew" and 'width' in self.ingame_res_width_entry.get():
             self.ingame_res_width_entry.delete(0, "end")
             self.ingame_res_width_entry.config(fg='black')
-        elif self.ingame_res_height_entry.get() == 'height':
+        elif id == "ingameh" and 'height' in self.ingame_res_height_entry.get():
             self.ingame_res_height_entry.delete(0, "end")
             self.ingame_res_height_entry.config(fg='black')
-        if self.windowed_width_entry.get() == 'width':
+        elif id == "winw" and 'width' in self.windowed_width_entry.get():
             self.windowed_width_entry.delete(0, 'end')
             self.windowed_width_entry.config(fg='black')
-        elif self.windowed_height_entry.get() == 'height':
+        elif id == "winh" and 'height' in self.windowed_height_entry.get():
             self.windowed_height_entry.delete(0, 'end')
             self.windowed_height_entry.config(fg='black')
 
@@ -467,6 +468,7 @@ class SettingsWindow:
             self.windowed_height_entry['state'] = 'normal'
             self.windowed_button['state'] = 'normal'
         else:
+            self.windowed_pos_value.set(' - ')
             self.windowed_label['state'] = 'disabled'
             self.windowed_width_entry['state'] = 'disabled'
             self.windowed_height_entry['state'] = 'disabled'
@@ -529,6 +531,15 @@ class SettingsWindow:
             self.resolution_button['state'] = 'normal'
         elif self.resolution.get() == 'Off':
             self.windowed_toggle.deselect()
+
+            self.resolution_width_entry.delete(0, 'end')
+            self.resolution_width_entry.insert(0, "width")
+            self.resolution_width_entry.config(fg='gray')
+            self.resolution_height_entry.delete(0, 'end')
+            self.resolution_height_entry.insert(0, "height")
+            self.resolution_height_entry.config(fg='gray')
+            self.settings_window.focus()
+
             self.windowed_toggle['state'] = 'disabled'
             gui_vars_dict["check_resolution"] = False
             gui_vars_dict["windowed"] = False
@@ -555,6 +566,15 @@ class SettingsWindow:
         elif self.windowed.get() == 'Off':
             gui_vars_dict["windowed"] = False
             self.windowed_pos_value.set(' - ')
+
+            self.windowed_width_entry.delete(0, 'end')
+            self.windowed_width_entry.insert(0, "width")
+            self.windowed_width_entry.config(fg='gray')
+            self.windowed_height_entry.delete(0, 'end')
+            self.windowed_height_entry.insert(0, "height")
+            self.windowed_height_entry.config(fg='gray')
+            self.settings_window.focus()
+
             self.windowed_label['state'] = 'disabled'
             self.windowed_width_entry['state'] = 'disabled'
             self.windowed_height_entry['state'] = 'disabled'
@@ -575,6 +595,15 @@ class SettingsWindow:
         elif self.ingame_res.get() == 'Off':
             gui_vars_dict["check_ingame_resolution"] = False
             self.ingame_res_value.set(' 0 x 0 ')
+
+            self.ingame_res_width_entry.delete(0, 'end')
+            self.ingame_res_width_entry.insert(0, "width")
+            self.ingame_res_width_entry.config(fg='gray')
+            self.ingame_res_height_entry.delete(0, 'end')
+            self.ingame_res_height_entry.insert(0, "height")
+            self.ingame_res_height_entry.config(fg='gray')
+            self.settings_window.focus()
+
             self.ingame_res_width_entry['state'] = 'disabled'
             self.ingame_res_height_entry['state'] = 'disabled'
             self.ingame_res_button['state'] = 'disabled'
@@ -686,30 +715,45 @@ class SettingsWindow:
 
         This is used to calculate game window position in windowed mode.
 
+        <IMPORTANT>
         If user has Windows OS, the wingui32 library can automatically update window location; for other OS this
-        becomes much more complicated and has not been implemented (not sure if its even possible).
+        becomes much more complicated and has not been implemented (not sure if its even possible). Therefore value 
+        must be set manually.
         """
         try:
             width = self.windowed_width_entry.get()
             height = self.windowed_height_entry.get()
-            if width == "" or height == "":
+            _autocondition: tuple[str] = ("", "auto")
+            if width in _autocondition or height in _autocondition:
                 with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
                     gui_vars_dict: dict[str, Any] = json.load(f)
-                gui_vars_dict["windowed_position"] = "-"
-                self.windowed_pos_value.set(' - ')
+                if sys.platform == 'win32':
+                    gui_vars_dict["windowed_position"] = "auto"
+                    self.windowed_pos_value.set(' auto ')
+                else:
+                    gui_vars_dict["windowed_position"] = "centered"
+                    self.windowed_pos_value.set(' centered ')
                 with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
                     json.dump(gui_vars_dict, f, indent=4)
-            w = int(width)
-            h = int(height)
-            native = pyautogui.size()
-            if 0 <= w <= native[0] and 0 <= h <= native[1]:
-                    val = width+' x '+height
-                    with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-                        gui_vars_dict: dict[str, Any] = json.load(f)
-                    gui_vars_dict["windowed_position"] = val
-                    self.windowed_pos_value.set(' '+val+' ')
-                    with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
-                        json.dump(gui_vars_dict, f, indent=4)
+            elif width == 'centered' or height == 'centered':
+                with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+                    gui_vars_dict: dict[str, Any] = json.load(f)
+                    gui_vars_dict["windowed_position"] = "centered"
+                    self.windowed_pos_value.set(' centered ')
+                with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+                    json.dump(gui_vars_dict, f, indent=4)
+            else:
+                w = int(width)
+                h = int(height)
+                native = pyautogui.size()
+                if 0 <= w <= native[0] and 0 <= h <= native[1]:
+                        val = width+' x '+height
+                        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+                            gui_vars_dict: dict[str, Any] = json.load(f)
+                        gui_vars_dict["windowed_position"] = val
+                        self.windowed_pos_value.set(' '+val+' ')
+                        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+                            json.dump(gui_vars_dict, f, indent=4)
         except ValueError:
             ...
 
@@ -847,20 +891,25 @@ class SettingsWindow:
         """Reset adjust arguments."""
         res_raw = self.resolution_value.get().strip().split()
         res = 'res='+res_raw[0]+'x'+res_raw[2]
-        winpos_raw = self.windowed_pos_value.get().strip().split()
-        try:
+        winpos_raw = self.windowed_pos_value.get().strip()
+        winpos: str
+        if winpos_raw == '-' or winpos_raw == 'centered':
+            winpos = 'winpos=centered'
+        elif sys.platform == 'win32' and winpos_raw == 'auto':
+            winpos = 'winpos=auto'
+        else:
+            winpos_raw = winpos_raw.split()
             winpos = 'winpos='+winpos_raw[0]+'x'+winpos_raw[2]
-        except IndexError:
-            winpos = 'winpos=-'
         shift_raw = self.ingame_res_value.get().strip().split()
         shift = 'shift='+shift_raw[0]+'x'+shift_raw[2]
+
         adjust_args = f'{res}'
         if self.resolution.get() == 'On' and self.windowed.get() == 'On':
             adjust_args += ' win=1'
             adjust_args += ' '+winpos
         else:
             adjust_args += ' win=0'
-            adjust_args += ' winpos=-'
+            adjust_args += ' winpos=centered'
         adjust_args += f' {shift}'
         adjust_args += ' monkeys=all delta=4'
         self.ocr_autoadjust_entry.delete(0, "end")

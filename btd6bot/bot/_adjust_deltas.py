@@ -4,6 +4,7 @@ from typing import Any
 import pathlib
 import json
 import os
+import sys
 import time
 
 from bot import kb_mouse
@@ -16,6 +17,9 @@ from bot.ocr.ocr import weak_substring_check, OcrValues
 from bot.ocr.ocr_reader import OCR_READER
 from customprint import cprint
 from utils import timing
+
+if sys.platform == 'win32':
+    import win32gui
 
 _TEMPFILE_PATH = pathlib.Path(__file__).parent.parent/'Files'/'.temp_upg_deltas.json'
 
@@ -299,7 +303,12 @@ def run() -> None:
             elif win_val == 0:
                 BotVars.windowed = False
         elif 'winpos=' in args:
-            if args[7] == '-':
+            if sys.platform == 'win32' and args[7:] == 'auto':
+                winpos = 'auto'
+                ScreenRes.update_winpos(-2, -2)
+                winrect = win32gui.GetWindowRect(ScreenRes._phandle)
+                ScreenRes.update_res(winrect[2]-winrect[0], winrect[3]-winrect[1])
+            elif args[7:] == 'centered':
                 winpos = 'centered'
                 ScreenRes.update_winpos(-1, -1)
             else:

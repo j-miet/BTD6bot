@@ -486,8 +486,10 @@ class MonitoringWindow:
                     '[Windowed] '+str(windowed))
             if windowed:
                 wintext: str
-                if winpos == '-':
+                if winpos == 'centered':
                     wintext = 'centered'
+                elif sys.platform == 'win32' and winpos == 'auto':
+                    wintext = 'auto'
                 else:
                     wintemp = winpos.split('x')
                     wintext = wintemp[0].strip()+'x'+wintemp[1].strip()
