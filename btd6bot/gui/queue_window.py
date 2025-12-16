@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import itertools as it
 import json
 import tkinter as tk
 from tkinter import ttk
@@ -13,144 +14,189 @@ from utils import plan_data
 class QueueModeWindow:
     """Allows adding and saving current queue list of plans.
     
-    A separate Toplevel object is created so that other tkinter widgets can be placed inside it.
-
     Attributes:
-        queue_optionwindow (tk.Toplevel): Toplevel object that creates a new window where other elements can be 
-            inserted.
-        current_plan (str): Plan name string.
-        myplans (tk.Listbox): Holds all user-selected plans.
-        myplanslabel (tk.Label): Label displaying text above mymaps.
-        delbutton (tk.Button): Button handling the removing of user-selected plans.
-        allplans (tk.Label): Listbox of all existing plans.
-        allplanslabel (tk.Label): Label displaying text above allmaps.
-        up (tk.Button): Button for moving position of currently chosen plan one step up in mymaps.
-        down (tk.Button): Button for moving position of currently chosen plan one step down in mymaps.
+        queuewindow (tk.Toplevel): 
+            Toplevel object that creates a new window and allows inserting widgets into it.   
+        current_plan (str): 
+            Name of selected plan
+        myplans (tk.Listbox): 
+            List of user-selected plans. Queued plan data is stored in 'text files/hotkeys.txt'.
+        up (tk.Button): 
+            Moves selected plan one step up in myplans.
+        down (tk.Button): 
+            Moves selected plan one step down in myplans.
+        allplans (tk.Listbox): 
+            List of all existing plans.
+        infowindow (tk.Text):
+            Displays info of selected plan.
+        delbutton (tk.Button): 
+            Removes selected plan from myplans.
+        delall_button (tk.Button):
+            Removes all plans fro myplans
+        addbutton (tk.Button):
+            Adds selected plan from allplans to myplans
+        all_searchbartext (tk.StringVar):
+            Text variable storing current search bar input
+        all_searchbar (tk.Entry):
+            Search bar for allplans
     """
     def __init__(self) -> None:
         """Initialize queue mode window."""
-        self.queue_optionwindow = tk.Toplevel()
-        self.queue_optionwindow.title("Queue map list")
-        self.queue_optionwindow.iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
-        self.queue_optionwindow.geometry('930x400+100+550')
-        self.queue_optionwindow.minsize(930,400)
-        self.queue_optionwindow.maxsize(930,400)
+        self.queuewindow = tk.Toplevel()
+        self.queuewindow.title("Queue map list")
+        self.queuewindow.iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
+        self.queuewindow.geometry('930x400+100+550')
+        self.queuewindow.minsize(930,400)
+        self.queuewindow.maxsize(930,400)
+        # hotkeys
+        self.queuewindow.bind("<Shift-A>", lambda _: self._add_plan())
+        self.queuewindow.bind("<Shift-R>", lambda _: self._remove_plan())
+        self.queuewindow.bind("<Shift-U>", lambda _: self._move_up())
+        self.queuewindow.bind("<Shift-D>", lambda _: self._move_down())
 
         self.current_plan: str = ''
-        self.myplanslabel = tk.Label(self.queue_optionwindow, 
-                                     text='Current queue', 
-                                     font=os_font)
-        self.myplanslabel.grid(column=0, row=0)
-        currentplans_scroll = ttk.Scrollbar(self.queue_optionwindow, 
+        myplanslabel = tk.Label(self.queuewindow, 
+                                text='Current queue', 
+                                font=os_font)
+        myplanslabel.grid(column=0, row=0)
+
+        currentplans_scroll = ttk.Scrollbar(self.queuewindow, 
                                             orient='vertical')
         currentplans_scroll.grid(column=1, row=1, sticky="nsw")
-        self.myplans = tk.Listbox(self.queue_optionwindow,
-                                  width=36, 
-                                  height=20, 
-                                  yscrollcommand=currentplans_scroll.set, 
-                                  font=os_font)
+
+        self.myplans = tk.Listbox(self.queuewindow,
+                                    width=36, 
+                                    height=20, 
+                                    yscrollcommand=currentplans_scroll.set, 
+                                    font=os_font)
         self.myplans.grid(column=0, row=1, padx=(11, 0))
-        self.myplans.bind("<<ListboxSelect>>", lambda _: self.update_planinfo())
+        self.myplans.bind("<<ListboxSelect>>", lambda _: self._update_planinfo())
+        self.myplans.bind("<KeyPress>", lambda e, list_type=self.myplans: self._searchqueue(e, list_type))
         currentplans_scroll.configure(command=self.myplans.yview)
 
-        self.up = tk.Button(self.queue_optionwindow, 
-                            text=u'\u2191\n\n(u)', 
-                            width=2, 
+        self.up = tk.Button(self.queuewindow, 
+                            text=u'\u2191\n\n', 
+                            width=1, 
                             height=5, 
-                            command=self.move_up,
+                            command=self._move_up,
                             font=os_font)
         self.up.grid(column=2, row=1, sticky='n', padx=(2,0))
-        self.queue_optionwindow.bind("u", lambda _: self.move_up())
 
-        self.down = tk.Button(self.queue_optionwindow, 
-                              text=u'(d)\n\n\u2193', 
-                              width=2, 
-                              height=5, 
-                              command=self.move_down,
-                              font=os_font)
+        self.down = tk.Button(self.queuewindow, 
+                                text=u'\n\n\u2193', 
+                                width=1,
+                                height=5, 
+                                command=self._move_down,
+                                font=os_font)
         self.down.grid(column=2, row=1, sticky='s', padx=(2,0))
-        self.queue_optionwindow.bind("d", lambda _: self.move_down())
     
-        allplans_scroll = ttk.Scrollbar(self.queue_optionwindow, 
+        allplans_scroll = ttk.Scrollbar(self.queuewindow, 
                                         orient='vertical')
         allplans_scroll.grid(column=4, row=1, sticky="nsw", padx=(0, 11))
-        self.allplanslabel = tk.Label(self.queue_optionwindow, 
-                                      text='All plans', 
-                                      font=os_font)
-        self.allplanslabel.grid(column=3, row=0)
-        self.allplans = tk.Listbox(self.queue_optionwindow, 
-                                   width=36, 
-                                   height=20, 
-                                   yscrollcommand=allplans_scroll.set,
-                                   font=os_font)
+
+        allplanslabel = tk.Label(self.queuewindow, 
+                                text='All plans', 
+                                font=os_font)
+        allplanslabel.grid(column=3, row=0)
+
+        self.allplans = tk.Listbox(self.queuewindow, 
+                                    width=36, 
+                                    height=20, 
+                                    yscrollcommand=allplans_scroll.set,
+                                    font=os_font)
         self.allplans.grid(column=3, row=1, padx=(11, 0))
-        self.allplans.bind("<<ListboxSelect>>", lambda _: self.update_planinfo())
+        self.allplans.bind("<<ListboxSelect>>", lambda _: self._update_planinfo())
+        self.allplans.bind("<KeyPress>", lambda e, list_type=self.allplans: self._searchqueue(e, list_type))
         allplans_scroll.configure(command=self.allplans.yview)
-        info_window_scroll = ttk.Scrollbar(self.queue_optionwindow, 
-                                           orient='vertical')
+
+        info_window_scroll = ttk.Scrollbar(self.queuewindow, 
+                                            orient='vertical')
         info_window_scroll.grid(column=6, row=1, sticky="nsw")
-        self.infolabel = tk.Label(self.queue_optionwindow, 
-                                  text='Plan info', 
-                                  font=os_font)
-        self.infolabel.grid(column=5, row=0)
-        self.info_window = tk.Text(self.queue_optionwindow, 
-                                   height=18, 
-                                   width=40, 
-                                   yscrollcommand=info_window_scroll.set, 
-                                   font=os_font, 
-                                   wrap=tk.WORD, 
-                                   relief='sunken', 
-                                   padx=11)
+
+        infolabel = tk.Label(self.queuewindow, 
+                            text='Plan info', 
+                            font=os_font)
+        infolabel.grid(column=5, row=0)
+
+        self.info_window = tk.Text(self.queuewindow, 
+                                    height=18, 
+                                    width=40, 
+                                    yscrollcommand=info_window_scroll.set, 
+                                    font=os_font, 
+                                    wrap=tk.WORD, 
+                                    relief='sunken', 
+                                    padx=11)
         self.info_window.grid(column=5, row=1, sticky='ns')
         self.info_window['state'] = 'disabled'
         info_window_scroll.configure(command=self.info_window.yview)
 
-        self.delbutton = tk.Button(self.queue_optionwindow, 
-                                   text='Remove (r)', 
-                                   command=self.remove_plan, 
-                                   width=10, 
-                                   font=os_font)
+        self.delbutton = tk.Button(self.queuewindow, 
+                                    text='Remove', 
+                                    command=self._remove_plan, 
+                                    width=10, 
+                                    font=os_font)
         self.delbutton.grid(column=0, row=2, sticky="w", padx=(11,0),pady=(5,0))
-        self.queue_optionwindow.bind("r", lambda _: self.remove_plan())
-        self.delall_button = tk.Button(self.queue_optionwindow, 
-                                       text='Remove all', 
-                                       command=self.remove_allcurrentplans, 
-                                       width=10, 
-                                       font=os_font)
+        
+        self.delall_button = tk.Button(self.queuewindow, 
+                                        text='Remove all', 
+                                        command=self._remove_allcurrentplans, 
+                                        width=10, 
+                                        font=os_font)
         self.delall_button.grid(column=0, row=2, sticky="e", padx=(11,0), pady=(5,0))
-        self.addbutton = tk.Button(self.queue_optionwindow, 
-                                   text='Add (a)', 
-                                   command=self.add_plan, 
-                                   width=10, 
-                                   font=os_font)
+
+        self.addbutton = tk.Button(self.queuewindow, 
+                                    text='Add', 
+                                    command=self._add_plan, 
+                                    width=10, 
+                                    font=os_font)
         self.addbutton.grid(column=3, row=2, sticky="w", padx=(11,0), pady=(5,0))
-        self.queue_optionwindow.bind("a", lambda _: self.add_plan())
 
         self.all_searchbartext = tk.StringVar(value="")
         self.all_searchbartext.trace_add("write", lambda r, w, u: self._callback_all())
-        self.all_searchbar = tk.Entry(self.queue_optionwindow, 
-                                      textvariable=self.all_searchbartext, 
-                                      font=os_font)
+
+        self.all_searchbar = tk.Entry(self.queuewindow, 
+                                        textvariable=self.all_searchbartext, 
+                                        font=os_font)
         self.all_searchbar.grid(column=3, row=2, sticky="e")
         self.all_searchbar.insert(0, "search plans...")
         self.all_searchbar.bind('<FocusIn>', lambda _: self._clear_entry())
         self.all_searchbar.bind('<FocusOut>', lambda _: self._set_defaultmessage())
         self.all_searchbar.config(fg='gray')
 
-        self.read_queue_list()
-        self.read_allplans_list()
+        self._read_queue_list()
+        self._read_allplans_list()
         self.all_searchbar.setvar(value="")
 
     def _clear_entry(self) -> None:
         if self.all_searchbar.get() == 'search plans...':
             self.all_searchbar.delete(0, "end")
             self.all_searchbar.config(fg='black')
+        self.myplans.selection_clear(0, 'end')
 
     def _set_defaultmessage(self) -> None:
         if self.all_searchbar.get() == '':
+            index = self.allplans.curselection()
             self.all_searchbar.insert(0, "search plans...")
             self.all_searchbar.config(fg='gray')
-            self.read_allplans_list()
+            self._read_allplans_list()
+            if index != ():
+                self.allplans.select_set(index[0])
+
+    def _searchqueue(self, event: tk.Event, list_type: tk.Listbox) -> None:
+        _allowed_shiftchars = {'#'} # set of allowed Shift+CHAR combinations in plan names
+        values = list_type.get(0, 'end')
+        selected = list_type.curselection()
+        if selected != ():
+            current = selected[0]
+            for i in it.chain(range(current + 1, list_type.size()), range(0, current)):
+                key = event.char.lower()
+                if (key == values[i][0].lower() and 
+                    (key in _allowed_shiftchars or event.state != 9)): # event.state == 9 means holding Shift key
+                    list_type.select_clear(0, 'end')
+                    list_type.select_set(i)
+                    list_type.activate(i)
+                    list_type.see(i)
+                    return
 
     def _get_plansearchresult(self, searchtext: str) -> list[str]:
         """Add custom search tools.
@@ -210,49 +256,39 @@ class QueueModeWindow:
             if matching_plans[i] not in listed_plans:
                 self.allplans.insert(i, matching_plans[i])
 
-    def _highlight_allplans_entry(self, index: int) -> None:
-        self.allplans.select_clear(0, "end")
-        if self.allplans.size() == 0:
+    def _highlight_planlist_entry(self, list_type: tk.Listbox, index: int) -> None:
+        list_type.select_clear(0, "end")
+        if list_type.size() == 0:
             self.info_window['state'] = 'normal'
             self.info_window.delete(1.0, tk.END)
             self.info_window['state'] = 'disabled'
             return
-        elif index < self.allplans.size()-1:
-            self.allplans.select_set(index)
-            self.allplans.activate(index)
+        elif list_type.size() == 1 and index == 0:
+            list_type.select_set(index)
+            list_type.activate(index)
+        elif index < list_type.size()-1:
+            list_type.select_set(index)
+            list_type.activate(index)
+            list_type.see(index)
         else:
-            self.allplans.select_set(index-1)
-            self.allplans.activate(index-1)
-        self.update_planinfo()
+            list_type.select_set(index-1)
+            list_type.activate(index-1)
+            list_type.see(index-1)
+        self._update_planinfo()
 
-    def _highlight_myplans_entry(self, index: int) -> None:
-        self.myplans.select_clear(0, "end")
-        if self.myplans.size() == 0:
-            self.info_window['state'] = 'normal'
-            self.info_window.delete(1.0, tk.END)
-            self.info_window['state'] = 'disabled'
-            return
-        elif index < self.myplans.size()-1:
-            self.myplans.select_set(index)
-            self.myplans.activate(index)
-        else:
-            self.myplans.select_set(index-1)
-            self.myplans.activate(index-1)
-        self.update_planinfo()
-
-    def update_planinfo(self) -> None:
-        """Updates plan info panel based on selected name."""
+    def _update_planinfo(self) -> None:
+        """Updates plan info panel based on selected plan."""
         index_my = self.myplans.curselection() # type: ignore
         index_all = self.allplans.curselection() # type: ignore
-        if index_my:
+        if index_my != ():
             self.current_plan = self.myplans.get(index_my[0])
-            self.show_planinfo()
-        elif index_all:
+            self._show_planinfo()
+        elif index_all != ():
             self.current_plan = self.allplans.get(index_all[0])
-            self.show_planinfo()
+            self._show_planinfo()
 
-    def show_planinfo(self) -> None:
-        """Displays optional info screen.
+    def _show_planinfo(self) -> None:
+        """Displays info screen.
         
         Info texts are defined at the beginning of each plan file in 'plans' folder.
         If no valid info string is found, displays a blank screen.
@@ -286,94 +322,91 @@ class QueueModeWindow:
             self.info_window.insert('end', '')
             self.info_window['state'] = 'disabled'
 
-    def move_up(self) -> None:
-        """Handles moving currently selected row up."""
+    def _move_up(self) -> None:
+        """Handles moving currently selected queue entry one row up."""
         index = self.myplans.curselection() # type: ignore
-        if index == () or index[0] == 0:
-            return
-        current_line = self.myplans.get(index[0])
-        self.myplans.delete(index[0])
-        self.myplans.insert(index[0]-1, current_line)
-        
+        if index != () and index[0] != 0:
+            current_line = self.myplans.get(index[0])
+            self.myplans.delete(index[0])
+            self.myplans.insert(index[0]-1, current_line)
+            
+            with open(gui_paths.QUEUE_LIST_PATH) as file_read:
+                listed = file_read.readlines()
+            listed.pop(index[0])
+            listed.insert(index[0]-1, current_line+'\n')
+            plan_data.list_format(listed)
+            with open(gui_paths.QUEUE_LIST_PATH, 'w') as file_write:
+                for line in listed:
+                    file_write.write(line)  
+            self.myplans.selection_set(index[0]-1)
+            self.myplans.activate(index[0]-1)
+            self.myplans.see(index[0]-1)
+
+    def _move_down(self) -> None:
+        """Handles moving currently selected queue entry one row down."""
+        index = self.myplans.curselection() # type: ignore
         with open(gui_paths.QUEUE_LIST_PATH) as file_read:
             listed = file_read.readlines()
-        listed.pop(index[0])
-        listed.insert(index[0]-1, current_line+'\n')
-        plan_data.list_format(listed)
-        with open(gui_paths.QUEUE_LIST_PATH, 'w') as file_write:
-            for line in listed:
-                file_write.write(line)  
-        self.myplans.selection_set(index[0]-1)
-        self.myplans.activate(index[0]-1)
-        self.myplans.see(index[0]-1)
+        if index != () and index[0] < len(listed)-1:
+            current_line = self.myplans.get(index[0])
+            self.myplans.delete(index[0])
+            self.myplans.insert(index[0]+1, current_line)
 
-    def move_down(self) -> None:
-        """Handles moving currently selected row down."""
-        index = self.myplans.curselection() # type: ignore
-        with open(gui_paths.QUEUE_LIST_PATH) as file_read:
-            listed = file_read.readlines()
-        if index == () or index[0] == len(listed)-1:
-            return
-        current_line = self.myplans.get(index[0])
-        self.myplans.delete(index[0])
-        self.myplans.insert(index[0]+1, current_line)
+            listed.pop(index[0])
+            listed.insert(index[0]+1, current_line+'\n')
+            plan_data.list_format(listed)
+            with open(gui_paths.QUEUE_LIST_PATH, 'w') as file_write:
+                for line in listed:
+                    file_write.write(line)
+            self.myplans.selection_set(index[0]+1)
+            self.myplans.activate(index[0]+1)
+            self.myplans.see(index[0]+1)
 
-        listed.pop(index[0])
-        listed.insert(index[0]+1, current_line+'\n')
-        plan_data.list_format(listed)
-        with open(gui_paths.QUEUE_LIST_PATH, 'w') as file_write:
-            for line in listed:
-                file_write.write(line)
-        self.myplans.selection_set(index[0]+1)
-        self.myplans.activate(index[0]+1)
-        self.myplans.see(index[0]+1)
-
-    def add_plan(self) -> None:
-        """Add a new plan to current queue.
+    def _add_plan(self) -> None:
+        """Add a new plan to queue.
         
         Won't add a plan if it's already in queue.
         """
         index = self.allplans.curselection() # type: ignore
-        if index == ():
-            return
-        selected_plan = self.allplans.get(index[0])
-        with open(gui_paths.QUEUE_LIST_PATH) as file_read:
-            listed_plans = plan_data.list_format(file_read.readlines())
-        if selected_plan in listed_plans:
-            return
-        self.myplans.insert(tk.END, selected_plan)
-        with open(gui_paths.QUEUE_LIST_PATH, 'a') as file_append:
-            file_append.write(self.allplans.get(index[0])+'\n')
-        self._callback_all()
-        self._highlight_allplans_entry(index[0])
+        if index != ():
+            selected_plan = self.allplans.get(index[0])
+            with open(gui_paths.QUEUE_LIST_PATH) as file_read:
+                listed_plans = plan_data.list_format(file_read.readlines())
+            if selected_plan in listed_plans:
+                return
+            self.myplans.insert(tk.END, selected_plan)
+            with open(gui_paths.QUEUE_LIST_PATH, 'a') as file_append:
+                file_append.write(self.allplans.get(index[0])+'\n')
+            self._callback_all()
+            self._highlight_planlist_entry(self.allplans, index[0])
 
-    def remove_allcurrentplans(self) -> None:  
-        """Remove all currently selected plans from queue."""
+    def _remove_allcurrentplans(self) -> None:  
+        """Remove all selected plans from queue."""
         self.myplans.delete(0, "end")
         with open(gui_paths.QUEUE_LIST_PATH, 'w') as _:
             ...
         self._callback_all()
         
-    def remove_plan(self) -> None:
-        """Remove a plan from current queue."""
+    def _remove_plan(self) -> None:
+        """Remove selected plan from queue."""
         index = self.myplans.curselection() # type: ignore
-        if index == ():
-            return
-        self.myplans.delete(index[0])    
-        with open(gui_paths.QUEUE_LIST_PATH) as file_read:
-            listed = file_read.readlines()
-        listed.pop(index[0])
-        plan_data.list_format(listed)
-        with open(gui_paths.QUEUE_LIST_PATH, 'w') as file_write:
-            for line in listed:
-                file_write.write(line)
-        self._callback_all()
-        self._highlight_myplans_entry(index[0])
+        if index != ():
+            self.myplans.delete(index[0])    
+            with open(gui_paths.QUEUE_LIST_PATH) as file_read:
+                listed = file_read.readlines()
+            listed.pop(index[0])
+            plan_data.list_format(listed)
+            with open(gui_paths.QUEUE_LIST_PATH, 'w') as file_write:
+                for line in listed:
+                    file_write.write(line)
+            self._callback_all()
+            self._highlight_planlist_entry(self.myplans, index[0])
             
-    def read_queue_list(self) -> None:
-        """Load an existing list of queued plans.
+    def _read_queue_list(self) -> None:
+        """Load current list of queued plans.
         
-        Will also check whether all currently queued plans are found. If not, removes them automatically.
+        Performs a check for all found plan names to see if they're still available. If not, removes them 
+        automatically from queue.
         """
         with open(gui_paths.QUEUE_LIST_PATH) as file_read:
             listed_plans_raw = file_read.readlines()
@@ -392,8 +425,8 @@ class QueueModeWindow:
         for i in range(0, len(listed_plans)):
             self.myplans.insert(i, listed_plans[i])
 
-    def read_allplans_list(self) -> None:
-        """Load a list of all existing plans which are not selected in current query."""
+    def _read_allplans_list(self) -> None:
+        """Load and insert all found plans which are not listed in query into allplans listbox."""
         with open(gui_paths.QUEUE_LIST_PATH) as file_read:
             listed_plans_raw = file_read.readlines()
             listed_plans = plan_data.list_format(listed_plans_raw)
@@ -402,10 +435,10 @@ class QueueModeWindow:
             if found_plans[i] not in listed_plans:
                 self.allplans.insert(i, found_plans[i])
 
-    def get_optionwindow(self) -> tk.Toplevel:
-        """Get current option window.
+    def get_queuewindow(self) -> tk.Toplevel:
+        """Get current queue window.
         
         Returns:
             Current Toplevel window object of QueueModeWindow.
         """
-        return self.queue_optionwindow
+        return self.queuewindow
