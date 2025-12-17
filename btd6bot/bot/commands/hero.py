@@ -25,32 +25,28 @@ class Hero(Monkey):
 
     To select a hero for current plan, you must edit the docstring of your plan file: at the very beginning, there 
     should be plan information wrapped in comments and in particular, the [Hero] line where you add the name. If the 
-    plan doesn't use a hero, you should write '-'. Hero names are not case-sensitive so you can write quincy, Quincy, 
-    QUINCY or anything similar. As always, if you're unsure then open any existing plan .py file and check how it's 
-    done there.
+    plan doesn't use a hero, you should write '-'. Hero names are not case-sensitive, but try to use the standard
+    format: capitalize first letter and rest in lower case. As always, if you're unsure then open any existing plan .py 
+    file and check how it's done there.
 
     All supported hero name can be found under locations.py -> CLICK -> heroes/heroes2
 
     Attributes:
         current_plan_hero_name (str, class attribute, class attribute): Hero name in current plan. If you use hero 
             outside a plan file, you must set a value of this variable with Hero.current_plan_hero_name = ...
-        
-        name (str): For heroes, this is always 'hero', to differentiate them from monkeys. Initialized with super().
-        pos_x (float | None): X-coordinate location. Initialized with super().
-        pos_y (float | None): Y-coordinate location. Initialized with super().
-        targeting (str): Targeting priority, initial value is returned via basic_monkey_target method after
-            calling super() in initialize, but overridden by basic_hero_target() right after.
-        upgrade_path (str): Current upgrade path of Monkey, initially always '0-0-0'. Heroes don't use this.
-            Initialized with super().
-        hero_name (str): Name of Hero.
 
     Methods:
     --
-        target: Change targeting priority of this hero.  
-        special: Use special of this monkey (inherited from Monkey).  
-        sell: Sell this monkey (inherited from Monkey).
-        shop: Geraldo's shop items.
-        spellbook: Corvus's spells.
+        target: 
+            Change targeting priority of this hero.  
+        special: 
+            Use special of this monkey (inherited from Monkey).  
+        sell: 
+            Sell this monkey (inherited from Monkey).
+        shop: 
+            Geraldo's shop items.
+        spellbook: 
+            Corvus's spells.
 
         See also:
           ability.ability for ability usage.
@@ -73,7 +69,7 @@ class Hero(Monkey):
         >>> hero.sell()
         Hero sold!
     """
-    current_plan_hero_name: str | None = None # if you need Hero class without existing plan, modify this variable.
+    current_plan_hero_name: str | None = None
 
     def __init__(self, pos_x: float, pos_y: float) -> None:
         """Initializes a Hero by passing it its name and placement position.
@@ -177,7 +173,7 @@ class Hero(Monkey):
     def upgrade(self, upg_list: list[str], cpos: tuple[float, float] | None = None) -> None:
         """Overrides upgrade method of Monkey to prevent calling 'upgrade' of superclass Monkey. 
         
-        As upgrading heroes is  not possible, all this method does is print a message "Can't upgrade heroes".
+        As upgrading heroes is not possible, all this method does is print a message "Can't upgrade heroes".
         """
         PauseControl.pause_bot()
         if BotVars.defeat_status:
