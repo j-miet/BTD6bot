@@ -157,8 +157,6 @@ class Rounds:
         time.sleep(0.5)
         times.time_print(total_start, final_round_end, 'Total')
 
-        cprint('\nExiting map in...', end=' ')
-        timing.counter(3)
         kb_mouse.click(get_click('ingame', 'next_button'))
         time.sleep(0.5)
         kb_mouse.click(get_click('ingame', 'home_button'))
