@@ -1,4 +1,4 @@
-"""Contains QueueModeWindow class."""
+"""Implements QueueModeWindow class."""
 
 from __future__ import annotations
 
@@ -12,33 +12,9 @@ from gui.gui_tools import os_font
 from utils import plan_data
 
 class QueueModeWindow:
-    """Allows adding and saving current queue list of plans.
-    
-    Attributes:
-        queuewindow (tk.Toplevel): 
-            Toplevel object that creates a new window and allows inserting widgets into it.   
-        current_plan (str): 
-            Name of selected plan
-        myplans (tk.Listbox): 
-            List of user-selected plans. Queued plan data is stored in 'text files/hotkeys.txt'.
-        up (tk.Button): 
-            Moves selected plan one step up in myplans.
-        down (tk.Button): 
-            Moves selected plan one step down in myplans.
-        allplans (tk.Listbox): 
-            List of all existing plans.
-        infowindow (tk.Text):
-            Displays info of selected plan.
-        delbutton (tk.Button): 
-            Removes selected plan from myplans.
-        delall_button (tk.Button):
-            Removes all plans fro myplans
-        addbutton (tk.Button):
-            Adds selected plan from allplans to myplans
-        all_searchbartext (tk.StringVar):
-            Text variable storing current search bar input
-        all_searchbar (tk.Entry):
-            Search bar for allplans
+    """Gui window where user can modify current list of queued plans.
+
+    Queue data is stored in 'Files/text files/queue_list.txt'.
     """
     def __init__(self) -> None:
         """Initialize queue mode window."""
