@@ -195,19 +195,27 @@ class QueueModeWindow:
         if searchtext[0:2] == "*v" and len(searchtext) >= 5 and searchtext.find(' ') != -1: # *v command
             versioncheck, search = searchtext.split(' ', 1)
             versioncompare: str = versioncheck[2]
-            versionnumber: int = int(versioncheck[3:])
+            try:
+                versionnumber: int = int(versioncheck[3:])
+            except ValueError:
+                versionnumber: int = versioncheck[3:]
+                if versionnumber != '-':
+                    return []
             ver: int
             timedata: dict[str, str | int | list[str]]
             with open(gui_paths.FILES_PATH/"time_data.json") as planfile:
                 timedata = json.load(planfile)
             for plan_name in plans_all:
-                ver = timedata[plan_name]["version"]
+                try:
+                    ver = timedata[plan_name]["version"]
+                except KeyError:
+                    ver = '-'
                 plan_strat: str = plan_data.return_strategy(plan_name).split('-')
                 if (search in plan_name.lower() or 
                     search in plan_name.lower().replace('_', ' ') or
                     search in plan_data.return_map(plan_name)+" "+plan_strat[0].lower()+" "+plan_strat[1].lower()):
-                    if ((versioncompare == "<" and ver < versionnumber) or
-                        (versioncompare == ">" and ver > versionnumber) or
+                    if ((versioncompare == "<" and isinstance(versionnumber, int) and ver < versionnumber) or
+                        (versioncompare == ">" and isinstance(versionnumber, int) and ver > versionnumber) or
                         (versioncompare == "=" and ver == versionnumber)):
                         plans_found.append(plan_name)
         else:
