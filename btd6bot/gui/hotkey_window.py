@@ -30,7 +30,7 @@ class HotkeyWindow:
             But it doesn't unless MainWindow stops the listener after HotkeyWindow no longer exists. By giving 
             MainWindow access by class attribute, this gets solved easily.
     """
-    input_key_listener: pynput.keyboard.Listener
+    input_key_listener: pynput.keyboard.Listener = pynput.keyboard.Listener()
 
     def __init__(self) -> None:  
         """Initialize hotkey window."""   
