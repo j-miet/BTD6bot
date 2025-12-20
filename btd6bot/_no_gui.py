@@ -84,6 +84,26 @@ class NoGui:
             for p in queued_plans:
                 self._run_plan(p.replace('\n', ''))
 
+    def _start_farming_loop(self) -> None:
+        set_plan.farming_print()
+        set_plan.select_defaulthero()
+        while True:
+            rewardplan: str = set_plan.select_rewardplan()
+            if rewardplan == '':
+                cprint('\n#####Unable to continue farming loop, bot terminated#####')
+                return
+            else:
+                set_plan.run_farming_mode(rewardplan)
+
+    def _run_farming(self) -> None:
+        self.bot_thread = threading.Thread(target=self._start_farming_loop, daemon=True)
+        self.bot_thread.start()
+        self.bot_thread_active = True
+        while self.bot_thread.is_alive():
+            time.sleep(0.1)
+        self.bot_thread_active = False
+        print()
+
     def _run_plan(self, plan_name: str) -> None:
         try:
             if plan_name in self.PLANS:
@@ -161,15 +181,7 @@ class NoGui:
                     print(p)
             elif user_input.split()[0].lower() == 'run':
                 if BotVars.current_farming_status == 'On':
-                    set_plan.farming_print()
-                    set_plan.select_defaulthero()
-                    while True:
-                        rewardplan: str = set_plan.select_rewardplan()
-                        if rewardplan == '':
-                            cprint('\n#####Unable to continue farming loop, bot terminated#####')
-                            return
-                        else:
-                            set_plan.run_farming_mode(rewardplan)
+                    self._run_farming()
                 elif len(user_input.split()) == 2:
                     self._run_plan(user_input.split()[1])
             elif user_input.lower() == 'queue':
