@@ -774,12 +774,12 @@ class MainWindow:
 
     def _farming_mode_check(self) -> None:
         if self.farming.get() == 'On' and self.collection.get() == 'On':
+            if self.queue.get() == 'On':
+                self.start_button.configure(state='active')
             self.queue.set('Off')
             self.replay.set('Off')
-            self.queueoptions_button.configure(state='disabled')
             self.queue_toggle.configure(state='disabled')
             self.replay_toggle.configure(state='disabled')
         else:
-            self.queueoptions_button.configure(state='active')
             self.queue_toggle.configure(state='active')
             self.replay_toggle.configure(state='active')
