@@ -27,19 +27,36 @@ def play(rounds):
     map_start = time()
     while current_round < END+1:
         current_round = Rounds.round_check(current_round, map_start, rounds[2])
-        if current_round == BEGIN:     
+        if current_round == BEGIN:    
+            change_autostart() 
             dart1 = Monkey('dart', 0.7255208333333, 0.0509259259259, False)
             engi1 = Monkey('engineer', 0.5453125, 0.0490740740741)
+            forward()
             engi1.target('strong')
+            end_round(10)
+        elif current_round == 7:
+            end_round(12)
         elif current_round == 8:
             sniper1 = Monkey('sniper', 0.353125, 0.0490740740741)
             sniper1.target('strong')
+            end_round(8)
         elif current_round == 9:
             engi1.target('first')
+            end_round(10)
         elif current_round == 10:
             engi1.upgrade(['1-0-0'])
+            end_round(6)
+        elif current_round == 11:
+            end_round(8)
+        elif current_round == 12:
+            end_round(7)
+        elif current_round == 13:
+            end_round(13)
+        elif current_round == 14:
+            end_round(12)
         elif current_round == 15:
             hero = Hero(0.5057291666667, 0.0472222222222)
+            change_autostart()
         elif current_round == 19:
             spike1 = Monkey('spike', 0.6869791666667, 0.0342592592593)
         elif current_round == 21:

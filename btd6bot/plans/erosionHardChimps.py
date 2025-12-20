@@ -129,7 +129,10 @@ def play(rounds):
             spike2.upgrade(['0-2-2','0-3-2'])
         elif current_round == 99:
             spike2.upgrade(['0-4-2'])
+            change_autostart()
+            end_round(12)
         elif current_round == 100:
+            change_autostart()
             ability(3,2)
             ability(4,3)
             ability(4,4)            

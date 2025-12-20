@@ -1,20 +1,22 @@
 """
-[Hero] Psi
+[Hero] Churchill
 [Monkey Knowledge] -
 ---------------------------------------------------------------
 ===Monkeys & upgrades required===
-dart 0-0-1
-boomer 5-0-2
+boomer 0-2-4
 glue 5-2-0
+desperado 0-1-0
 
-sniper 4-2-2
+sniper 1-1-0
+sub 2-0-3
+mortar 0-2-4
 
-alch 4-0-1
-mermonkey 2-0-5
+alch 4-2-0
 
-village 3-2-0
+spike 1-0-5
+village 4-2-0
+engineer 0-0-0
 _______________________________________
--Has some rng, but you should be able to succeed within a few attempts.
 """
 
 from._plan_imports import *
@@ -27,232 +29,238 @@ def play(rounds):
         current_round = Rounds.round_check(current_round, map_start, rounds[2])
         if current_round == BEGIN:
             change_autostart()
-            dart_mid = Monkey('dart', 0.5364583333333, 0.2583333333333)
-            dart_right = Monkey('dart', 0.7442708333333, 0.1083333333333)
-            dart_left = Monkey('dart', 0.1661458333333, 0.3509259259259)
+            desp1 = Monkey('desperado', 0.5359375, 0.2546296296296)
+            desp2 = Monkey('desperado', 0.1661458333333, 0.3694444444444)
             forward()
-            dart_mid.upgrade(['0-0-1'], 0.46, 0.27)
+            wait(9)
+            desp2.target('strong', cpos=(0.2333333333333, 0.4203703703704))
             end_round()
         elif current_round == 7:
-            dart_left2 = Monkey('dart', 0.3348958333333, 0.4546296296296)
-            dart_left.target('strong', cpos=(0.3078125, 0.4157407407407))
-            dart_right.target('strong', cpos=(0.7234375, 0.3342592592593))
+            wait(11)
+            desp2.target('first', cpos=(0.3203125, 0.4194444444444))
             end_round()
         elif current_round == 8:
-            dart_right2 = Monkey('dart', 0.6302083333333, 0.4342592592593)
-            end_round()
+            sniper1 = Monkey('sniper', 0.7161458333333, 0.8472222222222)
+            sniper1.target('strong')
+            end_round(5)
         elif current_round == 9:
             end_round(8)
         elif current_round == 10:
-            sniper1 = Monkey('sniper', 0.4072916666667, 0.0611111111111)
-            end_round(2)
+            engi = Monkey('engineer', 0.6484375, 0.3990740740741)
+            engi.target('strong')
+            end_round(13)
         elif current_round == 11:
             end_round(8)
         elif current_round == 12:
-            end_round(8)
+            wait(7)
+            sub = Monkey('sub', 0.4854166666667, 0.1768518518519)
+            sub.upgrade(['1-0-0'])
+            end_round()
         elif current_round == 13:
-            end_round(12)
+            end_round(13 )
         elif current_round == 14:
-            hero = Hero(0.3833333333333, 0.1064814814815)
-            hero.target('strong')
+            wait(10)
+            sub.upgrade(['2-0-0'], cpos=(0.4895833333333, 0.162037037037))
             end_round()
         elif current_round == 15:
-            end_round(10)
-        elif current_round == 16:
-            end_round(8)
-        elif current_round == 17:
-            boomerang = Monkey('boomer', 0.5, 0.2546296296296)
-            boomerang.upgrade(['1-0-0', '1-0-1'])
-            end_round(2)
-        elif current_round == 18:
-            boomerang.upgrade(['2-0-1'], cpos=(0.425, 0.275))
-            end_round(2)
-        elif current_round == 19:
-            end_round(8) 
-        elif current_round == 20:
-            sniper1.upgrade(['0-0-1'], cpos=(0.40625, 0.0564814814815))
-            end_round(2)
-        elif current_round == 21:
-            sniper1.upgrade(['1-0-1'], cpos=(0.488, 0.025))
             wait(2)
+            sniper1.target('first', cpos=(0.7614583333333, 0.8712962962963))
+            wait(7)
             sniper1.target('strong')
             end_round()
-        elif current_round == 22:
+        elif current_round == 16:
+            wait(8)
+            sub.upgrade(['2-0-1'], cpos=(0.4927083333333, 0.1731481481481))
+            end_round()
+        elif current_round == 17:
             end_round(4)
+        elif current_round == 18:
+            end_round(12)
+        elif current_round == 19:
+            wait(8)
+            sniper1.target('first', cpos=(0.6479166666667, 0.7935185185185))
+            end_round() 
+        elif current_round == 20:
+            wait(3)
+            sub.upgrade(['2-0-2'], cpos=(0.490625, 0.1712962962963))
+            end_round()
+        elif current_round == 21:
+            wait(7)
+            sniper1.upgrade(['1-0-0'], cpos=(0.7583333333333, 0.8675925925926))
+            sniper1.target('strong') 
+            end_round()
+        elif current_round == 22:
+            end_round(5)
         elif current_round == 23:
-            ability(1, 1)
             wait(4)
-            sniper1.target('first', cpos=(0.333, 0.0354814814815))
+            desp1.upgrade(['0-1-0'], cpos=(0.3916666666667, 0.2564814814815))
+            boomer = Monkey('boomer', 0.2760416666667, 0.4259259259259)
+            boomer.target('last')
+            boomer.special(1)
             end_round()
         elif current_round == 24:
-            boomerang.upgrade(['3-0-1'], cpos=(0.4260416666667, 0.2722222222222))
-            end_round(3)
+            end_round(4)
         elif current_round == 25:
-            end_round(8)
+            end_round(9)
         elif current_round == 26:
-            sniper1.upgrade(['1-0-2'], cpos=(0.4104166666667, 0.0592592592593))
-            end_round(5)
-        elif current_round == 27:
-            sniper2 = Monkey('sniper', 0.3895833333333, 0.0444444444444)
-            end_round(10)
-        elif current_round == 28:
-            sniper2.upgrade(['1-0-0', '1-1-0'], cpos=(0.4645833333333, 0.0574074074074))
-            sniper2.special(1)
-            end_round(3)
-        elif current_round == 29:
-            end_round(8)
-        elif current_round == 30:
-            wait(5)
-            sniper1.target('strong', cpos=(0.4104166666667, 0.0592592592593))
-            end_round(3)
-        elif current_round == 31:
-            ability(1, 1)
-            wait(6)
-            sniper1.target('first', cpos=(0.333, 0.0354814814815))
+            wait(7)
+            sniper1.target('first', cpos=(0.71875, 0.8481481481481))
             end_round()
+        elif current_round == 27:
+            wait(14)
+            sniper1.target('strong', cpos=(0.71875, 0.8481481481481))
+            end_round()
+        elif current_round == 28:
+            end_round(5)
+        elif current_round == 29:
+            wait(7)
+            hero = Hero(0.4921875, 0.2518518518519)
+            end_round()
+        elif current_round == 30:
+            end_round(7)
+        elif current_round == 31:
+            end_round(7)
         elif current_round == 32:
-            end_round(10)
+            sub.upgrade(['2-0-3'], cpos=(0.4848958333333, 0.1722222222222))
+            sniper1.upgrade(['1-1-0'], cpos=(0.7223958333333, 0.8351851851852))
+            end_round(4)
         elif current_round == 33: 
             end_round(10)
         elif current_round == 34:
-            end_round(14)
+            wait(14)
+            click(0.4088541666667, 0.2740740740741)
+            wait(1)
+            click(0.7546875, 0.6296296296296)
+            click(0.5, 0.5)
+            end_round()
         elif current_round == 35:
-            boomerang.upgrade(['4-0-1', '4-0-2'], cpos=(0.35, 0.2564814814815))
-            end_round(12)
+            end_round(13)
         elif current_round == 36:
-            sniper1.upgrade(['2-0-2'], cpos=(0.4104166666667, 0.0592592592593))
-            end_round(10)
+            wait(9)
+            alch = Monkey('alch', 0.4671875, 0.0648148148148)
+            alch.upgrade(['1-0-0','2-0-0'])
+            end_round()
         elif current_round == 37:
-            end_round(18)
+            end_round(17)
         elif current_round == 38:
-            ability(1, 1)
-            end_round(12)
-        elif current_round == 39:
-            sniper1.upgrade(['3-0-2'], cpos=(0.333, 0.0354814814815))
-            village = Monkey('village', 0.3729166666667, 0.125)
-            end_round(12)
-        elif current_round == 40: 
-            ability(1, 1)
-            end_round(4)
-        elif current_round == 41:
-            village.upgrade(['0-1-0', '0-2-0'], cpos=(0.5260416666667, 0.1453703703704))
-            end_round(15)
-        elif current_round == 42:
-            mermonkey1 = Monkey('mermonkey', 0.3875, 0.2361111111111)
+            wait(2)
+            village = Monkey('village', 0.4380208333333, 0.1462962962963)
+            village.upgrade(['1-0-0','2-0-0','3-0-0'])
             end_round(5)
-        elif current_round == 43:
-            mermonkey1.upgrade(['1-0-0', '2-0-0', '2-0-1', '2-0-2'], cpos=(0.3114583333333, 0.2287037037037))
+        elif current_round == 39:
+            wait(14)
+            alch.upgrade(['3-0-0'], cpos=(0.3880208333333, 0.0407407407407))
+            end_round()
+        elif current_round == 40: 
+            ability(1)
+            wait(3)
+            alch.upgrade(['3-1-0','3-2-0'], cpos=(0.4671875, 0.0574074074074))
+            end_round()
+        elif current_round == 41:
+            end_round(17)
+        elif current_round == 42:
+            village.upgrade(['4-0-0'], cpos=(0.4369791666667, 0.1481481481481))
             end_round(3)
+        elif current_round == 43:
+            wait(1)
+            glue = Monkey('glue', 0.4161458333333, 0.2185185185185)
+            glue.upgrade(['1-0-0','2-0-0','2-1-0'])
+            end_round(1)
         elif current_round == 44:
-            end_round(10)
+            glue.upgrade(['3-1-0'], cpos=(0.4953125, 0.2333333333333))
+            end_round(3)
         elif current_round == 45:
-            mermonkey1.upgrade(['2-0-3'], cpos=(0.4583333333333, 0.2231481481481))
             end_round(20)
         elif current_round == 46:
-             end_round(5)
+            end_round(5)
         elif current_round == 47:
-             end_round(10)
+            end_round(10)
         elif current_round == 48:
-             end_round(20)
+            wait(2)
+            glue.upgrade(['4-1-0','4-2-0'], cpos=(0.5020833333333, 0.2462962962963))
+            end_round(6)
         elif current_round == 49:
-             mermonkey1.upgrade(['2-0-4'], cpos=(0.459375, 0.2212962962963))
-             mermonkey1.special(1, 0.4395833333333, 0.3731481481481)
-             alch1 = Monkey('alch', 0.5041666666667, 0.1972222222222)
-             alch1.upgrade(['1-0-0', '2-0-0', '3-0-0', '3-0-1'])
-             end_round(9)
-        elif current_round == 50:
-             alch1.upgrade(['4-0-1'], cpos=(0.4322916666667, 0.2064814814815))
-             end_round(8)
-        elif current_round == 51:
-             end_round(10)
-        elif current_round == 52:
-             village.upgrade(['1-2-0', '2-2-0'], cpos=(0.446375, 0.1111037037037))
-             end_round(10)
-        elif current_round == 53:
-            glue = Monkey('glue', 0.5385416666667, 0.2064814814815)
-            end_round(15)
-        elif current_round == 54:
-            glue.upgrade(['1-0-0', '2-0-0', '3-0-0', '3-1-0'], cpos=(0.4666666666667, 0.2231481481481))
-            end_round(8)
-        elif current_round == 55:
-            glue.upgrade(['3-2-0'], cpos=(0.3927083333333, 0.2027777777778))
-            end_round(12)
-        elif current_round == 56:
-            end_round(8)
+            wait(18)
+            sub.target('strong', cpos=(0.5640625, 0.1462962962963))
+            change_autostart()
+            end_round()
         elif current_round == 57:
-            ability(1, 4)
-            glue.upgrade(['4-2-0'], cpos=(0.5416666666667, 0.2046296296296))
-            end_round(5)
-        elif current_round == 58:
-            village.upgrade(['3-2-0'], cpos=(0.453125, 0.1490740740741))
-            end_round(17)
+            ability(1, 1)
         elif current_round == 59:
-            end_round(12)
-        elif current_round == 60:
-            end_round(10)
-        elif current_round == 61:
-            end_round(10)
-        elif current_round == 62:
-            sniper2.upgrade(['2-1-0', '3-1-0', '3-2-0'], cpos=(0.4651041666667, 0.0444444444444))
-            end_round(15)
-        elif current_round == 63:
-            ability(1, 6.75)
-            ability(2, 12)
-            sniper2.upgrade(['4-2-0'], 0.396875, 0.0240740740741)
-            end_round(3)
-        elif current_round == 64:
-            change_autostart()
+            wait(1)
+            glue.upgrade(['5-2-0'], cpos=(0.421875, 0.212962962963))
         elif current_round == 65:
-            ability(1, 21.5)
-        elif current_round == 73:
-            ability(1, 10)
-            ability(2, 11.5)
-        elif current_round == 75:
-            ability(1, 13.5)
-        elif current_round == 76:
-            ability(2, 1)
-        elif current_round == 77:
-            ability(1, 15.5)
-            glue.upgrade(['5-2-0'], cpos=(0.5364583333333, 0.1814814814815))
+            wait(2)
+            village2 = Monkey('village', 0.4583333333333, 0.9444444444444)
+            village2.upgrade(['0-0-1','0-0-2'])
+            spike = Monkey('spike', 0.4854166666667, 0.8592592592593)
+            spike.upgrade(['0-0-1','0-0-2','0-0-3','1-0-3'])
+            spike.target('automatic')
+            alch2 = Monkey('alch', 0.5104166666667, 0.9314814814815)
+            alch2.upgrade(['1-0-0','2-0-0','3-0-0'])
+        elif current_round == 68:
+            wait(1)
+            alch2.upgrade(['4-0-0'], cpos=(0.4359375, 0.9305555555556))
+        elif current_round == 69:
+            wait(1)
+            spike.upgrade(['1-0-4'])
+        elif current_round == 71:
+            wait(1)
+            village.upgrade(['4-1-0','4-2-0'], cpos=(0.3614583333333, 0.15))
         elif current_round == 82:
-            ability(1, 8)
-            ability(2, 17.5)
+            wait(2)
+            spike.upgrade(['1-0-5'], cpos=(0.3984375, 0.8407407407407))
+            village2.upgrade(['1-0-2','2-0-2'], cpos=(0.3723958333333, 0.9287037037037))
+        elif current_round == 83:
+            wait(2)
+            alch.upgrade(['4-2-0'], cpos=(0.3932291666667, 0.0490740740741))
         elif current_round == 84:
-            boomerang.upgrade(['5-0-2'], cpos=(0.4348958333333, 0.2842592592593))
+            wait(1)
+            boomer2 = Monkey('boomer', 0.3796875, 0.2287037037037)
+            forward()
+            boomer2.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-1-4','0-2-4'])
+            boomer2.target('strong')
+            boomer.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-1-4','0-2-4'], cpos=(0.1296875, 0.2101851851852))
+            boomer.target('strong')
+            forward()
         elif current_round == 87:
-            ability(2, 13)
+            wait(1)
+            boomer3 = Monkey('boomer', 0.7067708333333, 0.3990740740741)
+            boomer3.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-1-4','0-2-4'])
+            boomer3.target('strong')
+        elif current_round == 91:
+            wait(1)
+            mortar = Monkey('mortar', 0.2536458333333, 0.7787037037037)
+            mortar.special(1, 0.4390625, 0.3694444444444)
+            mortar.upgrade(['0-0-1','0-0-2','0-0-3'])
         elif current_round == 92:
-            ability(2, 14)
+            wait(1)
+            mortar.upgrade(['0-0-4','0-1-4','0-2-4'], cpos=(0.2161458333333, 0.812037037037))
         elif current_round == 93:
-            change_autostart()
-            end_round(18)
+            wait(1)
+            boomer4 = Monkey('boomer', 0.1005208333333, 0.3287037037037)
+            boomer4.target('strong')
+            boomer4.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-1-4','0-2-4'])
         elif current_round == 94:
-            mermonkey1.upgrade(['2-0-5'], cpos=(0.4072916666667, 0.2342592592593))
-            ability(1, 12)
-            mermonkey2 = Monkey('mermonkey', 0.4989583333333, 0.1990740740741)
-            mermonkey2.upgrade(['1-0-0', '2-0-0', '2-0-1', '2-0-2', '2-0-3'])
-            end_round(4)
+            wait(1)
+            boomer5 = Monkey('boomer', 0.7682291666667, 0.212037037037)
+            boomer5.target('strong')
+            boomer5.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-1-4','0-2-4'])
         elif current_round == 95:
-            ability(2, 12)
-            end_round(10)
+            wait(1)
+            boomer6 = Monkey('boomer', 0.3359375, 0.487962962963)
+            boomer6.target('strong')
+            boomer6.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-1-4','0-2-4'])
         elif current_round == 96:
-            mermonkey2.upgrade(['2-0-4'], cpos=(0.5, 0.16))
-            mermonkey2.special(1, 0.4375, 0.3374814814815)
-            ability(1, 14)
-            end_round(14)
+            wait(1)
+            boomer7 = Monkey('boomer', 0.6484375, 0.5101851851852)
+            boomer7.target('strong')
+            boomer7.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-1-4','0-2-4'])
         elif current_round == 97:
-            end_round(20)
-        elif current_round == 98:
-            sniper1.upgrade(['4-2-0'], 0.4067708333333, 0.0527777777778)
-            ability(2, 10.5)
-            alch2 = Monkey('alch', 0.490625, 0.1037037037037)
-            alch2.upgrade(['1-0-0', '2-0-0', '3-0-0', '4-0-0', '4-0-1'])
-            end_round(10)
-        elif current_round == 99:
-            sniper3 = Monkey('sniper', 0.7838541666667, 0.3796296296296)
-            sniper3.upgrade(['1-0-0', '2-0-0', '3-0-0', '3-1-0', '3-2-0'])
-            sniper3.target('strong')
-            end_round(5)
+            wait(1)
+            boomer8 = Monkey('boomer', 0.5817708333333, 0.5027777777778)
+            boomer8.target('strong')
+            boomer8.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-1-4','0-2-4'])
         elif current_round == END:
-            ability(1, 8)
-            ability(2, 11)
+            ability(2,2)
+            ability(1,3)

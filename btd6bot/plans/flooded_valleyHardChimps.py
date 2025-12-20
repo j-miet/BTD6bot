@@ -3,13 +3,12 @@
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
-ice 0-4-1
+ice 0-3-1
 
 sniper 1-2-0
-sub 0-2-1
+sub 0-5-2
 boat 5-0-2
 
-ninja 1-0-5
 alch 4-2-0
 mermonkey 5-0-4
 
@@ -103,23 +102,24 @@ def play(rounds):
         elif current_round == 84:
             alch = Monkey('alch', 0.6109375, 0.5657407407407)
             alch.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-1-0','4-2-0'])
-        elif current_round == 87:
-            ninja = Monkey('ninja', 0.4890625, 0.6907407407407)
-            ninja.upgrade(['1-0-0','1-0-1','1-0-2','1-0-3'])
-        elif current_round == 88:
-            ninja.upgrade(['1-0-4'])
-            ninja.target('strong')
+        elif current_round == 91:
+            sub1.upgrade(['0-3-1','0-4-1'])
         elif current_round == 94:
             ability(1,5)
         elif current_round == 96:
             ability(1,15)
         elif current_round == 97:
+            sub1.upgrade(['0-5-1'])
             ability(2,4.5)
+            sub1.upgrade(['0-5-2'])
         elif current_round == 98:
+            glue = Monkey('glue', 0.4890625, 0.6907407407407)
+            ability(3,3)
             ability(1,4)
-            ninja.upgrade(['1-0-5'])
-            ice1.upgrade(['0-4-1'])
+            glue.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-1-4'])
+            glue.target('strong')
         elif current_round == 99:
-            ability(3,2.5)
+            glue.upgrade(['0-2-4'])
         elif current_round == 100:
+            ability(3,3)
             ability(1,7)
