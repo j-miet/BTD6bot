@@ -12,13 +12,7 @@ launching program: it takes like 10 seconds, but isn't required afterwards as re
 passed as a variable to all implemented reader-utilizing tools. Also a major plus with easyocr is that it can be 
 installed entirely as a Python package whereas tesseract requires an executable file on top of its code library.
 
-After reader is initialized, it will reserve quite a sizeable chunk in memory, about 400MB.
-
-Constants:
-    WHITE, GRAY:
-    colors used in detecting text from an image. Always include the main color from upgrade texts with rgb_range = 1.
-    Increasing it can increase reading accuracy but also make it worse so these are experimental. So don't pass other
-    values unless you know what you're doing.
+After reader is initialized, it will reserve quite a sizeable chunk in memory: at least about 400MB.
 """
 
 from __future__ import annotations
@@ -26,10 +20,19 @@ from typing import TYPE_CHECKING
 import difflib
 import json
 import pathlib
+import sys
 import time
 
+from PIL import Image
 import pyautogui
 from numpy import array, repeat
+# https://python-mss.readthedocs.io/usage.html#import
+if sys.platform == 'win32': 
+    from mss.windows import MSS as mss
+elif sys.platform == 'darwin':
+    from mss.darwin import MSS as mss
+elif sys.platform == 'linux':
+    from mss.linux import MSS as mss
 
 from bot import kb_mouse
 from bot.bot_vars import BotVars
@@ -44,18 +47,11 @@ class OcrValues:
     """Wrapper class: constants required for optical character recognition tools.
 
     Attributes:
-        OCR_IMAGE_PATH (pathlib.PATH, class attribute):
-            Folder location that stores temporary ocr images. Images are constantly overwritten as ocr process repeats 
-            screenshots and reading text from screenshot image.
-        DELTA (float, class attribute):
+        DELTA (float, constant class attribute):
             Controls OCR string matching accuracy in strong_delta_check for general strings - upgrade string are 
             handled separately. Delta value itself is included i.e. 0.8 means that all deltas on closed interval 
             [0.8, 1] are valid.
-        OCR_UPGRADE_DATA (dict[str, list[str, float]], class attribute):
-            Contains all upgrade names and their respective deltas for strong_delta_check. Each key 
-            is a identifier for monkey and crosspath, with values being the ocr data. For example,
-            OCR_UPGRADE_DATA['dart 1-x-x'] would return something similar to ["sharp shots", 0.8].
-                       
+        
         read_file_frequency (float, class attribute):
             Text recognition check rate in both find_text and check_upg_text: lower number increases rate of checking, 
             but also increases CPU usage significantly. Frequency itself is just a pause timer in seconds so 1 equals 
@@ -64,27 +60,30 @@ class OcrValues:
             i.e. 0.01 doesn't match to 100 checks per second.
 
     """
-    OCR_IMAGE_PATH: pathlib.Path = pathlib.Path(__file__).parent.parent.parent/'Files'/'ocr temp'
     DELTA: float = 0.75
 
+    read_file_frequency: float = 0.01
+
+    _ocr_upgradedata: dict[str, Any]
+    _ocr_upg_basedata: dict[str, Any]
+    _log_ocr_deltas: bool = False
+
     @staticmethod
-    def _get_current_upgradedata() -> Any:
+    def _get_current_upgradedata() -> dict[str, Any]:
         try:
             with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'upgrades_current.json') as f:
                 return json.load(f)
         except FileNotFoundError:
             with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'_ocr_upgradedata.json') as f:
                 return json.load(f)
-    OCR_UPGRADEDATA = _get_current_upgradedata()
 
     @staticmethod
-    def _get_base_upgradedata() -> Any:
+    def _get_base_upgradedata() -> dict[str, Any]:
         with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'_ocr_upgradedata.json') as f:
             return json.load(f)   
-    _OCR_UPG_BASEDATA = _get_base_upgradedata() 
-
-    read_file_frequency: float = 0.01
-    _log_ocr_deltas: bool = False
+    
+    _ocr_upgradedata = _get_current_upgradedata()
+    _ocr_upg_basedata = _get_base_upgradedata() 
 
 def get_pixelcolor(x: float, y: float) -> tuple[int, int, int]:
     """Returns rgb color tuple of a coordinate location.
@@ -135,9 +134,6 @@ def gray_shades(rgb_range: int = 1) -> list[tuple[int, int, int]]:
                 gray_list.extend([g1, g2])
     return gray_list
 
-WHITE = white_shades()
-GRAY = gray_shades()
-
 def img_to_black_and_white(image: ImageFile) -> ImageFile:
     """Return an image with non-white and non-grey shades replaced with black.
       
@@ -155,7 +151,7 @@ def img_to_black_and_white(image: ImageFile) -> ImageFile:
     for i in range(0, width): # process all pixels
         for j in range(0, height):
             data = img.getpixel((i,j))
-            if data in GRAY or data in WHITE:
+            if data in gray_shades() or data in white_shades():
                 img.putpixel((i,j), (255, 255, 255))              
             else:
                 img.putpixel((i,j),(0, 0, 0))
@@ -180,7 +176,9 @@ def weak_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> st
     """
     tl_x, tl_y, br_x, br_y = coordinates[0], coordinates[1], coordinates[2], coordinates[3]
     width, height = br_x - tl_x, br_y - tl_y
-    ocr_img = pyautogui.screenshot(region=(tl_x, tl_y, width, height))
+    with mss() as sct:
+        monitor = {"left": tl_x, "top": tl_y, "width": width, "height": height}
+        ocr_img = sct.grab(monitor)
     img = array(ocr_img)
     try:
         result = reader.readtext(img)
@@ -208,7 +206,10 @@ def strong_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> 
     """
     tl_x, tl_y, br_x, br_y = coordinates[0], coordinates[1], coordinates[2], coordinates[3]
     width, height = br_x - tl_x, br_y - tl_y
-    ocr_img = pyautogui.screenshot(region=(tl_x, tl_y, width, height))
+    with mss() as sct:
+        monitor = {"left": tl_x, "top": tl_y, "width": width, "height": height}
+        img = sct.grab(monitor)
+    ocr_img = Image.frombytes("RGB", img.size, img.bgra, "raw", "BGRX")
     blackwhite_image = img_to_black_and_white(ocr_img) # type: ignore
     final = array(blackwhite_image)
     if BotVars.windowed:
@@ -310,10 +311,10 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
     if len(text) != 0:
         if input_str == '_upgrade_':
             if OcrValues._log_ocr_deltas:
-                match = OcrValues._OCR_UPG_BASEDATA[upg_match]
+                match = OcrValues._ocr_upg_basedata[upg_match]
                 match_str = match[0]
             else:
-                match = OcrValues.OCR_UPGRADEDATA[upg_match]
+                match = OcrValues._ocr_upgradedata[upg_match]
                 match_str = match[0]
                 delta_limit = match[1]
             d = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), match_str).quick_ratio()
