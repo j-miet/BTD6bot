@@ -206,7 +206,7 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
     """
     BotVars.ingame_res_enabled = False
     ScreenRes.update_shift(0, 0)
-    ScreenRes.update_winpos(-1, -1)
+    ScreenRes.update_winpos_status('centered')
     OcrValues._log_ocr_deltas = False
     bot.hotkeys.generate_hotkeys(bot.hotkeys.hotkeys)
     Rounds.begin_round, Rounds.end_round = begin_r, end_r
@@ -241,13 +241,19 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
         if windowed_val:
             winpos_val: str = gui_vars_dict["windowed_position"]
             if winpos_val == 'auto' and sys.platform == 'win32':
-                ScreenRes.update_winpos(-2, -2)
-                winrect = win32gui.GetWindowRect(ScreenRes._phandle)
-                ScreenRes.update_res(winrect[2]-winrect[0], winrect[3]-winrect[1]) # auto-update window res
+                ScreenRes.update_winpos_status(winpos_val)
+                try:
+                    ScreenRes._phandle = win32gui.FindWindow(None, "BloonsTD6")
+                    winrect = win32gui.GetWindowRect(ScreenRes._phandle)
+                    ScreenRes.update_res(winrect[2]-winrect[0], winrect[3]-winrect[1]) # auto-update window res
+                except Exception:
+                    cprint("Can't find Bloons TD 6 game instance. Open the game and reset bot.")
+                    while True:
+                        time.sleep(1)
             elif winpos_val == 'centered':
-                # ScreenRes.update_winpos(-1, -1) is already called earlier
-                ...
+                ScreenRes.update_winpos_status(winpos_val)
             else:
+                ScreenRes.update_winpos_status('custom')
                 winpos: tuple[int, ...] = tuple(map(int, gui_vars_dict["windowed_position"].split('x')))
                 ScreenRes.update_winpos(winpos[0], winpos[1])
 
