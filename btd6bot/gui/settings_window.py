@@ -703,7 +703,8 @@ class SettingsWindow:
     def _set_winpos_value(self) -> None:
         """Saves top-left coordinate location of game screen.
 
-        This is used to calculate game window position in windowed mode.
+        This is used to calculate game window position in windowed mode. Values are integers and can also have a
+        negative sign if game window is on secondary monitor.
 
         <IMPORTANT>
         If user has Windows OS, the wingui32 library can automatically update window location; for other OS this
@@ -733,17 +734,14 @@ class SettingsWindow:
                 with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
                     json.dump(gui_vars_dict, f, indent=4)
             else:
-                w = int(width)
-                h = int(height)
-                native = pyautogui.size()
-                if 0 <= w <= native[0] and 0 <= h <= native[1]:
-                        val = width+' x '+height
-                        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-                            gui_vars_dict: dict[str, Any] = json.load(f)
-                        gui_vars_dict["windowed_position"] = val
-                        self.windowed_pos_value.set(' '+val+' ')
-                        with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
-                            json.dump(gui_vars_dict, f, indent=4)
+                _, _ = int(width), int(height) # test if inputs are integers; otherwise throw ValueError
+                val = width+' x '+height
+                with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
+                    gui_vars_dict: dict[str, Any] = json.load(f)
+                gui_vars_dict["windowed_position"] = val
+                self.windowed_pos_value.set(' '+val+' ')
+                with open(gui_paths.FILES_PATH/'gui_vars.json', 'w') as f:
+                    json.dump(gui_vars_dict, f, indent=4)
         except ValueError:
             ...
 
