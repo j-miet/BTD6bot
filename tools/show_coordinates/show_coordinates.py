@@ -12,8 +12,12 @@ import pynput
 import pyperclip
 
 ACCURACY = 13
+_sc_tl_pos: tuple[int, int]
+_sc_winsize: tuple[int, int]
 
-def scalar_position(real_x: float, real_y: float) -> tuple[float, float]:
+def scalar_position(real_x: float, 
+                    real_y: float,
+                    ) -> tuple[float, float]:
     """Pixel coordinates to decimals. Can change accuracy of output and choose desired screen resolution.
 
     Args:
@@ -23,11 +27,13 @@ def scalar_position(real_x: float, real_y: float) -> tuple[float, float]:
     Returns:
         scalar_x, scalar_y: Converted scalar coordinates as a tuple.
     """
-    res_x, res_y = pyautogui.size()
-    scalar_x, scalar_y = round(real_x / res_x, ACCURACY), round(real_y / res_y, ACCURACY)
+    scalar_x = round((real_x - _sc_tl_pos[0]) / _sc_winsize[0], ACCURACY) 
+    scalar_y = round((real_y - _sc_tl_pos[1]) / _sc_winsize[1], ACCURACY)
     return scalar_x, scalar_y
 
-def coordinates(pixel_just: int, scalar_just: int) -> None:
+def coordinates(pixel_just: int, 
+                scalar_just: int
+                ) -> None:
     """Displays mouse location in 2 different coordinate systems: pixels and normalized decimals.
 
     Args:
@@ -36,7 +42,7 @@ def coordinates(pixel_just: int, scalar_just: int) -> None:
     """
     while True:  
         x, y = pyautogui.position()
-        sx, sy = scalar_position(x,y)
+        sx, sy = scalar_position(x, y)
         positionStr = ' '+ str(x).rjust(pixel_just) + ', ' + str(y).rjust(pixel_just) + ' '*4+' | ' \
         + str(sx).rjust(scalar_just) + ', ' + str(sy).rjust(scalar_just)
         print(positionStr, end='')
@@ -69,10 +75,32 @@ def kb(key: Key | KeyCode | None) -> None:
         print("--> Pixel coordinates "+pos_x+", "+pos_y+" copied to clipboard "+'#'*8)
 
 def run() -> None:
+    global _sc_tl_pos
+    global _sc_winsize
+    _sc_tl_pos = (0, 0)
+    _sc_winsize = pyautogui.size()
+
     # sends every keyboard input through kb function; starts a secondary thread
     kb_listener = pynput.keyboard.Listener(on_press = kb)
     kb_listener.start()
 
-    print("Press '+' to copy current mouse location as scalar coordinate to clipboard, or F8 to exit.")
-    print('Pixel coordinates'.rjust(11) + ' <--- # ---> ' + 'Scalar coordinates'.rjust(10))
-    coordinates(5, 16)
+    print("Type 'n' and press Enter for normal mode, or type 'c' then press Enter for custom mode.\n" \
+    "Normal mode is for 16:9 fullscreen users, custom for windowed users. Use normal mode if possible.")
+    while True:
+        input_str = input("[select mode]=>")
+        if input_str == 'n':
+            print("Press '+' to copy current mouse location as scalar coordinate to clipboard, '*' same but for pixel " 
+                    "coordinates. F8 to exit.")
+            print('Pixel coordinates'.rjust(11) + ' <--- # ---> ' + 'Scalar coordinates'.rjust(10))
+            coordinates(5, 16)
+        elif input_str == 'c':
+            input_str = input("Give top-left game window coordinate.\n[give coordinate in 'X,Y' format]=>")
+            tl_pos = input_str.split(',')
+            _sc_tl_pos = int(tl_pos[0]), int(tl_pos[1].strip())
+            input_str = input("Now give your game window resolution.\n[give game resolution in 'X,Y' format]=>")
+            size = input_str.split(',')
+            _sc_winsize = int(size[0]), int(size[1].strip())
+            print("Press '+' to copy current mouse location as scalar coordinate to clipboard, '*' same but for pixel " 
+                    "coordinates. F8 to exit.")
+            print('Pixel coordinates'.rjust(11) + ' <--- # ---> ' + 'Scalar coordinates'.rjust(10))
+            coordinates(5, 16)
