@@ -180,7 +180,7 @@ class QueueModeWindow:
         Commands:
             *v{OPERATOR}{VERSION} {TEXT}
             - {OPERATOR} has values "<", ">", "="
-            - {VERSION} is any integer
+            - {VERSION} is any integer or a dash '-' for plans with no recorded version data.
             - {TEXT} is arbitrary text string
             Searches all plans with specific game version {VERSION} and using {TEXT} to filter items. Space between
             {VERSION} and {TEXT} is required.
@@ -189,6 +189,7 @@ class QueueModeWindow:
                 *v=50 => has a single space after 50; this finds all plans with game version equal to 50
                 *v<51 hard => find all plans with version less than 51 and on hard difficulty
                 *v>51 dark castle easy => find all plans with version 51 or higher on dark castle, on easy difficulty
+                *v=- => all plans with no recorded version data
         """
         plans_all = plan_data.read_plans()
         plans_found: list[str] = []
@@ -197,6 +198,8 @@ class QueueModeWindow:
             versioncompare: str = versioncheck[2]
             try:
                 versionnumber: int = int(versioncheck[3:])
+                if versionnumber < 1 or versionnumber > 999:
+                    return []
             except ValueError:
                 versionnumber: int = versioncheck[3:]
                 if versionnumber != '-':
@@ -214,8 +217,10 @@ class QueueModeWindow:
                 if (search in plan_name.lower() or 
                     search in plan_name.lower().replace('_', ' ') or
                     search in plan_data.return_map(plan_name)+" "+plan_strat[0].lower()+" "+plan_strat[1].lower()):
-                    if ((versioncompare == "<" and isinstance(versionnumber, int) and ver < versionnumber) or
-                        (versioncompare == ">" and isinstance(versionnumber, int) and ver > versionnumber) or
+                    if ((versioncompare == "<" and isinstance(ver, int) and isinstance(versionnumber, int) and
+                         ver < versionnumber) or
+                        (versioncompare == ">" and isinstance(ver, int) and isinstance(versionnumber, int) and
+                         ver > versionnumber) or
                         (versioncompare == "=" and ver == versionnumber)):
                         plans_found.append(plan_name)
         else:
