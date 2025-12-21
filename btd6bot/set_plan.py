@@ -206,7 +206,7 @@ def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str,
     try:
         _flush_times_temp()
         plan_module.play(info)
-        if _check_if_temp_valid():
+        if not info[-1] and _check_if_temp_valid():
             _save_to_json(plan_name)
     except BotError as err:
         cprint(err)
