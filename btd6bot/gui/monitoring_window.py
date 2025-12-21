@@ -84,8 +84,7 @@ class MonitoringWindow:
                             ">Resolution has aspect ratio of ~16:9\n"
                             ">Game is preferably fullscreen (but windowed works too)\n"
                             ">Bot hotkeys match with your in-game equivalents\n"
-                            ">Your Btd6 game window is on your main monitor and has\n"
-                            " main menu screen opened\n"
+                            ">Your Btd6 game window has main menu screen opened\n"
                             "------\n"
                             "~Press 'Run'/your 'start-stop' hotkey to start bot!\n"
                             "~Press 'Stop'/'start-stop' again to stop and reset\n current plan."
@@ -229,6 +228,14 @@ class MonitoringWindow:
         self._update_collection_status()
         self._update_farming_status()
 
+        self.monitor_run_button = tk.Button(self.monitoringwindow, 
+                                            text='Run', 
+                                            command=self._stop_or_run, 
+                                            state='active', 
+                                            padx=10, 
+                                            pady=10)
+        self.monitor_run_button.grid(column=5, row=4, sticky='ne')
+
         if self.farming == 'On':
             self.runs_label = tk.Label(self.monitoringwindow, 
                                         width=15, 
@@ -236,7 +243,7 @@ class MonitoringWindow:
                                         text='Runs completed', 
                                         relief='sunken',
                                         font=os_font)
-            self.runs_label.grid(column=1, row=4, sticky='sw', padx=10)
+            self.runs_label.grid(column=1, row=4, sticky='sw', padx=10, pady=(10, 0))
 
             self.runs = tk.IntVar(value=0)
             self.runs_display = tk.Label(self.monitoringwindow, 
@@ -245,7 +252,7 @@ class MonitoringWindow:
                                             relief='sunken', 
                                             textvariable=self.runs, 
                                             font=os_font)
-            self.runs_display.grid(column=1, row=4, sticky='s', padx=(75,0))
+            self.runs_display.grid(column=1, row=4, sticky='s', padx=(75,0), pady=(10, 0))
 
             monitor_farming_text = tk.Label(self.monitoringwindow, 
                                             text='Farm mode: On',             
@@ -253,6 +260,8 @@ class MonitoringWindow:
                                             padx=10, 
                                             pady=10)
             monitor_farming_text.grid(column=5, row=2, sticky='e')
+
+            self.monitor_run_button.grid_configure(pady=(15,0))
         else:
             monitor_queuemode_text = tk.Label(self.monitoringwindow, 
                                                 text='Queue mode: '+str(self.queue_val),             
@@ -271,14 +280,6 @@ class MonitoringWindow:
         # create the initial placeholder thread for MainWindow.is_monitoringwindow.
         self.bot_thread = threading.Thread()
         MonitoringWindow.current_bot_thread = self.bot_thread
-
-        self.monitor_run_button = tk.Button(self.monitoringwindow, 
-                                            text='Run', 
-                                            command=self._stop_or_run, 
-                                            state='active', 
-                                            padx=10, 
-                                            pady=10)
-        self.monitor_run_button.grid(column=5, row=4, sticky='ne')
 
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             if json.load(f)["logging"]:
@@ -512,7 +513,7 @@ class MonitoringWindow:
                     self.monitor_mapscreen.configure(image='')
                     self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
                 self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display(rewardplan))
-                if not set_plan.run_farming_mode(rewardplan):
+                if set_plan.run_farming_mode(rewardplan):
                     self.runs.set(self.runs.get()+1)
         if self.replay_val == 'On':
             while True:
