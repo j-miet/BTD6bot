@@ -58,6 +58,7 @@ class Rounds:
             dragdrop = get_pixelcolor(*get_click('ingame', 'dragdrop'))
             nugde = get_pixelcolor(*get_click('ingame', 'nudge'))
             autostart = get_pixelcolor(*get_click('ingame', 'autostart'))
+            hints = get_pixelcolor(*get_click('ingame', 'hints'))
             if dragdrop[0] != 0:
                 kb_mouse.click(get_click('ingame', 'dragdrop'))
                 cprint("Enabled 'drag & drop'")
@@ -70,6 +71,10 @@ class Rounds:
                 kb_mouse.click(get_click('ingame', 'autostart'))
                 AutoStart.autostart_status = True
                 cprint("Enabled 'auto start'")
+                time.sleep(0.5)
+            if hints[2] == 0:
+                kb_mouse.click(get_click('ingame', 'hints'))
+                cprint("Disabled game hints")
                 time.sleep(0.5)
             kb_mouse.press_esc()
             Rounds.escsettings_check = False
