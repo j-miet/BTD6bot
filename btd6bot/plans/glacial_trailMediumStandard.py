@@ -13,7 +13,6 @@ druid 1-3-0
 spike 2-0-4
 engineer 4-2-0
 _______________________________________
-Derived from glacial_trailHardChimps.
 """
 
 from._plan_imports import *

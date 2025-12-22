@@ -25,32 +25,28 @@ class Hero(Monkey):
 
     To select a hero for current plan, you must edit the docstring of your plan file: at the very beginning, there 
     should be plan information wrapped in comments and in particular, the [Hero] line where you add the name. If the 
-    plan doesn't use a hero, you should write '-'. Hero names are not case-sensitive so you can write quincy, Quincy, 
-    QUINCY or anything similar. As always, if you're unsure then open any existing plan .py file and check how it's 
-    done there.
+    plan doesn't use a hero, you should write '-'. Hero names are not case-sensitive, but try to use the standard
+    format: capitalize first letter and rest in lower case. As always, if you're unsure then open any existing plan .py 
+    file and check how it's done there.
 
     All supported hero name can be found under locations.py -> CLICK -> heroes/heroes2
 
     Attributes:
         current_plan_hero_name (str, class attribute, class attribute): Hero name in current plan. If you use hero 
             outside a plan file, you must set a value of this variable with Hero.current_plan_hero_name = ...
-        
-        name (str): For heroes, this is always 'hero', to differentiate them from monkeys. Initialized with super().
-        pos_x (float | None): X-coordinate location. Initialized with super().
-        pos_y (float | None): Y-coordinate location. Initialized with super().
-        targeting (str): Targeting priority, initial value is returned via basic_monkey_target method after
-            calling super() in initialize, but overridden by basic_hero_target() right after.
-        upgrade_path (str): Current upgrade path of Monkey, initially always '0-0-0'. Heroes don't use this.
-            Initialized with super().
-        hero_name (str): Name of Hero.
 
     Methods:
     --
-        target: Change targeting priority of this hero.  
-        special: Use special of this monkey (inherited from Monkey).  
-        sell: Sell this monkey (inherited from Monkey).
-        shop: Geraldo's shop items.
-        spellbook: Corvus's spells.
+        target: 
+            Change targeting priority of this hero.  
+        special: 
+            Use special of this monkey (inherited from Monkey).  
+        sell: 
+            Sell this monkey (inherited from Monkey).
+        shop: 
+            Geraldo's shop items.
+        spellbook: 
+            Corvus's spells.
 
         See also:
           ability.ability for ability usage.
@@ -73,7 +69,7 @@ class Hero(Monkey):
         >>> hero.sell()
         Hero sold!
     """
-    current_plan_hero_name: str | None = None # if you need Hero class without existing plan, modify this variable.
+    current_plan_hero_name: str | None = None
 
     def __init__(self, pos_x: float, pos_y: float) -> None:
         """Initializes a Hero by passing it its name and placement position.
@@ -177,7 +173,7 @@ class Hero(Monkey):
     def upgrade(self, upg_list: list[str], cpos: tuple[float, float] | None = None) -> None:
         """Overrides upgrade method of Monkey to prevent calling 'upgrade' of superclass Monkey. 
         
-        As upgrading heroes is  not possible, all this method does is print a message "Can't upgrade heroes".
+        As upgrading heroes is not possible, all this method does is print a message "Can't upgrade heroes".
         """
         PauseControl.pause_bot()
         if BotVars.defeat_status:
@@ -300,25 +296,25 @@ class Hero(Monkey):
             target_y: float | None,
             cpos: tuple[float, float] | None = None,
             ) -> None:
-        """Use Geraldo's shop items at selected location.
+        """Use Geraldo's shop item at selected location.
         
         Items are selected using integers 1-16 as follows:  
-        1: Shooty turret  
-        2: Stack of old nails  
-        3: Creepy idol  
-        4: Jar of pickles  
-        5: Rare Quincy action figure  
-        6: See invisibility potion  
-        7: Tube of amaz-o-glue  
-        8: Sharpening stone  
-        9: Worn hero's cape  
-        10: Blade trap  
-        11: Bottle of 'Gerry's fire' hot sauce  
-        12: Fertilizer  
-        13: Pet rabbit  
-        14: Rejuv potion  
-        15: Genie bottle  
-        16: Paragon power totem
+        1: Shooty Turret
+        2: Stack of Old Nails
+        3: Creepy Idol
+        4: Jar of Pickles
+        5: Rare Quincy Action Figure
+        6: See Invisibility Potion
+        7: Tube of Amaz-o-Glue
+        8: Sharpening Stone
+        9: Worn Hero's Cape
+        10: Blade Trap
+        11: Bottle of 'Gerry's Fire' Hot Sauce
+        12: Fertilizer
+        13: Pet Rabbit
+        14: Rejuv Potion
+        15: Genie Bottle
+        16: Paragon Power Totem
 
         Args:
             item: Selected shop item.
@@ -326,6 +322,24 @@ class Hero(Monkey):
             target_y: Item target location y-coordinate.
             cpos: Updated current coordinate position.
         """
+        ITEMS = {
+            1: 'Shooty Turret',
+            2: 'Stack of Old Nails',
+            3: 'Creepy Idol',
+            4: 'Jar of Pickles',
+            5: 'Rare Quincy Action Figure',
+            6: 'See Invisibility Potion',
+            7: 'Tube of Amaz-o-Glue',
+            8: 'Sharpening Stone',
+            9: 'Worn Hero\'s Cape',
+            10: 'Blade Trap',
+            11: 'Bottle of \'Gerry\'s Fire\' Hot Sauce',
+            12: 'Fertilizer',
+            13: 'Pet Rabbit',
+            14: 'Rejuv Potion',
+            15: 'Genie Bottle',
+            16: 'Paragon Power Totem'
+        }
         PauseControl.pause_bot()
         if BotVars.defeat_status:
             return
@@ -336,7 +350,11 @@ class Hero(Monkey):
             kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
             time.sleep(0.2)
             if cpos is not None:
+                self._prepare_hero_menu()
+                time.sleep(0.25)
                 self._update_panel_position(cpos[0])
+                self._prepare_hero_menu()
+                time.sleep(0.2)
             if self._panel_pos == 'left':
                 kb_mouse.click(get_click('hero_left_menu', str(item)), shifted=True)
             elif self._panel_pos == 'right':
@@ -344,11 +362,11 @@ class Hero(Monkey):
             kb_mouse.move_cursor((0.45, 0.01))
             kb_mouse.click((target_x, target_y), shifted=True)
             kb_mouse.press_esc()
-            cprint(f"Geraldo item {item} used.")
+            cprint(f"Geraldo used '{ITEMS[item]}'.")
 
     def spellbook(self, spells: list[int],
-            cpos: tuple[float, float] | None = None,
-            ) -> None:
+                cpos: tuple[float, float] | None = None,
+                ) -> None:
         """Use Corvus's spells.
         
         Spells are passed as a list of integers with values in range 1-16. List of spells:  
@@ -362,17 +380,35 @@ class Hero(Monkey):
         8: Trample  
         9: Frostbound  
         10: Ember
-        11: Ancestral might  
+        11: Ancestral Might  
         12: Overload  
         13: Nourishment  
-        14: Soul barrier  
+        14: Soul Barrier  
         15: Vision  
         16: Recovery
 
         Args:
-            item: Selected spell in spellbook.
+            spells: List of selected spells.
             cpos: Updated current coordinate position.
         """
+        SPELLS = {
+            1: 'Spear',
+            2: 'Aggression',
+            3: 'Malevolence',
+            4: 'Storm',
+            5: 'Repel',
+            6: 'Echo',
+            7: 'Haste',
+            8: 'Trample',
+            9: 'Frostbound',
+            10: 'Ember',
+            11: 'Ancestral Might',
+            12: 'Overload',
+            13: 'Nourishment',
+            14: 'Soul Barrier',
+            15: 'Vision',
+            16: 'Recovery'
+        }
         PauseControl.pause_bot()
         if BotVars.defeat_status:
             return
@@ -381,13 +417,19 @@ class Hero(Monkey):
                 self._pos_x = cpos[0]
                 self._pos_y = cpos[1]
             kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
+            time.sleep(0.2)
             if cpos is not None:
+                self._prepare_hero_menu()
+                time.sleep(0.2)
                 self._update_panel_position(cpos[0])
+                self._prepare_hero_menu()
+                time.sleep(0.2)
             for spell in spells:       
                 if self._panel_pos == 'left':
                     kb_mouse.click(get_click('hero_left_menu', str(spell)), shifted=True)
                 elif self._panel_pos == 'right':
                     kb_mouse.click(get_click('hero_right_menu', str(spell)), shifted=True)
-                self.special(2)
-                cprint(f"Corvus spell {spell} used.")
+                kb_mouse.kb_input(hotkeys['special 2'])
+                cprint(f"Corvus used '{SPELLS[spell]}'.")
+            time.sleep(0.2)
             kb_mouse.press_esc()

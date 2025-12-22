@@ -19,6 +19,7 @@ spike 3-0-3
 village 2-0-2
 engineer 0-3-2
 _______________________________________
+Round 79 has annoiyng rng depending on how many BFBs path to middle instead of right.
 """
 
 from._plan_imports import *

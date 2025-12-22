@@ -2,6 +2,8 @@
 
 Can easily save create valid commands which can be copy-pasted into actual plans files.
 
+---Works only with fullscreen 16:9 aspect ratio resolutions with game on main monitor---
+
 >How to use:
 -pressing right mouse allows adding commands to commands.txt:
  >current mouse location is saved with right click
@@ -307,6 +309,6 @@ def run_tracker() -> None:
         TrackerVals.coordinates_file = open(pathlib.Path(__file__).parent/'commands.txt', 'a')
         if TrackerVals.ct_user_input == '<>':   # right mouse button identifier
             flush_input()
-            comment_input = input('Insert command text --->')     # this input() is now part of main thread so it won't slow  # down like it would if it were inside mouse_tracker
+            comment_input = input('Insert command text --->')     # this input() is now part of main thread so it won't cause lag like it would if it were inside mouse_tracker
             add_command(comment_input)
             TrackerVals.ct_user_input = ''

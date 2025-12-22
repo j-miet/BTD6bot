@@ -129,7 +129,7 @@ def play(rounds):
             ice.upgrade(['0-1-0','1-1-0','2-1-0','3-1-0'])
         elif current_round == 99:
             ice.upgrade(['4-1-0'])
-            ability(5,2)
+            ability(4,2)
             village.upgrade(['3-0-2'])
         elif current_round == 100:
             ability(3,8)

@@ -37,48 +37,30 @@ from bot.rounds import Rounds
 from bot.times import PauseControl
 from customprint import cprint
     
-class Monkey():
+class Monkey:
     """Monkey class: creates all placeable monkeys and implements their common behavior.
-
-    Attributes:
-        name (str): Name of a Monkey.
-        pos_x (float | None): X-coordinate location. Value must be on interval [0, 1), or to be more precise, 
-            [0.0141, 0.8567] because left frame and monkey panel on the right. But bot takes care of invalid values, so 
-            this won't be repeated under other comments (except right below, because y has different values). Also, 
-            monkey size matters so you can't place a super monkey right at x=0.0141, but dart works. 
-        pos_y (float | None): Y-coordinate location. Value must be on interval [0, 1), or actually [0.02593, 0.9731].
-            Just like with pos_x, bot will check correct values, but it won't check monkey size: while a sniper is slim 
-            enough, trying to place a heli at y=0.02593 doesn't work.
-        placement_check: If bot will verify the monkey was placed. Should always use the default value True unless you 
-                know what you're doing. Use case: if placed monkey is under life/money/round hud, it can be placed 
-                there but afterwards clicking on this location does nothing because of hud. To access monkey again, you 
-                need to update its position slightly away from center and it should work again. To update monkey 
-                location, use cpos argument for next command. A concrete example of above would be bloody 
-                puddles chimps plan, where sniper is placed on top of current cash display.
-        panel_pos (str): Side where upgrade panel opens. This is always relative to middle x-coordinate of non-panel 
-            screen i.e. somewhere around 0.42-0.44. Panel opens to the opposite side of this relative position e.g. 
-            monkey to the left has panel on right. Values are 'left', 'right' and 'middle'. Last value is only needed 
-            as a placeholder because different resolutions could change the panel opening side: actual side should be 
-            checked via ocr and set as final value.
-        targeting (str): Targeting priority, initial value is set via basic_monkey_targeting method automatically. 
-            Change this value via 'target' method afterwards.
-        upgrade_path (str): Current upgrade path of Monkey, initially '0-0-0'. Change value via 'upgrade' method 
-            afterwards.
 
     Methods:
     --
-        target: Change targeting priority of this monkey.  
-        upgrade: Upgrade this monkey.  
-        special: Use special of this monkey.  
-        sell: Sell this monkey.  
-        robo_target: Control targeting of robo monkey's second arm.
-        merge: Merge beast handlers with another.
-        center: Change monkey ace centered path location.
+        target: 
+            Change targeting priority of this monkey.  
+        upgrade: 
+            Upgrade this monkey.  
+        special: 
+            Use special of this monkey.  
+        sell: 
+            Sell this monkey.  
+        robo_target: 
+            Control targeting of robo monkey's second arm.
+        merge: 
+            Merge beast handlers with another.
+        center: 
+            Change monkey ace centered path location.
 
     See also:
     --
         ability.ability to use abilities (in plan files, just type ability() to see docs for more info).  
-        btd6bot (project root) -> tools -> show_coordinates or coordinate_tracker, to find coordinates.
+        btd6bot -> tools -> show_coordinates or coordinate_tracker, to find coordinates.
 
     Examples:
         Even if you never refer to a monkey after its placement, it's preferred to save it in a variable for clarity.
@@ -137,10 +119,23 @@ class Monkey():
         """Initializes a Monkey by passing it name and position coordinates.
         
         Args:
-            name: Name string. See 'Monkey' class documentation for all valid names.
-            pos_x: X-coordinate, must be on interval [0, 1).
-            pos_y: Y-coordinate, must be on interval [0, 1).
-            placement_check: Whether bot will verify the monkey was placed or not. Default is True.
+            name (str): 
+                Name of a Monkey.
+            pos_x (float): 
+                X-coordinate location. Value must be on interval [0, 1), or to be more precise, [0.0141, 0.8567] 
+                because left frame and monkey panel on the right. But bot takes care of invalid values, so this won't 
+                be repeated under other comments (except right below, because y has different values). Also, monkey 
+                size matters so you can't place a super monkey right at x=0.0141, but dart works. 
+            pos_y (float):
+                Y-coordinate location. Value must be on interval [0, 1), or actually [0.02593, 0.9731]. Just like with 
+                pos_x, bot will check correct values, but it won't check monkey size: while a sniper is slim enough, 
+                trying to place a heli at y=0.02593 doesn't work.
+            placement_check (bool=True): 
+                If bot will verify the monkey was placed. Should always use the default value True unless you know what 
+                you're doing. Use case: if placed monkey is under life/money/round hud, it can be placed there but 
+                afterwards clicking on this location does nothing because of hud. To access monkey again, you need to 
+                update its position slightly away from center and it should work again. To update monkey location, use 
+                cpos argument for next command.
         """
         self._name = name
         self._pos_x = pos_x
@@ -167,19 +162,20 @@ class Monkey():
             other: Additional text string, string list or string tuple, not required. Default value is ''.
         """
         obj = error_object 
-        if type == 'init':
-            if obj[0] == '-1':
-                cprint(f'\nNAME ERROR "{obj[0]}": monkey name not found.')
-            if obj[1] == '-1':
-                cprint(f'\nPOS_X ERROR {obj[1]}: x-coordinate must be within interval [0,1).')
-            if obj[2] == '-1':
-                cprint(f'\nPOS_Y ERROR {obj[2]}: y-coordinate must be within interval [0,1).')
-        elif type == 'target':
-            cprint(f'\nTARGET ERROR "{obj}": {obj} is not a valid targeting for {other}.')
-        elif type == 'upgrade_list':
-            cprint('\nUPGRADE LIST ERROR: upgrade list is empty.')
-        elif type == 'upgrade':
-            cprint(f'\nUPGRADE PATH ERROR: upgrade path {obj} in current upgrade list {other} is invalid.')
+        match type:
+            case 'init':
+                if obj[0] == '-1':
+                    cprint(f'\nNAME ERROR "{obj[0]}": monkey name not found.')
+                if obj[1] == '-1':
+                    cprint(f'\nPOS_X ERROR {obj[1]}: x-coordinate must be within interval [0,1).')
+                if obj[2] == '-1':
+                    cprint(f'\nPOS_Y ERROR {obj[2]}: y-coordinate must be within interval [0,1).')
+            case 'target':
+                cprint(f'\nTARGET ERROR "{obj}": {obj} is not a valid targeting for {other}.')
+            case 'upgrade_list':
+                cprint('\nUPGRADE LIST ERROR: upgrade list is empty.')
+            case 'upgrade':
+                cprint(f'\nUPGRADE PATH ERROR: upgrade path {obj} in current upgrade list {other} is invalid.')
         time.sleep(1)
         BotVars.defeat_status = True
         cprint('\n**An Error has occured. Current game state treated as Defeat**')
@@ -187,10 +183,11 @@ class Monkey():
     def _init_panel_position(self) -> str:
         """Get upgrade panel position of current monkey.
         
-        Values 'left' and 'right' are always opposite of relative position of monkey from middle. The 'middle' value is 
-        only required because different resolution could shift the small interval of middle values. Then for some 
-        resolutions it could be left, for other right. However, 'middle' is a placeholder value anyway, as _place will 
-        overwrite it and set it as one of the directional values.
+        Side where upgrade panel opens. This is always relative to middle x-coordinate of non-panel 
+        screen i.e. somewhere around 0.42-0.44. Panel opens to the opposite side of this relative position e.g. monkey 
+        to the left has panel on right. Values are 'left', 'right' and 'middle'. Last value is only needed as a 
+        placeholder because different resolutions could change the panel opening side. Actual side should be checked 
+        via ocr and set as final value: this whole process is part of _place method.
 
         Returns:
             "left" if monkey is on right, "right" if on left, "middle" if close to midpoint.
@@ -338,36 +335,37 @@ class Monkey():
             'OK' string if targeting change was successful.
             name, target: If problems were encountered, return monkey's name and target string.
         """
-        if target == 'first':
-            if current == 'last':
-                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-            elif current == 'strong':
-                kb_mouse.kb_input(hotkeys['target change'], 1)
-            elif current == 'close':
-                kb_mouse.kb_input(hotkeys['target change'], 2)
-        elif target == 'last':
-            if current == 'first':
-                kb_mouse.kb_input(hotkeys['target change'], 1)
-            elif current == 'strong':
-                kb_mouse.kb_input(hotkeys['target change'], 2)
-            elif current == 'close':
-                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-        elif target == 'close':
-            if current == 'first':
-                kb_mouse.kb_input(hotkeys['target reverse'], 2)
-            elif current == 'strong':
-                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-            elif current == 'last':
-                kb_mouse.kb_input(hotkeys['target change'], 1)
-        elif target == 'strong':
-            if current == 'first':
-                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-            elif current == 'last':
-                kb_mouse.kb_input(hotkeys['target change'], 2)
-            elif current == 'close':
-                kb_mouse.kb_input(hotkeys['target change'], 1)
-        else:
-            return self._name, target
+        match target:
+            case 'first':
+                if current == 'last':
+                    kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                elif current == 'strong':
+                    kb_mouse.kb_input(hotkeys['target change'], 1)
+                elif current == 'close':
+                    kb_mouse.kb_input(hotkeys['target change'], 2)
+            case 'last':   
+                if current == 'first':
+                    kb_mouse.kb_input(hotkeys['target change'], 1)
+                elif current == 'strong':
+                    kb_mouse.kb_input(hotkeys['target change'], 2)
+                elif current == 'close':
+                    kb_mouse.kb_input(hotkeys['target reverse'], 1)
+            case 'close':
+                if current == 'first':
+                    kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                elif current == 'strong':
+                    kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                elif current == 'last':
+                    kb_mouse.kb_input(hotkeys['target change'], 1)
+            case 'strong':
+                if current == 'first':
+                    kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                elif current == 'last':
+                    kb_mouse.kb_input(hotkeys['target change'], 2)
+                elif current == 'close':
+                    kb_mouse.kb_input(hotkeys['target change'], 1)
+            case _:
+                return self._name, target
         return 'OK'
     
     def _change_target_special(self, s: str | int, x: float | None = None, y: float | None = None) -> None:
@@ -418,284 +416,317 @@ class Monkey():
         kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
         if cpos is not None:
             self._update_panel_position(cpos[0])
+        if self._name == 'sniper' and self._targeting == 'elite' and not Monkey._elite_sniper:
+            self._targeting = 'first'
         match self._name:
             case 'farm':
                 return self._name, target
             case 'sniper':
-                if Monkey._elite_sniper == 1:
-                    if target == 'first':
-                        if current == 'last':
-                            kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                        elif current == 'strong':
-                            kb_mouse.kb_input(hotkeys['target change'], 2)
-                        elif current == 'close':
-                            kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                        elif current == 'elite':
-                            kb_mouse.kb_input(hotkeys['target change'], 1)
-                    elif target == 'last':
-                        if current == 'first':
-                            kb_mouse.kb_input(hotkeys['target change'], 1)
-                        elif current == 'strong':
-                            kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                        elif current == 'close':
-                            kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                        elif current == 'elite':
-                            kb_mouse.kb_input(hotkeys['target change'], 2)
-                    elif target == 'close':
-                        if current == 'first':
-                            kb_mouse.kb_input(hotkeys['target change'], 2)
-                        elif current == 'strong':
-                            kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                        elif current == 'last':
-                            kb_mouse.kb_input(hotkeys['target change'], 1)
-                        elif current == 'elite':
-                            kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                    elif target == 'strong':
-                        if current == 'first':
-                            kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                        elif current == 'last':
-                            kb_mouse.kb_input(hotkeys['target change'], 2)
-                        elif current == 'close':
-                            kb_mouse.kb_input(hotkeys['target change'], 1)
-                        elif current == 'elite':
-                            kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                    elif target == 'elite':
-                        if current == 'first':
-                            kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                        elif current == 'strong':
-                            kb_mouse.kb_input(hotkeys['target change'], 1)
-                        elif current == 'last':
-                            kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                        elif current == 'close':
-                            kb_mouse.kb_input(hotkeys['target change'], 2)
-                    else:
-                        return self._name, target
+                if Monkey._elite_sniper:
+                    match target:
+                        case 'first':
+                            match current:
+                                case 'last':
+                                    kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                case 'strong':
+                                    kb_mouse.kb_input(hotkeys['target change'], 2)
+                                case 'close':
+                                    kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                                case 'elite':
+                                    kb_mouse.kb_input(hotkeys['target change'], 1)
+                        case 'last':
+                            match current:
+                                case 'first':
+                                    kb_mouse.kb_input(hotkeys['target change'], 1)
+                                case 'strong':
+                                    kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                                case 'close':
+                                    kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                case 'elite':
+                                    kb_mouse.kb_input(hotkeys['target change'], 2)
+                        case 'close':
+                            match current:
+                                case 'first':
+                                    kb_mouse.kb_input(hotkeys['target change'], 2)
+                                case 'strong':
+                                    kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                case 'last':
+                                    kb_mouse.kb_input(hotkeys['target change'], 1)
+                                case 'elite':
+                                    kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                        case 'strong':
+                            match current:
+                                case 'first':
+                                    kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                                case 'last':
+                                    kb_mouse.kb_input(hotkeys['target change'], 2)
+                                case 'close':
+                                    kb_mouse.kb_input(hotkeys['target change'], 1)
+                                case 'elite':
+                                    kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                        case 'elite':
+                            match current:
+                                case 'first':
+                                    kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                case 'strong':
+                                    kb_mouse.kb_input(hotkeys['target change'], 1)
+                                case 'last':
+                                    kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                                case 'close':
+                                    kb_mouse.kb_input(hotkeys['target change'], 2)
+                        case _:
+                            return self._name, target
                 else:
                     return self._normal_targeting(current, target)
-            case 'heli':    # follow is used as base value. You can't switch to 'follow' or 'patrol points'.
-                if target == 'lock':
-                    if current == 'follow':
-                        kb_mouse.kb_input(hotkeys['target change'], 1)
-                        if x is not None and y is not None: # allows for locking in place without new coordinates.
-                            self._change_target_special(1, x, y)
-                    elif current == 'pursuit':
-                        kb_mouse.kb_input(hotkeys['target change'], 2)
-                        if x is not None and y is not None:
-                            self._change_target_special(1, x, y)
-                elif target == 'pursuit':
-                    if current == 'follow':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                    elif current == 'lock':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                else:
-                    return self._name, target
+            case 'heli': # follow is used as base value. You can't switch to 'follow' or 'patrol points'.
+                match target:
+                    case 'lock':
+                        match current:
+                            case 'follow':
+                                kb_mouse.kb_input(hotkeys['target change'], 1)
+                                if x is not None and y is not None: # allows locking in place without new coordinates.
+                                    self._change_target_special(1, x, y)
+                            case 'pursuit':
+                                kb_mouse.kb_input(hotkeys['target change'], 2)
+                                if x is not None and y is not None:
+                                    self._change_target_special(1, x, y)
+                    case 'pursuit':
+                        match current:
+                            case 'follow':
+                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                            case 'lock':
+                                kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                    case _:
+                        return self._name, target
             case 'ace':
                 if int(self._upgrade_path[4]) >= 2:
                     if Monkey._wingmonkey:
-                        if target == 'circle':
-                            if current == 'infinite':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                            elif current == 'eight':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                            elif current == 'wingmonkey':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                            elif current == 'centered':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 3)
-                        elif target == 'infinite':
-                            if current == 'circle':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                            elif current == 'eight':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                            elif current == 'wingmonkey':
-                                kb_mouse.kb_input(hotkeys['target change'], 2)
-                            elif current == 'centered':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 2)   
-                        elif target == 'eight':
-                            if current == 'circle':
-                                kb_mouse.kb_input(hotkeys['target change'], 2)
-                            elif current == 'infinite':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                            elif current == 'wingmonkey':
-                                kb_mouse.kb_input(hotkeys['target change'], 3)
-                            elif current == 'centered':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                        elif target == 'wingmonkey':
-                            if current == 'circle':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                            elif current == 'infinite':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                            elif current == 'eight':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 3)
-                            elif current == 'centered':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                        elif target == 'centered':
-                            if current == 'circle':
-                                kb_mouse.kb_input(hotkeys['target change'], 3)
-                            elif current == 'eight':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                            elif current == 'infinite':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                            elif current == 'wingmonkey':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                        else:
-                            return self._name, target
+                        match target:
+                            case 'circle':
+                                match current:
+                                    case 'infinite':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                                    case 'eight':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                                    case 'wingmonkey':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                                    case 'centered':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 3)
+                            case 'infinite':
+                                match current:
+                                    case 'circle':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                                    case 'eight':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                    case 'wingmonkey':
+                                        kb_mouse.kb_input(hotkeys['target change'], 2)
+                                    case 'centered':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 2)   
+                            case 'eight':
+                                match current:
+                                    case 'circle':
+                                        kb_mouse.kb_input(hotkeys['target change'], 2)
+                                    case  'infinite':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                                    case 'wingmonkey':
+                                        kb_mouse.kb_input(hotkeys['target change'], 3)
+                                    case 'centered':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                            case 'wingmonkey':
+                                match current:
+                                    case 'circle':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                    case 'infinite':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                                    case 'eight':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 3)
+                                    case 'centered':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                            case 'centered':
+                                match current:
+                                    case 'circle':
+                                        kb_mouse.kb_input(hotkeys['target change'], 3)
+                                    case 'eight':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                                    case 'infinite':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                                    case 'wingmonkey':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                            case _:
+                                return self._name, target
                     else:
-                        if target == 'circle':
-                            if current == 'infinite':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                            elif current == 'eight':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                            elif current == 'centered':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                        elif target == 'infinite':
-                            if current == 'circle':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                            elif current == 'eight':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                            elif current == 'centered':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 2)   
-                        elif target == 'eight':
-                            if current == 'circle':
-                                kb_mouse.kb_input(hotkeys['target change'], 2)
-                            elif current == 'infinite':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                            elif current == 'centered':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                        elif target == 'centered':
-                            if current == 'circle':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                            elif current == 'eight':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                            elif current == 'infinite':
-                                kb_mouse.kb_input(hotkeys['target change'], 2)
-                        else:
-                            return self._name, target
+                        match target:
+                            case 'circle':
+                                match current:
+                                    case 'infinite':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                    case 'eight':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                                    case 'centered':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                            case 'infinite':
+                                match current:
+                                    case 'circle':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                                    case 'eight':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                    case 'entered':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 2)   
+                            case 'eight':
+                                match current:
+                                    case 'circle':
+                                        kb_mouse.kb_input(hotkeys['target change'], 2)
+                                    case 'infinite':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                                    case 'centered':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                            case 'centered':
+                                match current:
+                                    case 'circle':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                                    case 'eight':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                    case 'infinite':
+                                        kb_mouse.kb_input(hotkeys['target change'], 2)
+                            case _:
+                                return self._name, target
                 else:
                     if Monkey._wingmonkey:
-                        if target == 'circle':
-                            if current == 'infinite':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                            elif current == 'eight':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                            elif current == 'wingmonkey':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                        elif target == 'infinite':
-                            if current == 'circle':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                            elif current == 'eight':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                            elif current == 'wingmonkey':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 2)   
-                        elif target == 'eight':
-                            if current == 'circle':
-                                kb_mouse.kb_input(hotkeys['target change'], 2)
-                            elif current == 'infinite':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                            elif current == 'wingmonkey':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                        elif target == 'wingmonkey':
-                            if current == 'circle':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                            elif current == 'eight':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                            elif current == 'infinite':
-                                kb_mouse.kb_input(hotkeys['target change'], 2)
-                        else:
-                            return self._name, target
+                        match target:
+                            case 'circle':
+                                match current:
+                                    case 'infinite':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                    case 'eight':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                                    case 'wingmonkey':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                            case 'infinite':
+                                match current:
+                                    case 'circle':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                                    case 'eight':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                    case 'wingmonkey':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 2)   
+                            case 'eight':
+                                match current:
+                                    case 'circle':
+                                        kb_mouse.kb_input(hotkeys['target change'], 2)
+                                    case 'infinite':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                                    case 'wingmonkey':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                            case 'wingmonkey':
+                                match current:
+                                    case 'circle':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                    case 'eight':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                                    case 'infinite':
+                                        kb_mouse.kb_input(hotkeys['target change'], 2)
+                            case _:
+                                return self._name, target
                     else:
-                        if target == 'circle':
-                            if current == 'infinite':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                            elif current == 'eight':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                        elif target == 'infinite':
-                            if current == 'circle':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                            elif current == 'eight':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)  
-                        elif target == 'eight':
-                            if current == 'circle':
-                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                            elif current == 'infinite':
-                                kb_mouse.kb_input(hotkeys['target change'], 1)
-                        else:
-                            return self._name, target
-            case 'mortar':  
-                # with mortar, you need to always use special(1, x, y) as mortars cannot use targeting.
+                        match target:
+                            case 'circle':
+                                match current:
+                                    case 'infinite':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                    case 'eight':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                            case 'infinite':
+                                match current:
+                                    case 'circle':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                                    case 'eight':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)  
+                            case 'eight':
+                                match current:
+                                    case 'circle':
+                                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                    case 'infinite':
+                                        kb_mouse.kb_input(hotkeys['target change'], 1)
+                            case _:
+                                return self._name, target
+            case 'mortar':  # with mortar, you need to always use special(1, x, y) as mortars cannot use targeting.
                 cprint("Use special(1, x, y) instead.")
                 return 'OK'
-            case 'dartling':
-                # after changing to 'locked', you must use special(1, x, y) instead to change target. 
-                if target == 'locked':
-                    if current == 'normal':
-                        kb_mouse.kb_input(hotkeys['target change'], 1)
-                        self._change_target_special(1, x, y)
-                    elif current == 'independent':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                        self._change_target_special(1, x, y)
-                elif target == 'independent':
-                    if current == 'normal':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                    elif current == 'locked':
-                        kb_mouse.kb_input(hotkeys['target change'], 1)
-                else:
-                    return self._name, target
+            case 'dartling': 
+                match target:
+                    case 'locked': # after changing to 'locked', you must use special(1, x, y) instead to change target.
+                        match current:
+                            case 'normal':
+                                kb_mouse.kb_input(hotkeys['target change'], 1)
+                                self._change_target_special(1, x, y)
+                            case 'independent':
+                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                                self._change_target_special(1, x, y)
+                    case 'independent':
+                        match current:
+                            case 'normal':
+                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                            case 'locked':
+                                kb_mouse.kb_input(hotkeys['target change'], 1)
+                    case _:
+                        return self._name, target
             case 'spike':
-                if target == 'normal':
-                    if current == 'close':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                    elif current == 'smart':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                    elif current == 'set':
-                        kb_mouse.kb_input(hotkeys['target change'], 2)
-                    elif current == 'automatic':
-                        kb_mouse.kb_input(hotkeys['target change'], 1)
-                elif target == 'close':
-                    if current == 'normal':
-                        kb_mouse.kb_input(hotkeys['target change'], 1)
-                    elif current == 'smart':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                    elif current == 'set':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                    elif current == 'automatic':
-                        kb_mouse.kb_input(hotkeys['target change'], 2)
-                elif target == 'set':
-                    if current == 'normal':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                        if x is not None and y is not None:
-                            self._change_target_special(1, x, y)
-                    elif current == 'close':
-                        kb_mouse.kb_input(hotkeys['target change'], 2)
-                        if x is not None and y is not None:
-                            self._change_target_special(1, x, y)
-                    elif current == 'smart':
-                        kb_mouse.kb_input(hotkeys['target change'], 1)
-                        if x is not None and y is not None:
-                            self._change_target_special(1, x, y)
-                    elif current == 'automatic':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                        if x is not None and y is not None:
-                            self._change_target_special(1, x, y)
-                elif target == 'smart':
-                    if current == 'close':
-                        kb_mouse.kb_input(hotkeys['target change'], 1)
-                    elif current == 'set':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                    elif current == 'normal':
-                        kb_mouse.kb_input(hotkeys['target change'], 2)
-                    elif current == 'automatic':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                elif target == 'automatic':
-                    if current == 'close':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 2)
-                    elif current == 'set':
-                        kb_mouse.kb_input(hotkeys['target change'], 1)
-                    elif current == 'normal':
-                        kb_mouse.kb_input(hotkeys['target reverse'], 1)
-                    elif current == 'smart':
-                        kb_mouse.kb_input(hotkeys['target change'], 2)
-                else:
-                    return self._name, target
+                match target:
+                    case 'normal':
+                        match current:
+                            case 'close':
+                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                            case'smart':
+                                kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                            case 'set':
+                                kb_mouse.kb_input(hotkeys['target change'], 2)
+                            case 'automatic':
+                                kb_mouse.kb_input(hotkeys['target change'], 1)
+                    case 'close':
+                        match current:
+                            case'normal':
+                                kb_mouse.kb_input(hotkeys['target change'], 1)
+                            case 'smart':
+                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                            case 'set':
+                                kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                            case 'automatic':
+                                kb_mouse.kb_input(hotkeys['target change'], 2)
+                    case 'set':
+                        match current:
+                            case 'normal':
+                                kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                            case 'close':
+                                kb_mouse.kb_input(hotkeys['target change'], 2)
+                            case 'smart':
+                                kb_mouse.kb_input(hotkeys['target change'], 1)
+                            case 'automatic':
+                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                        if (x is not None and y is not None and
+                            current in {'normal', 'close', 'smart'', automatic'}):
+                                self._change_target_special(1, x, y)
+                    case 'smart':
+                        match current:
+                            case 'close':
+                                kb_mouse.kb_input(hotkeys['target change'], 1)
+                            case 'set':
+                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                            case 'normal':
+                                kb_mouse.kb_input(hotkeys['target change'], 2)
+                            case 'automatic':
+                                kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                    case 'automatic':
+                        match current:
+                            case 'close':
+                                kb_mouse.kb_input(hotkeys['target reverse'], 2)
+                            case 'set':
+                                kb_mouse.kb_input(hotkeys['target change'], 1)
+                            case 'normal':
+                                kb_mouse.kb_input(hotkeys['target reverse'], 1)
+                            case 'smart':
+                                kb_mouse.kb_input(hotkeys['target change'], 2)
+                    case _:
+                        return self._name, target
             case _:
                 return self._normal_targeting(current, target)
         return 'OK'
@@ -721,7 +752,7 @@ class Monkey():
             self._targeting = 'pursuit'
         elif self._name == 'sniper' and i == 1 and int(u[2*i]) == 5:
             self._targeting = 'elite'
-            Monkey._elite_sniper = 1
+            Monkey._elite_sniper = True
 
     def _do_upgrades(self, upgrade_list: list[str], cpos: tuple[float, float] | None = None) -> None:
         """Handles the choosing of correct upgrade path and verifies the process.
@@ -737,18 +768,20 @@ class Monkey():
             cpos: If monkey's current coordinate position has changed, update it. Default value is None.
         """
         PauseControl.pause_bot()
-        paths = ['upgrade top', 'upgrade mid', 'upgrade bot'] 
+        CHECK_TIMELIMIT: int = 15
+        paths = ('upgrade top', 'upgrade mid', 'upgrade bot')
+        start = time.time()
+        counter: int = 0
+
         if cpos is not None:
             self._pos_x = cpos[0]
             self._pos_y = cpos[1]
         kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
         if cpos is not None:
             self._update_panel_position(cpos[0])
-        start = time.time()
-        counter = 0
         if self._panel_pos == 'right':
             while not ocr.strong_delta_check('Sell', get_text('ingame', 'right_panel_sell_location'), OCR_READER):
-                if time.time()-start > 10:
+                if time.time()-start > CHECK_TIMELIMIT:
                     BotVars.defeat_status = True
                     cprint("Failed to find the upgradeable monkey.")
                     return
@@ -761,7 +794,7 @@ class Monkey():
                 counter += 1
         elif self._panel_pos == 'left':
             while not ocr.strong_delta_check('Sell', get_text('ingame', 'left_panel_sell_location'), OCR_READER):
-                if time.time()-start > 10:
+                if time.time()-start > CHECK_TIMELIMIT:
                     BotVars.defeat_status = True
                     cprint("Failed to find the upgradeable monkey.")
                     return
@@ -794,24 +827,25 @@ class Monkey():
             upg: Current upgrade path string/the upgrade we want to buy for our monkey.
             button: Upgrade button, either for top, mid or bottom path.
         """
-        if button == 'upgrade top':
-            self._check_upgrade(upg, 
-                                button,
-                                get_text('ingame', 'top_upg_current_leftwindow'),
-                                get_text('ingame', 'top_upg_current_rightwindow'),
-                                0)
-        elif button == 'upgrade mid':
-            self._check_upgrade(upg, 
-                                button,
-                                get_text('ingame', 'mid_upg_current_leftwindow'),
-                                get_text('ingame', 'mid_upg_current_rightwindow'),
-                                1)
-        elif button == 'upgrade bot':
-            self._check_upgrade(upg,
-                                button,
-                                get_text('ingame', 'bot_upg_current_leftwindow'),
-                                get_text('ingame', 'bot_upg_current_rightwindow'),
-                                2)
+        match button:
+            case 'upgrade top':
+                self._check_upgrade(upg, 
+                                    button,
+                                    get_text('ingame', 'top_upg_current_leftwindow'),
+                                    get_text('ingame', 'top_upg_current_rightwindow'),
+                                    0)
+            case 'upgrade mid':
+                self._check_upgrade(upg, 
+                                    button,
+                                    get_text('ingame', 'mid_upg_current_leftwindow'),
+                                    get_text('ingame', 'mid_upg_current_rightwindow'),
+                                    1)
+            case 'upgrade bot':
+                self._check_upgrade(upg,
+                                    button,
+                                    get_text('ingame', 'bot_upg_current_leftwindow'),
+                                    get_text('ingame', 'bot_upg_current_rightwindow'),
+                                    2)
 
     def _check_upgrade(self, upg: str,
                       button: str,
@@ -839,18 +873,20 @@ class Monkey():
             upg_path: Integer for upgrade path: 0 = top, 1 = middle, 2 = bot. Is necessary for some special monkey 
                 upgrade paths which ocr needs to identify and handle separately.
         """
-        c_path = self._upgrade_path
-        if upg_path == 0:
-            upg_match = self._name+' '+str(int(c_path[0])+1)+'-x-x'
-        elif upg_path == 1:
-            upg_match = self._name+' x-'+str(int(c_path[2])+1)+'-x'
-        elif upg_path == 2:
-            upg_match = self._name+' x-x-'+str(int(c_path[4])+1)
-
         total_time = times.current_time()
-        upgraded = 0
-        defeat_check = 1
-        levelup_check = 1
+        upgraded: bool = False
+        defeat_check: int = 1
+        levelup_check: int = 1
+        c_path: str = self._upgrade_path
+
+        match upg_path:
+            case 0:
+                upg_match = self._name+' '+str(int(c_path[0])+1)+'-x-x'
+            case 1:
+                upg_match = self._name+' x-'+str(int(c_path[2])+1)+'-x'
+            case 2:
+                upg_match = self._name+' x-x-'+str(int(c_path[4])+1)
+
         while not upgraded:
             if levelup_check == Rounds.LEVEL_UP_CHECK_FREQUENCY:
                 kb_mouse.click((0.9994791666667, 0), shifted=True)
@@ -873,14 +909,14 @@ class Monkey():
                         (current_r[0], current_r[1], current_r[2], current_r[3]),
                         OCR_READER,
                         upg_match):
-                        upgraded = 1
+                        upgraded = True
                 elif self._panel_pos == 'left':
                     if ocr.strong_delta_check(
                         '_upgrade_', 
                         (current_l[0], current_l[1], current_l[2], current_l[3]),
                         OCR_READER, 
                         upg_match):
-                        upgraded = 1
+                        upgraded = True
                 if upgraded:
                     if not OcrValues._log_ocr_deltas:
                         cprint('Upgraded.')
@@ -903,11 +939,14 @@ class Monkey():
         """
         if BotVars.defeat_status:
             return
-        cprint(f'Placing {self._name.capitalize()}...', end=' ')
+
         total_time = times.current_time()
         placed: bool = False
-        defeat_check = 1
-        levelup_check = 1
+        first_check: bool = True
+        defeat_check: int = 1
+        levelup_check: int = 1
+
+        cprint(f'Placing {self._name.capitalize()}...', end=' ')
         while not placed:
             if OcrValues._log_ocr_deltas or not self._placement_check:
                 kb_mouse.click((0.5, 0), shifted=True)
@@ -926,18 +965,25 @@ class Monkey():
                 cprint(f'**Failed to place {self._name.capitalize()}**')
                 return
             defeat_check += 1
-            kb_mouse.kb_input(self._get_hotkey())
-            kb_mouse.click((self._pos_x, self._pos_y), clicks=2, shifted=True)
-            time.sleep(0.2)
-            if self._panel_pos == 'right':
-                if ocr.strong_delta_check('Sell', get_text('ingame', 'right_panel_sell_location'), OCR_READER):
-                    placed = True
-            elif self._panel_pos == 'left':
-                if ocr.strong_delta_check('Sell', get_text('ingame', 'left_panel_sell_location'), OCR_READER):
-                    placed = True
+
+            if first_check:
+                first_check = False
+                kb_mouse.kb_input(self._get_hotkey())
+                kb_mouse.click((self._pos_x, self._pos_y), clicks=2, shifted=True)
             else:
-                if self._update_panel_position(self._pos_x):
-                    placed = True
+                kb_mouse.click((0.999, 0), shifted=True) 
+                kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
+            time.sleep(0.2)
+            match self._panel_pos:
+                case 'right':
+                    if ocr.strong_delta_check('Sell', get_text('ingame', 'right_panel_sell_location'), OCR_READER):
+                        placed = True
+                case 'left':
+                    if ocr.strong_delta_check('Sell', get_text('ingame', 'left_panel_sell_location'), OCR_READER):
+                        placed = True
+                case 'middle':
+                    if self._update_panel_position(self._pos_x):
+                        placed = True  
             if placed:
                 if self._name == 'heli': # set targeting to 'lock' and move heli on top of placement location
                     kb_mouse.kb_input(hotkeys['target change'], 1)
@@ -948,6 +994,11 @@ class Monkey():
                 kb_mouse.press_esc()
                 cprint(f'{self._name.capitalize()} placed.')
                 return
+            # previous 'if first_check' and this combined should prevent erroneous placement loop if a lag spike occurs 
+            # after placing a tower, but bot fails to verify the placement
+            if not first_check:
+                kb_mouse.kb_input(self._get_hotkey())
+                kb_mouse.click((self._pos_x, self._pos_y), shifted=True)
     
     def special(self, s: str | int,
                 x: float | None = None,
@@ -1123,7 +1174,7 @@ class Monkey():
         time.sleep(0.3)
         kb_mouse.kb_input(hotkeys['sell'])
         if self._name == 'sniper' and int(self._upgrade_path[2]) == 5:
-            Monkey._elite_sniper = 0
+            Monkey._elite_sniper = False
         if not OcrValues._log_ocr_deltas:
             cprint(f'{self._name.capitalize()} sold!')
 

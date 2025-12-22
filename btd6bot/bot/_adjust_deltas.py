@@ -4,6 +4,7 @@ from typing import Any
 import pathlib
 import json
 import os
+import sys
 import time
 
 from bot import kb_mouse
@@ -16,6 +17,9 @@ from bot.ocr.ocr import weak_substring_check, OcrValues
 from bot.ocr.ocr_reader import OCR_READER
 from customprint import cprint
 from utils import timing
+
+if sys.platform == 'win32':
+    import win32gui
 
 _TEMPFILE_PATH = pathlib.Path(__file__).parent.parent/'Files'/'.temp_upg_deltas.json'
 
@@ -171,7 +175,6 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
     if monkeys == []:
         return
     
-    BotVars.check_gamesettings = True
     BotVars.print_delta_ocrtext = True
     BotVars.checking_time_limit = 10
     OcrValues._log_ocr_deltas = True
@@ -288,6 +291,7 @@ def run() -> None:
     args_list = gui_vars_adjust_args.split()
     monkey_list: list[str]
     delta: int
+    winpos: str
     for args in args_list:
         if 'res=' in args:
             res_vals = args[4:].split('x')
@@ -298,6 +302,20 @@ def run() -> None:
                 BotVars.windowed = True
             elif win_val == 0:
                 BotVars.windowed = False
+        elif 'winpos=' in args:
+            if sys.platform == 'win32' and args[7:] == 'auto':
+                winpos = 'auto'
+                ScreenRes.update_winpos_status('auto')
+                winrect = win32gui.GetWindowRect(ScreenRes._phandle)
+                ScreenRes.update_res(winrect[2]-winrect[0], winrect[3]-winrect[1])
+            elif args[7:] == 'centered':
+                winpos = 'centered'
+                ScreenRes.update_winpos_status('centered')
+            else:
+                winpos_vals = args[7:].split('x')
+                winpos = winpos_vals[0]+'x'+winpos_vals[1]
+                ScreenRes.update_winpos_status('custom')
+                ScreenRes.update_winpos(int(winpos_vals[0]), int(winpos_vals[1]))
         elif 'shift=' in args:
             shift_vals = args[6:].split('x')
             ScreenRes.update_shift(int(shift_vals[0]), int(shift_vals[1]))
@@ -310,6 +328,7 @@ def run() -> None:
     cprint("Updating upgrade deltas with following arguments:\n" \
             f"Resolution: {res_vals[0]}x{res_vals[1]}\n"
             f"Windowed: {BotVars.windowed}\n"
+            f"  -Window top-left position: {winpos}\n"
             f"Coordinate shift: {shift_vals[0]}x{shift_vals[1]}\n"
             f"Monkeys: {monkey_list}\n"
             f"Delta: {delta}\n\n"

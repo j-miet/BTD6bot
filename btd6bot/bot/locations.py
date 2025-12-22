@@ -64,6 +64,7 @@ _DEFAULT_LOCATIONS: dict[str, Any] = {
             "dragdrop": (0.4427083333333, 0.2777777777778),
             "nudge": (0.4458333333333, 0.412962962963),
             "autostart": (0.6697916666667, 0.2796296296296),
+            "hints": (0.6765625, 0.3509259259259),
             "next_button": (0.5, 0.85),
             "home_button": (0.37, 0.78),
             "home_button2": (0.44, 0.78),
@@ -191,6 +192,8 @@ CLICK (2-tuple):
             Nudge mode setting.
         autostart:
             Autostart setting.
+        hints:
+            Game hints setting.
         next_button:
             Next button after a map is finished successfully.
         home_button:
@@ -295,7 +298,7 @@ def get_text(category: str, value: str) -> Any:
         value (str): Value of dictionary, a 4-tuple
     
     Returns:
-        A 2-tuple value
+        A 4-tuple value
     """
     if BotVars.ingame_res_enabled:
         return _custom_locations["TEXT"][category][value]

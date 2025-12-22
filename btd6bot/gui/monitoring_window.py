@@ -1,4 +1,4 @@
-"""Contains MonitoringWindow class."""
+"""Implements MonitoringWindow class."""
 
 from __future__ import annotations
 from typing import TYPE_CHECKING
@@ -36,46 +36,15 @@ class MonitoringWindow:
     Bot itself operates on a separate thread, allowing both general GUI and monitoring screen to update constantly.
 
     Attributes:
-        START_STOP_HOTKEY (pynput.Key, class attribute): Hotkey that starts and stops current bot thread inside 
-            monitoring window. Current: F9.
         current_bot_thread (threading.Thread, class attribute): Current monitoring window bot thread.
             Mainwindow.is_monitoringwindow() needs to identify a bot thread in order to terminate it, in 
-            particular if monitoring window is closed while bot thread is in use. So the newest thread has to be known 
-            at all times, otherwise it could leave the previous thread running. And if, for example, this thread was 
-            currently performing ocr, but not finding any fitting match, it would end up eating a up A LOT of CPU. Even 
-            worse, these inaccessible & unusable threads could stack and execute multiple bots at the same time, which 
-            of course, would break everything as they all share key & mouse inputs and all files.
-        
-        all_plans (list[str]): List of all plans in the queue list or a single plan if queue mode is disabled.
-        replay_val (str): String with On/Off value for replay mode button.
-        queue_val (str): String with On/Off value for queue mode button.
-        collection (str): String with On/Off value to both display collection event status and update corresponding 
-            value to gui_vars.json.
-        farming (str): String value to determine if bot is launched in normal or collection event farming mode.
-        current_plans (list[str]): List of currently unfinished plans. When bot is run, all_plans contents are copied
-            into this. Then after finishing a plan, it gets removed from this list. Here finishing means plan was either
-            completed successfully, or failed to finish within given amount of retries.  
-            Eventually, current_plans becomes an empty list. If queue mode is not on (i.e. only a single plan), bot can
-            run the plan again. If queue mode is enabled, bot cannot be run again until a new monitoring window is
-            opened an queue is refreshed. If replay mode is on, bot will automatically reset queue and go again no
-            matter if there's a single or multiple plans.
-        plans_status (list[str]): Stores status of completed plans. If queue mode is enabled, its contents are used for
-            not only displaying successfully finished plans, but also any unsuccessful ones.
-        roundtime (tk.StringVar): Variable storing current round timer value.
-        monitoringwindow (tk.Toplevel): Window where other gui elements can be inserted.
-        textbox (tk.Text): Text object that is responsible of displaying all text output during bot runtime.
-        old_stdout (TextIO | Any): Original standard output stream. Program will return to it if MonitoringWindow is 
-            not accessed.
-        monitor_mapscreen_ascii (str): Ascii string used as default value for monitor_mapscreen.
-        monitor_mapscreen (tk.Label): Displays current map image. If no image is found, use monitor_mapscreen_ascii 
-            string and insert this into label instead.
-        monitor_infobox_current (tk.Label): Displays current plan's info panel.
-        monitor_infobox_next (tk.Label): Displays next plan's info panel.
-        monitor_run_button (tk.Button): Button object required to start/stop bot. Bot is set to run on a separate 
-            thread.
-        bot_thread (threading.Thread): Current thread where bot itself is allocated. A placeholder thread is initially 
-            created so that MainWindow can start tracking its existence and won't throw an error. After 'Run' button is 
-            pressed, _stop_or_run method is called and target of this thread is set to _run_bot method instead.
+            particular if monitoring window is closed while bot thread is in use. 
+            
+            The newest thread has to be known at all times, otherwise it could leave the previous thread running. And 
+            if, for example, this thread was currently performing ocr, but not finding any fitting match, it would end 
+            up eating a up A LOT of CPU. Even worse, these inaccessible & unusable threads could stack and execute 
+            multiple bots at the same time, which of course, would break everything as they all share key and mouse 
+            inputs + files.
     """
     current_bot_thread: threading.Thread
 
@@ -83,9 +52,10 @@ class MonitoringWindow:
         """Initialize monitoring window by passing it the plans list and replay/queue mode checks.
 
         Args:
-            all_plans: List of all plans in the queue list or a single plans if queue mode is disabled.
-            replay: StringVar to set On/Off value for a replay mode button.
-            queue: StringVar to set On/Off value for a queue mode button.
+            all_plans: List of all plans in the queue list or a single plan if queue mode is set to 'Off'.
+            replay: Replay mode status ('On'/'Off').
+            queue: Queue mode status ('On'/'Off').
+            farming: Farming mode status ('On'/'Off').
         """
         self.all_plans = all_plans_list
         self.replay_val = replay
@@ -94,8 +64,6 @@ class MonitoringWindow:
         self.farming = farming
         self.current_plans: list[str] = []
         self.plans_status: list[str] = []
-        self.roundtime = tk.StringVar(value='-')
-        self.runs = tk.IntVar(value=0)
 
         self.monitoringwindow = tk.Toplevel()
         self.monitoringwindow.title("Bot Monitoring Window")
@@ -105,10 +73,10 @@ class MonitoringWindow:
         self.monitoringwindow.maxsize(800,480)
 
         self.textbox = tk.Text(self.monitoringwindow, 
-                               width=55, 
-                               height=25, 
-                               state='normal', 
-                               wrap=tk.WORD)
+                                width=55, 
+                                height=25, 
+                                state='normal', 
+                                wrap=tk.WORD)
         self.textbox.grid(column=0, columnspan=2, row=0, rowspan=4, sticky='n')
         self.textbox.insert('end', "Welcome to BTD6bot!\n"
                             "Make sure that:\n"
@@ -116,8 +84,7 @@ class MonitoringWindow:
                             ">Resolution has aspect ratio of ~16:9\n"
                             ">Game is preferably fullscreen (but windowed works too)\n"
                             ">Bot hotkeys match with your in-game equivalents\n"
-                            ">Your Btd6 game window is on your main monitor and has\n"
-                            " main menu screen opened\n"
+                            ">Your Btd6 game window has main menu screen opened\n"
                             "------\n"
                             "~Press 'Run'/your 'start-stop' hotkey to start bot!\n"
                             "~Press 'Stop'/'start-stop' again to stop and reset\n current plan."
@@ -142,12 +109,13 @@ class MonitoringWindow:
                                         font=os_font)
         self.roundtime_label.grid(column=0, row=4, sticky='sw', padx=10)
 
+        self.roundtime = tk.StringVar(value='-')
         self.roundtime_display = tk.Label(self.monitoringwindow, 
-                                          width=8, 
-                                          height=3, 
-                                          relief='sunken', 
-                                          textvariable=self.roundtime, 
-                                          font=os_font)
+                                            width=8, 
+                                            height=3, 
+                                            relief='sunken', 
+                                            textvariable=self.roundtime, 
+                                            font=os_font)
         self.roundtime_display.grid(column=0, row=4, sticky='s', padx=10)
         if self.farming == 'On':
             self.roundtime_display.grid_configure(padx=(70,0))
@@ -157,7 +125,7 @@ class MonitoringWindow:
         self.textbox.configure(yscrollcommand=scroll.set)
         scroll.configure(command=self.textbox.yview)
 
-        self.monitor_mapscreen_ascii = ("   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⢀⣾⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
+        self.MONITOR_MAPSCREEN_ASCII = ("   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⢀⣾⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
                                         "   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣰⣿⣿⣿⣿⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
                                         "   ⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
                                         "   ⠀⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
@@ -179,47 +147,47 @@ class MonitoringWindow:
             try:
                 photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'spa pits.png')
                 self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
-                                                   image=photo, 
-                                                   compound='top', 
-                                                   anchor='nw', 
-                                                   justify='left')
+                                                    image=photo, 
+                                                    compound='top', 
+                                                    anchor='nw', 
+                                                    justify='left')
                 self.monitor_mapscreen.image = photo # type: ignore
                 self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
             except tk.TclError:
                 self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
-                                                   compound='top', 
-                                                   anchor='nw',
-                                                   style='Style.TButton', 
-                                                   justify='left')
+                                                    compound='top', 
+                                                    anchor='nw',
+                                                    style='Style.TButton', 
+                                                    justify='left')
                 self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
-                self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
+                self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
         elif self.farming == 'On':
             self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
-                                               compound='top', 
-                                               anchor='nw',
-                                               style='Style.TButton', 
-                                               justify='left')
+                                                compound='top', 
+                                                anchor='nw',
+                                                style='Style.TButton', 
+                                                justify='left')
             self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
             self.monitor_mapscreen.configure(image='')
-            self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
+            self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
         else:
             try:
                 photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(self.all_plans[0])+'.png'))
                 self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
-                                                   image=photo, 
-                                                   compound='top', 
-                                                   anchor='nw', 
-                                                   justify='left')
+                                                    image=photo, 
+                                                    compound='top', 
+                                                    anchor='nw', 
+                                                    justify='left')
                 self.monitor_mapscreen.image = photo # type: ignore
                 self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
             except tk.TclError:
                 self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
-                                                   compound='top', 
-                                                   anchor='nw',
-                                                   style='Style.TButton', 
-                                                   justify='left')
+                                                    compound='top', 
+                                                    anchor='nw',
+                                                    style='Style.TButton', 
+                                                    justify='left')
                 self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
-                self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
+                self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
 
         self.monitor_infobox_current = tk.Label(self.monitoringwindow, 
                                                 width=20, 
@@ -239,67 +207,26 @@ class MonitoringWindow:
 
         if self.farming == 'Off':
             self.monitor_infobox_next = tk.Label(self.monitoringwindow, 
-                                                 width=20, 
-                                                 height=5, 
-                                                 text='-'*12, 
-                                                 anchor='nw',
-                                                 relief='sunken', 
-                                                 justify='left', 
-                                                 padx=10, 
-                                                 pady=10)
+                                                    width=20, 
+                                                    height=5, 
+                                                    text='-'*12, 
+                                                    anchor='nw',
+                                                    relief='sunken', 
+                                                    justify='left', 
+                                                    padx=10, 
+                                                    pady=10)
             self.monitor_infobox_next.grid(column=4, row=3, sticky='nw')
             if len(self.all_plans) > 1:
                 self.monitor_infobox_next.config(text='Next\n'+plan_data.info_display(self.all_plans[1]))
 
         monitor_collection_text = tk.Label(self.monitoringwindow, 
-                                           text='Collection event: '+str(self.collection_val),
-                                           relief='sunken', 
-                                           padx=10, 
-                                           pady=10)
-        monitor_collection_text.grid(column=5, row=2, sticky='ne')
-        self._update_collection_status()
-
-        if self.farming == 'On':
-            self.runs_label = tk.Label(self.monitoringwindow, 
-                                        width=15, 
-                                        height=3, 
-                                        text='Runs completed', 
-                                        relief='sunken',
-                                        font=os_font)
-            self.runs_label.grid(column=1, row=4, sticky='sw', padx=10)
-
-            self.runs_display = tk.Label(self.monitoringwindow, 
-                                         width=8, 
-                                         height=3, 
-                                         relief='sunken', 
-                                         textvariable=self.runs, 
-                                         font=os_font)
-            self.runs_display.grid(column=1, row=4, sticky='s', padx=(75,0))
-
-            monitor_farming_text = tk.Label(self.monitoringwindow, 
-                                            text='Farm mode: On',             
+                                            text='Collection event: '+str(self.collection_val),
                                             relief='sunken', 
                                             padx=10, 
                                             pady=10)
-            monitor_farming_text.grid(column=5, row=2, sticky='e')
-        else:
-            monitor_queuemode_text = tk.Label(self.monitoringwindow, 
-                                              text='Queue mode: '+str(self.queue_val),             
-                                              relief='sunken', 
-                                              padx=10, 
-                                              pady=10)
-            monitor_queuemode_text.grid(column=5, row=2, sticky='se')
-
-            monitor_replay_text = tk.Label(self.monitoringwindow, 
-                                           text='Replay mode: '+str(self.replay_val),
-                                           relief='sunken', 
-                                           padx=10, 
-                                           pady=10)
-            monitor_replay_text.grid(column=5, row=3, sticky='e', pady=10)
-
-        # create the initial placeholder thread for MainWindow.is_monitoringwindow.
-        self.bot_thread = threading.Thread()
-        MonitoringWindow.current_bot_thread = self.bot_thread
+        monitor_collection_text.grid(column=5, row=2, sticky='ne')
+        self._update_collection_status()
+        self._update_farming_status()
 
         self.monitor_run_button = tk.Button(self.monitoringwindow, 
                                             text='Run', 
@@ -309,13 +236,58 @@ class MonitoringWindow:
                                             pady=10)
         self.monitor_run_button.grid(column=5, row=4, sticky='ne')
 
+        if self.farming == 'On':
+            self.runs_label = tk.Label(self.monitoringwindow, 
+                                        width=15, 
+                                        height=3, 
+                                        text='Runs completed', 
+                                        relief='sunken',
+                                        font=os_font)
+            self.runs_label.grid(column=1, row=4, sticky='sw', padx=10, pady=(10, 0))
+
+            self.runs = tk.IntVar(value=0)
+            self.runs_display = tk.Label(self.monitoringwindow, 
+                                            width=8, 
+                                            height=3, 
+                                            relief='sunken', 
+                                            textvariable=self.runs, 
+                                            font=os_font)
+            self.runs_display.grid(column=1, row=4, sticky='s', padx=(75,0), pady=(10, 0))
+
+            monitor_farming_text = tk.Label(self.monitoringwindow, 
+                                            text='Farm mode: On',             
+                                            relief='sunken', 
+                                            padx=10, 
+                                            pady=10)
+            monitor_farming_text.grid(column=5, row=2, sticky='e')
+
+            self.monitor_run_button.grid_configure(pady=(15,0))
+        else:
+            monitor_queuemode_text = tk.Label(self.monitoringwindow, 
+                                                text='Queue mode: '+str(self.queue_val),             
+                                                relief='sunken', 
+                                                padx=10, 
+                                                pady=10)
+            monitor_queuemode_text.grid(column=5, row=2, sticky='se')
+
+            monitor_replay_text = tk.Label(self.monitoringwindow, 
+                                            text='Replay mode: '+str(self.replay_val),
+                                            relief='sunken', 
+                                            padx=10, 
+                                            pady=10)
+            monitor_replay_text.grid(column=5, row=3, sticky='e', pady=10)
+
+        # create the initial placeholder thread for MainWindow.is_monitoringwindow.
+        self.bot_thread = threading.Thread()
+        MonitoringWindow.current_bot_thread = self.bot_thread
+
         with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
             if json.load(f)["logging"]:
                 BotVars.logging = True
             else:
                 BotVars.logging = False
-        GuiHotkeys.start_stop_status = 0
-        GuiHotkeys.pause_status = 0
+        GuiHotkeys.start_stop_status = False
+        GuiHotkeys.pause_status = False
         # listener thread object sends keyboard inputs to _bot_hotkey method
         self.bot_hk_listener = threading.Thread(target=self._bot_hotkey)
         self.bot_hk_listener.daemon = True
@@ -342,6 +314,9 @@ class MonitoringWindow:
 
     def _update_collection_status(self) -> None:
         BotVars.current_event_status = self.collection_val
+
+    def _update_farming_status(self) -> None:
+        BotVars.current_farming_status = self.farming
 
     def _stop_or_run(self) -> None:
         """Handles current bot thread termination and opening of new ones."""
@@ -370,39 +345,39 @@ class MonitoringWindow:
             shutil.copy2(gui_paths.FILES_PATH/'_ocr_upgradedata.json', gui_paths.FILES_PATH/'upgrades_current.json')
             with open(gui_paths.FILES_PATH/'upgrades_current.json') as f:
                 identifier: list[int | str] = json.load(f)["__identifier"]
-        issue_flag = 0
+        issue_flag: bool = False
         if customres:
             if list(resolution_val) != identifier[0:2]:
                 cprint("-"*55+"\n"
                         ">Ocr data resolution differs from display resolution:\n"
                         " Ocr resolution:", identifier[0], identifier[1], "\n"
                         " Display resolution:", resolution_val[0], resolution_val[1])
-                issue_flag = 1
+                issue_flag = True
         else:
             if list((w, h)) != identifier[0:2]:
                 cprint("-"*55+"\n"
                         ">Ocr data resolution differs from display resolution:\n"
                         " Ocr resolution:", identifier[0], identifier[1], "\n"
                         " Display resolution:", w, h)
-                issue_flag = 1
+                issue_flag = True
         if identifier[4] == "fullscreen" and windowed:
             cprint("-"*55+"\n"
                     ">Ocr data supports fullscreen, but you use\n windowed mode.")
-            issue_flag = 1
+            issue_flag = True
         elif identifier[4] == "windowed" and not windowed:
             cprint("-"*55+"\n"
                     ">Ocr data supports windowed mode, but you use\n fullscreen mode.")
-            issue_flag = 1
+            issue_flag = True
         if ingame_shift and list(shift_val) != identifier[2:4]:
             cprint("-"*55+"\n"
                     ">Ocr data coordinate shift differs from current value:\n"
                     " Ocr shift:", identifier[3], identifier[3], "\n"
                     " Current shift:", shift_val[0], shift_val[1])
-            issue_flag = 1
-        if issue_flag == 1:
+            issue_flag = True
+        if issue_flag:
             cprint(55*"-"+"\n"
                     "-->> Issues detected; see above. <<--\n" \
-                    "They don't prevent bot from starting, but are very likely to cause problems with ocr text "
+                    "They don't prevent bot from running, but are very likely to cause problems with ocr text "
                     "detection.\n"+
                     27*" "+".\n"+
                     27*" "+".\n"+
@@ -437,7 +412,7 @@ class MonitoringWindow:
             self.current_plans = self.all_plans[:]
         while self.current_plans != []:
             BotData.victory = False
-            attempt_number = 1
+            attempt_number: int = 1
             while attempt_number <= retries:
                 self._plantest_print(self.current_plans[0], attempt_number, retries)
                 self._execute(self.current_plans, 0)
@@ -469,6 +444,7 @@ class MonitoringWindow:
         customres: bool = gui_vars_dict["check_resolution"]
         resolution_val: tuple[int, ...] = tuple(map(int, gui_vars_dict["custom_resolution"].split('x')))
         windowed: bool = gui_vars_dict["windowed"]
+        winpos: str = gui_vars_dict["windowed_position"]
         ingame_shift: bool = gui_vars_dict["check_resolution"]
         shift_val: tuple[int, ...] = tuple(map(int, gui_vars_dict["ingame_res_shift"].split('x')))
         retries_val: int = gui_vars_dict["retries"]
@@ -478,7 +454,18 @@ class MonitoringWindow:
             self._res_check(customres, resolution_val, windowed, w, h, ingame_shift, shift_val)
         if customres:
             cprint('[Custom Resolution] '+str(resolution_val[0])+'x'+str(resolution_val[1])+'\n'
-                    '[Windowed] '+str(windowed)+'\n')
+                    '[Windowed] '+str(windowed))
+            if windowed:
+                wintext: str
+                if winpos == 'centered':
+                    wintext = 'centered'
+                elif sys.platform == 'win32' and winpos == 'auto':
+                    wintext = 'auto'
+                else:
+                    wintemp = winpos.split('x')
+                    wintext = wintemp[0].strip()+'x'+wintemp[1].strip()
+                cprint('[Window position] '+wintext)
+            cprint()
         else:
             w, h = pyautogui.size()
             cprint('[Resolution] '+str(w)+'x'+str(h)+'\n')
@@ -490,7 +477,7 @@ class MonitoringWindow:
                 self.monitor_mapscreen.image = new_image # type: ignore
             except tk.TclError:
                 self.monitor_mapscreen.configure(image='')
-                self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
+                self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
             self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display('spa_pitsEasySandbox'))
             cprint(".-------------------------.\n"
                   "| Ocr adjust mode enabled |\n"
@@ -503,20 +490,17 @@ class MonitoringWindow:
         if os.path.exists(gui_paths.FILES_PATH/'.temp_upg_deltas.json'):
             os.remove(gui_paths.FILES_PATH/'.temp_upg_deltas.json')
         if self.farming == 'On':
-            cprint("Collection event farming mode enabled.\n" \
-                   "Bot keeps farming expert maps with bonus rewards on Easy, Standard.\n"
-                   "Monkey knowledge is not required.\n"
-                   "Only Sauda is required as hero, make sure you have her unlocked.\n")
+            set_plan.farming_print()
             set_plan.select_defaulthero()
             while True:
-                rewardmap: str = set_plan.select_rewardmap()
-                if rewardmap == '':
+                rewardplan: str = set_plan.select_rewardplan()
+                if rewardplan == '':
                     cprint('\n#####Unable to continue farming loop, bot terminated#####')
                     self.monitor_run_button['text'] = 'Run'
                     return
-                rewardplan: str = rewardmap.replace(' ', '_')+'EasyStandard'
                 try:
                     self.monitor_mapscreen.destroy()
+                    rewardmap: str = plan_data.return_map(rewardplan)
                     new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/f'{rewardmap}.png')
                     self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
                                                        image=new_image, 
@@ -527,10 +511,10 @@ class MonitoringWindow:
                     self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
                 except tk.TclError:
                     self.monitor_mapscreen.configure(image='')
-                    self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
+                    self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
                 self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display(rewardplan))
-                set_plan.run_farming_mode(rewardplan)
-                self.runs.set(self.runs.get()+1)
+                if set_plan.run_farming_mode(rewardplan):
+                    self.runs.set(self.runs.get()+1)
         if self.replay_val == 'On':
             while True:
                 self._run_plans(retries_val)
@@ -573,7 +557,7 @@ class MonitoringWindow:
             self.monitor_mapscreen.image = new_image # type: ignore
         except tk.TclError:
             self.monitor_mapscreen.configure(image='')
-            self.monitor_mapscreen['text'] = self.monitor_mapscreen_ascii
+            self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
         self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display(current))
         set_plan.plan_setup(current)
 
@@ -587,13 +571,13 @@ class MonitoringWindow:
             key: Latest keyboard key the user has pressed. 
         """
         while self.monitoringwindow.winfo_exists():
-            if GuiHotkeys.start_stop_status == 1:
-                GuiHotkeys.start_stop_status = 0
+            if GuiHotkeys.start_stop_status:
+                GuiHotkeys.start_stop_status = False
                 self._stop_or_run()
                 time.sleep(1)
-            elif GuiHotkeys.pause_status == 1:
+            elif GuiHotkeys.pause_status:
                 BotVars.paused = not BotVars.paused
-                GuiHotkeys.pause_status = 0
+                GuiHotkeys.pause_status = False
             time.sleep(0.1)
         else:
             gui_tools.terminate_thread(self.bot_hk_listener)

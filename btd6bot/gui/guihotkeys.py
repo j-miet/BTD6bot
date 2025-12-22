@@ -3,14 +3,14 @@ from pynput.keyboard import Key
 import gui.gui_paths as gui_paths
 import bot.hotkeys as hotkeys
 
-class GuiHotkeys():
-    """Class for handling gui hotkeys."""
+class GuiHotkeys:
+    """Class for tracking gui hotkey values."""
     exit_hotkey: Key | str
     pause_hotkey: Key | str
     start_stop_hotkey: Key | str
 
-    start_stop_status = 0
-    pause_status = 0
+    start_stop_status: bool = False
+    pause_status: bool = False
 
     @staticmethod
     def update_guihotkeys() -> None:

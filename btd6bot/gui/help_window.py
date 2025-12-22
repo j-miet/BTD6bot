@@ -1,4 +1,4 @@
-"""Contains HelpWindow class."""
+"""Implements HelpWindow class."""
 
 from __future__ import annotations
 import tkinter as tk
@@ -9,14 +9,10 @@ from tkinterweb import HtmlFrame # type: ignore
 import gui.gui_paths as gui_paths
 
 class HelpWindow:
-    """Display help text window.
+    """Help window displaying README.md contents.
 
-    A separate Toplevel object is created so that other tkinter widgets can be placed inside it.
-
-    Attributes:
-        helpwindow (tk.Toplevel): Toplevel object that creates a new window where other elements can be inserted.
-        helpframe (tkinterweb.HtmlFrame): Frame for displaying html data, in particular readme markdown data converted 
-            to html format.
+    In order to display markdown in tkinter environment, it's first translated to html then loaded into special 
+    HtmlFrame window from tkinterweb library.
     """
     def __init__(self) -> None:
         """Initialize help window.""" 

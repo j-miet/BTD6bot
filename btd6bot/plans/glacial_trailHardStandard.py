@@ -43,9 +43,7 @@ def play(rounds):
             druid = Monkey('druid', 0.6135416666667, 0.9546296296296)
             druid.upgrade(['0-1-0'])
         elif current_round == 23:
-            druid.upgrade(['0-2-0'])
-        elif current_round == 24:
-            druid.upgrade(['0-3-0'])
+            druid.upgrade(['0-2-0','0-3-0'])
         elif current_round == 25:
             druid.upgrade(['1-3-0'])
         elif current_round == 31:

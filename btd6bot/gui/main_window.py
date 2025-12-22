@@ -1,6 +1,7 @@
-"""Contains MainWindow class responsible for operating entire GUI.
+"""Implements MainWindow class responsible for operating entire GUI.
 
-Also includes a MainWindowCombobox class which requires a MainWindow instance as argument.
+Also includes MainWindowCombobox class which requires a MainWindow instance as argument.
+For this reason placing it anywhere else would result into circular import.
 """
 
 from __future__ import annotations
@@ -34,6 +35,7 @@ from utils import plan_data
 
 if TYPE_CHECKING:
     from typing import Any, TextIO
+    from tkinter import Event
 
 class MainWindowCombobox(ttk.Combobox):
     """Custom combobox class specifically made for MainWindow class.
@@ -50,73 +52,60 @@ class MainWindowCombobox(ttk.Combobox):
     def __init__(self, mainwindow: MainWindow, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.mainwindow = mainwindow
-        pd = self.tk.call('ttk::combobox::PopdownWindow', self) #get popdownWindow reference 
-        lb = pd + '.f.l' #get popdown listbox
-        self._bind(('bind', lb),"<KeyPress>",self.popup_key_pressed,None)
 
-    def popup_key_pressed(self,evt):
+        pd = self.tk.call('ttk::combobox::PopdownWindow', self) # get popdownWindow reference 
+        lb = pd + '.f.l' # get popdown listbox
+        self._bind(('bind', lb), "<KeyPress>", self._comboboxsearch, None)
+
+    def _updateselection(self, i: int, event: Event) -> None:
+        self.current(i)
+        self.icursor(i)
+        self.tk.eval(event.widget + ' selection clear 0 end') # clear current selection
+        self.tk.eval(event.widget + ' selection set ' + str(i)) # select new element
+        self.tk.eval(event.widget + ' see ' + str(i)) # spin combobox popdown for selected element will be
+
+    def _comboboxsearch(self, event: Event) -> str:
+        """Implements custom combobox behavior.
+
+        Using keyword string "break" as return value disables current widget's (= this combobox) default behavior.
+        Importantly, moving up and down with arrow keys interferes with custom letter-based search and messes up index 
+        tracking. Disabling this and making Custom "Up", "Down" and "Return" (= pressing Enter) events fixes this.
+        """
         values = self.cget("values")
-        for i in it.chain(range(self.current() + 1,len(values)),range(0,self.current())):
-            if evt.char.lower() == values[i][0].lower():
-                self.current(i)
-                self.icursor(i)
-                self.tk.eval(evt.widget + ' selection clear 0 end') #clear current selection
-                self.tk.eval(evt.widget + ' selection set ' + str(i)) #select new element
-                self.tk.eval(evt.widget + ' see ' + str(i)) #spin combobox popdown for selected element will be visible
-                if self._name == 'mapbox':
-                    self.mainwindow.update_mapconfig() # auto-update map info panel when for currently selected element
-                elif self._name == 'stratbox':
-                    self.mainwindow.update_stratconfig()
+        match event.keysym:
+            case "Return":
+                try:
+                    self.focus_displayof() # 'Enter' to unfocus combobox. Throws KeyError which must be handled.
+                except KeyError:
+                    ...
                 return
+            case "Up":
+                if self.current() <= 0:
+                    return
+                i: int = self.current()-1
+                self._updateselection(i, event)
+            case "Down":
+                if self.current() >= len(values)-1:
+                    return
+                i: int = self.current()+1
+                self._updateselection(i, event)
+            case _:
+                for i in it.chain(range(self.current() + 1,len(values)), range(0,self.current())):
+                    if event.char.lower() == values[i][0].lower():
+                        self._updateselection(i, event)
+                        break
+        if self.widgetName == 'mapbox':
+            self.mainwindow._update_mapconfig() # auto-update map info panel when for currently selected element
+        elif self.widgetName == 'stratbox':
+            self.mainwindow._update_stratconfig()
+        return "break"
 
 
 class MainWindow:
     """GUI main window.
 
-    Places main window frame inside root. All GUI windows need the main thread which is tied to this root:
+    Places main window frame inside root. Other GUI windows need the main thread which is tied to this root:
     if this thread is terminated, all other windows and their respective threads will also close.
-
-    Attributes:
-        kb_listener (pynput.keyboard.Listener, class attribute): 
-            Pynput keyboard listener to track key presses for gui hotkey tracking function. Listener is a thread object 
-            so it can track inputs at all times and is terminated only after entire program is closed.
-
-            Listener thread is not started on Mac operating systems as it appears to interfere with keyboard controller,
-            crashing entire program. As controller is responsible for handling all keyboards inputs it must be
-            prioritized which unfortunately leaves gui hotkeys unavailable.
-
-        root (tk.Tk): 
-            A tkinter.root object for placing the main window.
-        reader_init (bool): 
-            Tracks ocr reader initialization status. Starts as False, and after initialization, remains True for the 
-            rest of program runtime.
-        init_button_first_time (bool): Tracks if initialization button has been pressed or not. This is important as 
-            otherwise opening and closing windows/toggling button On then Off, could enable button access prematurely.
-        collection (tk.StringVar): StringVar to set On/Off value for collection event mode button.
-        farming (tk.StringVar): Enable/disable farm mode.
-        replay (tk.StringVar): StringVar to set On/Off value for a replay mode button.
-        queue (tk.StringVar): StringVar to set On/Off value for a queue mode button.
-        current_map (str): Currently selected map.
-        maps_box (ttk.Combobox): Dropdown menu of all maps.
-        info_window (tk.Text): Displays plan information based on current map and strategy. Info is read from current 
-            plan file located in 'plans' folder using current current_map and current_strat values.
-        current_strat (str): Currently selected strategy based on current_map.
-        strat_box (ttk.Combobox): Dropdown menu of all strategies for currently selected map.
-        mapscreen_text_str (str): Default string text to display in place of map screen.
-        mapscreen (tk.Label): Label used for displaying current map image. Images are stored and loaded from 
-            'map images' folder. If no image is found, insert mapscreen_text_str into label instead.
-        help_button (tk.Button): Opens a separate help window.
-        hotkey_button (tk.Button): Opens a separate hotkey settings window.
-        queueoptions_button (tk.Button): Opens a separate options window for queue mode settings.
-        settings_button (tk.Button): Opens a separate settings window.
-        collection_toggle (tk.Checkbutton): Enable/disable collection event mode.
-        queue_toggle (tk.Checkbutton): Enable/disable queue mode.
-        replay_toggle (tk.Checkbutton): Enable/disable replay mode.
-        monitor_plot_button (tk.Button): Button to open a matplotlib screen which lists all rounds and their respective 
-            commands. Useful for users that want to see how commands are written and want to see how the current plan 
-            progresses.
-             >Plots are quite resource-intensive and can be lagging if you drag their contents around.
-        start_button (tk.Button): Button object which opens a separate MonitoringWindow for running the bot.
     """
     try:
         _MAP_IMAGES = os.listdir(gui_paths.MAP_IMAGES_PATH)
@@ -137,9 +126,9 @@ class MainWindow:
         if key == GuiHotkeys.exit_hotkey or (isinstance(key, KeyCode) and key.char == GuiHotkeys.exit_hotkey): 
             os.kill(os.getpid(), signal.SIGTERM)
         elif key == GuiHotkeys.start_stop_hotkey:
-            GuiHotkeys.start_stop_status = 1
+            GuiHotkeys.start_stop_status = True
         elif key == GuiHotkeys.pause_hotkey:
-            GuiHotkeys.pause_status = 1
+            GuiHotkeys.pause_status = True
 
     # Listener thread object sends keyboard inputs to _hotkey_tracker function. 
     # If user operating system is MacOS, gui hotkeys must be disabled in order to avoid errors with keyboard controller 
@@ -147,9 +136,9 @@ class MainWindow:
     # Should other Listener objects exist, make sure to disable them on any unsupported OS and implement alternate
     # systems in place.
     if sys.platform != 'darwin':
-        kb_listener = pynput.keyboard.Listener(on_press = _hotkey_tracker)
-        kb_listener.daemon = True
-        kb_listener.start()    
+        _kb_listener = pynput.keyboard.Listener(on_press = _hotkey_tracker)
+        _kb_listener.daemon = True
+        _kb_listener.start()    
 
     def __init__(self, root: tk.Tk) -> None:
         """Initialize main window using the passed tkinter root.
@@ -166,13 +155,8 @@ class MainWindow:
         self.root.maxsize(655,442)
         self.MAP_NAMES_AND_STRATS_DICT = plan_data.return_maps_and_strats(plan_data.read_plans())
 
-        self.reader_init = False
-        self.init_button_first_time = True
-
-        self.collection = tk.StringVar(value='Off')
-        self.farming = tk.StringVar(value='Off')
-        self.replay = tk.StringVar(value='Off')
-        self.queue = tk.StringVar(value='Off')
+        self.reader_init: bool = False
+        self.init_button_first_time: bool = True
 
         mainframe = tk.Frame(root, 
                              borderwidth=5, 
@@ -184,83 +168,81 @@ class MainWindow:
         mainframe.grid(sticky='nwes')
         mainframe.bind("<ButtonRelease-1>", lambda _: self.root.focus())
         
-        self.current_map = 'dark castle'
+        self.current_map: str = 'dark castle'
         self.maps_box = MainWindowCombobox(mainwindow=self,
-                                           master=mainframe, 
-                                           state='readonly', 
-                                           values=self.get_maps(),
-                                           name='mapbox')
+                                            master=mainframe, 
+                                            state='readonly', 
+                                            values=self._get_maps(),
+                                            name='mapbox')
         self.maps_box.grid(column=0, row=5, sticky='sw', pady=10)
-        self.maps_box.bind("<<ComboboxSelected>>", lambda _: self.update_mapconfig())
+        self.maps_box.bind("<<ComboboxSelected>>", lambda _: self._update_mapconfig())
         self.maps_box.bind("<<ComboboxSelected>>", lambda _: self.root.focus(), add='+')
-        self.maps_box.set(self.current_map)     # initialize with default value
+        self.maps_box.set(self.current_map) # initialize with default value
 
         info_window_scroll = ttk.Scrollbar(mainframe, 
-                                           orient='vertical')
+                                            orient='vertical')
         info_window_scroll.grid(column=2, row=3, rowspan=2, sticky="nsw")
 
         self.info_window = tk.Text(mainframe,
-                                   height=9, 
-                                   yscrollcommand=info_window_scroll.set, 
-                                   font=("Times New Roman", 11),
-                                   wrap=tk.WORD, relief='sunken')
+                                    height=9, 
+                                    yscrollcommand=info_window_scroll.set, 
+                                    font=("Times New Roman", 11),
+                                    wrap=tk.WORD, relief='sunken')
         self.info_window.grid(column=0, columnspan=2, row=3, rowspan=2)
         info_window_scroll.configure(command=self.info_window.yview)
 
-        self.current_strat = 'Easy-Standard'
+        self.current_strat: str = 'Easy-Standard'
         self.strat_box = MainWindowCombobox(mainwindow=self,
                                             master=mainframe, 
-                                            state='readonly', 
-                                            values=self.get_strats(),
+                                            state='readonly',
                                             name='stratbox')
         self.strat_box.grid(column=1, row=5, sticky='sw', pady=10)
-        self.strat_box.bind("<<ComboboxSelected>>", lambda _: self.update_stratconfig())
+        self.strat_box.bind("<<ComboboxSelected>>", lambda _: self._update_stratconfig())
         self.strat_box.bind("<<ComboboxSelected>>", lambda _: self.root.focus(), add='+')
-        self.strat_box.set(self.current_strat)
-        self.show_mapinfo() # initialize info_window with default value 
-
-        self.mapscreen_text_str = (r" ___  _____  ___    __  _          _    "+"\n"
-                                   r"| _ )|_   _||   \  / / | |__  ___ | |_  "+"\n"
-                                   r"| _ \  | |  | |) |/ _ \| '_ \/ _ \|  _| "+"\n"
-                                   r"|___/  |_|  |___/ \___/|_.__/\___/ \__| "+"\n"
-                                   r"   _    _____________       ___    _____"+"\n"
-                                   r"__| \_//   // //     \_____/   \ _/     "+"\n"
-                                   r" _|__//    || ||      \   |     |       "+"\n"
-                                   r"(____)(    || ||      ))   \   /      __"+"\n"
-                                   r"  |  \\    || ||      /     /_\      /  "+"\n"
-                                   r"  |_/ \\___\\_\\_____/              /   "+"\n"
-                                   r"___________________________________/    "
-                                    )  
+        self._show_mapinfo() # initialize info_window with default value 
+ 
+        self.MAPSCREEN_TEXT_STR = (r" ___  _____  ___    __  _          _    "+"\n"
+                                r"| _ )|_   _||   \  / / | |__  ___ | |_  "+"\n"
+                                r"| _ \  | |  | |) |/ _ \| '_ \/ _ \|  _| "+"\n"
+                                r"|___/  |_|  |___/ \___/|_.__/\___/ \__| "+"\n"
+                                r"   _    _____________       ___    _____"+"\n"
+                                r"__| \_//   // //     \_____/   \ _/     "+"\n"
+                                r" _|__//    || ||      \   |     |       "+"\n"
+                                r"(____)(    || ||      ))   \   /      __"+"\n"
+                                r"  |  \\    || ||      /     /_\      /  "+"\n"
+                                r"  |_/ \\___\\_\\_____/              /   "+"\n"
+                                r"___________________________________/    "
+                                )
         style = ttk.Style()
         style.configure('Style.TButton', font='TkFixedFont')
         try:
             map_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'dark castle.png')
             self.mapscreen = ttk.Label(mainframe, 
-                                       image=map_image, 
-                                       compound='top', 
-                                       anchor='nw', 
-                                       relief='sunken', 
-                                       justify='left', 
-                                       style='Style.TButton')
+                                        image=map_image, 
+                                        compound='top', 
+                                        anchor='nw', 
+                                        relief='sunken', 
+                                        justify='left', 
+                                        style='Style.TButton')
             # Save image reference; otherwise Python garbage collection destroys it.
             # For some reason, image is not recognized as an attribute of Label. Thus type ignore to avoid mypy errors.
             self.mapscreen.image = map_image # type: ignore
             self.mapscreen.grid(column=0, row=0, columnspan=3, rowspan=3, sticky='nw')
         except (FileNotFoundError, tk.TclError):
             self.mapscreen = ttk.Label(mainframe, 
-                                       relief='sunken', 
-                                       style='Style.TButton', 
-                                       justify='left')
+                                        relief='sunken', 
+                                        style='Style.TButton', 
+                                        justify='left')
             self.mapscreen.grid(column=0, row=0, columnspan=2, rowspan=3)
             # Text generated with 'Graceful' font on https://patorjk.com/software/taag
             # Picture is self-made.
-            self.mapscreen['text'] = self.mapscreen_text_str
+            self.mapscreen['text'] = self.MAPSCREEN_TEXT_STR
 
         self.help_button= tk.Button(mainframe, 
                                     text="Help", 
                                     height=2, 
                                     width=5, 
-                                    command=self.help_window, 
+                                    command=self._help_window, 
                                     padx=20,
                                     pady=5)
         self.help_button.grid(column=2, row=0, padx=30, pady=10, sticky='nwe')
@@ -269,59 +251,63 @@ class MainWindow:
                                         text="Settings", 
                                         height=2, 
                                         width=5,
-                                        command=self.settings_window, 
+                                        command=self._settings_window, 
                                         padx=20, 
                                         pady=5)
         self.settings_button.grid(column=3, row=0, pady=10, sticky='nwe')
 
         self.hotkey_button = tk.Button(mainframe, 
-                                       text="Set\nhotkeys", 
-                                       height=2, 
-                                       width=5, 
-                                       command=self.hotkey_window,
-                                       padx=20, 
-                                       pady=5)
+                                        text="Set\nhotkeys", 
+                                        height=2, 
+                                        width=5, 
+                                        command=self._hotkey_window,
+                                        padx=20, 
+                                        pady=5)
         self.hotkey_button.grid(column=3, row=1, pady=10, sticky='we')
 
         self.queueoptions_button = tk.Button(mainframe, 
-                                             text="Queue mode\nmaplist", 
-                                             height=2, 
-                                             width=5, 
-                                             command=self.queue_mode_window, 
-                                             padx=20, 
-                                             pady=5)
+                                                text="Queue mode\nmaplist", 
+                                                height=2, 
+                                                width=5, 
+                                                command=self._queue_mode_window, 
+                                                padx=20, 
+                                                pady=5)
         self.queueoptions_button.grid(column=3, row=2, pady=10, sticky='wes') 
 
+        self.collection = tk.StringVar(value='Off')
         self.collection_toggle = tk.Checkbutton(mainframe, 
                                                 text='Collection Event', 
                                                 anchor='e', 
                                                 variable=self.collection,
-                                                command=self.collection_mode_check,
+                                                command=self._collection_mode_check,
                                                 offvalue='Off', 
                                                 onvalue='On', 
                                                 state='disabled')
         self.collection_toggle.grid(column=3, row=3, sticky='se', pady=(1,1))
 
+        self.farming = tk.StringVar(value='Off')
         self.collection_farm_toggle = tk.Checkbutton(mainframe, 
-                                                     text='Farm mode', 
-                                                     anchor='e', 
-                                                     variable=self.farming,
-                                                     command=self.farming_mode_check,
-                                                     offvalue='Off', 
-                                                     onvalue='On', 
-                                                     state='disabled')
+                                                        text='Farm mode', 
+                                                        anchor='e', 
+                                                        variable=self.farming,
+                                                        command=self._farming_mode_check,
+                                                        offvalue='Off', 
+                                                        onvalue='On', 
+                                                        state='disabled')
         self.collection_farm_toggle.grid(column=3, row=4, sticky='ne', pady=(1,2))
 
+        self.queue = tk.StringVar(value='Off')
         self.queue_toggle = tk.Checkbutton(mainframe, 
-                                           text='Queue mode', 
-                                           anchor='e', 
-                                           variable=self.queue,
-                                           command=self.queue_mode_check, 
-                                           offvalue='Off', 
-                                           onvalue='On', 
-                                           state='disabled')
+                                            text='Queue mode', 
+                                            anchor='e', 
+                                            variable=self.queue,
+                                            command=self._queue_mode_check, 
+                                            offvalue='Off', 
+                                            onvalue='On', 
+                                            state='disabled')
         self.queue_toggle.grid(column=3, row=4, sticky='e', pady=(2,2))
 
+        self.replay = tk.StringVar(value='Off')
         self.replay_toggle = tk.Checkbutton(mainframe, 
                                             text='Replay mode', 
                                             anchor='e', 
@@ -332,19 +318,19 @@ class MainWindow:
         self.replay_toggle.grid(column=3, row=4, sticky='se', pady=(2,5))
 
         self.monitor_plot_button = tk.Button(mainframe, 
-                                             text='Show plot', 
-                                             height=1, 
-                                             state='normal',
-                                             command=lambda: roundplot.plot_plan(self.get_original()))
+                                                text='Show plot', 
+                                                height=1, 
+                                                state='normal',
+                                                command=lambda: roundplot.plot_plan(self._get_original()))
         self.monitor_plot_button.grid(column=2, row=5, sticky='e', padx=55)
 
         self.start_button = tk.Button(mainframe, 
-                                      text="Initialize bot", 
-                                      height=2, 
-                                      command=self.monitoring_window,
-                                      state='active', 
-                                      padx=10, 
-                                      pady=0)
+                                        text="Initialize bot", 
+                                        height=2, 
+                                        command=self._monitoring_window,
+                                        state='active', 
+                                        padx=10, 
+                                        pady=0)
         self.start_button.grid(column=3, row=5, sticky='e')
     
         if sys.platform == "darwin": # adjust gui element placements if macOS
@@ -367,35 +353,54 @@ class MainWindow:
             self.start_button.grid(column=3, row=6, sticky='e')
 
         self._delete_readme_html()
+        self._update_mapconfig()
+        self._update_stratconfig()
+        self.strat_box.set(self.current_strat)
 
     def _delete_readme_html(self) -> None:
         if os.path.exists(gui_paths.FILES_PATH/'helpwindow'/'README.html'):
             os.remove(gui_paths.FILES_PATH/'helpwindow'/'README.html')
 
-    def get_maps(self) -> list[str]:
+    def _reorder_strats(self, strategies: list[str]) -> list[str]:
+        filter = {"Easy": 1, "Medium": 2, "Hard": 3} # change plan list order: Easy first then Medium and last Hard
+        strats: list[str] = strategies.copy()
+        current: int
+        for i in range(0, len(strats)-1):
+            strat_current: str = strats[i].split('-')[0]
+            strat_next: str = strats[i+1].split('-')[0]
+            try:
+                if filter[strat_current] > filter[strat_next]:
+                    current = strats[i]
+                    strats[i] = strats[i+1]
+                    strats[i+1] = current
+            except KeyError:
+                ...
+        return strats
+
+    def _get_maps(self) -> list[str]:
         """Get all map names.
 
         Returns:
             names: List of all map names parsed from files in 'plans' folder.
         """
-        names = []
+        names: list[str] = []
         for m in self.MAP_NAMES_AND_STRATS_DICT.keys():
             names.append(m)
         return names
 
-    def get_strats(self) -> list[str]:
+    def _get_strats(self) -> list[str]:
         """Get all strategy names and update current map info window.
 
         Returns:
             strats: List of all strategy names parsed from files in 'plans' folder.
         """
-        strats = []
+        strats: list[str] = []
         for s in self.MAP_NAMES_AND_STRATS_DICT[self.current_map]:
             strats.append(s)
-        self.show_mapinfo()
+        self._show_mapinfo()
         return strats
 
-    def update_mapconfig(self) -> None:
+    def _update_mapconfig(self) -> None:
         """Reads map combobox value, and updates current map, image and strategies.
 
         Also sets default value for current strategy after map value is read."""
@@ -410,7 +415,7 @@ class MainWindow:
                     self.mapscreen.image = temp # type: ignore 
                 except (AttributeError, ValueError):
                     self.mapscreen.configure(image='', compound='center', anchor='center', justify='left')
-                    self.mapscreen['text'] = self.mapscreen_text_str
+                    self.mapscreen['text'] = self.MAPSCREEN_TEXT_STR
                 self.strat_box.set(self.MAP_NAMES_AND_STRATS_DICT[map_name][0])
                 strats_for_map = []
                 for strats in self.MAP_NAMES_AND_STRATS_DICT[map_name]:
@@ -418,27 +423,27 @@ class MainWindow:
                 self.strat_box.configure(values=strats_for_map)
                 self.current_strat = self.MAP_NAMES_AND_STRATS_DICT[map_name][0]
                 self.info_window.insert('end', '')
-                self.update_stratconfig()
+                self._update_stratconfig()
 
-    
-    def update_stratconfig(self) -> None:
+    def _update_stratconfig(self) -> None:
         """Updates current strat value and possible map info screen if available."""
         for maps in self.MAP_NAMES_AND_STRATS_DICT.keys():
             if self.maps_box.get() == maps:
                 strats_for_map = []
                 for strats in self.MAP_NAMES_AND_STRATS_DICT[maps]:
                     strats_for_map.append(strats)
-                    self.strat_box.configure(values=strats_for_map)
+                all_strats: list[str] = self._reorder_strats(strats_for_map)
+                self.strat_box.configure(values=all_strats)
         self.current_strat = self.strat_box.get()
-        self.show_mapinfo()
+        self._show_mapinfo()
 
-    def show_mapinfo(self) -> None:
+    def _show_mapinfo(self) -> None:
         """Displays optional info screen.
         
         Info texts are defined at the beginning of each plan file in 'plans' folder.
         If no valid info string is found, displays a blank screen.
         """
-        original = self.get_original()
+        original = self._get_original()
         with open(gui_paths.PLANS_PATH/(original+'.py')) as file_read:
             infolist = file_read.readlines()
         try:
@@ -467,7 +472,7 @@ class MainWindow:
             self.info_window.insert('end', '')
             self.info_window['state'] = 'disabled'
 
-    def get_original(self) -> str:
+    def _get_original(self) -> str:
         """Reconstruct the original plan name from a .py file using name and strat components.
 
         Returns:
@@ -477,19 +482,19 @@ class MainWindow:
         stratsplit = self.current_strat.split('-')
         return '_'.join(namesplit) + stratsplit[0] + stratsplit[1]
     
-    def choose_mode(self) -> list[str]:
+    def _choose_mode(self) -> list[str]:
         """Returns either a single plan or list of plans from queue list.
 
         Returns:
             String list of plans based on queue mode settings.
         """
         if self.queue.get() == 'Off':
-            return [self.get_original()]
+            return [self._get_original()]
         else:
             with open(gui_paths.QUEUE_LIST_PATH) as file_read:
                 return plan_data.list_format(file_read.readlines())
 
-    def ocr_init(self, init_win: tk.Toplevel) -> None:
+    def _ocr_init(self, init_win: tk.Toplevel) -> None:
         """Imports ocr Reader object from bot.ocr.ocr_reader, which also initializes it for use.
         
         This method is called through root.after method to allow mainloop to create a init label and only after start 
@@ -518,7 +523,7 @@ class MainWindow:
         self.replay_toggle['state'] = 'active'
         self.reader_init = True
 
-    def monitoring_window(self) -> None:
+    def _monitoring_window(self) -> None:
         """Create monitoring window object and allocate it to its own thread.
 
         When attempting to open a monitoring window first time in a session, a reader is also loaded. This 
@@ -563,22 +568,22 @@ class MainWindow:
                      text='Loading ocr model into memory, please wait.',
                      font=("Times", 16, "bold")).pack()
             ocr_init_window.attributes('-topmost', True)
-            threading.Thread(target=lambda: self.ocr_init(ocr_init_window), daemon=True).start()
+            threading.Thread(target=lambda: self._ocr_init(ocr_init_window), daemon=True).start()
             self.start_button.configure(state='disabled')
             return
         self.start_button.configure(state='disabled')
-        monitoringwindow = MonitoringWindow(self.choose_mode(), 
+        monitoringwindow = MonitoringWindow(self._choose_mode(), 
                                             self.replay.get(), 
                                             self.queue.get(),
                                             self.collection.get(),
                                             self.farming.get())
-        monitoringthread = threading.Thread(target=self.is_monitoringwindow, 
+        monitoringthread = threading.Thread(target=self._is_monitoringwindow, 
                                             args=[monitoringwindow.get_monitoringwindow(),
                                                   monitoringwindow.get_old_output()],
                                             daemon=True)
         monitoringthread.start()
 
-    def is_monitoringwindow(self, current_monitoringwin: tk.Toplevel, old_stdout: TextIO | Any) -> None:
+    def _is_monitoringwindow(self, current_monitoringwin: tk.Toplevel, old_stdout: TextIO | Any) -> None:
         """MainWindow method that tracks existence of a MonitoringWindow.
 
         If current MonitoringWindow object no longer exists, enables start button for main screen again and also 
@@ -619,16 +624,16 @@ class MainWindow:
             self.start_button.configure(state='disabled')
             time.sleep(0.01) # tracking frequency; don't set this to too low as it will strain your CPU for nothing.
 
-    def queue_mode_window(self) -> None:
+    def _queue_mode_window(self) -> None:
         """Open queue mode window which operates on its own thread."""
         self.queueoptions_button.configure(state='disabled')
         self.start_button.configure(state='disabled')
-        optionwindow = QueueModeWindow()
-        optionwindowthread = threading.Thread(target=self.is_queue_mode_screen, args=[optionwindow.get_optionwindow()])
-        optionwindowthread.daemon = True
-        optionwindowthread.start()
+        queuewindow = QueueModeWindow()
+        queuewindowthread = threading.Thread(target=self._is_queue_mode_screen, args=[queuewindow.get_queuewindow()])
+        queuewindowthread.daemon = True
+        queuewindowthread.start()
 
-    def is_queue_mode_screen(self, current_options: tk.Toplevel) -> None:
+    def _is_queue_mode_screen(self, current_options: tk.Toplevel) -> None:
         """Checks if queue mode window exists and handles button access based on this.
         
         Args:
@@ -650,7 +655,7 @@ class MainWindow:
             self.start_button.configure(state='disabled')
             time.sleep(0.01)
 
-    def queue_mode_check(self) -> None:
+    def _queue_mode_check(self) -> None:
         """Disables and enabled initialization button based on queue mode toggle.
          
         If queue mode is off and reader has been initialized, enabled start button.
@@ -664,16 +669,16 @@ class MainWindow:
         else:
             self.start_button.configure(state='active')
 
-    def hotkey_window(self) -> None:
+    def _hotkey_window(self) -> None:
         """Open hotkey window which operates on its own thread."""
         self.hotkey_button.configure(state='disabled')
         self.start_button.configure(state='disabled')
         hotkeywindow = HotkeyWindow()
-        hotkeywindowthread = threading.Thread(target=self.is_hotkeywindow, args=[hotkeywindow.get_hotkeywindow()])
+        hotkeywindowthread = threading.Thread(target=self._is_hotkeywindow, args=[hotkeywindow.get_hotkeywindow()])
         hotkeywindowthread.daemon = True
         hotkeywindowthread.start()
 
-    def is_hotkeywindow(self, current_hotkey: tk.Toplevel) -> None:
+    def _is_hotkeywindow(self, current_hotkey: tk.Toplevel) -> None:
         """Checks if hotkey window exists and handles button access based on this.
         
         Args:
@@ -697,15 +702,15 @@ class MainWindow:
             self.start_button.configure(state='disabled')
             time.sleep(0.01)
 
-    def help_window(self) -> None:
+    def _help_window(self) -> None:
         """Open help window which operates on its own thread."""
         self.help_button.configure(state='disabled')
         helpwindow = HelpWindow()
-        helpwindowthread = threading.Thread(target=self.is_helpwindow, args=[helpwindow.get_helpwindow()])
+        helpwindowthread = threading.Thread(target=self._is_helpwindow, args=[helpwindow.get_helpwindow()])
         helpwindowthread.daemon = True
         helpwindowthread.start()
 
-    def is_helpwindow(self, current_help: tk.Toplevel) -> None:
+    def _is_helpwindow(self, current_help: tk.Toplevel) -> None:
         """Checks if help window exists and handles button access based on this.
         
         Args:
@@ -727,16 +732,16 @@ class MainWindow:
                 return
             time.sleep(0.01)
      
-    def settings_window(self) -> None:
+    def _settings_window(self) -> None:
         """Open settings window which operates on its own thread."""
         self.settings_button.configure(state='disabled')
         self.start_button.configure(state='disabled')
         settingswindow = SettingsWindow()
-        settingsthread = threading.Thread(target=self.is_settingswindow, args=[settingswindow.get_settingswindow()])
+        settingsthread = threading.Thread(target=self._is_settingswindow, args=[settingswindow.get_settingswindow()])
         settingsthread.daemon = True
         settingsthread.start()
 
-    def is_settingswindow(self, current_settings: tk.Toplevel) -> None:
+    def _is_settingswindow(self, current_settings: tk.Toplevel) -> None:
         """Checks if settings window exists and handles button access based on this.
         
         Args:
@@ -758,23 +763,23 @@ class MainWindow:
             self.start_button.configure(state='disabled')
             time.sleep(0.01)
 
-    def collection_mode_check(self) -> None:
+    def _collection_mode_check(self) -> None:
         """Disables and enabled farm mode toggle depending on collection mode toggle."""
         if self.collection.get() == 'On':
             self.collection_farm_toggle.configure(state='active')
         else:
-            self.farming_mode_check()
+            self._farming_mode_check()
             self.collection_farm_toggle.configure(state='disabled')
             self.collection_farm_toggle.deselect()
 
-    def farming_mode_check(self) -> None:
+    def _farming_mode_check(self) -> None:
         if self.farming.get() == 'On' and self.collection.get() == 'On':
+            if self.queue.get() == 'On':
+                self.start_button.configure(state='active')
             self.queue.set('Off')
             self.replay.set('Off')
-            self.queueoptions_button.configure(state='disabled')
             self.queue_toggle.configure(state='disabled')
             self.replay_toggle.configure(state='disabled')
         else:
-            self.queueoptions_button.configure(state='active')
             self.queue_toggle.configure(state='active')
             self.replay_toggle.configure(state='active')

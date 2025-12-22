@@ -10,22 +10,30 @@ from bot.ocr.ocr import weak_substring_check, strong_delta_check
 from bot.ocr.ocr_reader import OCR_READER
 from customprint import cprint
 
-_MAPNAMES = {'glacial trail', 
-             'dark dungeons', 
-             'sanctuary', 
-             'ravine', 
-             'flooded valley', 
-             'infernal',
-             'bloody puddles', 
-             'workshop', 
-             'quad', 
-             'dark castle', 
-             'muddy puddles', 
-             '#ouch'
+_MAPNAMES = {'tricky tracks',
+            'glacial trail', 
+            'dark dungeons', 
+            'sanctuary', 
+            'ravine', 
+            'flooded valley', 
+            'infernal',
+            'bloody puddles', 
+            'workshop', 
+            'quad', 
+            'dark castle', 
+            'muddy puddles', 
+            '#ouch'
             }
 """All expert maps"""
 
-def select_rewardmap() -> str:
+def get_rewardplanname(mapname: str) -> str:
+    """Select plan for given mapname.
+    
+    Current farming mode setup picks only Easy-Standard plans for each expert map.
+    """
+    return mapname.replace(' ', '_')+'EasyStandard'
+
+def select_rewardplan() -> str:
     """Selects map with bonus rewards."""
     loop: bool = True
     cprint('Searching for main menu screen...')
@@ -51,7 +59,7 @@ def select_rewardmap() -> str:
                 ...
             else:
                 cprint(f"Next map ----> {mapname}\n")
-                return mapname
+                return get_rewardplanname(mapname)
         if check < failurelimit:
             cprint(f"Failed to detect bonus reward map, retrying [Attempt {check+1}/{failurelimit}]")
     kb_mouse.press_esc()

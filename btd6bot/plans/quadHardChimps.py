@@ -220,5 +220,5 @@ def play(rounds):
             druid = Monkey('druid', 0.3807291666667, 0.2796296296296)
             druid.upgrade(['0-0-1','0-0-2','0-1-2'])
             heli.special(1, 0.6057291666667, 0.3527777777778)
-            ability(1, 6)
-            ability(2, 7.5)
+            ability(1, 5)
+            ability(2, 6.5)

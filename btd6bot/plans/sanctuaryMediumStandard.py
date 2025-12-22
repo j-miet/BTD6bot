@@ -14,7 +14,6 @@ mermonkey 2-0-4
 
 village 3-2-0
 _______________________________________
-Derived from sanctuary_HardChimps.
 """
 
 from._plan_imports import *

@@ -58,12 +58,11 @@ def _update_time_data(plan_name: str) -> dict[str, Any]:
     with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt') as f:
         times_contents = f.readlines()
     times_contents = plan_data.list_format(times_contents)
-    rounds_list = []
-    times_list = []
+    roundstimes_dict = {}
+
     for r_time in times_contents[:-1]:
         round_num, round_time = r_time.split(',')
-        rounds_list.append(round_num)
-        times_list.append(round_time)
+        roundstimes_dict[round_num] = round_time
     time_total = times_contents[-1]
     current_json: dict[str, Any] = _read_timedata()
     current_version: dict[str, Any] = _read_guivars()
@@ -71,8 +70,7 @@ def _update_time_data(plan_name: str) -> dict[str, Any]:
     data_dict = {
         "update_date": date,
         "version": current_version,
-        "rounds": rounds_list,
-        "times": times_list,
+        "roundtimes": roundstimes_dict,
         "time_total": time_total
         }
     if plan_name not in current_json.keys():
@@ -86,7 +84,7 @@ def _save_to_json(plan_name: str) -> None:
     
     Should only be called by plan_run.
     """
-    new_times = _update_time_data(plan_name)
+    new_times = dict(sorted(_update_time_data(plan_name).items()))
     with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as timef:
         current_times: dict[str, Any] = json.load(timef)
     with open(pathlib.Path(__file__).parent/'Files'/'time_data-backup.json', 'w') as timef:
@@ -100,24 +98,26 @@ def run_delta_adjust() -> None:
     import bot._adjust_deltas
     bot._adjust_deltas.run()
 
+def farming_print() -> None:
+    """Print message when farming mode is enabled."""
+    cprint("Collection event farming mode enabled.\n" \
+            "Bot keeps farming expert maps with bonus rewards on Easy, Standard.\n"
+            "Monkey knowledge is not required.\n"
+            "Only Sauda is required as hero, make sure you have her unlocked.\n")
+
 def select_defaulthero() -> None:
     import bot._farming
     bot._farming.select_defaulthero()
 
-def select_rewardmap() -> str:
+def select_rewardplan() -> str:
     import bot._farming
-    mapname: str = bot._farming.select_rewardmap()
-    if mapname == '':
-        return ''
-    return mapname
+    planname: str = bot._farming.select_rewardplan()
+    return planname
 
 def run_farming_mode(rewardplan: str) -> bool:
     import bot._farming
     bot._farming.click_rewardmap()
-    val = plan_setup(rewardplan, True)
-    if not val:
-        return False
-    return True
+    return plan_setup(rewardplan, True)
 
 def get_rounds(difficulty: str, gamemode: str) -> tuple[int, int]:
     """Returns begin and end rounds based on difficulty + game mode.
@@ -206,7 +206,7 @@ def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str,
     try:
         _flush_times_temp()
         plan_module.play(info)
-        if _check_if_temp_valid():
+        if not info[-1] and _check_if_temp_valid():
             _save_to_json(plan_name)
     except BotError as err:
         cprint(err)

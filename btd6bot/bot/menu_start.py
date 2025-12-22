@@ -11,6 +11,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import json
 import pathlib
+import sys
 import time
 
 import pyautogui
@@ -32,6 +33,8 @@ from customprint import cprint
 
 if TYPE_CHECKING:
     from typing import Any
+if sys.platform == 'win32':
+    import win32gui
 
 
 def _scroll_down_heroes() -> None:
@@ -195,7 +198,7 @@ def _reset_global_targeting() -> None:
 def _update_external_variables(begin_r: int, end_r: int) -> None:
     """Initializes all external class-level variables used within bot package.
     
-    This function should only be called by menu.load.
+    This function should only be called by 'load'.
 
     Args:
         begin_r: First round.
@@ -203,6 +206,7 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
     """
     BotVars.ingame_res_enabled = False
     ScreenRes.update_shift(0, 0)
+    ScreenRes.update_winpos_status('centered')
     OcrValues._log_ocr_deltas = False
     bot.hotkeys.generate_hotkeys(bot.hotkeys.hotkeys)
     Rounds.begin_round, Rounds.end_round = begin_r, end_r
@@ -225,13 +229,34 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
             ScreenRes.update_res(resolution_val[0], resolution_val[1])
         else:
             ScreenRes.update_res(ScreenRes.BASE_RES[0], ScreenRes.BASE_RES[1])
+        
         ingameres_val: bool = gui_vars_dict["check_ingame_resolution"]
         if ingameres_val:
             ingame_shift_val: tuple[int, ...] = tuple(map(int, gui_vars_dict["ingame_res_shift"].split('x')))
             ScreenRes.update_shift(ingame_shift_val[0], ingame_shift_val[1])
             locations.update_customlocations()
             cprint("#Custom location values loaded.")  
+        
         windowed_val: bool = gui_vars_dict["windowed"]
+        if windowed_val:
+            winpos_val: str = gui_vars_dict["windowed_position"]
+            if winpos_val == 'auto' and sys.platform == 'win32':
+                ScreenRes.update_winpos_status(winpos_val)
+                try:
+                    ScreenRes._phandle = win32gui.FindWindow(None, "BloonsTD6")
+                    winrect = win32gui.GetWindowRect(ScreenRes._phandle)
+                    ScreenRes.update_res(winrect[2]-winrect[0], winrect[3]-winrect[1]) # auto-update window res
+                except Exception:
+                    cprint("Can't find Bloons TD 6 game instance. Open the game and reset bot.")
+                    while True:
+                        time.sleep(1)
+            elif winpos_val == 'centered':
+                ScreenRes.update_winpos_status(winpos_val)
+            else:
+                ScreenRes.update_winpos_status('custom')
+                winpos: tuple[int, ...] = tuple(map(int, gui_vars_dict["windowed_position"].split('x')))
+                ScreenRes.update_winpos(winpos[0], winpos[1])
+
         time_limit_val: int = gui_vars_dict["checking_time_limit"]
         frequency_val: float = gui_vars_dict["ocr_frequency"]
         verify_limit: int = gui_vars_dict["upg_verify_limit"]
