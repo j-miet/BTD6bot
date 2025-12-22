@@ -305,15 +305,16 @@ def run() -> None:
         elif 'winpos=' in args:
             if sys.platform == 'win32' and args[7:] == 'auto':
                 winpos = 'auto'
-                ScreenRes.update_winpos(-2, -2)
+                ScreenRes.update_winpos_status('auto')
                 winrect = win32gui.GetWindowRect(ScreenRes._phandle)
                 ScreenRes.update_res(winrect[2]-winrect[0], winrect[3]-winrect[1])
             elif args[7:] == 'centered':
                 winpos = 'centered'
-                ScreenRes.update_winpos(-1, -1)
+                ScreenRes.update_winpos_status('centered')
             else:
                 winpos_vals = args[7:].split('x')
                 winpos = winpos_vals[0]+'x'+winpos_vals[1]
+                ScreenRes.update_winpos_status('custom')
                 ScreenRes.update_winpos(int(winpos_vals[0]), int(winpos_vals[1]))
         elif 'shift=' in args:
             shift_vals = args[6:].split('x')
