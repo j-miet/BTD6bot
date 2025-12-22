@@ -94,12 +94,31 @@ def run() -> None:
             print('Pixel coordinates'.rjust(11) + ' <--- # ---> ' + 'Scalar coordinates'.rjust(10))
             coordinates(5, 16)
         elif input_str == 'c':
-            input_str = input("Give top-left game window coordinate.\n[give coordinate in 'X,Y' format]=>")
-            tl_pos = input_str.split(',')
-            _sc_tl_pos = int(tl_pos[0]), int(tl_pos[1].strip())
-            input_str = input("Now give your game window resolution.\n[give game resolution in 'X,Y' format]=>")
-            size = input_str.split(',')
-            _sc_winsize = int(size[0]), int(size[1].strip())
+            input_str = input("Give top-left game window coordinate.\n"
+                                "[give top-left coordinate in any of the following formats: 'X,Y', 'X Y', 'XxY']=>")
+            if "'" in input_str:
+                tl_pos = input_str.split(',')
+            elif " " in input_str:
+                tl_pos = input_str.split()
+            elif "x" in input_str:
+                tl_pos = input_str.split('x')
+            else:
+                print("Invalid top-left input, returning to mode selection.")
+                continue
+            _sc_tl_pos = int(tl_pos[0].strip()), int(tl_pos[1].strip())
+            input_str = input("Now give your game window resolution.\n"
+                                "[give game resolution in any of the following formats: 'X,Y', 'X Y', 'XxY']=>")
+            if "'" in input_str:
+                size = input_str.split(',')
+            elif " " in input_str:
+                size = input_str.split()
+            elif "x" in input_str:
+                size = input_str.split('x')
+            else:
+                print("Invalid resolution input, returning to mode selection.")
+                continue
+            _sc_winsize = int(size[0].strip()), int(size[1].strip())
+
             print("Press '+' to copy current mouse location as scalar coordinate to clipboard, '*' same but for pixel " 
                     "coordinates. F8 to exit.")
             print('Pixel coordinates'.rjust(11) + ' <--- # ---> ' + 'Scalar coordinates'.rjust(10))
