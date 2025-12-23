@@ -94,9 +94,9 @@ class MainWindowCombobox(ttk.Combobox):
                     if event.char.lower() == values[i][0].lower():
                         self._updateselection(i, event)
                         break
-        if self.widgetName == 'mapbox':
+        if self._name == 'mapbox':
             self.mainwindow._update_mapconfig() # auto-update map info panel when for currently selected element
-        elif self.widgetName == 'stratbox':
+        elif self._name == 'stratbox':
             self.mainwindow._update_stratconfig()
         return "break"
 
