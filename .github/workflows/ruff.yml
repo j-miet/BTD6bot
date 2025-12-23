@@ -4,11 +4,14 @@ on:
   push:
     branches: 
       - dev
+    paths:
+      - 'btd6bot/!(plans/**)/**'
+      - 'tests/**'
+      - 'scripts/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
       - name: Checkout dev repository
         with:

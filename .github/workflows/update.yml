@@ -1,0 +1,111 @@
+name: Update Plans.md and helpwindow README.md + images
+
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'btd6bot/plans/**.py'
+      - '!btd6bot/plans/_plan_imports.py'
+      - '!btd6bot/plans/__init__.py.py'
+      - 'docs/images/**.png'
+      - 'README.md'
+
+jobs:
+  update-plans:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout dev repository
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.x
+      - name: Check if Plans.md was modified
+        id: check_plans
+        shell: pwsh
+        run: |
+          $readmebefore = Get-Content .\Plans.md -Raw
+
+          python scripts/update_plans.py
+
+          $readmenow = Get-Content .\Plans.md -Raw
+          $hasdiff = $readmebefore -ne $readmenow
+
+          Write-Output "plans_changed=$hasdiff" >> $env:GITHUB_OUTPUT
+      - name: Commit and push Plans.md changes
+        if: steps.check_plans.outputs.plans_changed == 'true'
+        shell: pwsh
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+          git add Plans.md
+          git commit -m "Updated plan list"
+          git push
+
+  update-images:
+    needs: update-plans
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout dev repository
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.x
+      - name: Check if docs/images was modified
+        id: check_images
+        shell: pwsh
+        run: |
+          $diff = git diff --name-only ${{ github.event.before }} ${{ github.event.after }}
+          $sourcediff = $diff | Where-Object { $_ -match 'docs/images'}
+          $hasdiff = $sourcediff.Length -gt 0
+
+          Write-Output "images_changed=$hasdiff" >> $env:GITHUB_OUTPUT
+      - name: Commit and push image changes
+        if: steps.check_images.outputs.images_changed == 'true'
+        shell: pwsh
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+          git add btd6bot/Files/helpwindow/images
+          git commit -m "Update images"
+          git push
+
+  update-readme:
+    needs: update-images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout dev repository
+        uses: actions/checkout@v4
+        with:
+          ref: dev
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.x
+      - name: Check if README.md was modified.
+        id: check_readme
+        shell: pwsh
+        run: |
+          $diff = git diff --name-only ${{ github.event.before }} ${{ github.event.after }}
+          $sourcediff = $diff | Where-Object { $_ -match 'README.md'}
+          $hasdiff = $sourcediff.Length -gt 0
+
+          Write-Output "readme_changed=$hasdiff" >> $env:GITHUB_OUTPUT
+      - name: Commit and push readme changes
+        if: steps.check_readme.outputs.readme_changed == 'true'
+        shell: pwsh
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+          git add btd6bot/Files/helpwindow/README.md
+          git commit -m "Updated readme"
+          git push
