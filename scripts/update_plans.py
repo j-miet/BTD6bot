@@ -137,7 +137,7 @@ for p in plans:
         infolist[i] = infolist[i] + info_indent*'\t'
     plans_info[p] = infolist
 
-with open(Path(__file__).parent.parent/'docs/Plans.md', 'w') as plansfile:
+with open(Path(__file__).parent.parent/'Plans.md', 'w') as plansfile:
     plansfile.writelines(INFO)
     for plan in plans_dict.keys():
         mapname = capitalize(plan)
