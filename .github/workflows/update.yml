@@ -40,8 +40,8 @@ jobs:
         if: steps.check_plans.outputs.plans_changed == 'true'
         shell: pwsh
         run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+          git config --global user.name "autoupdate"
+          git config --global user.email "auto@update.com"
           git add Plans.md
           git commit -m "Updated plan list"
           git push
@@ -72,8 +72,8 @@ jobs:
         if: steps.check_images.outputs.images_changed == 'true'
         shell: pwsh
         run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+          git config --global user.name "autoupdate"
+          git config --global user.email "auto@update.com"
           git add btd6bot/Files/helpwindow/images
           git commit -m "Update images"
           git push
@@ -104,8 +104,8 @@ jobs:
         if: steps.check_readme.outputs.readme_changed == 'true'
         shell: pwsh
         run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR_ID}+${GITHUB_ACTOR}@users.noreply.github.com"
+          git config --global user.name "autoupdate"
+          git config --global user.email "auto@update.com"
           git add btd6bot/Files/helpwindow/README.md
           git commit -m "Updated readme"
           git push
