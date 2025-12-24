@@ -33,7 +33,7 @@ Updated for Bloons TD 6 version ``52``**
 
 - For now, bot is planned to be updated after each major game update
 - New game plans might also get added on an infrequent basis
-    - All available plans are listed [here](docs/Plans.md)
+    - All available plans are listed [here](Plans.md)
 
 **[Supported display resolutions]**
 
