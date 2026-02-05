@@ -19,7 +19,7 @@ def play(rounds):
         current_round = Rounds.round_check(current_round, map_start, rounds[2])
         if current_round == BEGIN:     
             hero = Hero(0.4140625, 0.4240740740741)
-            dart = Monkey(0.4880208333333, 0.6296296296296)
+            dart = Monkey('dart', 0.4880208333333, 0.6296296296296)
         elif current_round == 3:
             desp = Monkey('desperado', 0.5171875, 0.5851851851852)
         elif current_round == 4:
