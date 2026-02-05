@@ -21,6 +21,7 @@ mermonkey 4-3-2
 village 3-0-2
 _______________________________________
 Created with all monkey knowledge unlocked.
+Copy of CHIMPS plan.
 """
 
 from._plan_imports import *
