@@ -1,3 +1,6 @@
+[project]
+requires-python = ">=3.12"
+
 # Pytest
 [tool.pytest.ini_options]
 pythonpath = ["btd6bot"]
