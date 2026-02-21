@@ -5,22 +5,24 @@ Files with doctests included: monkey.py, hero.py, ability.py
 Open btd6 menu screen and wait until tests finish.
 """
 
+import pathlib
+import sys
 import time
 
-from bot import kb_mouse
-from bot.bot_vars import BotVars
+sys.path.append(str(pathlib.Path(__file__).parent.parent))
+
+from bot import _maindata, kb_mouse
 from bot.commands.ability import ability
 from bot.commands.hero import Hero
 from bot.commands.monkey import Monkey
+from bot.locations import get_click, get_text
 from bot.menu_start import _choose_map, _choose_diff
-from bot.menu_start import OcrLocations, MouseLocations
 from bot.ocr.ocr import weak_substring_check
 from bot.ocr.ocr_reader import OCR_READER
-from bot.rounds import Rounds
 
 def commands_doctest() -> None:
     timer = time.time()
-    while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
+    while not weak_substring_check("Play", get_text('menu', 'menu_playtext'), OCR_READER):
         if time.time()-timer >= 10:
             return
         print("Searching for main menu screen...")
@@ -28,10 +30,10 @@ def commands_doctest() -> None:
 
     _choose_map('monkey meadow')
     _choose_diff('EASY')
-    kb_mouse.click(MouseLocations.MODES['bottom_left'])
+    kb_mouse.click(get_click('modes', 'bottom_left'))
 
-    BotVars.checking_time_limit = 10
-    while not weak_substring_check('Upgrades', Rounds.UPGRADE_TEXT, OCR_READER):
+    _maindata.maindata["bot_vars"]["checking_time_limit"] = 10
+    while not weak_substring_check("Upgrades", get_text('ingame','upgrade_text'), OCR_READER):
         print("Waiting map screen...")
         kb_mouse.click((0.5036458333333, 0.7064814814815))
         time.sleep(1)
