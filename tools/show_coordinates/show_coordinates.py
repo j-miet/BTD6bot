@@ -123,3 +123,6 @@ def run() -> None:
                     "coordinates. F8 to exit.")
             print('Pixel coordinates'.rjust(11) + ' <--- # ---> ' + 'Scalar coordinates'.rjust(10))
             coordinates(5, 16)
+			
+if __name__ == "__main__":
+	run()

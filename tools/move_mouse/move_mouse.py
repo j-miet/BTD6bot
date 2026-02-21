@@ -53,3 +53,6 @@ def run() -> None:
                 print("Invalid input.")
         elif input_val.lower() == 'exit':
             os.kill(os.getpid(), signal.SIGTERM)
+			
+if __name__ == "__main__":
+	run()

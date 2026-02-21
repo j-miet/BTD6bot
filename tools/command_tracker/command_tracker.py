@@ -312,3 +312,6 @@ def run_tracker() -> None:
             comment_input = input('Insert command text --->')     # this input() is now part of main thread so it won't cause lag like it would if it were inside mouse_tracker
             add_command(comment_input)
             TrackerVals.ct_user_input = ''
+
+if __name__ == "__main__":
+    run_tracker()
