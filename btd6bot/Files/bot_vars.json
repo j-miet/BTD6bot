@@ -10,10 +10,10 @@
     "ocr_frequency": 0.1,
     "checking_time_limit": 300,
     "upg_verify_limit": 3,
-    "use_gpu": true,
+    "use_gpu": false,
     "logging": false,
     "delta_ocrtext": false,
     "substring_ocrtext": false,
     "ocr_adjust_deltas": false,
-    "adjust_args": "res=1600x900 win=0 winpos=centered shift=0x0 monkeys=all delta=4"
+    "adjust_args": "res=1920x1080 win=0 winpos=centered shift=0x0 monkeys=all delta=4"
 }
