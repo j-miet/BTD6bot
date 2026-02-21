@@ -188,7 +188,7 @@ def strong_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> 
         monitor = {"left": tl_x, "top": tl_y, "width": width, "height": height}
         img = sct.grab(monitor)
     ocr_img = Image.frombytes("RGB", img.size, img.bgra, "raw", "BGRX")
-    blackwhite_image = img_to_black_and_white(ocr_img) # type: ignore
+    blackwhite_image = img_to_black_and_white(ocr_img) # type: ignore[arg-type]
     final = array(blackwhite_image)
     if _maindata.maindata["bot_vars"]["windowed"]:
         zoom_factor = 2

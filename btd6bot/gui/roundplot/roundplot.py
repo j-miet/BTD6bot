@@ -197,9 +197,9 @@ def plot(round_labels: list[str], rounds: list[list[str]], plan_name: str) -> No
     plt.subplots_adjust(left=0.05, bottom=0.1, right=0.99, top=0.9, wspace=None, hspace=None)
     rcParams['toolbar'] = 'None'
     winmanager = plt.get_current_fig_manager()
-    winmanager.window.wm_iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico') # type: ignore
+    winmanager.window.wm_iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico') # type: ignore[union-attr]
     try:
-        winmanager.window.state('zoomed') # type: ignore
+        winmanager.window.state('zoomed') # type: ignore[union-attr]
     except AttributeError:
         ...
     fig.suptitle(f'Round commands and round times of current plan "{plan_name}"')
@@ -284,7 +284,7 @@ def plot(round_labels: list[str], rounds: list[list[str]], plan_name: str) -> No
         else:
             for text_line in range(0, len(r)):
                 lines += r[text_line]+'\n'
-        ax_rounds.text(x, -0.8, lines, ha='left') # type: ignore
+        ax_rounds.text(x, -0.8, lines, ha='left') # type: ignore[arg-type]
 
     axis_position = plt.axes((0.1, 0.025, 0.8, 0.025))
     slider_min_val = -0.1
@@ -306,7 +306,7 @@ def plot(round_labels: list[str], rounds: list[list[str]], plan_name: str) -> No
         ax_rounds.axis((pos+0.08, pos+0.35, -1.0, 2.0))
         fig.canvas.draw_idle()
 
-    def _rounds_scroll(event):
+    def _rounds_scroll(event): # type: ignore[no-untyped-def]
         # Update rounds axis a single step forward/backward when user scrolls mouse wheel up/down respectively.
         pos: float = round_slider.val
         pos_up: float = pos + round_slider.valstep
@@ -321,7 +321,7 @@ def plot(round_labels: list[str], rounds: list[list[str]], plan_name: str) -> No
             fig.canvas.draw_idle()
 
     round_slider.on_changed(_update)
-    round_slider.connect_event('scroll_event', _rounds_scroll)   
+    round_slider.connect_event('scroll_event', _rounds_scroll) # type: ignore[arg-type]
     plt.show()
 
 

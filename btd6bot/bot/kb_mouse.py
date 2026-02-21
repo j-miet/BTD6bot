@@ -189,9 +189,9 @@ def kb_input(input: Key | KeyCode | str,
         if isinstance(input, str) and input.strip("<>") in {f"{num}" for num in range(96, 106)}: # numpad keys
             input_key = int(input.strip("<>"))
             for _ in range(times):
-                kb_controller.press(KeyCode(input_key))
+                kb_controller.press(KeyCode(input_key)) # type: ignore[arg-type]
                 time.sleep(0.1)
-                kb_controller.release(KeyCode(input_key))
+                kb_controller.release(KeyCode(input_key)) # type: ignore[arg-type]
                 if times >= 2:
                     time.sleep(0.1)
         else:
