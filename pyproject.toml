@@ -8,6 +8,29 @@ addopts = [
     "--import-mode=importlib"
 ]
 
+
+# Mypy
+[tool.mypy]
+files = ["btd6bot"]
+exclude = [
+    "^btd6bot/_ocr_tests/",
+    "^btd6bot/plans/",
+]
+disable_error_code = ["no-untyped-call"]
+
+[[tool.mypy.overrides]]
+module = [
+    "btd6bot/bot/commands/monkey.*"
+    ]
+disable_error_code = ["no-any-return"]
+
+[[tool.mypy.overrides]]
+module = [
+    "btd6bot/gui/roundplot.*"
+]
+disable_error_code = ["operator", "assignment"]
+
+
 # Ruff
 [tool.ruff]
 exclude = [
