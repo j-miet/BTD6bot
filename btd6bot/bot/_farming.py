@@ -71,7 +71,7 @@ def click_rewardmap() -> None:
     kb_mouse.click(get_click('menu', 'choose_map_bl'))
     time.sleep(0.3)
 
-def select_defaulthero(hero_name: str = 'sauda') -> None:
+def select_defaulthero(hero_name: str = 'sauda') -> bool:
     """Select default hero for event farming."""
     cprint('Searching menu screen...')
     loop: bool = True
@@ -103,3 +103,4 @@ def select_defaulthero(hero_name: str = 'sauda') -> None:
     time.sleep(0.3)
     kb_mouse.press_esc()
     cprint("Hero selected.")
+    return True
