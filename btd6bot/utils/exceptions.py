@@ -13,17 +13,17 @@ class SetPlanError(Exception):
         3: Invalid game mode in plan file: either invalid game mode value, or it's under wrong difficulty e.g. 
             logsEasyChimps.
     """
-    def __init__(self, code: int) -> None:
+    def __init__(self, code: str) -> None:
         """Invalid syntax and/or invalid substring values in plan file string."""
         self.code = code
         super().__init__("Current plan file has invalid difficulty and/or game mode.")
 
     def __str__(self) -> str:
-        if self.code == 1:
+        if self.code == "SyntaxError":
             return "Current plan file has invalid syntax: Correct syntax is map_nameDifficultyMode."
-        elif self.code == 2:
+        elif self.code == "DifficultyError":
             return "Current plan file has invalid difficulty."
-        elif self.code == 3:
+        elif self.code == "GamemodeError":
             return "Current plan file has invalid game mode for selected difficulty."
         else:
             return "Undefined error."
