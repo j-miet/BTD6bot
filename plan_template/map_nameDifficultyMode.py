@@ -1,15 +1,11 @@
 """
-[Hero]
+[Hero] -
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
-*list all monkeys + their highest crosspaths here*
-Example: sniper 5-3-1 means plan uses tier 5 top path, tier 3 middle path, and tier 1 bottom path for snipers.
 _______________________________________
-*put description/any additional comments here*
 """
 
-# copy this file into btd6bot/plans, then uncomment all the code below this line
 '''
 from._plan_imports import *
 
