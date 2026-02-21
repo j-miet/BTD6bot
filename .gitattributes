@@ -1,3 +1,4 @@
+# Assign file content and end-of-line type
 *.txt text
 *.bat text eol=crlf
 *.sh  text eol=lf
@@ -6,4 +7,3 @@
 .github/**/* export-ignore
 docs/**/project-history export-ignore
 scripts/**/* export-ignore
-*.toml export-ignore
