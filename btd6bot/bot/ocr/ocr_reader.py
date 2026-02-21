@@ -5,7 +5,7 @@ only once each session.
 """
 import warnings
 
-import easyocr # type: ignore
+import easyocr
 
 from bot import _maindata
 

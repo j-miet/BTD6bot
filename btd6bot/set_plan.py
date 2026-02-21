@@ -22,8 +22,9 @@ import importlib
 import json
 import pathlib
 
+from bot import _maindata
 from customprint import cprint
-import plans # shows as 'not accessed' in VS Code, because it's only used via importlib module.
+import plans # only used via importlib module.
 from utils import plan_data
 from utils.exceptions import SetPlanError, BotError
 
@@ -31,33 +32,21 @@ if TYPE_CHECKING:
     from typing import Any
     from types import ModuleType
 
-def _check_if_temp_valid() -> bool:
+def _check_if_temp_valid(temp_data: list[str]) -> bool:
     """Check if times_temp has all round data + total time rows."""
-    with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt') as f:
-        lines = f.readlines()
-    return True if len(lines) >= 2 and ',' not in lines[-1] else False
-
-def _flush_times_temp() -> None:
-    """Flushes existing contents of Files//times_temp.txt to allow new plan time data to be saved."""
-    try:
-        with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt', 'w') as _:
-            ...
-    except OSError:
-        ...
+    return True if len(temp_data) >= 2 and ',' not in temp_data[-1] else False
 
 def _read_timedata() -> Any:
     with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as f:
         return json.load(f)
 
-def _read_guivars() -> Any:
-    with open(pathlib.Path(__file__).parent/'Files'/'gui_vars.json') as varsfile:
+def _read_botvars() -> Any:
+    with open(pathlib.Path(__file__).parent/'Files'/'bot_vars.json') as varsfile:
         return json.load(varsfile)["version"]
 
-def _update_time_data(plan_name: str) -> dict[str, Any]:
-    """Adds saved times_temp.txt contents in a dictionary."""
-    with open(pathlib.Path(__file__).parent/'Files'/'times_temp.txt') as f:
-        times_contents = f.readlines()
-    times_contents = plan_data.list_format(times_contents)
+def _update_time_data(plan_name: str, temp_data: list[str]) -> dict[str, Any]:
+    """Adds temporary time data contents of a plan to dictionary and return this new dict."""
+    times_contents = plan_data.list_format(temp_data)
     roundstimes_dict = {}
 
     for r_time in times_contents[:-1]:
@@ -65,7 +54,7 @@ def _update_time_data(plan_name: str) -> dict[str, Any]:
         roundstimes_dict[round_num] = round_time
     time_total = times_contents[-1]
     current_json: dict[str, Any] = _read_timedata()
-    current_version: dict[str, Any] = _read_guivars()
+    current_version: dict[str, Any] = _read_botvars()
     date: str = str(datetime.date.today()).replace('-','/')
     data_dict = {
         "update_date": date,
@@ -79,12 +68,12 @@ def _update_time_data(plan_name: str) -> dict[str, Any]:
         current_json[plan_name] = data_dict
     return current_json
 
-def _save_to_json(plan_name: str) -> None:
+def _save_to_json(plan_name: str, time_data: list[str]) -> None:
     """Saves time data to time_data.json file which gui.roundplot requires when creating plots.
     
     Should only be called by plan_run.
     """
-    new_times = dict(sorted(_update_time_data(plan_name).items()))
+    new_times = dict(sorted(_update_time_data(plan_name, time_data).items()))
     with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as timef:
         current_times: dict[str, Any] = json.load(timef)
     with open(pathlib.Path(__file__).parent/'Files'/'time_data-backup.json', 'w') as timef:
@@ -105,9 +94,9 @@ def farming_print() -> None:
             "Monkey knowledge is not required.\n"
             "Only Sauda is required as hero, make sure you have her unlocked.\n")
 
-def select_defaulthero() -> None:
+def select_defaulthero() -> bool:
     import bot._farming
-    bot._farming.select_defaulthero()
+    return bot._farming.select_defaulthero() # type: ignore[no-any-return]
 
 def select_rewardplan() -> str:
     import bot._farming
@@ -123,8 +112,8 @@ def get_rounds(difficulty: str, gamemode: str) -> tuple[int, int]:
     """Returns begin and end rounds based on difficulty + game mode.
 
     Args:
-        difficulty: Difficulty setting.
-        gamemode: Game mode setting.
+        difficulty: Difficulty setting in all uppercase e.g. EASY
+        gamemode: Game mode setting in all uppercase e.g. STANDARD
 
     Raises:
         SetPlanError: If plan string name has invalid difficulty and/or game mode syntax/name.
@@ -136,12 +125,12 @@ def get_rounds(difficulty: str, gamemode: str) -> tuple[int, int]:
             case 'DEFLATION':
                 return 31, 60
             case _:
-                raise SetPlanError(3)
+                raise SetPlanError("GamemodeError")
     elif difficulty == 'MEDIUM':
         if gamemode in {'STANDARD', 'REVERSE','MILITARY', 'APOPALYPSE'}:
             return 1, 60
         else: 
-            raise SetPlanError(3)
+            raise SetPlanError("GamemodeError")
     elif difficulty == 'HARD':
         match gamemode:
             case 'STANDARD' | 'MAGIC' | 'DOUBLE_HP' | 'HALF_CASH' | 'ALTERNATE':
@@ -149,12 +138,12 @@ def get_rounds(difficulty: str, gamemode: str) -> tuple[int, int]:
             case 'IMPOPPABLE' | 'CHIMPS':
                 return 6, 100
             case _:
-                raise SetPlanError(3)
+                raise SetPlanError("GamemodeError")
     else:
-        raise SetPlanError(2)
+        raise SetPlanError("DifficultyError")
 
 def get_plan_info(plan: str) -> tuple[str, str, str, int, int]:
-    """Returns map name, difficulty, game mode, begin and end rounds, and used hero.
+    """Returns map name, difficulty, game mode, begin and end rounds, and hero.
     
     Args:
         plan: Current plan.
@@ -165,7 +154,7 @@ def get_plan_info(plan: str) -> tuple[str, str, str, int, int]:
     map_name = plan_data.return_map(plan)
     raw_strat = plan_data.return_strategy(plan)
     if map_name == '' or raw_strat == '':
-        raise SetPlanError(1)
+        raise SetPlanError("SyntaxError")
     split = raw_strat.split('-')
     if split[1][-1] in (str(i) for i in range(2,10)):
         diff, mode = split[0].upper(), split[1].upper()[:-1]
@@ -174,20 +163,16 @@ def get_plan_info(plan: str) -> tuple[str, str, str, int, int]:
     begin, end = get_rounds(diff, mode)
     return (map_name, diff, mode, begin, end)
 
-def get_hero_name_from_plan(plan_name: str) -> str:
-    """Return plan hero name by parsing its value from documentations of current plan.
+def get_hero_name_from_plan(plan_info: list[str]) -> str:
+    """Finds hero name from a plan info string.
     
     Args:
-        plan_name: Name of current plan.
+        plan_info: Plan info string.
 
     Returns:
-        Hero name string. Returns '-' if [Hero] is missing from plan documentation. Hero name will be tested later 
-        under bot so at this point it can be anything.
+        Hero name string. Returns '-' if [Hero] is missing from plan documentation.
     """
-    plan_file_name = plan_name+'.py'
-    with open(pathlib.Path(__file__).parent/'plans'/plan_file_name) as plan_file:
-        plan_code = plan_data.list_format(plan_file.readlines())
-    for line in plan_code:
+    for line in plan_info:
         if '[Hero]' in line:
             return line[6:].strip()
     return '-'
@@ -204,10 +189,9 @@ def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str,
             begin round, end round, hero name, farming mode status.
     """
     try:
-        _flush_times_temp()
         plan_module.play(info)
-        if not info[-1] and _check_if_temp_valid():
-            _save_to_json(plan_name)
+        if not info[-1] and _check_if_temp_valid(_maindata.maindata["times_temp"]):
+            _save_to_json(plan_name, _maindata.maindata["times_temp"])
     except BotError as err:
         cprint(err)
 
@@ -237,5 +221,8 @@ def plan_setup(plan: str, farming: bool = False) -> bool:
     if farming:
         plan_run(plan, plan_module, (*info, '-', True))
     else:
-        plan_run(plan, plan_module, (*info, get_hero_name_from_plan(plan), False))
+        plan_file_name = plan+'.py'
+        with open(pathlib.Path(__file__).parent/'plans'/plan_file_name) as plan_file:
+            plan_info = plan_data.list_format(plan_file.readlines())
+        plan_run(plan, plan_module, (*info, get_hero_name_from_plan(plan_info), False))
     return True

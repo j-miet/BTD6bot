@@ -8,7 +8,7 @@ import pyautogui
 import pynput
 from pynput.keyboard import Key, KeyCode, Controller
 
-from bot.bot_vars import BotVars
+from bot import _maindata
 from customprint import cprint
 
 # pyautogui.FAILSAFE controls build-in pyautogui fail-safe of dragging mouse to a corner of the screen, shutting down 
@@ -103,18 +103,22 @@ def pixel_position(xy: tuple[float | None, float | None],
         y: int
         if ignore_windowed:
             x, y = round(ScreenRes.BASE_RES[0]*xy[0]), round(ScreenRes.BASE_RES[1]*xy[1])
-        elif BotVars.windowed:
+        elif _maindata.maindata["bot_vars"]["windowed"]:
             if ScreenRes.get_winpos_status() == 'auto' and sys.platform == 'win32':
                 # if OS is Windows bot can automatically get window location
                 winrect = win32gui.GetWindowRect(ScreenRes._phandle)
                 ScreenRes.update_winpos(winrect[0], winrect[1])
-            if ScreenRes.get_winpos_status() in ('custom', 'auto') and not (BotVars.ingame_res_enabled and shifted):
+            if (ScreenRes.get_winpos_status() in ('custom', 'auto') and 
+                not (_maindata.maindata["bot_vars"]["check_ingame_resolution"] and shifted)):
                 x = round(ScreenRes._win_w + ScreenRes._width*xy[0])
                 y = round(ScreenRes._win_h + ScreenRes._height*xy[1])
-            elif ScreenRes.get_winpos_status() in ('custom', 'auto') and BotVars.ingame_res_enabled and shifted:
+            elif (ScreenRes.get_winpos_status() in ('custom', 'auto') and 
+                _maindata.maindata["bot_vars"]["check_ingame_resolution"] and shifted):
                 x = round(ScreenRes._win_w + ScreenRes._w_shift + (ScreenRes._width-2*ScreenRes._w_shift)*xy[0])
                 y = round(ScreenRes._win_h + ScreenRes._h_shift + (ScreenRes._height-2*ScreenRes._h_shift)*xy[1])
-            elif ScreenRes.get_winpos_status() == 'centered' and BotVars.ingame_res_enabled and shifted:
+            elif (ScreenRes.get_winpos_status() == 'centered' and 
+                  _maindata.maindata["bot_vars"]["check_ingame_resolution"] 
+                  and shifted):
                 x = round((ScreenRes.BASE_RES[0]-ScreenRes._width)/2 + ScreenRes._w_shift +
                             (ScreenRes._width-2*ScreenRes._w_shift)*xy[0])
                 y = round((ScreenRes.BASE_RES[1]-ScreenRes._height)/2 + ScreenRes._h_shift +
@@ -123,7 +127,7 @@ def pixel_position(xy: tuple[float | None, float | None],
                 x = round((ScreenRes.BASE_RES[0] - ScreenRes._width)/2 + ScreenRes._width*xy[0])
                 y = round((ScreenRes.BASE_RES[1] - ScreenRes._height)/2 + ScreenRes._height*xy[1])
         else:
-            if BotVars.ingame_res_enabled and shifted:
+            if _maindata.maindata["bot_vars"]["check_ingame_resolution"] and shifted:
                 x = round((ScreenRes._width-2*ScreenRes._w_shift)*xy[0] + ScreenRes._w_shift)
                 y = round((ScreenRes._height-2*ScreenRes._h_shift)*xy[1] + ScreenRes._h_shift)
             else:
@@ -185,9 +189,9 @@ def kb_input(input: Key | KeyCode | str,
         if isinstance(input, str) and input.strip("<>") in {f"{num}" for num in range(96, 106)}: # numpad keys
             input_key = int(input.strip("<>"))
             for _ in range(times):
-                kb_controller.press(KeyCode(input_key)) # type: ignore
+                kb_controller.press(KeyCode(input_key))
                 time.sleep(0.1)
-                kb_controller.release(KeyCode(input_key)) # type: ignore
+                kb_controller.release(KeyCode(input_key))
                 if times >= 2:
                     time.sleep(0.1)
         else:

@@ -1,9 +1,8 @@
 from __future__ import annotations
 import time
 
-from bot import kb_mouse
+from bot import _maindata, kb_mouse
 from bot.bot_data import BotData
-from bot.bot_vars import BotVars
 from bot.ocr.ocr import weak_substring_check, strong_delta_check
 from bot.ocr.ocr_reader import OCR_READER
 from bot.locations import get_click, get_text
@@ -17,8 +16,6 @@ def collection_event_handler() -> None:
     time window is added between click to allow collections to register.
     
     If no collection event window pops up, does nothing.
-
-    current event status is read from BotVars.current_event_status.
     """
     cprint('\nChecking if collection event screen appears...')
     start = time.time()
@@ -55,8 +52,8 @@ def collection_event_handler() -> None:
 
 def returned(victory: bool = True) -> None:
     """Verifies bot has returned to main menu and checks for collection event status."""
-    BotVars.ingame_res_enabled = False
-    if BotVars.current_event_status == 'On':
+    _maindata.maindata["bot_vars"]["check_ingame_resolution"] = False
+    if _maindata.maindata["toggle"]["event_status"]:
         collection_event_handler()
     loop: bool = True
     while loop:
