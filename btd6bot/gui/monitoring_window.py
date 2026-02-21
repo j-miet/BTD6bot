@@ -3,9 +3,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-import json
 import os
-import shutil
 import sys
 import threading
 import time
@@ -14,9 +12,8 @@ from tkinter import ttk
 
 import pyautogui
 
-from bot import times
+from bot import _maindata, times
 from bot.bot_data import BotData
-from bot.bot_vars import BotVars
 from customprint import cprint
 from gui.guihotkeys import GuiHotkeys
 import gui.gui_paths as gui_paths
@@ -65,6 +62,8 @@ class MonitoringWindow:
         self.current_plans: list[str] = []
         self.plans_status: list[str] = []
 
+        _maindata.init_readvalues()
+        
         self.monitoringwindow = tk.Toplevel()
         self.monitoringwindow.title("Bot Monitoring Window")
         self.monitoringwindow.iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
@@ -141,8 +140,7 @@ class MonitoringWindow:
         style = ttk.Style()
         style.configure('Style.TButton', font='TkFixedFont')
 
-        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-            guivars_adjust: dict[str, Any] = json.load(f)["ocr_adjust_deltas"]
+        guivars_adjust = _maindata.maindata["bot_vars"]["ocr_adjust_deltas"]
         if guivars_adjust:
             try:
                 photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'spa pits.png')
@@ -151,7 +149,7 @@ class MonitoringWindow:
                                                     compound='top', 
                                                     anchor='nw', 
                                                     justify='left')
-                self.monitor_mapscreen.image = photo # type: ignore
+                self.monitor_mapscreen.image = photo # type: ignore[attr-defined]
                 self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
             except tk.TclError:
                 self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
@@ -178,7 +176,7 @@ class MonitoringWindow:
                                                     compound='top', 
                                                     anchor='nw', 
                                                     justify='left')
-                self.monitor_mapscreen.image = photo # type: ignore
+                self.monitor_mapscreen.image = photo # type: ignore[attr-defined]
                 self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
             except tk.TclError:
                 self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
@@ -281,11 +279,6 @@ class MonitoringWindow:
         self.bot_thread = threading.Thread()
         MonitoringWindow.current_bot_thread = self.bot_thread
 
-        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-            if json.load(f)["logging"]:
-                BotVars.logging = True
-            else:
-                BotVars.logging = False
         GuiHotkeys.start_stop_status = False
         GuiHotkeys.pause_status = False
         # listener thread object sends keyboard inputs to _bot_hotkey method
@@ -313,10 +306,10 @@ class MonitoringWindow:
         self.roundtime.set("-")
 
     def _update_collection_status(self) -> None:
-        BotVars.current_event_status = self.collection_val
+        _maindata.maindata["toggle"]["event_status"] = True if self.collection_val == "On" else False
 
     def _update_farming_status(self) -> None:
-        BotVars.current_farming_status = self.farming
+        _maindata.maindata["toggle"]["farming_status"] = True if self.farming == "On" else False
 
     def _stop_or_run(self) -> None:
         """Handles current bot thread termination and opening of new ones."""
@@ -336,15 +329,7 @@ class MonitoringWindow:
 
     def _res_check(self, customres: bool, resolution_val: tuple[int, ...], windowed: bool, w: int, h: int,
                    ingame_shift: bool, shift_val: tuple[int, ...]) -> None:
-        try:
-            with open(gui_paths.FILES_PATH/'upgrades_current.json') as f:
-                identifier: list[int | str] = json.load(f)["__identifier"]
-        except FileNotFoundError:
-            print("***\nupgrades_current.json couldn't not be found, creating one with default values\n"
-                "You should perform ocr auto-adjust before continuing\n***\n")
-            shutil.copy2(gui_paths.FILES_PATH/'_ocr_upgradedata.json', gui_paths.FILES_PATH/'upgrades_current.json')
-            with open(gui_paths.FILES_PATH/'upgrades_current.json') as f:
-                identifier: list[int | str] = json.load(f)["__identifier"]
+        identifier = _maindata.maindata["ocr_upgradedata"]["__identifier"]
         issue_flag: bool = False
         if customres:
             if list(resolution_val) != identifier[0:2]:
@@ -439,18 +424,17 @@ class MonitoringWindow:
         needed again.
         """
         cprint('=====Bot running=====')
-        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-            gui_vars_dict: dict[str, Any] = json.load(f)
-        customres: bool = gui_vars_dict["check_resolution"]
-        resolution_val: tuple[int, ...] = tuple(map(int, gui_vars_dict["custom_resolution"].split('x')))
-        windowed: bool = gui_vars_dict["windowed"]
-        winpos: str = gui_vars_dict["windowed_position"]
-        ingame_shift: bool = gui_vars_dict["check_resolution"]
-        shift_val: tuple[int, ...] = tuple(map(int, gui_vars_dict["ingame_res_shift"].split('x')))
-        retries_val: int = gui_vars_dict["retries"]
+        bot_vars_dict = _maindata.maindata["bot_vars"]
+        customres: bool = bot_vars_dict["check_resolution"]
+        resolution_val: tuple[int, ...] = tuple(map(int, bot_vars_dict["custom_resolution"].split('x')))
+        windowed: bool = bot_vars_dict["windowed"]
+        winpos: str = bot_vars_dict["windowed_position"]
+        ingame_shift: bool = bot_vars_dict["check_resolution"]
+        shift_val: tuple[int, ...] = tuple(map(int, bot_vars_dict["ingame_res_shift"].split('x')))
+        retries_val: int = bot_vars_dict["retries"]
         w, h = pyautogui.size()
 
-        if not gui_vars_dict["ocr_adjust_deltas"]:
+        if not bot_vars_dict["ocr_adjust_deltas"]:
             self._res_check(customres, resolution_val, windowed, w, h, ingame_shift, shift_val)
         if customres:
             cprint('[Custom Resolution] '+str(resolution_val[0])+'x'+str(resolution_val[1])+'\n'
@@ -469,12 +453,12 @@ class MonitoringWindow:
         else:
             w, h = pyautogui.size()
             cprint('[Resolution] '+str(w)+'x'+str(h)+'\n')
-        if gui_vars_dict["ocr_adjust_deltas"]:
+        if bot_vars_dict["ocr_adjust_deltas"]:
             try:
                 new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'spa pits.png')
                 self.monitor_mapscreen['text'] = ''
                 self.monitor_mapscreen.configure(image=new_image)
-                self.monitor_mapscreen.image = new_image # type: ignore
+                self.monitor_mapscreen.image = new_image # type: ignore[attr-defined]
             except tk.TclError:
                 self.monitor_mapscreen.configure(image='')
                 self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
@@ -491,7 +475,10 @@ class MonitoringWindow:
             os.remove(gui_paths.FILES_PATH/'.temp_upg_deltas.json')
         if self.farming == 'On':
             set_plan.farming_print()
-            set_plan.select_defaulthero()
+            if not set_plan.select_defaulthero():
+                cprint('\n#####Unable to select default hero, bot terminated#####')
+                self.monitor_run_button['text'] = 'Run'
+                return
             while True:
                 rewardplan: str = set_plan.select_rewardplan()
                 if rewardplan == '':
@@ -507,11 +494,16 @@ class MonitoringWindow:
                                                        compound='top', 
                                                        anchor='nw', 
                                                        justify='left')
-                    self.monitor_mapscreen.image = new_image # type: ignore
+                    self.monitor_mapscreen['image'] = new_image
                     self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
                 except tk.TclError:
-                    self.monitor_mapscreen.configure(image='')
-                    self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
+                    self.monitor_mapscreen = ttk.Label(self.monitoringwindow,  
+                                                       compound='top', 
+                                                       anchor='nw', 
+                                                       style='Style.TButton', 
+                                                       justify='left',
+                                                       text=self.MONITOR_MAPSCREEN_ASCII)
+                    self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
                 self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display(rewardplan))
                 if set_plan.run_farming_mode(rewardplan):
                     self.runs.set(self.runs.get()+1)
@@ -554,7 +546,7 @@ class MonitoringWindow:
             new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(current)+'.png'))
             self.monitor_mapscreen['text'] = ''
             self.monitor_mapscreen.configure(image=new_image)
-            self.monitor_mapscreen.image = new_image # type: ignore
+            self.monitor_mapscreen.image = new_image # type: ignore[attr-defined]
         except tk.TclError:
             self.monitor_mapscreen.configure(image='')
             self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
@@ -576,7 +568,7 @@ class MonitoringWindow:
                 self._stop_or_run()
                 time.sleep(1)
             elif GuiHotkeys.pause_status:
-                BotVars.paused = not BotVars.paused
+                _maindata.maindata["internal"]["paused"] = not _maindata.maindata["internal"]["paused"]
                 GuiHotkeys.pause_status = False
             time.sleep(0.1)
         else:
