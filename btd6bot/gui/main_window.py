@@ -236,7 +236,8 @@ class MainWindow:
                 style='Style.TButton'
             )
             # Save image reference; otherwise Python garbage collection destroys it.
-            # For some reason, image is not recognized as an attribute of Label. Thus type ignore to avoid mypy errors.
+            # See following archived link for more:
+            # https://web.archive.org/web/20201111190625/http://effbot.org/pyfaq/why-do-my-tkinter-images-not-appear.htm
             self.mapscreen.image = map_image # type: ignore[attr-defined]
             self.mapscreen.grid(column=0, row=0, columnspan=3, rowspan=3, sticky='nw')
         except (FileNotFoundError, tk.TclError):
