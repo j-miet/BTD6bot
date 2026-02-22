@@ -3,7 +3,7 @@
 *.bat text eol=crlf
 *.sh  text eol=lf
 
-# Github Release zip file contents
-.github/**/* export-ignore
-docs/**/project-history export-ignore
-scripts/**/* export-ignore
+# Github Release source code zip file contents; use export-ignore to drop files
+# Example => 
+# .github/**/* export-ignore
+# This would ignore .github directory
