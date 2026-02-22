@@ -5,15 +5,16 @@ import pytest
 from utils.exceptions import SetPlanError, BotError
 
 def test_setplanerror_args():
-    err = SetPlanError(1)
-    assert err.code == 1
+    err = SetPlanError("SyntaxError")
+    assert err.code == "SyntaxError"
 
 @pytest.mark.parametrize("error, message", [
-    (SetPlanError(1), "Current plan file has invalid syntax: Correct syntax is map_nameDifficultyMode."),
-    (SetPlanError(2), "Current plan file has invalid difficulty."),
-    (SetPlanError(3), "Current plan file has invalid game mode for selected difficulty.")
+    (SetPlanError("SyntaxError"), "Current plan file has invalid syntax: Correct syntax is map_nameDifficultyMode."),
+    (SetPlanError("DifficultyError"), "Current plan file has invalid difficulty."),
+    (SetPlanError("GamemodeError"), "Current plan file has invalid game mode for selected difficulty."),
+    (SetPlanError(""), "Undefined error.")
 ])
-def test_setplanerror_msg(error, message):
+def test_setplanerror_msg(error: SetPlanError, message: str):
     assert error.__str__() == message
 
 def test_boterror_args():
@@ -22,7 +23,9 @@ def test_boterror_args():
     assert err.code == 10
 
 def test_boterror_msg():
-    boterror1 = BotError("test message", "Error code")  # works, but numbers are used instead
-    boterror2 = BotError("Failed to enter a game", 1)
-    assert boterror1.__str__() == "(BotError Error code) test message."
-    assert boterror2.__str__() == "(BotError 1) Failed to enter a game."
+    boterror1 = BotError("test message", "Error code")
+    boterror2 = BotError("Failed to enter a game", "FailedToEnter")
+    boterror3 = BotError("error", 1)
+    assert boterror1.__str__() == "BotError: Error code -> test message"
+    assert boterror2.__str__() == "BotError: FailedToEnter -> Failed to enter a game"
+    assert boterror3.__str__() == "BotError: 1 -> error"

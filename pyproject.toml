@@ -7,7 +7,9 @@ pythonpath = ["btd6bot"]
 addopts = [
     "--import-mode=importlib"
 ]
-
+filterwarnings = [
+    "ignore: The argument 'device' of Tensor.is_pinned\\(\\) is deprecated:DeprecationWarning",
+]
 
 # Mypy
 [tool.mypy]
