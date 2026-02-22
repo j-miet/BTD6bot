@@ -5,4 +5,4 @@ if [[ "$OSTYPE" == "msys" ]]; then
 else
 	source ./../../.venv/bin/activate
 fi
-python image_scaler.py
+python3 image_scaler.py

@@ -10,10 +10,10 @@ cp ./_install/other/_copy/show_coordinates.sh ./tools/show_coordinates/run.sh
 cp ./_install/other/_copy/move_mouse.sh ./tools/move_mouse/run.sh
 cp ./_install/other/_copy/image_scaler.sh ./tools/image_scaler/run.sh
 cp ./_install/other/_copy/commands_tracker.sh ./tools/command_tracker/run.sh
-python -m venv ./.venv
+python3 -m venv ./.venv
 if [[ "$OSTYPE" == "msys" || "OSTYPE" == "cygwin" ]]; then
 	source ./.venv/Scripts/activate
 else
 	source ./.venv/bin/activate
 fi
-pip install -r requirements.txt
+pip3 install -r requirements.txt

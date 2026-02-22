@@ -5,4 +5,4 @@ if [[ "$OSTYPE" == "msys" ]]; then
 else
 	source ./../../.venv/bin/activate
 fi
-python move_mouse.py
+python3 move_mouse.py

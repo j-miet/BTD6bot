@@ -5,4 +5,4 @@ if [[ "$OSTYPE" == "msys" ]]; then
 else
 	source ./../../.venv/bin/activate
 fi
-python command_tracker.py
+python3 command_tracker.py

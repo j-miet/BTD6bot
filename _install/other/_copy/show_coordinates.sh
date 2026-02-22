@@ -5,4 +5,4 @@ if [[ "$OSTYPE" == "msys" ]]; then
 else
 	source ./../../.venv/bin/activate
 fi
-python show_coordinates.py
+python3 show_coordinates.py

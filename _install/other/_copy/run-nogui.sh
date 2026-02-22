@@ -5,4 +5,4 @@ if [[ "$OSTYPE" == "msys" ]]; then
 else
 	source ./.venv/bin/activate
 fi
-python btd6bot -nogui
+python3 btd6bot -nogui
