@@ -36,13 +36,13 @@ def _check_if_temp_valid(temp_data: list[str]) -> bool:
     """Check if times_temp has all round data + total time rows."""
     return True if len(temp_data) >= 2 and ',' not in temp_data[-1] else False
 
-def _read_timedata() -> Any:
+def _read_timedata() -> dict[str, dict[str, str | int | list[str]]]:
     with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as f:
         return json.load(f)
 
-def _read_botvars() -> Any:
+def _read_version() -> int:
     with open(pathlib.Path(__file__).parent/'Files'/'bot_vars.json') as varsfile:
-        return json.load(varsfile)["version"]
+        return int(json.load(varsfile)["version"])
 
 def _update_time_data(plan_name: str, temp_data: list[str]) -> dict[str, Any]:
     """Adds temporary time data contents of a plan to dictionary and return this new dict."""
@@ -53,8 +53,8 @@ def _update_time_data(plan_name: str, temp_data: list[str]) -> dict[str, Any]:
         round_num, round_time = r_time.split(',')
         roundstimes_dict[round_num] = round_time
     time_total = times_contents[-1]
-    current_json: dict[str, Any] = _read_timedata()
-    current_version: dict[str, Any] = _read_botvars()
+    current_json = _read_timedata()
+    current_version = _read_version()
     date: str = str(datetime.date.today()).replace('-','/')
     data_dict = {
         "update_date": date,
