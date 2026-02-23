@@ -78,7 +78,7 @@ from utils import plan_data
 def find_fre(plan: list[str]) -> int:
     """Finds row index of last command within the first round block.
 
-    If plan has multiple round blocks, return the row before first 'elif current_round...' line. If it has only a 
+    If plan has multiple round blocks, return the row before first 'elif round...' line. If it has only a 
     single round block, return last row instead.
 
     Args:
@@ -89,7 +89,7 @@ def find_fre(plan: list[str]) -> int:
             subtracting 1 gives final row.
     """
     for code_row in range(14, len(plan)):   # range(len(plan)) is ok, but starting from 14 skips non-relevant code.
-        if plan[code_row].find('elif current_round == ') != -1:
+        if plan[code_row].find('elif round == ') != -1:
             return code_row-1
     return len(plan)-1
 
@@ -126,13 +126,13 @@ def append_rounds(plan: list[str], first_r: int, first_r_end: int, round_labels:
         rounds.append(temp)  # adds all commands of a round as a sublist
         return rounds, round_labels
     else:
-        current_r = first_r_end+1  # points to first 'elif current_round == ...' line.
+        current_r = first_r_end+1  # points to first 'elif round == ...' line.
         for index in range(first_r+1, current_r): # everything included on the first round
             temp.append(plan[index])
         rounds.append(temp)  # adds all commands from a round as a sublist
         round_labels.append(plan[current_r].split('== ')[1][:-1])  # remove ':' at the end by not including index -1.
         for line in plan[current_r+1:]: # then rounds between first and last, last included
-            if line.startswith('elif current_round =='):
+            if line.startswith('elif round =='):
                 templist: list[str] = []
                 round_labels.append(line.split('== ')[1][:-1]) # separate round number
                 next_line = plan.index(line)
@@ -151,7 +151,7 @@ def append_rounds(plan: list[str], first_r: int, first_r_end: int, round_labels:
 def remove_empty_rows(plan: list[str], first_r: int, round_labels: list[str]) -> list[str]:
     """Removes round labels from all corresponding empty round blocks, preventing any empty rounds showing up in plots.
     
-    Compares two consecutive code rows: if first contains the latter and latter has "if current_round" as substring, it 
+    Compares two consecutive code rows: if first contains the latter and latter has "if round" as substring, it 
     means the first is a round block without any code inside it. And thus, the index of first is found by splitting 
     from the '==' sign (with one space after so '== ') and removing the ':' at the end, then finding corresponding 
     round label index from list of all labels and then removing it.
@@ -367,7 +367,7 @@ def plot_plan(plan_str: str) -> None:
     else:
         first_round_num, final_round_num = get_rounds(strat_name[0].upper(), strat_name[1].upper())
 
-    first_round: int = get_plan.index('if current_round == BEGIN:')
+    first_round: int = get_plan.index('if round == BEGIN:')
     first_round_end: int = find_fre(get_plan)
     round_labels: list[str] = [str(first_round_num)]
     rounds, round_labels = append_rounds(get_plan, first_round, first_round_end, round_labels)

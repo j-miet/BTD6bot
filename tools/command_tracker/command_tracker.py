@@ -96,7 +96,7 @@ def keyboard_tracker(key_pressed: Key | KeyCode | None) -> None:
         if key_pressed.char == '+' and TrackerVals.ct_user_input == '':                                    
             TrackerVals.ct_round_counter += 1
             TrackerVals.coordinates_file.write(
-                'elif current_round == '+ str(TrackerVals.ct_round_counter)+':\n')
+                'elif round == '+ str(TrackerVals.ct_round_counter)+':\n')
             print('Current round is ' + str(TrackerVals.ct_round_counter))
     elif key_pressed == Key.pause:
         with open(pathlib.Path(__file__).parent/'commands.txt', 'w') as TrackerVals.coordinates_file:
@@ -299,7 +299,7 @@ def run_tracker() -> None:
         'quit.')
     print("[All right-click commands]: help, -m, -h, -u, -t, -s, -ucp, -tcp, -scp, -c, -l")        
     with open(pathlib.Path(__file__).parent/'commands.txt', 'a') as TrackerVals.coordinates_file:
-        TrackerVals.coordinates_file.write('if current_round == BEGIN:\n')
+        TrackerVals.coordinates_file.write('if round == BEGIN:\n')
     print('Current round is ' + str(TrackerVals.ct_round_counter))
 
     # updates file during program runtime by opening it in append mode. 

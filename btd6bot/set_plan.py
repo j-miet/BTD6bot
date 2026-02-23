@@ -179,7 +179,7 @@ def get_hero_name_from_plan(plan_info: list[str]) -> str:
             return line[6:].strip()
     return '-'
 
-def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str, int, int, str, bool]) -> None:
+def plan_run(plan_name: str, plan_module: ModuleType, data: tuple[str, str, str, int, int, str, bool]) -> None:
     """Runs the plan file with given information.
 
     Also handles time recording for round plots.
@@ -187,12 +187,12 @@ def plan_run(plan_name: str, plan_module: ModuleType, info: tuple[str, str, str,
     Args:
         plan_name: Name of current plan.
         plan_module: Importlib module of current plan.
-        info: All information required for a plan. Components are: map name, difficulty, game mode, 
+        data: All information required for a plan. Components in order: map name, difficulty, game mode, 
             begin round, end round, hero name, farming mode status.
     """
     try:
-        plan_module.play(info)
-        if not info[-1] and _check_if_temp_valid(_maindata.maindata["times_temp"]):
+        plan_module.play(data)
+        if not data[-1] and _check_if_temp_valid(_maindata.maindata["times_temp"]):
             _save_to_json(plan_name, _maindata.maindata["times_temp"])
     except BotError as err:
         cprint(err)
