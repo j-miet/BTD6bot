@@ -16,6 +16,7 @@ status is True.
 """
 
 from __future__ import annotations
+import copy
 from typing import TYPE_CHECKING
 import datetime
 import importlib
@@ -33,7 +34,7 @@ if TYPE_CHECKING:
     from types import ModuleType
 
 def _check_if_temp_valid(temp_data: list[str]) -> bool:
-    """Check if times_temp has all round data + total time rows."""
+    # Check if times_temp has all round data + total time rows
     return True if len(temp_data) >= 2 and ',' not in temp_data[-1] else False
 
 def _read_timedata() -> dict[str, dict[str, str | int | list[str]]]:
@@ -44,36 +45,36 @@ def _read_version() -> int:
     with open(pathlib.Path(__file__).parent/'Files'/'bot_vars.json') as varsfile:
         return int(json.load(varsfile)["version"])
 
-def _update_time_data(plan_name: str, temp_data: list[str]) -> dict[str, Any]:
-    """Adds temporary time data contents of a plan to dictionary and return this new dict."""
-    times_contents = plan_data.list_format(temp_data)
+def _update_time_data(plan_name: str,
+        recorded_timedata: list[str],
+        full_timedata: dict[str, dict[str, str | int | list[str]]],
+        version: int 
+    ) -> dict[str, dict[str, str | int | list[str]]]:
+    recorded = plan_data.list_format(recorded_timedata)
+    current_timedata = copy.deepcopy(full_timedata)
     roundstimes_dict = {}
 
-    for r_time in times_contents[:-1]:
+    for r_time in recorded[:-1]:
         round_num, round_time = r_time.split(',')
         roundstimes_dict[round_num] = round_time
-    time_total = times_contents[-1]
-    current_json = _read_timedata()
-    current_version = _read_version()
+    time_total = recorded[-1]
     date: str = str(datetime.date.today()).replace('-','/')
     data_dict = {
         "update_date": date,
-        "version": current_version,
+        "version": version,
         "roundtimes": roundstimes_dict,
         "time_total": time_total
         }
-    if plan_name not in current_json.keys():
-        current_json.update({plan_name: data_dict})
+    if plan_name not in current_timedata.keys():
+        current_timedata.update({plan_name: data_dict})
     else:
-        current_json[plan_name] = data_dict
-    return current_json
+        current_timedata[plan_name] = data_dict
+    return current_timedata
 
 def _save_to_json(plan_name: str, time_data: list[str]) -> None:
-    """Saves time data to time_data.json file which gui.roundplot requires when creating plots.
-    
-    Should only be called by plan_run.
-    """
-    new_times = dict(sorted(_update_time_data(plan_name, time_data).items()))
+    # Saves time data to time_data.json file which gui.roundplot requires when creating plots.
+    # Should only be called by plan_run.
+    new_times = dict(sorted(_update_time_data(plan_name, time_data, _read_timedata(), _read_version()).items()))
     with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as timef:
         current_times: dict[str, Any] = json.load(timef)
     with open(pathlib.Path(__file__).parent/'Files'/'time_data-backup.json', 'w') as timef:
@@ -82,6 +83,7 @@ def _save_to_json(plan_name: str, time_data: list[str]) -> None:
         json.dump(new_times, f, indent=2)
 
 def run_delta_adjust() -> None:
+    """Run ocr delta adjusting"""
     # internal imports bot._adjust_deltas and bot._farming should only be loaded after the first function call
     # in order to prevent ocr reader's auto-initialization
     import bot._adjust_deltas
