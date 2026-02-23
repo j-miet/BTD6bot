@@ -34,7 +34,11 @@ def get_rewardplanname(mapname: str) -> str:
     return mapname.replace(' ', '_')+'EasyStandard'
 
 def select_rewardplan() -> str:
-    """Selects map with bonus rewards."""
+    """Selects map with bonus rewards.
+    
+    Returns:
+        Map name. If no plan is found, return empty string.
+    """
     loop: bool = True
     cprint('Searching for main menu screen...')
     while loop:
@@ -72,7 +76,11 @@ def click_rewardmap() -> None:
     time.sleep(0.3)
 
 def select_defaulthero(hero_name: str = 'sauda') -> bool:
-    """Select default hero for event farming."""
+    """Select default hero for event farming.
+    
+    Returns:
+        True if hero selection was successful, otherwise False.
+    """
     cprint('Searching menu screen...')
     loop: bool = True
     while loop:
