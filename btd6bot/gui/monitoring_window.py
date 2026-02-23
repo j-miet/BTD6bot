@@ -160,7 +160,7 @@ class MonitoringWindow:
                     anchor='nw', 
                     justify='left'
                 )
-                self.monitor_mapscreen.image = photo
+                self.monitor_mapscreen.image = photo # type: ignore[attr-defined]
                 self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
             except tk.TclError:
                 self.monitor_mapscreen = ttk.Label(
@@ -193,7 +193,7 @@ class MonitoringWindow:
                     anchor='nw', 
                     justify='left'
                 )
-                self.monitor_mapscreen.image = photo
+                self.monitor_mapscreen.image = photo # type: ignore[attr-defined]
                 self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
             except tk.TclError:
                 self.monitor_mapscreen = ttk.Label(
@@ -504,7 +504,7 @@ class MonitoringWindow:
                 new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'spa pits.png')
                 self.monitor_mapscreen['text'] = ''
                 self.monitor_mapscreen.configure(image=new_image)
-                self.monitor_mapscreen.image = new_image
+                self.monitor_mapscreen.image = new_image # type: ignore[attr-defined]
             except tk.TclError:
                 self.monitor_mapscreen.configure(image='')
                 self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
@@ -542,7 +542,7 @@ class MonitoringWindow:
                         anchor='nw', 
                         justify='left'
                     )
-                    self.monitor_mapscreen.image = new_image
+                    self.monitor_mapscreen.image = new_image # type: ignore[attr-defined]
                     self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
                 except tk.TclError:
                     self.monitor_mapscreen = ttk.Label(
@@ -596,7 +596,7 @@ class MonitoringWindow:
             new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(current)+'.png'))
             self.monitor_mapscreen['text'] = ''
             self.monitor_mapscreen.configure(image=new_image)
-            self.monitor_mapscreen.image = new_image
+            self.monitor_mapscreen.image = new_image # type: ignore[attr-defined]
         except tk.TclError:
             self.monitor_mapscreen.configure(image='')
             self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII

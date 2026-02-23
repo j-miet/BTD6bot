@@ -37,7 +37,7 @@ def _check_if_temp_valid(temp_data: list[str]) -> bool:
     # Check if times_temp has all round data + total time rows
     return True if len(temp_data) >= 2 and ',' not in temp_data[-1] else False
 
-def _read_timedata() -> dict[str, dict[str, str | int | list[str]]]:
+def _read_timedata() -> Any:
     with open(pathlib.Path(__file__).parent/'Files'/'time_data.json') as f:
         return json.load(f)
 
@@ -47,11 +47,11 @@ def _read_version() -> int:
 
 def _update_time_data(plan_name: str,
         recorded_timedata: list[str],
-        full_timedata: dict[str, dict[str, str | int | list[str]]],
+        full_timedata: Any,
         version: int 
     ) -> dict[str, dict[str, str | int | list[str]]]:
     recorded = plan_data.list_format(recorded_timedata)
-    current_timedata = copy.deepcopy(full_timedata)
+    current_timedata: dict[str, dict[str, str | int | list[str]]] = copy.deepcopy(full_timedata)
     roundstimes_dict = {}
 
     for r_time in recorded[:-1]:
