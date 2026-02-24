@@ -58,6 +58,7 @@ class OcrValues:
     """
     DELTA: float = 0.75
 
+    _baseres: tuple[int, ...] = tuple(map(int, str(_maindata.maindata["bot_vars"]["custom_resolution"]).split('x')))
     _read_file_frequency: float = _maindata.maindata["bot_vars"]["ocr_frequency"]
     _log_ocr_deltas: bool = False # only _adjust_deltas.py should set this to True  
     _ocr_upgradedata: dict[str, Any] = _maindata.maindata["ocr_upgradedata"]
@@ -190,8 +191,15 @@ def strong_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> 
     ocr_img = Image.frombytes("RGB", img.size, img.bgra, "raw", "BGRX")
     blackwhite_image = img_to_black_and_white(ocr_img) # type: ignore[arg-type]
     final = array(blackwhite_image)
-    if _maindata.maindata["bot_vars"]["windowed"]:
-        zoom_factor = 2
+    if (_maindata.maindata["bot_vars"]["windowed"] and
+        (kb_mouse.ScreenRes._width < kb_mouse.ScreenRes.BASE_RES[0] or
+        kb_mouse.ScreenRes._height < kb_mouse.ScreenRes.BASE_RES[1])):
+        zoom_factor: int # add some zoom based on game window size
+        if (kb_mouse.ScreenRes.BASE_RES[0] < 2*kb_mouse.ScreenRes._width or
+            kb_mouse.ScreenRes.BASE_RES[1] < 2*kb_mouse.ScreenRes._height): # if window w/h more than half of native res
+            zoom_factor = 2
+        else:
+            zoom_factor = 3
         for i in range(2): # zooming of images, quite expensive to calculate.
             final = repeat(final, zoom_factor, axis=i)
     try:
