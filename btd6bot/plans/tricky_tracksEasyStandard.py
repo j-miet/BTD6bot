@@ -27,7 +27,7 @@ def play(data):
             desp3 = Monkey('desperado', 0.3963541666667, 0.4055555555556)
             desp3.target('strong')
         elif round == 4:
-            wizard = Monkey('wizard', 0.4380208333333, 0.5666666666667)
+            wizard = Monkey('wizard', 0.4380208333333, 0.5866666666667)
             wizard.target('strong')
         elif round == 6:
             sniper1 = Monkey('sniper', 0.2390625, 0.8583333333333)
