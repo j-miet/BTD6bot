@@ -133,78 +133,83 @@ class MonitoringWindow:
         self.textbox.configure(yscrollcommand=scroll.set)
         scroll.configure(command=self.textbox.yview)
 
-        self.MONITOR_MAPSCREEN_ASCII = ("   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⢀⣾⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣰⣿⣿⣿⣿⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⡿⠿⢿⣿⣿⣶⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⢼⡟⠉⣻⣿⣿⡏⠰⣷⠀⢹⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⢻⣷⡀⠙⣻⣿⣿⣄⣠⣴⡿⠋⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⠀⣭⣉⣛⣻⣿⣿⣿⣿⣿⣿⣿⣶⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⢠⠞⢡⣽⣿⣿⠿⢻⣿⣿⣿⣏⣿⣿⣿⣧⣤⣤⣤⣄⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠘⣴⡨⠛⠋⠁⠀⣼⣿⣿⣿⡟⣿⣿⣿⣿⣯⢈⣿⣿⠂⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠘⠃⠀⠀⠀⢀⣤⣿⣷⡜⣿⣧⡉⠉⠙⠋⠁⠈⠉⠁⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠁⢠⣾⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     \n" 
+        self.MONITOR_MAPSCREEN_ASCII = ("   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⢀⣾⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣰⣿⣿⣿⣿⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⡿⠿⢿⣿⣿⣶⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⢼⡟⠉⣻⣿⣿⡏⠰⣷⠀⢹⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⢻⣷⡀⠙⣻⣿⣿⣄⣠⣴⡿⠋⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⠀⣭⣉⣛⣻⣿⣿⣿⣿⣿⣿⣿⣶⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⢠⠞⢡⣽⣿⣿⠿⢻⣿⣿⣿⣏⣿⣿⣿⣧⣤⣤⣤⣄⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠘⣴⡨⠛⠋⠁⠀⣼⣿⣿⣿⡟⣿⣿⣿⣿⣯⢈⣿⣿⠂⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠘⠃⠀⠀⠀⢀⣤⣿⣷⡜⣿⣧⡉⠉⠙⠋⠁⠈⠉⠁⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠁⢠⣾⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀    \n" 
                                         )
         style = ttk.Style()
         style.configure('Style.TButton', font='TkFixedFont')
+
+        # wrapper from map image labels. Png images use 320x195 standard. 
+        # exact height crops top of the image off so set Frame height slightly higher than actual actual image height
+        self.monitor_mapscreen_frame = tk.Frame(self.monitoringwindow, width=320, height=215, bg="black")
+        self.monitor_mapscreen_frame.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+        self.monitor_mapscreen_frame.grid_propagate(False)
 
         guivars_adjust = _maindata.maindata["bot_vars"]["ocr_adjust_deltas"]
         if guivars_adjust:
             try:
                 photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'spa pits.png')
                 self.monitor_mapscreen = ttk.Label(
-                    self.monitoringwindow, 
+                    self.monitor_mapscreen_frame, 
                     image=photo, 
                     compound='top', 
                     anchor='nw', 
                     justify='left'
                 )
                 self.monitor_mapscreen.image = photo # type: ignore[attr-defined]
-                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+                self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
             except tk.TclError:
                 self.monitor_mapscreen = ttk.Label(
-                    self.monitoringwindow, 
+                    self.monitor_mapscreen_frame, 
                     compound='top', 
                     anchor='nw',
                     style='Style.TButton', 
-                    justify='left'
+                    justify='left',
+                    text = self.MONITOR_MAPSCREEN_ASCII
                 )
-                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
-                self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
+                self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
         elif self.farming == 'On':
             self.monitor_mapscreen = ttk.Label(
-                self.monitoringwindow, 
+                self.monitor_mapscreen_frame, 
                 compound='top', 
                 anchor='nw',
                 style='Style.TButton', 
-                justify='left'
+                justify='left',
+                text=self.MONITOR_MAPSCREEN_ASCII
             )
-            self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
-            self.monitor_mapscreen.configure(image='')
-            self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
+            self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
         else:
             try:
                 photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(self.all_plans[0])+'.png'))
                 self.monitor_mapscreen = ttk.Label(
-                    self.monitoringwindow, 
+                    self.monitor_mapscreen_frame, 
                     image=photo, 
                     compound='top', 
                     anchor='nw', 
                     justify='left'
                 )
                 self.monitor_mapscreen.image = photo # type: ignore[attr-defined]
-                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+                self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
             except tk.TclError:
                 self.monitor_mapscreen = ttk.Label(
-                    self.monitoringwindow, 
+                    self.monitor_mapscreen_frame, 
                     compound='top', 
                     anchor='nw',
                     style='Style.TButton', 
-                    justify='left'
+                    justify='left',
+                    text=self.MONITOR_MAPSCREEN_ASCII
                 )
-                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
-                self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
+                self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
 
         self.monitor_infobox_current = tk.Label(
             self.monitoringwindow, 
@@ -356,15 +361,16 @@ class MonitoringWindow:
             MonitoringWindow.current_bot_thread = self.get_bot_thread()
             self.monitor_run_button.configure(text='Run')
             cprint('\n#####Bot terminated#####')
+            self.monitor_mapscreen.destroy()
             self.monitor_mapscreen = ttk.Label(
-                self.monitoringwindow,  
+                self.monitor_mapscreen_frame,  
                 compound='top', 
                 anchor='nw', 
                 style='Style.TButton', 
                 justify='left',
                 text=self.MONITOR_MAPSCREEN_ASCII
             )
-            self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+            self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
             return
         self.bot_thread = threading.Thread(target=self._run_bot, daemon=True)
         MonitoringWindow.current_bot_thread = self.get_bot_thread()
@@ -536,24 +542,24 @@ class MonitoringWindow:
                     rewardmap: str = plan_data.return_map(rewardplan)
                     new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/f'{rewardmap}.png')
                     self.monitor_mapscreen = ttk.Label(
-                        self.monitoringwindow, 
+                        self.monitor_mapscreen_frame, 
                         image=new_image, 
                         compound='top', 
                         anchor='nw', 
                         justify='left'
                     )
                     self.monitor_mapscreen.image = new_image # type: ignore[attr-defined]
-                    self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+                    self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
                 except tk.TclError:
                     self.monitor_mapscreen = ttk.Label(
-                        self.monitoringwindow,  
+                        self.monitor_mapscreen_frame,  
                         compound='top', 
                         anchor='nw', 
                         style='Style.TButton', 
                         justify='left',
                         text=self.MONITOR_MAPSCREEN_ASCII
                     )
-                    self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+                    self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
                 self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display(rewardplan))
                 if set_plan.run_farming_mode(rewardplan):
                     self.runs.set(self.runs.get()+1)
@@ -593,13 +599,26 @@ class MonitoringWindow:
         except IndexError:
             self.monitor_infobox_next.configure(text='-'*12) 
         try:
-            new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(current)+'.png'))
-            self.monitor_mapscreen['text'] = ''
-            self.monitor_mapscreen.configure(image=new_image)
-            self.monitor_mapscreen.image = new_image # type: ignore[attr-defined]
+            self.monitor_mapscreen.destroy()
+            photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(current)+'.png'))
+            self.monitor_mapscreen = ttk.Label(
+                self.monitor_mapscreen_frame, 
+                image=photo, 
+                compound='top', 
+                anchor='nw', 
+                justify='left'
+            )
+            self.monitor_mapscreen.image = photo # type: ignore[attr-defined]
+            self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
         except tk.TclError:
-            self.monitor_mapscreen.configure(image='')
-            self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
+            self.monitor_mapscreen = ttk.Label(
+                self.monitor_mapscreen_frame, 
+                compound='top', 
+                anchor='nw', 
+                justify='left',
+                text = self.MONITOR_MAPSCREEN_ASCII
+            )
+            self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
         self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display(current))
         set_plan.plan_setup(current)
 
