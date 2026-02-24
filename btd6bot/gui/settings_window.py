@@ -787,7 +787,7 @@ class SettingsWindow:
             height = self.resolution_height_entry.get()
             h = int(height)
             native = pyautogui.size()
-            if (1 <= w <= native[0] and 1 <= h < native[1]) or (1 <= w < native[0] and 1 <= h <= native[1]) :
+            if (1 <= w <= native[0]+1 and 1 <= h < native[1]+1) or (1 <= w < native[0]+1 and 1 <= h <= native[1]+1) :
                     val = width+' x '+height
                     with open(gui_paths.FILES_PATH/'bot_vars.json') as f:
                         bot_vars_dict: dict[str, Any] = json.load(f)

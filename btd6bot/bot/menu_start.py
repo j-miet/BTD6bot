@@ -231,7 +231,7 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
     if windowed_val:
         winpos_val: str = bot_vars_dict["windowed_position"]
         if winpos_val == 'auto' and sys.platform == 'win32':
-            ScreenRes.update_winpos_status(winpos_val)
+            ScreenRes.update_winpos_status('auto')
             try:
                 ScreenRes._phandle = win32gui.FindWindow(None, "BloonsTD6")
                 winrect = win32gui.GetWindowRect(ScreenRes._phandle)
@@ -241,7 +241,7 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
                 while True:
                     time.sleep(1)
         elif winpos_val == 'centered':
-            ScreenRes.update_winpos_status(winpos_val)
+            ScreenRes.update_winpos_status('centered')
         else:
             ScreenRes.update_winpos_status('custom')
             winpos: tuple[int, ...] = tuple(map(int, bot_vars_dict["windowed_position"].split('x')))
@@ -291,8 +291,6 @@ def load(map_name: str,
     Returns:
         Begin and end rounds.
     """
-    if not _maindata.init_readvalues():
-        return -1, -1
     _update_external_variables(begin_round, end_round)
     loop: bool = True
     if not farm:

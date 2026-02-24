@@ -7,8 +7,27 @@ from typing import Any
 from customprint import cprint
 
 maindata: dict[str, Any] = {}
+"""Central data storage for btd6bot during runtime."""
 
-def init_readvalues(maindata_dict: dict[str, Any] = maindata) -> bool:
+def init_maindata(maindata_dict: dict[str, Any] = maindata) -> bool:
+    """Initialize maindata dictionary by reading data from core files.
+
+    For each missing file print a message and set return value to False. Missing files will not immediately cause
+    issues, but in most cases lead to eventual crash.
+
+    [How to use]
+
+    First init call is always made in _maindata module i.e. where this function is defined. This alone is sufficient if 
+    no further file writes are performed during runtime loop. This is the default behavior for _no_gui.py as it's meant
+    to operate with its initial state and not alter it, making it lightweight to operate.
+
+    If additional file writes are done then init must be called before new data is meant to be accessed. Two clear use 
+    cases for this are
+    1. creating and running multiple bot runtime cycles with a possibility that passed data needs to be updated between
+        cycles -> BTD6bot GUI after a new  monitoring window gets created
+    2. running a separate update process not part of core runtime loop, but still requiring bot tools -> _adjust_deltas 
+        running ocr adjusting process
+"""
     maindata_dict.update({})
     failed: bool = False
     temp_dict: dict[str, Any] = {}
@@ -43,13 +62,19 @@ def init_readvalues(maindata_dict: dict[str, Any] = maindata) -> bool:
         cprint("Can't access upgrades_current.json file")
         failed = True
 
+    # built-in data paths (= not read from a file)
     temp_dict["times_temp"] = [] # for round times
     temp_dict["temp_upg_deltas"] = {} # for _adjust_deltas
-    temp_dict["toggle"] = {"event_status": False, # toggled status for collection events and farming mode
-                            "farming_status": False}
-    temp_dict["internal"] = {"time_recording_status": True,
-                            "paused": False,
-                            "defeat_status": False}
+    temp_dict["toggle"] = { # toggled status for collection events and farming mode
+        "event_status": False,
+        "farming_status": False
+    }
+    temp_dict["internal"] = {
+        "time_recording_status": True,
+        "paused": False,
+        "defeat_status": False
+    }
+
     if failed:
         return False
     else:
@@ -57,11 +82,11 @@ def init_readvalues(maindata_dict: dict[str, Any] = maindata) -> bool:
         return True
 
 def write_botvars(new_vars: dict[str, Any]) -> None:
-    with open(Path(__file__).parent.parent/'Files'/'bot_vars.json', 'w') as guivars_f:
-        json.dump(new_vars, guivars_f, indent=4)
+    with open(Path(__file__).parent.parent/'Files'/'bot_vars.json', 'w') as botvars_f:
+        json.dump(new_vars, botvars_f, indent=4)
 
 def write_ocr_upgrades(new_ocrvals: dict[str, Any]) -> None:
     with open(Path(__file__).parent.parent/'Files'/'upgrades_current.json', 'w') as f:
         json.dump(new_ocrvals, f, indent=2)
 
-init_readvalues()
+init_maindata() # first init when program starts

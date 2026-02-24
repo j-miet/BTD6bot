@@ -21,7 +21,7 @@ def collection_event_handler() -> None:
     start = time.time()
     while time.time()-start <= 5:
         if strong_delta_check('collect', get_text('menu', 'collection_collect'), OCR_READER):
-            cprint('Clicking all insta pop-ups location...')
+            cprint('Clicking all insta pop-up locations...')
             kb_mouse.click(get_click('menu', 'collection_event'), 2)
             time.sleep(2)
             kb_mouse.click(get_click('menu', 'collection_two_left'))

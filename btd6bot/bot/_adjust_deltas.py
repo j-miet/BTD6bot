@@ -254,7 +254,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
     previous_settings["ocr_adjust_deltas"] = False
     _maindata.maindata["bot_vars"].update(previous_settings)
     _maindata.write_botvars(previous_settings)
-    _maindata.init_readvalues()
+    _maindata.init_maindata()
     OcrValues._log_ocr_deltas = False
     cprint("\n-Auto-adjust set to False.\n")
 
@@ -268,7 +268,7 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
     cprint("Adjusting process complete!")
 
 def run() -> None:
-    if not _maindata.init_readvalues():
+    if not _maindata.init_maindata():
         cprint("Adjusting process halted.")
         return
     bot_vars_adjust_args: str = _maindata.maindata["bot_vars"]["adjust_args"]

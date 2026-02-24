@@ -194,6 +194,7 @@ def plan_run(plan_name: str, plan_module: ModuleType, data: tuple[str, str, str,
         plan_module.play(data)
         if not data[-1] and _check_if_temp_valid(_maindata.maindata["times_temp"]):
             _save_to_json(plan_name, _maindata.maindata["times_temp"])
+        _maindata.maindata["times_temp"] = [] # flush saved round times
     except BotError as err:
         cprint(err)
 

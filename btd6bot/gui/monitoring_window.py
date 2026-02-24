@@ -62,7 +62,7 @@ class MonitoringWindow:
         self.current_plans: list[str] = []
         self.plans_status: list[str] = []
 
-        _maindata.init_readvalues()
+        _maindata.init_maindata()
         
         self.monitoringwindow = tk.Toplevel()
         self.monitoringwindow.title("Bot Monitoring Window")
@@ -82,7 +82,6 @@ class MonitoringWindow:
         self.textbox.insert('end', "Welcome to BTD6bot!\n"
                             "Make sure that:\n"
                             ">Game language is set to ENGLISH\n"
-                            ">Resolution has aspect ratio of ~16:9\n"
                             ">Game is preferably fullscreen (but windowed works too)\n"
                             ">Bot hotkeys match with your in-game equivalents\n"
                             ">Your Btd6 game window has main menu screen opened\n"
@@ -361,16 +360,6 @@ class MonitoringWindow:
             MonitoringWindow.current_bot_thread = self.get_bot_thread()
             self.monitor_run_button.configure(text='Run')
             cprint('\n#####Bot terminated#####')
-            self.monitor_mapscreen.destroy()
-            self.monitor_mapscreen = ttk.Label(
-                self.monitor_mapscreen_frame,  
-                compound='top', 
-                anchor='nw', 
-                style='Style.TButton', 
-                justify='left',
-                text=self.MONITOR_MAPSCREEN_ASCII
-            )
-            self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
             return
         self.bot_thread = threading.Thread(target=self._run_bot, daemon=True)
         MonitoringWindow.current_bot_thread = self.get_bot_thread()
