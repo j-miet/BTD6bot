@@ -22,6 +22,8 @@ exclude = [
     "^btd6bot/plans/",
 ]
 disable_error_code = ["no-untyped-call"]
+ignore_missing_imports = "True"
+strict = "True"
 
 [[tool.mypy.overrides]]
 module = [
@@ -33,7 +35,7 @@ disable_error_code = ["no-any-return"]
 module = [
     "btd6bot/gui/roundplot.*"
 ]
-disable_error_code = ["operator", "assignment"]
+disable_error_code = ["operator", "assignment", "union-attr", "arg-type"]
 
 
 # Ruff

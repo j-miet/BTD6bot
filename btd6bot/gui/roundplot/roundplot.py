@@ -197,9 +197,9 @@ def plot(round_labels: list[str], rounds: list[list[str]], plan_name: str) -> No
     plt.subplots_adjust(left=0.05, bottom=0.1, right=0.99, top=0.9, wspace=None, hspace=None)
     rcParams['toolbar'] = 'None'
     winmanager = plt.get_current_fig_manager()
-    winmanager.window.wm_iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico') # type: ignore[union-attr]
+    winmanager.window.wm_iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
     try:
-        winmanager.window.state('zoomed') # type: ignore[union-attr]
+        winmanager.window.state('zoomed')
     except AttributeError:
         ...
     fig.suptitle(f'Round commands and round times of current plan "{plan_name}"')
@@ -284,7 +284,7 @@ def plot(round_labels: list[str], rounds: list[list[str]], plan_name: str) -> No
         else:
             for text_line in range(0, len(r)):
                 lines += r[text_line]+'\n'
-        ax_rounds.text(x, -0.8, lines, ha='left') # type: ignore[arg-type]
+        ax_rounds.text(x, -0.8, lines, ha='left')
 
     axis_position = plt.axes((0.1, 0.025, 0.8, 0.025))
     slider_min_val = -0.1
@@ -321,7 +321,7 @@ def plot(round_labels: list[str], rounds: list[list[str]], plan_name: str) -> No
             fig.canvas.draw_idle()
 
     round_slider.on_changed(_update)
-    round_slider.connect_event('scroll_event', _rounds_scroll) # type: ignore[arg-type]
+    round_slider.connect_event('scroll_event', _rounds_scroll)
     plt.show()
 
 

@@ -70,7 +70,8 @@ def get_pixelcolor(x: float, y: float) -> tuple[int, int, int]:
     Coordinates are passed as scalar values [0,1).
     """
     px, py = kb_mouse.pixel_position((x, y))
-    return pyautogui.pixel(px,py)
+    color: tuple[int, int, int] = pyautogui.pixel(px,py) # explicit typing for mypy
+    return color
 
 def white_shades(rgb_range: int = 1) -> list[tuple[int, int, int]]:
     """Returns a list of different shades of white color. By default, only white (255,255,255) is returned.
