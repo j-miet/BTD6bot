@@ -5,9 +5,12 @@ on:
     branches: 
       - dev
     paths:
-      - 'btd6bot/!(plans/**)/**'
+      - 'btd6bot/**'
       - 'tests/**'
-      - 'scripts/**'
+    paths-ignore:
+      - 'btd6bot/plans/**'
+      - 'btd6bot/_ocr_tests/**'
+
 
 jobs:
   pytest:
