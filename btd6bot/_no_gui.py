@@ -138,7 +138,7 @@ class NoGui:
             """Program termination via hotkey.
 
             Args:
-                key: Latest keyboard key the user has pressed.       
+                key: Last keyboard key the user has pressed.       
             """
             if key == GuiHotkeys.exit_hotkey or (isinstance(key, KeyCode) and key.char == GuiHotkeys.exit_hotkey):
                 cprint("Process terminated.")
