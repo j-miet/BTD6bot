@@ -10,7 +10,8 @@ It includes a simple graphical user interface: not visually impressive, but easy
 
 **Supports only <u>single player game modes</u> accessed under the main menu 'Play' button.**  
 Support for multiplayer/competitive modes such as races, bosses, contested territory, boss rush, etc. will not be 
-added.
+added.   
+-> *Only exception would be a possible achievement farming support, but there's **no** estimated time of arrival for this feature.*
 
 Bot is quite complex and has been tested thoroughly, but you may still encounter bugs.  
 
@@ -25,6 +26,8 @@ imposes the risk of flagging your account for cheating, or worst case, getting i
 I'm not certain how they could enforce this ruleset in a single player environment, though. If you're concerned,
 you can always run bot offline. <u>You have been warned</u>.***
 
+**-- Contributions --**  
+If you'd like to contribute to project, for example add new game plans, see [Contributions](#contributing-to-project) section.
 
 ---
 **[Update status]    
@@ -99,6 +102,7 @@ bot inside it.
         - [General](#general)
     - [Table: Monkeys, heroes and targeting options](#table-monkeys-heroes-and-targeting-options)
 - [<u>Updating the bot</u>](#updating-the-bot)
+- [<u>Contributing to project</u>](#contributing-to-project)
 
 # <u>Features</u>
 
@@ -2125,3 +2129,25 @@ This in in fact the only mandatory step for adding heroes. However, if hero uses
     - implement any other required internal methods (e.g. ``_prepare_hero_menu`` for Geraldo and Corvus)
     - **(Optional)** Add pause flag, cpos checks so method can be used in maps with changing positions; see other 
     existing methods for examples.
+
+## Contributing to project
+
+**[Pull requests]**
+
+Always set pull requests to merge from your branch into BTD6bot ``dev`` branch, i.e. 
+
+>base: ``dev`` <- compare: ``your_branch``
+
+where ``your_branch`` should be main branch of forked BTD66bot repo.
+
+This is because
+
+- ``dev`` is meant for adding and testing new features. Pull request code can be checked, possible fixes can be made then it can be merged with current development code to make sure everything works. After current set of new features/fixes in dev branch have been tested thoroughly, only then it gets moved to main branch so that all users can access them and expect minimal bugs.
+- ``main`` as stated above is the production/user branch. It's the current version of bot all users should download and therefore must have minimal amount of bugs. Any undetected bugs can be hotfixed and tested again in ``dev`` branch then merged into ``main`` only by creating a new pull request. This way unfinished dev code and production code are strictly separated.
+
+
+**[Issues]**
+
+- State your issue in your own words. If possible try to explain what you did before the issue happened. No need to be super-detailed, just the general details are enough.
+- If there was an error message or other type of text that indicates this wasn't supposed to happen, please include it.
+    - Mention your operating system. Usually this can easily be interpreted from the context but not always.
