@@ -37,7 +37,6 @@ from customprint import cprint
 
 if TYPE_CHECKING:
     from easyocr import Reader
-    from PIL.ImageFile import ImageFile
     from typing import Any
 
 class OcrValues:
@@ -114,7 +113,7 @@ def gray_shades(rgb_range: int = 1) -> list[tuple[int, int, int]]:
                 gray_list.extend([g1, g2])
     return gray_list
 
-def img_to_black_and_white(image: ImageFile) -> ImageFile:
+def img_to_black_and_white(image: Image.Image) -> Image.Image:
     """Return an image with non-white and non-grey shades replaced with black.
       
     This leaves white text with black background and makes ocr matching possibly more accurate. 
@@ -190,7 +189,7 @@ def strong_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> 
         monitor = {"left": tl_x, "top": tl_y, "width": width, "height": height}
         img = sct.grab(monitor)
     ocr_img = Image.frombytes("RGB", img.size, img.bgra, "raw", "BGRX")
-    blackwhite_image = img_to_black_and_white(ocr_img) # type: ignore[arg-type]
+    blackwhite_image = img_to_black_and_white(ocr_img)
     final = array(blackwhite_image)
     if (_maindata.maindata["bot_vars"]["windowed"] and
         (kb_mouse.ScreenRes._width < kb_mouse.ScreenRes.BASE_RES[0] or
