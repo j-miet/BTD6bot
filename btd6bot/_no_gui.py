@@ -23,6 +23,8 @@ import gui.gui_tools as gui_tools
 from gui.guihotkeys import GuiHotkeys
 
 class NoGui:
+    """CLI version of BTD6bot"""
+
     def __init__(self) -> None:
         self.replay: bool = False
         self.bot_thread: threading.Thread
