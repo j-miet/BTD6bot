@@ -1,3 +1,5 @@
+# Outdated, but can be used as reference
+
 //pytest//
 
 -----Setting up tests for new project-----

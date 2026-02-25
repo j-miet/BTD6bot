@@ -18,8 +18,6 @@ After reader is initialized, it will reserve quite a sizeable chunk in memory: a
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import difflib
-import json
-import pathlib
 import sys
 import time
 
@@ -34,12 +32,11 @@ elif sys.platform == 'darwin':
 elif sys.platform == 'linux':
     from mss.linux import MSS as mss
 
-from bot import kb_mouse
-from bot.bot_vars import BotVars
+from bot import _maindata, kb_mouse
 from customprint import cprint
 
 if TYPE_CHECKING:
-    from easyocr import Reader  # type: ignore
+    from easyocr import Reader
     from PIL.ImageFile import ImageFile
     from typing import Any
 
@@ -58,32 +55,14 @@ class OcrValues:
             to ~1 check a second, but this doesn't include the other part of process like screenshots, reading text 
             and comparing text. This means the actual frequency to checks ratio diminishes greatly with smaller value 
             i.e. 0.01 doesn't match to 100 checks per second.
-
     """
     DELTA: float = 0.75
 
-    read_file_frequency: float = 0.01
-
-    _ocr_upgradedata: dict[str, Any]
-    _ocr_upg_basedata: dict[str, Any]
-    _log_ocr_deltas: bool = False
-
-    @staticmethod
-    def _get_current_upgradedata() -> dict[str, Any]:
-        try:
-            with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'upgrades_current.json') as f:
-                return json.load(f)
-        except FileNotFoundError:
-            with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'_ocr_upgradedata.json') as f:
-                return json.load(f)
-
-    @staticmethod
-    def _get_base_upgradedata() -> dict[str, Any]:
-        with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'_ocr_upgradedata.json') as f:
-            return json.load(f)   
-    
-    _ocr_upgradedata = _get_current_upgradedata()
-    _ocr_upg_basedata = _get_base_upgradedata() 
+    _baseres: tuple[int, ...] = tuple(map(int, str(_maindata.maindata["bot_vars"]["custom_resolution"]).split('x')))
+    _read_file_frequency: float = _maindata.maindata["bot_vars"]["ocr_frequency"]
+    _log_ocr_deltas: bool = False # only _adjust_deltas.py should set this to True  
+    _ocr_upgradedata: dict[str, Any] = _maindata.maindata["ocr_upgradedata"]
+    _ocr_upg_basedata: dict[str, Any] = _maindata.maindata["ocr_basedata"]
 
 def get_pixelcolor(x: float, y: float) -> tuple[int, int, int]:
     """Returns rgb color tuple of a coordinate location.
@@ -91,7 +70,8 @@ def get_pixelcolor(x: float, y: float) -> tuple[int, int, int]:
     Coordinates are passed as scalar values [0,1).
     """
     px, py = kb_mouse.pixel_position((x, y))
-    return pyautogui.pixel(px,py)
+    color: tuple[int, int, int] = pyautogui.pixel(px,py) # explicit typing for mypy
+    return color
 
 def white_shades(rgb_range: int = 1) -> list[tuple[int, int, int]]:
     """Returns a list of different shades of white color. By default, only white (255,255,255) is returned.
@@ -210,10 +190,17 @@ def strong_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> 
         monitor = {"left": tl_x, "top": tl_y, "width": width, "height": height}
         img = sct.grab(monitor)
     ocr_img = Image.frombytes("RGB", img.size, img.bgra, "raw", "BGRX")
-    blackwhite_image = img_to_black_and_white(ocr_img) # type: ignore
+    blackwhite_image = img_to_black_and_white(ocr_img) # type: ignore[arg-type]
     final = array(blackwhite_image)
-    if BotVars.windowed:
-        zoom_factor = 2
+    if (_maindata.maindata["bot_vars"]["windowed"] and
+        (kb_mouse.ScreenRes._width < kb_mouse.ScreenRes.BASE_RES[0] or
+        kb_mouse.ScreenRes._height < kb_mouse.ScreenRes.BASE_RES[1])):
+        zoom_factor: int # add some zoom based on game window size
+        if (kb_mouse.ScreenRes.BASE_RES[0] < 2*kb_mouse.ScreenRes._width or
+            kb_mouse.ScreenRes.BASE_RES[1] < 2*kb_mouse.ScreenRes._height): # if window w/h more than half of native res
+            zoom_factor = 2
+        else:
+            zoom_factor = 3
         for i in range(2): # zooming of images, quite expensive to calculate.
             final = repeat(final, zoom_factor, axis=i)
     try:
@@ -252,11 +239,11 @@ def weak_substring_check(input_str: str, coords: tuple[float, float, float, floa
     (tl_x, tl_y) = kb_mouse.pixel_position((coords[0], coords[1]))
     (br_x, br_y) = kb_mouse.pixel_position((coords[2], coords[3]))
     text = weak_image_ocr((tl_x, tl_y, br_x, br_y), reader)
-    if BotVars.print_substring_ocrtext:
+    if _maindata.maindata["bot_vars"]["substring_ocrtext"]:
         cprint("\nText: "+text.lower()+'\nInput: '+input_str.lower())
     if len(text) != 0 and text.lower().find(input_str.lower()) != -1:
         return True
-    time.sleep(OcrValues.read_file_frequency)
+    time.sleep(OcrValues._read_file_frequency)
     return False
 
 def strong_delta_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader, upg_match: str = ''
@@ -312,35 +299,31 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
         if input_str == '_upgrade_':
             if OcrValues._log_ocr_deltas:
                 match = OcrValues._ocr_upg_basedata[upg_match]
-                match_str = match[0]
+                match_str: str = match[0]
             else:
                 match = OcrValues._ocr_upgradedata[upg_match]
                 match_str = match[0]
-                delta_limit = match[1]
+                delta_limit: float = match[1]
             d = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), match_str).quick_ratio()
-            if BotVars.print_delta_ocrtext:
+            if _maindata.maindata["bot_vars"]["delta_ocrtext"]:
                 cprint('\n-Text: '+text.lower())
                 cprint("-Match delta: "+str(d))
                 if OcrValues._log_ocr_deltas:
-                    with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'.temp_upg_deltas.json') as f:
-                        temp_dict: dict[str, Any] = json.load(f)
                     if len(str(d)) <= 4:
                         add_dict = {upg_match: [match_str, d]}
                     else:
                         add_dict = {upg_match: [match_str, round(d-0.005, 2)]}
-                    temp_dict.update(add_dict)
-                    with open(pathlib.Path(__file__).parent.parent.parent/'Files'/'.temp_upg_deltas.json','w') as f:
-                        json.dump(temp_dict, f, indent=2)
+                    _maindata.maindata["temp_upg_deltas"].update(add_dict)
                     return True
             if d >= delta_limit:
                 return True
         elif input_str != '':
             r = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), input_str.lower()).quick_ratio()
-            if BotVars.print_delta_ocrtext:
+            if _maindata.maindata["bot_vars"]["delta_ocrtext"]:
                 cprint('\n-Input: '+input_str.lower()+'\n-Text: '+text.lower()+'\n-Delta: '+str(r))
             if r >= OcrValues.DELTA:
                 return True
-    time.sleep(OcrValues.read_file_frequency)
+    time.sleep(OcrValues._read_file_frequency)
     return False
 
 def strong_substring_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader
@@ -371,9 +354,9 @@ def strong_substring_check(input_str: str, coords: tuple[float, float, float, fl
     (br_x, br_y) = kb_mouse.pixel_position((coords[2], coords[3]))
     text = strong_image_ocr((tl_x, tl_y, br_x, br_y), reader)
     text_lower = text.lower()
-    if BotVars.print_substring_ocrtext:
+    if _maindata.maindata["bot_vars"]["substring_ocrtext"]:
         cprint("\nText: "+text_lower+'\nInput: '+input_str.lower())
     if len(text) != 0 and text_lower.find(input_str.lower()) != -1:
         return (True, text_lower)
-    time.sleep(OcrValues.read_file_frequency)
+    time.sleep(OcrValues._read_file_frequency)
     return (False, text_lower)

@@ -9,15 +9,14 @@ Examples of this module can be found in 'plans' folder and picking any .py plan 
 import time
 from typing import override
 
-from bot import kb_mouse
-from bot.bot_vars import BotVars
+from bot import _maindata, kb_mouse
 from bot.commands.monkey import Monkey
 from bot.hotkeys import hotkeys
 from bot.locations import get_click
 from bot.times import PauseControl
 from customprint import cprint
 
-class Hero(Monkey):
+class Hero(Monkey): # type: ignore[misc]
     """Hero class that is used for placing a hero and implementing its hero-specific methods. 
 
     Inherits the Monkey class, which allows using methods like placing, targeting etc. on heroes.
@@ -166,7 +165,7 @@ class Hero(Monkey):
                 else:
                     return self._name, target
             case _:
-                return self._normal_targeting(current, target)   
+                return self._normal_targeting(current, target) # type: ignore[no-any-return]
         return 'OK'
 
     @override
@@ -176,7 +175,7 @@ class Hero(Monkey):
         As upgrading heroes is not possible, all this method does is print a message "Can't upgrade heroes".
         """
         PauseControl.pause_bot()
-        if BotVars.defeat_status:
+        if _maindata.maindata["internal"]["defeat_status"]:
             return
         cprint("Can't upgrade a hero monkey.")
 
@@ -281,7 +280,7 @@ class Hero(Monkey):
             Do not use this force_target in any other situation.            
         """
         PauseControl.pause_bot()
-        if BotVars.defeat_status:
+        if _maindata.maindata["internal"]["defeat_status"]:
             return
         val = self._change_hero_target(set_target.lower(), x, y, cpos)
         if val != 'OK':
@@ -341,7 +340,7 @@ class Hero(Monkey):
             16: 'Paragon Power Totem'
         }
         PauseControl.pause_bot()
-        if BotVars.defeat_status:
+        if _maindata.maindata["internal"]["defeat_status"]:
             return
         elif self._hero_name == 'geraldo':
             if cpos is not None:
@@ -410,7 +409,7 @@ class Hero(Monkey):
             16: 'Recovery'
         }
         PauseControl.pause_bot()
-        if BotVars.defeat_status:
+        if _maindata.maindata["internal"]["defeat_status"]:
             return
         elif self._hero_name == 'corvus':
             if cpos is not None:

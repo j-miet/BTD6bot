@@ -1,8 +1,6 @@
-import json
-import pathlib
 from typing import Any
 
-from bot.bot_vars import BotVars
+from bot import _maindata
 
 _DEFAULT_LOCATIONS: dict[str, Any] = {
     "CLICK": {
@@ -270,10 +268,8 @@ Values should be recorded in the resolution you"re planning to use. In-game shif
 coordinate scaling for all TEXT values and only shifts CLICK positions.
 """
 
-def update_customlocations(default_file: dict[str, Any] = _custom_locations) -> None:
-    with open(pathlib.Path(__file__).parent.parent/'Files'/'custom_locations.json') as loc_file:
-        locations: dict[str, Any] = json.load(loc_file)
-    default_file.update(locations)
+def update_customlocations(locations_dict: dict[str, Any], source: dict[str, Any]) -> None:
+    locations_dict.update(source)
 
 def get_click(category: str, value: str) -> Any:
     """Return a click location (2-tuple) from selected category dictionary.
@@ -285,7 +281,7 @@ def get_click(category: str, value: str) -> Any:
     Returns:
         A 2-tuple value
     """
-    if BotVars.ingame_res_enabled:
+    if _maindata.maindata["bot_vars"]["check_ingame_resolution"]:
         return _custom_locations["CLICK"][category][value]
     else:
         return _DEFAULT_LOCATIONS["CLICK"][category][value]
@@ -300,7 +296,7 @@ def get_text(category: str, value: str) -> Any:
     Returns:
         A 4-tuple value
     """
-    if BotVars.ingame_res_enabled:
+    if _maindata.maindata["bot_vars"]["check_ingame_resolution"]:
         return _custom_locations["TEXT"][category][value]
     else:
         return _DEFAULT_LOCATIONS["TEXT"][category][value]
@@ -313,7 +309,7 @@ def get_locationdict() -> dict[str, Any]:
     Returns:
         Location dictionary
     """
-    if BotVars.ingame_res_enabled:
+    if _maindata.maindata["bot_vars"]["check_ingame_resolution"]:
         return _custom_locations
     else:
         return _DEFAULT_LOCATIONS

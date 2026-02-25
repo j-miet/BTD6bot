@@ -78,7 +78,7 @@ from utils import plan_data
 def find_fre(plan: list[str]) -> int:
     """Finds row index of last command within the first round block.
 
-    If plan has multiple round blocks, return the row before first 'elif current_round...' line. If it has only a 
+    If plan has multiple round blocks, return the row before first 'elif round...' line. If it has only a 
     single round block, return last row instead.
 
     Args:
@@ -89,7 +89,7 @@ def find_fre(plan: list[str]) -> int:
             subtracting 1 gives final row.
     """
     for code_row in range(14, len(plan)):   # range(len(plan)) is ok, but starting from 14 skips non-relevant code.
-        if plan[code_row].find('elif current_round == ') != -1:
+        if plan[code_row].find('elif round == ') != -1:
             return code_row-1
     return len(plan)-1
 
@@ -126,13 +126,13 @@ def append_rounds(plan: list[str], first_r: int, first_r_end: int, round_labels:
         rounds.append(temp)  # adds all commands of a round as a sublist
         return rounds, round_labels
     else:
-        current_r = first_r_end+1  # points to first 'elif current_round == ...' line.
+        current_r = first_r_end+1  # points to first 'elif round == ...' line.
         for index in range(first_r+1, current_r): # everything included on the first round
             temp.append(plan[index])
         rounds.append(temp)  # adds all commands from a round as a sublist
         round_labels.append(plan[current_r].split('== ')[1][:-1])  # remove ':' at the end by not including index -1.
         for line in plan[current_r+1:]: # then rounds between first and last, last included
-            if line.startswith('elif current_round =='):
+            if line.startswith('elif round =='):
                 templist: list[str] = []
                 round_labels.append(line.split('== ')[1][:-1]) # separate round number
                 next_line = plan.index(line)
@@ -151,7 +151,7 @@ def append_rounds(plan: list[str], first_r: int, first_r_end: int, round_labels:
 def remove_empty_rows(plan: list[str], first_r: int, round_labels: list[str]) -> list[str]:
     """Removes round labels from all corresponding empty round blocks, preventing any empty rounds showing up in plots.
     
-    Compares two consecutive code rows: if first contains the latter and latter has "if current_round" as substring, it 
+    Compares two consecutive code rows: if first contains the latter and latter has "if round" as substring, it 
     means the first is a round block without any code inside it. And thus, the index of first is found by splitting 
     from the '==' sign (with one space after so '== ') and removing the ':' at the end, then finding corresponding 
     round label index from list of all labels and then removing it.
@@ -197,9 +197,9 @@ def plot(round_labels: list[str], rounds: list[list[str]], plan_name: str) -> No
     plt.subplots_adjust(left=0.05, bottom=0.1, right=0.99, top=0.9, wspace=None, hspace=None)
     rcParams['toolbar'] = 'None'
     winmanager = plt.get_current_fig_manager()
-    winmanager.window.wm_iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico') # type: ignore
+    winmanager.window.wm_iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
     try:
-        winmanager.window.state('zoomed') # type: ignore
+        winmanager.window.state('zoomed')
     except AttributeError:
         ...
     fig.suptitle(f'Round commands and round times of current plan "{plan_name}"')
@@ -284,7 +284,7 @@ def plot(round_labels: list[str], rounds: list[list[str]], plan_name: str) -> No
         else:
             for text_line in range(0, len(r)):
                 lines += r[text_line]+'\n'
-        ax_rounds.text(x, -0.8, lines, ha='left') # type: ignore
+        ax_rounds.text(x, -0.8, lines, ha='left')
 
     axis_position = plt.axes((0.1, 0.025, 0.8, 0.025))
     slider_min_val = -0.1
@@ -306,7 +306,7 @@ def plot(round_labels: list[str], rounds: list[list[str]], plan_name: str) -> No
         ax_rounds.axis((pos+0.08, pos+0.35, -1.0, 2.0))
         fig.canvas.draw_idle()
 
-    def _rounds_scroll(event):
+    def _rounds_scroll(event): # type: ignore[no-untyped-def]
         # Update rounds axis a single step forward/backward when user scrolls mouse wheel up/down respectively.
         pos: float = round_slider.val
         pos_up: float = pos + round_slider.valstep
@@ -321,7 +321,7 @@ def plot(round_labels: list[str], rounds: list[list[str]], plan_name: str) -> No
             fig.canvas.draw_idle()
 
     round_slider.on_changed(_update)
-    round_slider.connect_event('scroll_event', _rounds_scroll)   
+    round_slider.connect_event('scroll_event', _rounds_scroll)
     plt.show()
 
 
@@ -367,7 +367,7 @@ def plot_plan(plan_str: str) -> None:
     else:
         first_round_num, final_round_num = get_rounds(strat_name[0].upper(), strat_name[1].upper())
 
-    first_round: int = get_plan.index('if current_round == BEGIN:')
+    first_round: int = get_plan.index('if round == BEGIN:')
     first_round_end: int = find_fre(get_plan)
     round_labels: list[str] = [str(first_round_num)]
     rounds, round_labels = append_rounds(get_plan, first_round, first_round_end, round_labels)

@@ -2,10 +2,9 @@
 
 import time
 
-from bot import kb_mouse, times
+from bot import _maindata, kb_mouse, times
 from bot.bot_data import BotData
 from bot.commands.flow import AutoStart, change_autostart, forward
-from bot.bot_vars import BotVars
 from bot.kb_mouse import ScreenRes
 from bot.locations import get_click, get_text
 import bot.menu_return
@@ -46,7 +45,6 @@ class Rounds:
     begin_round: int = 0
     end_round: int = 0
     current_round_begin_time: float = 0
-
     exit_type: str = 'defeat'
     escsettings_check: bool = True
 
@@ -98,7 +96,7 @@ class Rounds:
     def defeat_check(current_time: float, cycle: int, frequency: int) -> bool:
         """Checks and updates current defeat status.
         
-        Checks if current time hasn't exceeded BotVars.checking_time_limit, then checks if current cycle matches the 
+        Checks if current time hasn't exceeded checking_time_limit value, then checks if current cycle matches the 
         given frequency. If both true, searches once for defeat screen and either finds it, sets defeat_status to True
         and returns True, or return False if no defeat detected. If checking time limit is exceeded instead, does the 
         same as with finding defeat screen.
@@ -115,18 +113,18 @@ class Rounds:
             frequency: Amount of cycles it takes between defeat checks.
         """
         if isinstance(cycle, int) and cycle >= 1 and isinstance(frequency, int) and frequency >= cycle:
-            if times.current_time() - current_time < BotVars.checking_time_limit:
-                if cycle == frequency:   # frequency of defeat checks: 2 = every second loop, N = every Nth loop.
+            if times.current_time() - current_time < _maindata.maindata["bot_vars"]["checking_time_limit"]:
+                if cycle == frequency:   # frequency of defeat checks: 2 = every second loop -> N = every Nth loop.
                     if weak_substring_check('bloons leaked', get_text('ingame', 'defeat'), OCR_READER):
                         cprint("\n**Defeat screen detected, game status set to defeat.**")
-                        BotVars.defeat_status = True
+                        _maindata.maindata["internal"]["defeat_status"] = True
                         return True
                     else:
                         return False
                 return False
             else:
                 cprint("\nChecking time limit reached! Game status set to defeat.")
-                BotVars.defeat_status = True
+                _maindata.maindata["internal"]["defeat_status"] = True
                 Rounds.exit_type = 'manual'
                 return True
         else:
@@ -178,8 +176,8 @@ class Rounds:
         Checks also current autostart status and will change it to True if not already, as True is the default value 
         (you start the bot with Autostart setting enabled in-game).
         """
-        if ScreenRes.get_shift() != (0,0):
-            BotVars.ingame_res_enabled = True
+        if ScreenRes.get_shift() != (0,0): # enable shifting only after leaving menu screens
+            _maindata.maindata["bot_vars"]["check_ingame_resolution"] = True
         start_time = times.current_time()
         loop: bool = True
         while loop:
@@ -220,14 +218,17 @@ class Rounds:
         Returns:
             Current round number.
         """
-        if prev_round == -1:
+        if prev_round == -2:
+            cprint("\nCouldn't initialize bot; one or more required file(s) missing.")
+            return Rounds.end_round + 1
+        elif prev_round == -1:
             cprint("\nHero/map selection failed.")
             kb_mouse.click((0.1911458333333, 0.0388888888889))
             time.sleep(1)
             kb_mouse.press_esc()
             return Rounds.end_round + 1
         current_round: int
-        if BotVars.defeat_status:
+        if _maindata.maindata["internal"]["defeat_status"]:
             kb_mouse.press_esc()
             BotData.set_data(current_round=Rounds.end_round+1)
             wait_start = times.current_time()
@@ -275,7 +276,7 @@ class Rounds:
                                 break
                         except ValueError:
                             ...
-                    elif BotVars.current_event_status == 'On' and '7' in round_value[1]:
+                    elif _maindata.maindata["toggle"]["event_status"] and '7' in round_value[1]:
                         try:
                             if int(round_value[1].split('7')[0]) >= current_round:
                                 break

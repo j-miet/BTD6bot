@@ -165,7 +165,7 @@ with open(Path(__file__).parent.parent/'Plans.md', 'w') as plansfile:
                 ...
             strat_split = strat.split('-')
             planname = f'{plan.replace(' ', '_')}{strat_split[0]}{strat_split[1]}'
-            plansfile.write(f'\t- [{strat_split[1]}](../btd6bot/plans/{planname}.py)\n')
+            plansfile.write(f'\t- [{strat_split[1]}](btd6bot/plans/{planname}.py)\n')
             try:
                 info_comment_end = 0
                 if plans_info[planname][0] == '\"\"\"\n'+info_indent*'\t':

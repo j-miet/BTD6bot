@@ -3,10 +3,9 @@
 Pynput docs: https://pynput.readthedocs.io/en/latest/keyboard.html#pynput.keyboard.Key
 """
 
-import pathlib
-
 from pynput.keyboard import Key
 
+from bot import _maindata
 from utils import plan_data
 
 PYNPUT_KEYS: dict[str, Key] = {
@@ -48,7 +47,7 @@ PYNPUT_KEYS: dict[str, Key] = {
 }
 """Dictionary of supported pynput special keys."""
 
-def generate_hotkeys(hotkey_dict: dict[str, str | Key]) -> None:
+def generate_hotkeys(hotkey_dict: dict[str, str | Key], source: list[str]) -> None:
     """Reads hotkey.txt file from 'text files' folder and saves these to dictionary.
 
     Because this program uses pynput library to handle key presses, it needs to convert special/modifier keys
@@ -59,8 +58,7 @@ def generate_hotkeys(hotkey_dict: dict[str, str | Key]) -> None:
     Returns:
         actual_hotkeys: Dictionary with keys as strings and values as string or Key type.
     """
-    with open(pathlib.Path(__file__).parent.parent/'Files'/'text files'/'hotkeys.txt') as file_read: 
-        hotkeys_text = plan_data.list_format(file_read.readlines())
+    hotkeys_text = plan_data.list_format(source.copy())
     h_keys: list[str] = []
     h_values: list[str] = []
     for text_line in hotkeys_text:
@@ -79,4 +77,4 @@ def generate_hotkeys(hotkey_dict: dict[str, str | Key]) -> None:
 
 hotkeys: dict[str, str | Key] = {}
 """Dictionary of current hotkeys read from hotkeys.txt."""
-generate_hotkeys(hotkeys)
+generate_hotkeys(hotkeys, _maindata.maindata["hotkeys"])

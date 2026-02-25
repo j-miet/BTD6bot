@@ -18,56 +18,56 @@ Inspired by monkey_meadowHardChimps:
 
 from._plan_imports import *
 
-def play(rounds):
-    BEGIN, END = menu_start.load(*rounds)
-    current_round = BEGIN-1
+def play(data):
+    BEGIN, END = menu_start.load(*data)
+    round = BEGIN-1
     map_start = time()
-    while current_round < END+1:
-        current_round = Rounds.round_check(current_round, map_start, rounds[2])
-        if current_round == BEGIN:     
+    while round < END+1:
+        round = Rounds.round_check(round, map_start, data[2])
+        if round == BEGIN:     
             hero = Hero(0.1401041666666, 0.5268518518518)
-        elif current_round == 8:
+        elif round == 8:
             sniper1 = Monkey('sniper', 0.034375, 0.5379629629629)
             sniper1.target('strong')
-        elif current_round == 15:
+        elif round == 15:
             heli1 = Monkey('heli', 0.1875, 0.4388888888888)
-        elif current_round == 19:
+        elif round == 19:
             heli1.upgrade(['1-0-0'])
-        elif current_round == 21:
+        elif round == 21:
             heli1.upgrade(['2-0-0'])
-        elif current_round == 27:
+        elif round == 27:
             heli1.upgrade(['3-0-0'])
-        elif current_round == 31:
+        elif round == 31:
             village1 = Monkey('village', 0.0901041666666, 0.5435185185185)
             village1.upgrade(['1-0-0'])
-        elif current_round == 35:
+        elif round == 35:
             village1.upgrade(['1-1-0','1-2-0'])
-        elif current_round == 36:
+        elif round == 36:
             heli2 = Monkey('heli', 0.0619791666666, 0.6564814814814)
-        elif current_round == 37:
+        elif round == 37:
             heli2.upgrade(['1-0-0','2-0-0'])
-        elif current_round == 38:
+        elif round == 38:
             heli2.upgrade(['2-0-1','2-0-2'])
-        elif current_round == 41:
+        elif round == 41:
             heli2.upgrade(['2-0-3'])
             heli1.upgrade(['3-0-1','3-0-2'])
-        elif current_round == 48:
+        elif round == 48:
             heli2.upgrade(['2-0-4'])
-        elif current_round == 58:
+        elif round == 58:
             heli1.upgrade(['4-0-2'])
-        elif current_round == 63:
+        elif round == 63:
             village1.upgrade(['2-2-0','2-3-0'])
-        elif current_round == 64:
+        elif round == 64:
             glue1 = Monkey('glue', 0.1921875, 0.6370370370370)
             glue1.upgrade(['0-1-0','0-2-0','0-2-1','0-2-2'])
-        elif current_round == 66:
+        elif round == 66:
             glue1.upgrade(['0-2-3'])
-        elif current_round == 84:
+        elif round == 84:
             heli1.upgrade(['5-0-2'])
-        elif current_round == 95:
+        elif round == 95:
             heli2.upgrade(['2-0-5'])
-        elif current_round == 96:
+        elif round == 96:
             glue1.upgrade(['0-2-4'])
             sniper1.upgrade(['1-0-0','2-0-0','3-0-0'])
-        elif current_round == 98:
+        elif round == 98:
             sniper1.upgrade(['4-0-0','4-1-0','4-2-0'])

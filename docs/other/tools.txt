@@ -1,0 +1,26 @@
+Tools used for development
+
+pip install =>
+
+pytest # unit tests; place them under btd6bot/tests -> run pytest
+pytest-mock # for test mock objects when those are needed
+mypy # type checking
+ruff # linting
+pigar # for generating requirements.txt
+
+
+
+Usage:
+[how to run command -> what running the command does]
+
+pytest 
+    pytest -> runs all tests in 'tests' folder
+mypy 
+    mypy --install-types --non-interactive -> install external library types; for initial setup so run it only once
+    mypy --strict --ignore-missing-imports -> run mypy type checking in strict mode and ignore local import errors
+ruff
+    ruff check -> runs linting operations on code
+
+(optional)
+pigar
+    pigar generate -> generated requirements.txt file; just for detecting main packages and removing others if needed

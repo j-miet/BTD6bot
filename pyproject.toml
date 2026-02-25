@@ -1,9 +1,42 @@
+[project]
+requires-python = ">=3.12"
+
 # Pytest
 [tool.pytest.ini_options]
 pythonpath = ["btd6bot"]
 addopts = [
     "--import-mode=importlib"
 ]
+testpaths = [
+    "tests",
+]
+filterwarnings = [
+    "ignore: The argument 'device' of Tensor.is_pinned\\(\\) is deprecated:DeprecationWarning",
+]
+
+# Mypy
+[tool.mypy]
+files = ["btd6bot"]
+exclude = [
+    "^btd6bot/_ocr_tests/",
+    "^btd6bot/plans/",
+]
+disable_error_code = ["no-untyped-call"]
+ignore_missing_imports = "True"
+strict = "True"
+
+[[tool.mypy.overrides]]
+module = [
+    "btd6bot/bot/commands/monkey.*"
+    ]
+disable_error_code = ["no-any-return"]
+
+[[tool.mypy.overrides]]
+module = [
+    "btd6bot/gui/roundplot.*"
+]
+disable_error_code = ["operator", "assignment", "union-attr", "arg-type"]
+
 
 # Ruff
 [tool.ruff]

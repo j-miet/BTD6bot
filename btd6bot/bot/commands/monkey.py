@@ -26,8 +26,7 @@ import time
 
 from pynput.keyboard import Key
 
-from bot import kb_mouse, times
-from bot.bot_vars import BotVars
+from bot import _maindata, kb_mouse, times
 from bot.hotkeys import hotkeys
 from bot.locations import get_text, get_click
 import bot.ocr.ocr as ocr
@@ -177,7 +176,7 @@ class Monkey:
             case 'upgrade':
                 cprint(f'\nUPGRADE PATH ERROR: upgrade path {obj} in current upgrade list {other} is invalid.')
         time.sleep(1)
-        BotVars.defeat_status = True
+        _maindata.maindata["internal"]["defeat_status"] = True
         cprint('\n**An Error has occured. Current game state treated as Defeat**')
 
     def _init_panel_position(self) -> str:
@@ -782,7 +781,7 @@ class Monkey:
         if self._panel_pos == 'right':
             while not ocr.strong_delta_check('Sell', get_text('ingame', 'right_panel_sell_location'), OCR_READER):
                 if time.time()-start > CHECK_TIMELIMIT:
-                    BotVars.defeat_status = True
+                    _maindata.maindata["internal"]["defeat_status"] = True
                     cprint("Failed to find the upgradeable monkey.")
                     return
                 if counter == 3:
@@ -795,7 +794,7 @@ class Monkey:
         elif self._panel_pos == 'left':
             while not ocr.strong_delta_check('Sell', get_text('ingame', 'left_panel_sell_location'), OCR_READER):
                 if time.time()-start > CHECK_TIMELIMIT:
-                    BotVars.defeat_status = True
+                    _maindata.maindata["internal"]["defeat_status"] = True
                     cprint("Failed to find the upgradeable monkey.")
                     return
                 if counter == 3:
@@ -811,7 +810,7 @@ class Monkey:
             for i in range(0, 3):
                 if int(u[2*i]) != int(upg[2*i]):
                     self._select_upgrade(upg, paths[i])
-                    if BotVars.defeat_status:
+                    if _maindata.maindata["internal"]["defeat_status"]:
                         return
                     self._update_auto_target_paths(upg, i)
                     break
@@ -902,7 +901,7 @@ class Monkey:
             kb_mouse.kb_input(hotkeys[button])
             if self._name == 'super' and re.search("^4-[0-2]-0$|^4-0-[0-2]$|^5-[0-2]-0$|^5-0-[0-2]$", upg) is not None:
                 kb_mouse.kb_input(Key.enter)    # if upgrade is Sun Temple/True Sun God, press Enter to confirm it
-            for _ in range(BotVars.upg_verify_limit):
+            for _ in range(_maindata.maindata["bot_vars"]["upg_verify_limit"]):
                 if self._panel_pos == 'right':
                     if ocr.strong_delta_check(
                         '_upgrade_', 
@@ -937,7 +936,7 @@ class Monkey:
         This method also updates upgrade panel position to 'left' or 'right' if it was 'middle', to remove any 
         ambiguity and need to handle this value separately under other methods.
         """
-        if BotVars.defeat_status:
+        if _maindata.maindata["internal"]["defeat_status"]:
             return
 
         total_time = times.current_time()
@@ -1115,7 +1114,7 @@ class Monkey:
             Mortar special 1 used.
         """
         PauseControl.pause_bot()
-        if BotVars.defeat_status:
+        if _maindata.maindata["internal"]["defeat_status"]:
             return
         elif s not in (1, 2, '1', '2'):
             cprint('Wrong input value on special ability; use 1 or 2')
@@ -1165,7 +1164,7 @@ class Monkey:
         Boomer sold!
         """
         PauseControl.pause_bot()
-        if BotVars.defeat_status:
+        if _maindata.maindata["internal"]["defeat_status"]:
             return
         if cpos is not None:
             self._pos_x = cpos[0]
@@ -1333,7 +1332,7 @@ class Monkey:
             Mortar special 1 used.
         """
         PauseControl.pause_bot()
-        if BotVars.defeat_status:
+        if _maindata.maindata["internal"]["defeat_status"]:
             return
         val = self._change_target(set_target.lower(), x , y, cpos)
         if val != 'OK':
@@ -1472,7 +1471,7 @@ class Monkey:
             Upgrading 4-2-0 Dart to 5-2-0... Upgraded.
         """
         PauseControl.pause_bot()
-        if BotVars.defeat_status:
+        if _maindata.maindata["internal"]["defeat_status"]:
             return
         elif set_upg != []:
             for upg in set_upg:
@@ -1505,7 +1504,7 @@ class Monkey:
             cpos (tuple[float, float] | None. Default = None): Updated current position.
         """
         PauseControl.pause_bot()
-        if BotVars.defeat_status:
+        if _maindata.maindata["internal"]["defeat_status"]:
             return
         if self._name != 'super':
             cprint('This monkey is not a super monkey.')
@@ -1542,7 +1541,7 @@ class Monkey:
             cpos (tuple[float, float] | None. Default = None): Updated current position.
         """
         PauseControl.pause_bot()
-        if BotVars.defeat_status:
+        if _maindata.maindata["internal"]["defeat_status"]:
             return
         if self._name != 'beast':
             cprint("This monkey is not a beast handler.")
@@ -1569,7 +1568,7 @@ class Monkey:
             cpos (tuple[float, float] | None. Default = None): Updated current position.
         """
         PauseControl.pause_bot()
-        if BotVars.defeat_status:
+        if _maindata.maindata["internal"]["defeat_status"]:
             return
         if self._name != 'ace':
             cprint("Can only be used on ace.")

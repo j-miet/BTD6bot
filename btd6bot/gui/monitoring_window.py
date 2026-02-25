@@ -3,9 +3,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 
-import json
 import os
-import shutil
 import sys
 import threading
 import time
@@ -14,9 +12,8 @@ from tkinter import ttk
 
 import pyautogui
 
-from bot import times
+from bot import _maindata, times
 from bot.bot_data import BotData
-from bot.bot_vars import BotVars
 from customprint import cprint
 from gui.guihotkeys import GuiHotkeys
 import gui.gui_paths as gui_paths
@@ -65,6 +62,8 @@ class MonitoringWindow:
         self.current_plans: list[str] = []
         self.plans_status: list[str] = []
 
+        _maindata.init_maindata()
+        
         self.monitoringwindow = tk.Toplevel()
         self.monitoringwindow.title("Bot Monitoring Window")
         self.monitoringwindow.iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
@@ -72,16 +71,17 @@ class MonitoringWindow:
         self.monitoringwindow.minsize(800,480)
         self.monitoringwindow.maxsize(800,480)
 
-        self.textbox = tk.Text(self.monitoringwindow, 
-                                width=55, 
-                                height=25, 
-                                state='normal', 
-                                wrap=tk.WORD)
+        self.textbox = tk.Text(
+            self.monitoringwindow, 
+            width=55, 
+            height=25, 
+            state='normal', 
+            wrap=tk.WORD
+        )
         self.textbox.grid(column=0, columnspan=2, row=0, rowspan=4, sticky='n')
         self.textbox.insert('end', "Welcome to BTD6bot!\n"
                             "Make sure that:\n"
                             ">Game language is set to ENGLISH\n"
-                            ">Resolution has aspect ratio of ~16:9\n"
                             ">Game is preferably fullscreen (but windowed works too)\n"
                             ">Bot hotkeys match with your in-game equivalents\n"
                             ">Your Btd6 game window has main menu screen opened\n"
@@ -101,104 +101,127 @@ class MonitoringWindow:
         self.old_stdout = sys.stdout
         sys.stdout = gui_tools.TextRedirector(self.textbox, "stdout")
 
-        self.roundtime_label = tk.Label(self.monitoringwindow, 
-                                        width=15, 
-                                        height=3, 
-                                        text='Round timer', 
-                                        relief='sunken',
-                                        font=os_font)
+        self.roundtime_label = tk.Label(
+            self.monitoringwindow, 
+            width=15, 
+            height=3, 
+            text='Round timer', 
+            relief='sunken',
+            font=os_font
+        )
         self.roundtime_label.grid(column=0, row=4, sticky='sw', padx=10)
 
         self.roundtime = tk.StringVar(value='-')
-        self.roundtime_display = tk.Label(self.monitoringwindow, 
-                                            width=8, 
-                                            height=3, 
-                                            relief='sunken', 
-                                            textvariable=self.roundtime, 
-                                            font=os_font)
+        self.roundtime_display = tk.Label(
+            self.monitoringwindow, 
+            width=8, 
+            height=3, 
+            relief='sunken', 
+            textvariable=self.roundtime, 
+            font=os_font
+        )
         self.roundtime_display.grid(column=0, row=4, sticky='s', padx=10)
         if self.farming == 'On':
             self.roundtime_display.grid_configure(padx=(70,0))
 
-        scroll = tk.Scrollbar(self.monitoringwindow, orient='vertical')
+        scroll = tk.Scrollbar(
+            self.monitoringwindow, 
+            orient='vertical'
+        )
         scroll.grid(column=3, row=0, rowspan=4, sticky='ns')
         self.textbox.configure(yscrollcommand=scroll.set)
         scroll.configure(command=self.textbox.yview)
 
-        self.MONITOR_MAPSCREEN_ASCII = ("   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⢀⣾⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣰⣿⣿⣿⣿⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⡿⠿⢿⣿⣿⣶⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⢼⡟⠉⣻⣿⣿⡏⠰⣷⠀⢹⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⢻⣷⡀⠙⣻⣿⣿⣄⣠⣴⡿⠋⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⠀⣭⣉⣛⣻⣿⣿⣿⣿⣿⣿⣿⣶⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⢠⠞⢡⣽⣿⣿⠿⢻⣿⣿⣿⣏⣿⣿⣿⣧⣤⣤⣤⣄⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠘⣴⡨⠛⠋⠁⠀⣼⣿⣿⣿⡟⣿⣿⣿⣿⣯⢈⣿⣿⠂⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠘⠃⠀⠀⠀⢀⣤⣿⣷⡜⣿⣧⡉⠉⠙⠋⠁⠈⠉⠁⠀⠀⠀⠀⠀\n"
-                                        "   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠁⢠⣾⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀     \n" 
+        self.MONITOR_MAPSCREEN_ASCII = ("   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⢀⣾⡇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣰⣿⣿⣿⣿⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿⣿⣿⣿⣷⡄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⡿⠿⢿⣿⣿⣶⣦⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⢼⡟⠉⣻⣿⣿⡏⠰⣷⠀⢹⣿⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⢻⣷⡀⠙⣻⣿⣿⣄⣠⣴⡿⠋⠉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⠀⣭⣉⣛⣻⣿⣿⣿⣿⣿⣿⣿⣶⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⢠⠞⢡⣽⣿⣿⠿⢻⣿⣿⣿⣏⣿⣿⣿⣧⣤⣤⣤⣄⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠘⣴⡨⠛⠋⠁⠀⣼⣿⣿⣿⡟⣿⣿⣿⣿⣯⢈⣿⣿⠂⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠘⠃⠀⠀⠀⢀⣤⣿⣷⡜⣿⣧⡉⠉⠙⠋⠁⠈⠉⠁⠀⠀⠀⠀ \n"
+                                        "   ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠉⠁⢠⣾⣿⡟⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀    \n" 
                                         )
         style = ttk.Style()
         style.configure('Style.TButton', font='TkFixedFont')
 
-        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-            guivars_adjust: dict[str, Any] = json.load(f)["ocr_adjust_deltas"]
+        # wrapper from map image labels. Png images use 320x195 standard. 
+        # exact height crops top of the image off so set Frame height slightly higher than actual actual image height
+        self.monitor_mapscreen_frame = tk.Frame(self.monitoringwindow, width=320, height=215, bg="black")
+        self.monitor_mapscreen_frame.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+        self.monitor_mapscreen_frame.grid_propagate(False)
+
+        guivars_adjust = _maindata.maindata["bot_vars"]["ocr_adjust_deltas"]
         if guivars_adjust:
             try:
                 photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'spa pits.png')
-                self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
-                                                    image=photo, 
-                                                    compound='top', 
-                                                    anchor='nw', 
-                                                    justify='left')
-                self.monitor_mapscreen.image = photo # type: ignore
-                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+                self.monitor_mapscreen = ttk.Label(
+                    self.monitor_mapscreen_frame, 
+                    image=photo, 
+                    compound='top', 
+                    anchor='nw', 
+                    justify='left'
+                )
+                self.monitor_mapscreen.image = photo # type: ignore[attr-defined]
+                self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
             except tk.TclError:
-                self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
-                                                    compound='top', 
-                                                    anchor='nw',
-                                                    style='Style.TButton', 
-                                                    justify='left')
-                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
-                self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
+                self.monitor_mapscreen = ttk.Label(
+                    self.monitor_mapscreen_frame, 
+                    compound='top', 
+                    anchor='nw',
+                    style='Style.TButton', 
+                    justify='left',
+                    text = self.MONITOR_MAPSCREEN_ASCII
+                )
+                self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
         elif self.farming == 'On':
-            self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
-                                                compound='top', 
-                                                anchor='nw',
-                                                style='Style.TButton', 
-                                                justify='left')
-            self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
-            self.monitor_mapscreen.configure(image='')
-            self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
+            self.monitor_mapscreen = ttk.Label(
+                self.monitor_mapscreen_frame, 
+                compound='top', 
+                anchor='nw',
+                style='Style.TButton', 
+                justify='left',
+                text=self.MONITOR_MAPSCREEN_ASCII
+            )
+            self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
         else:
             try:
                 photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(self.all_plans[0])+'.png'))
-                self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
-                                                    image=photo, 
-                                                    compound='top', 
-                                                    anchor='nw', 
-                                                    justify='left')
-                self.monitor_mapscreen.image = photo # type: ignore
-                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+                self.monitor_mapscreen = ttk.Label(
+                    self.monitor_mapscreen_frame, 
+                    image=photo, 
+                    compound='top', 
+                    anchor='nw', 
+                    justify='left'
+                )
+                self.monitor_mapscreen.image = photo # type: ignore[attr-defined]
+                self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
             except tk.TclError:
-                self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
-                                                    compound='top', 
-                                                    anchor='nw',
-                                                    style='Style.TButton', 
-                                                    justify='left')
-                self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
-                self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
+                self.monitor_mapscreen = ttk.Label(
+                    self.monitor_mapscreen_frame, 
+                    compound='top', 
+                    anchor='nw',
+                    style='Style.TButton', 
+                    justify='left',
+                    text=self.MONITOR_MAPSCREEN_ASCII
+                )
+                self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
 
-        self.monitor_infobox_current = tk.Label(self.monitoringwindow, 
-                                                width=20, 
-                                                height=5, 
-                                                text='Current\n'+plan_data.info_display(self.all_plans[0]), 
-                                                anchor='nw',
-                                                relief='sunken', 
-                                                justify='left', 
-                                                wraplength=330, 
-                                                padx=10, 
-                                                pady=10)
+        self.monitor_infobox_current = tk.Label(
+            self.monitoringwindow, 
+            width=20, 
+            height=5, 
+            text='Current\n'+plan_data.info_display(self.all_plans[0]), 
+            anchor='nw',
+            relief='sunken', 
+            justify='left', 
+            wraplength=330, 
+            padx=10, 
+            pady=10
+        )
         if guivars_adjust:
             self.monitor_infobox_current['text'] = 'Current\n'+plan_data.info_display('spa_pitsEasySandbox')
         elif self.farming == 'On':
@@ -206,86 +229,97 @@ class MonitoringWindow:
         self.monitor_infobox_current.grid(column=4, row=2, sticky='nw')
 
         if self.farming == 'Off':
-            self.monitor_infobox_next = tk.Label(self.monitoringwindow, 
-                                                    width=20, 
-                                                    height=5, 
-                                                    text='-'*12, 
-                                                    anchor='nw',
-                                                    relief='sunken', 
-                                                    justify='left', 
-                                                    padx=10, 
-                                                    pady=10)
+            self.monitor_infobox_next = tk.Label(
+                self.monitoringwindow, 
+                width=20, 
+                height=5, 
+                text='-'*12, 
+                anchor='nw',
+                relief='sunken', 
+                justify='left', 
+                padx=10, 
+                pady=10
+            )
             self.monitor_infobox_next.grid(column=4, row=3, sticky='nw')
             if len(self.all_plans) > 1:
                 self.monitor_infobox_next.config(text='Next\n'+plan_data.info_display(self.all_plans[1]))
 
-        monitor_collection_text = tk.Label(self.monitoringwindow, 
-                                            text='Collection event: '+str(self.collection_val),
-                                            relief='sunken', 
-                                            padx=10, 
-                                            pady=10)
+        monitor_collection_text = tk.Label(
+            self.monitoringwindow, 
+            text='Collection event: '+str(self.collection_val),
+            relief='sunken', 
+            padx=10, 
+            pady=10
+        )
         monitor_collection_text.grid(column=5, row=2, sticky='ne')
         self._update_collection_status()
         self._update_farming_status()
 
-        self.monitor_run_button = tk.Button(self.monitoringwindow, 
-                                            text='Run', 
-                                            command=self._stop_or_run, 
-                                            state='active', 
-                                            padx=10, 
-                                            pady=10)
+        self.monitor_run_button = tk.Button(
+            self.monitoringwindow, 
+            text='Run', 
+            command=self._stop_or_run, 
+            state='active', 
+            padx=10, 
+            pady=10
+        )
         self.monitor_run_button.grid(column=5, row=4, sticky='ne')
 
         if self.farming == 'On':
-            self.runs_label = tk.Label(self.monitoringwindow, 
-                                        width=15, 
-                                        height=3, 
-                                        text='Runs completed', 
-                                        relief='sunken',
-                                        font=os_font)
+            self.runs_label = tk.Label(
+                self.monitoringwindow, 
+                width=15, 
+                height=3, 
+                text='Runs completed', 
+                relief='sunken',
+                font=os_font
+            )
             self.runs_label.grid(column=1, row=4, sticky='sw', padx=10, pady=(10, 0))
 
             self.runs = tk.IntVar(value=0)
-            self.runs_display = tk.Label(self.monitoringwindow, 
-                                            width=8, 
-                                            height=3, 
-                                            relief='sunken', 
-                                            textvariable=self.runs, 
-                                            font=os_font)
+            self.runs_display = tk.Label(
+                self.monitoringwindow, 
+                width=8, 
+                height=3, 
+                relief='sunken', 
+                textvariable=self.runs, 
+                font=os_font
+            )
             self.runs_display.grid(column=1, row=4, sticky='s', padx=(75,0), pady=(10, 0))
 
-            monitor_farming_text = tk.Label(self.monitoringwindow, 
-                                            text='Farm mode: On',             
-                                            relief='sunken', 
-                                            padx=10, 
-                                            pady=10)
+            monitor_farming_text = tk.Label(
+                self.monitoringwindow, 
+                text='Farm mode: On',             
+                relief='sunken', 
+                padx=10, 
+                pady=10
+            )
             monitor_farming_text.grid(column=5, row=2, sticky='e')
 
             self.monitor_run_button.grid_configure(pady=(15,0))
         else:
-            monitor_queuemode_text = tk.Label(self.monitoringwindow, 
-                                                text='Queue mode: '+str(self.queue_val),             
-                                                relief='sunken', 
-                                                padx=10, 
-                                                pady=10)
+            monitor_queuemode_text = tk.Label(
+                self.monitoringwindow, 
+                text='Queue mode: '+str(self.queue_val),             
+                relief='sunken', 
+                padx=10, 
+                pady=10
+            )
             monitor_queuemode_text.grid(column=5, row=2, sticky='se')
 
-            monitor_replay_text = tk.Label(self.monitoringwindow, 
-                                            text='Replay mode: '+str(self.replay_val),
-                                            relief='sunken', 
-                                            padx=10, 
-                                            pady=10)
+            monitor_replay_text = tk.Label(
+                self.monitoringwindow, 
+                text='Replay mode: '+str(self.replay_val),
+                relief='sunken', 
+                padx=10, 
+                pady=10
+            )
             monitor_replay_text.grid(column=5, row=3, sticky='e', pady=10)
 
         # create the initial placeholder thread for MainWindow.is_monitoringwindow.
         self.bot_thread = threading.Thread()
         MonitoringWindow.current_bot_thread = self.bot_thread
 
-        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-            if json.load(f)["logging"]:
-                BotVars.logging = True
-            else:
-                BotVars.logging = False
         GuiHotkeys.start_stop_status = False
         GuiHotkeys.pause_status = False
         # listener thread object sends keyboard inputs to _bot_hotkey method
@@ -313,10 +347,10 @@ class MonitoringWindow:
         self.roundtime.set("-")
 
     def _update_collection_status(self) -> None:
-        BotVars.current_event_status = self.collection_val
+        _maindata.maindata["toggle"]["event_status"] = True if self.collection_val == "On" else False
 
     def _update_farming_status(self) -> None:
-        BotVars.current_farming_status = self.farming
+        _maindata.maindata["toggle"]["farming_status"] = True if self.farming == "On" else False
 
     def _stop_or_run(self) -> None:
         """Handles current bot thread termination and opening of new ones."""
@@ -336,15 +370,7 @@ class MonitoringWindow:
 
     def _res_check(self, customres: bool, resolution_val: tuple[int, ...], windowed: bool, w: int, h: int,
                    ingame_shift: bool, shift_val: tuple[int, ...]) -> None:
-        try:
-            with open(gui_paths.FILES_PATH/'upgrades_current.json') as f:
-                identifier: list[int | str] = json.load(f)["__identifier"]
-        except FileNotFoundError:
-            print("***\nupgrades_current.json couldn't not be found, creating one with default values\n"
-                "You should perform ocr auto-adjust before continuing\n***\n")
-            shutil.copy2(gui_paths.FILES_PATH/'_ocr_upgradedata.json', gui_paths.FILES_PATH/'upgrades_current.json')
-            with open(gui_paths.FILES_PATH/'upgrades_current.json') as f:
-                identifier: list[int | str] = json.load(f)["__identifier"]
+        identifier = _maindata.maindata["ocr_upgradedata"]["__identifier"]
         issue_flag: bool = False
         if customres:
             if list(resolution_val) != identifier[0:2]:
@@ -439,18 +465,17 @@ class MonitoringWindow:
         needed again.
         """
         cprint('=====Bot running=====')
-        with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-            gui_vars_dict: dict[str, Any] = json.load(f)
-        customres: bool = gui_vars_dict["check_resolution"]
-        resolution_val: tuple[int, ...] = tuple(map(int, gui_vars_dict["custom_resolution"].split('x')))
-        windowed: bool = gui_vars_dict["windowed"]
-        winpos: str = gui_vars_dict["windowed_position"]
-        ingame_shift: bool = gui_vars_dict["check_resolution"]
-        shift_val: tuple[int, ...] = tuple(map(int, gui_vars_dict["ingame_res_shift"].split('x')))
-        retries_val: int = gui_vars_dict["retries"]
+        bot_vars_dict = _maindata.maindata["bot_vars"]
+        customres: bool = bot_vars_dict["check_resolution"]
+        resolution_val: tuple[int, ...] = tuple(map(int, bot_vars_dict["custom_resolution"].split('x')))
+        windowed: bool = bot_vars_dict["windowed"]
+        winpos: str = bot_vars_dict["windowed_position"]
+        ingame_shift: bool = bot_vars_dict["check_resolution"]
+        shift_val: tuple[int, ...] = tuple(map(int, bot_vars_dict["ingame_res_shift"].split('x')))
+        retries_val: int = bot_vars_dict["retries"]
         w, h = pyautogui.size()
 
-        if not gui_vars_dict["ocr_adjust_deltas"]:
+        if not bot_vars_dict["ocr_adjust_deltas"]:
             self._res_check(customres, resolution_val, windowed, w, h, ingame_shift, shift_val)
         if customres:
             cprint('[Custom Resolution] '+str(resolution_val[0])+'x'+str(resolution_val[1])+'\n'
@@ -469,12 +494,12 @@ class MonitoringWindow:
         else:
             w, h = pyautogui.size()
             cprint('[Resolution] '+str(w)+'x'+str(h)+'\n')
-        if gui_vars_dict["ocr_adjust_deltas"]:
+        if bot_vars_dict["ocr_adjust_deltas"]:
             try:
                 new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'spa pits.png')
                 self.monitor_mapscreen['text'] = ''
                 self.monitor_mapscreen.configure(image=new_image)
-                self.monitor_mapscreen.image = new_image # type: ignore
+                self.monitor_mapscreen.image = new_image # type: ignore[attr-defined]
             except tk.TclError:
                 self.monitor_mapscreen.configure(image='')
                 self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
@@ -491,7 +516,10 @@ class MonitoringWindow:
             os.remove(gui_paths.FILES_PATH/'.temp_upg_deltas.json')
         if self.farming == 'On':
             set_plan.farming_print()
-            set_plan.select_defaulthero()
+            if not set_plan.select_defaulthero():
+                cprint('\n#####Unable to select default hero, bot terminated#####')
+                self.monitor_run_button['text'] = 'Run'
+                return
             while True:
                 rewardplan: str = set_plan.select_rewardplan()
                 if rewardplan == '':
@@ -502,16 +530,25 @@ class MonitoringWindow:
                     self.monitor_mapscreen.destroy()
                     rewardmap: str = plan_data.return_map(rewardplan)
                     new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/f'{rewardmap}.png')
-                    self.monitor_mapscreen = ttk.Label(self.monitoringwindow, 
-                                                       image=new_image, 
-                                                       compound='top', 
-                                                       anchor='nw', 
-                                                       justify='left')
-                    self.monitor_mapscreen.image = new_image # type: ignore
-                    self.monitor_mapscreen.grid(column=4, columnspan=2, row=0, rowspan=2, sticky='ne')
+                    self.monitor_mapscreen = ttk.Label(
+                        self.monitor_mapscreen_frame, 
+                        image=new_image, 
+                        compound='top', 
+                        anchor='nw', 
+                        justify='left'
+                    )
+                    self.monitor_mapscreen.image = new_image # type: ignore[attr-defined]
+                    self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
                 except tk.TclError:
-                    self.monitor_mapscreen.configure(image='')
-                    self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
+                    self.monitor_mapscreen = ttk.Label(
+                        self.monitor_mapscreen_frame,  
+                        compound='top', 
+                        anchor='nw', 
+                        style='Style.TButton', 
+                        justify='left',
+                        text=self.MONITOR_MAPSCREEN_ASCII
+                    )
+                    self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
                 self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display(rewardplan))
                 if set_plan.run_farming_mode(rewardplan):
                     self.runs.set(self.runs.get()+1)
@@ -551,13 +588,26 @@ class MonitoringWindow:
         except IndexError:
             self.monitor_infobox_next.configure(text='-'*12) 
         try:
-            new_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(current)+'.png'))
-            self.monitor_mapscreen['text'] = ''
-            self.monitor_mapscreen.configure(image=new_image)
-            self.monitor_mapscreen.image = new_image # type: ignore
+            self.monitor_mapscreen.destroy()
+            photo = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/(plan_data.return_map(current)+'.png'))
+            self.monitor_mapscreen = ttk.Label(
+                self.monitor_mapscreen_frame, 
+                image=photo, 
+                compound='top', 
+                anchor='nw', 
+                justify='left'
+            )
+            self.monitor_mapscreen.image = photo # type: ignore[attr-defined]
+            self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
         except tk.TclError:
-            self.monitor_mapscreen.configure(image='')
-            self.monitor_mapscreen['text'] = self.MONITOR_MAPSCREEN_ASCII
+            self.monitor_mapscreen = ttk.Label(
+                self.monitor_mapscreen_frame, 
+                compound='top', 
+                anchor='nw', 
+                justify='left',
+                text = self.MONITOR_MAPSCREEN_ASCII
+            )
+            self.monitor_mapscreen.place(relx=0.5, rely=0.5, anchor="center")
         self.monitor_infobox_current.configure(text='Current\n'+plan_data.info_display(current))
         set_plan.plan_setup(current)
 
@@ -576,7 +626,7 @@ class MonitoringWindow:
                 self._stop_or_run()
                 time.sleep(1)
             elif GuiHotkeys.pause_status:
-                BotVars.paused = not BotVars.paused
+                _maindata.maindata["internal"]["paused"] = not _maindata.maindata["internal"]["paused"]
                 GuiHotkeys.pause_status = False
             time.sleep(0.1)
         else:

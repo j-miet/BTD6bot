@@ -1,1 +1,0 @@
-python -c "import image_scaler; image_scaler.scale_images()"
