@@ -1,6 +1,6 @@
-# Supported game plans (Last updated 2025-12-23)
+# Supported game plans (Last updated 2026-02-25)
 
-- this list is auto-updated using ``scripts/update_plans.py`` via Github Actions workflow
+- this list is auto-updated using ``scripts/update_plans.py``
 - all implemented plans are listed. Each game mode includes
     - link to corresponding .py plan file located in ``plans`` directory
     - the documentation of corresponding .py plan file which is read from the same file
@@ -50,6 +50,7 @@
 - [Off The Coast](#off-the-coast)
 - [One Two Tree](#one-two-tree)
 - [Park Path](#park-path)
+- [Party Parade](#party-parade)
 - [Pat's Pond](#pat's-pond)
 - [Peninsula](#peninsula)
 - [Quad](#quad)
@@ -107,7 +108,7 @@
 			mermonkey 2-0-4
 			
 			village 2-3-2
-			engi 0-4-0
+			engineer 0-4-0
 			_______________________________________
 			
 ### Alpine Run
@@ -281,7 +282,7 @@
 			village 2-0-2
 			_______________________________________
 			On round 83 hero is manually leveled up to in order to increase consistency.
-			Some late rounds like 87, 89, 90 and 95 might also cause issues if gwen's heat up timing is off.
+			Some late data like 87, 89, 90 and 95 might also cause issues if gwen's heat up timing is off.
 			
 ### Cornfield
 - Hard
@@ -531,7 +532,7 @@
 			_______________________________________
 			Gameplay-wise, should be viable for black bordering.
 			
-			For late game rounds (90+), bot might skip ahead and begin executing commands for upcoming rounds.
+			For late game data (90+), bot might skip ahead and begin executing commands for upcoming data.
 			Reason is there's lot of projectiles/bloons moving around round label, which can cause false positives.
 			This should not matter, as long as 99 => 100 is detected normally; 100 requires abilities and if bot uses them earlier than intended, you will 100% lose.
 			Another harmless effect is incorrectly saved round times: some display too short and other too long round durations.
@@ -858,11 +859,11 @@
 			druid 4-0-2
 			
 			village 2-0-2
-			engi 5-2-0
+			engineer 5-2-0
 			spike 4-0-5
 			_______________________________________
-			Some rounds can get skipped because bot incorrectly detects different value.
-			This should mostly happen in early/mid game and thus not affect later rounds where ability timings are important.
+			Some data can get skipped because bot incorrectly detects different value.
+			This should mostly happen in early/mid game and thus not affect later data where ability timings are important.
 			
 ### Logs
 - Hard
@@ -1127,6 +1128,33 @@
 			Copy of monkey_meadowHardChimps:
 			    - tower position changed
 			
+### Party Parade
+- Hard
+	- [Chimps](../btd6bot/plans/party_paradeHardChimps.py)
+
+			[Hero] Etienne
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			boomer 0-2-4
+			tack 0-0-0
+			glue 0-2-4
+			desperado 5-4-0
+			
+			sniper 3-2-2
+			ace 2-0-3
+			
+			wizard 1-0-5
+			alch 4-2-0
+			druid 3-0-2
+			mermonkey 0-1-4
+			
+			village 3-0-2
+			engineer 4-0-2
+			_______________________________________
+			Round 50 is the round with most rng.
+			
 ### Pat's Pond
 - Hard
 	- [Chimps](../btd6bot/plans/pat's_pondHardChimps.py)
@@ -1217,7 +1245,7 @@
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
-			---------------------------------------------------------------
+			-------------------------------------------------------------
 			===Monkeys & upgrades required===
 			dart 1-3-1
 			
@@ -1278,7 +1306,7 @@
 
 			[Hero] -
 			[Monkey Knowledge] -
-			---------------------------------------------------------------
+			-------------------------------------------------------------
 			===Monkeys & upgrades required===
 			druid 1-3-0
 			
@@ -1290,7 +1318,7 @@
 
 			[Hero] Psi
 			[Monkey Knowledge] -
-			---------------------------------------------------------------
+			-------------------------------------------------------------
 			===Monkeys & upgrades required===
 			dart 0-0-1
 			boomer 4-0-2
@@ -1309,7 +1337,7 @@
 
 			[Hero] Psi
 			[Monkey Knowledge] -
-			---------------------------------------------------------------
+			-------------------------------------------------------------
 			===Monkeys & upgrades required===
 			dart 0-0-0
 			
@@ -1326,7 +1354,7 @@
 
 			[Hero] Churchill
 			[Monkey Knowledge] -
-			---------------------------------------------------------------
+			-------------------------------------------------------------
 			===Monkeys & upgrades required===
 			boomer 0-2-4
 			glue 5-2-0
@@ -1455,7 +1483,7 @@
 			
 			spike 4-4-2
 			village 2-0-2
-			engi 0-4-0
+			engineer 0-4-0
 			_______________________________________
 			
 ### The Cabin
@@ -1567,6 +1595,17 @@
 			wizard 3-0-2
 			_______________________________________
 			
+	- [Primary](../btd6bot/plans/tricky_tracksEasyPrimary.py)
+
+			[Hero] Quincy
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-2-4
+			boomer 4-0-2
+			desperado 0-0-0
+			_______________________________________
+			
 - Hard
 	- [Chimps](../btd6bot/plans/tricky_tracksHardChimps.py)
 
@@ -1591,7 +1630,7 @@
 			
 			village 3-0-2
 			_______________________________________
-			Possible rounds where bot might fail: 28, 36, 62.
+			Possible data where bot might fail: 28, 36, 62.
 			
 ### Underground
 - Hard
@@ -1695,5 +1734,5 @@
 			_______________________________________
 			Similar to maps like Erosion, sometimes bot can detect next round(s) too early because there are too many projectiles/bloons moving around round label, causing false positives. 
 			Good thing is, this doesn't affect gameplay for this particular plan as ability timings are not needed late game.
-			This only affects saved round times: some rounds could immediately skip over, causing other rounds falsely display extremely long durations.
+			This only affects saved round times: some data could immediately skip over, causing other data falsely display extremely long durations.
 			
