@@ -6,10 +6,9 @@ on:
       - dev
     paths:
       - 'btd6bot/**'
+      - '!btd6bot/plans/**'
+      - '!btd6bot/_ocr_tests/**'
       - 'tests/**'
-    paths-ignore:
-      - 'btd6bot/plans/**'
-      - 'btd6bot/_ocr_tests/**'
 
 
 jobs:
