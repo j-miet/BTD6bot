@@ -134,7 +134,7 @@ class NoGui:
     def run(self) -> None:
         """Main loop for no-gui version of BTD6bot."""
 
-        def exit(key: Key | KeyCode | None) -> None:
+        def _exit(key: Key | KeyCode | None) -> None:
             """Program termination via hotkey.
 
             Args:
@@ -149,7 +149,7 @@ class NoGui:
                     gui_tools.terminate_thread(self.bot_thread)
 
         if sys.platform != 'darwin':
-            kb_listener = pynput.keyboard.Listener(on_press = exit)
+            kb_listener = pynput.keyboard.Listener(on_press = _exit)
             kb_listener.daemon = True
             kb_listener.start()
         
