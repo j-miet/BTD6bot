@@ -76,7 +76,7 @@
 
 ### #Ouch
 - Easy
-	- [Standard](../btd6bot/plans/#ouchEasyStandard.py)
+	- [Standard](btd6bot/plans/#ouchEasyStandard.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -89,7 +89,7 @@
 			_______________________________________
 			
 - Hard
-	- [Chimps](../btd6bot/plans/#ouchHardChimps.py)
+	- [Chimps](btd6bot/plans/#ouchHardChimps.py)
 
 			[Hero] Obyn
 			[Monkey Knowledge] -
@@ -113,7 +113,7 @@
 			
 ### Alpine Run
 - Hard
-	- [Chimps](../btd6bot/plans/alpine_runHardChimps.py)
+	- [Chimps](btd6bot/plans/alpine_runHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -132,7 +132,7 @@
 			
 ### Ancient Portal
 - Hard
-	- [Chimps](../btd6bot/plans/ancient_portalHardChimps.py)
+	- [Chimps](btd6bot/plans/ancient_portalHardChimps.py)
 
 			[Hero] Quincy
 			[Monkey Knowledge] -
@@ -153,7 +153,7 @@
 			
 ### Another Brick
 - Hard
-	- [Chimps](../btd6bot/plans/another_brickHardChimps.py)
+	- [Chimps](btd6bot/plans/another_brickHardChimps.py)
 
 			[Hero] Psi
 			[Monkey Knowledge] -
@@ -172,7 +172,7 @@
 			
 ### Bloody Puddles
 - Easy
-	- [Standard](../btd6bot/plans/bloody_puddlesEasyStandard.py)
+	- [Standard](btd6bot/plans/bloody_puddlesEasyStandard.py)
 
 			[Hero] -
 			[Monkey Knowledge] -
@@ -185,7 +185,7 @@
 			_______________________________________
 			
 - Hard
-	- [Chimps](../btd6bot/plans/bloody_puddlesHardChimps.py)
+	- [Chimps](btd6bot/plans/bloody_puddlesHardChimps.py)
 
 			[Hero] Gwen
 			[Monkey Knowledge] -
@@ -209,7 +209,7 @@
 			
 ### Candy Falls
 - Hard
-	- [Chimps](../btd6bot/plans/candy_fallsHardChimps.py)
+	- [Chimps](btd6bot/plans/candy_fallsHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -228,7 +228,7 @@
 			
 ### Cargo
 - Hard
-	- [Chimps](../btd6bot/plans/cargoHardChimps.py)
+	- [Chimps](btd6bot/plans/cargoHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -246,7 +246,7 @@
 			
 ### Carved
 - Hard
-	- [Chimps](../btd6bot/plans/carvedHardChimps.py)
+	- [Chimps](btd6bot/plans/carvedHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -265,7 +265,7 @@
 			
 ### Castle Revenge
 - Hard
-	- [Chimps](../btd6bot/plans/castle_revengeHardChimps.py)
+	- [Chimps](btd6bot/plans/castle_revengeHardChimps.py)
 
 			[Hero] Gwen
 			[Monkey Knowledge] -
@@ -286,7 +286,7 @@
 			
 ### Cornfield
 - Hard
-	- [Chimps](../btd6bot/plans/cornfieldHardChimps.py)
+	- [Chimps](btd6bot/plans/cornfieldHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -304,7 +304,7 @@
 			
 ### Cracked
 - Hard
-	- [Chimps](../btd6bot/plans/crackedHardChimps.py)
+	- [Chimps](btd6bot/plans/crackedHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -323,7 +323,7 @@
 			
 ### Cubism
 - Hard
-	- [Chimps](../btd6bot/plans/cubismHardChimps.py)
+	- [Chimps](btd6bot/plans/cubismHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -342,7 +342,7 @@
 			
 ### Dark Castle
 - Easy
-	- [Standard](../btd6bot/plans/dark_castleEasyStandard.py)
+	- [Standard](btd6bot/plans/dark_castleEasyStandard.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -354,7 +354,7 @@
 			alch 3-0-0
 			_______________________________________
 			
-	- [Primary](../btd6bot/plans/dark_castleEasyPrimary.py)
+	- [Primary](btd6bot/plans/dark_castleEasyPrimary.py)
 
 			[Hero] Quincy
 			[Monkey Knowledge] -
@@ -364,7 +364,7 @@
 			boomer 0-4-2
 			_______________________________________
 			
-	- [Deflation](../btd6bot/plans/dark_castleEasyDeflation.py)
+	- [Deflation](btd6bot/plans/dark_castleEasyDeflation.py)
 
 			[Hero] Gwen
 			[Monkey Knowledge] -
@@ -378,7 +378,7 @@
 			_______________________________________
 			
 - Medium
-	- [Military](../btd6bot/plans/dark_castleMediumMilitary.py)
+	- [Military](btd6bot/plans/dark_castleMediumMilitary.py)
 
 			[Hero] Obyn
 			[Monkey Knowledge] -
@@ -391,7 +391,7 @@
 			_______________________________________
 			
 - Hard
-	- [Chimps](../btd6bot/plans/dark_castleHardChimps.py)
+	- [Chimps](btd6bot/plans/dark_castleHardChimps.py)
 
 			[Hero] Obyn
 			[Monkey Knowledge] -
@@ -410,7 +410,7 @@
 			
 ### Dark Dungeons
 - Easy
-	- [Standard](../btd6bot/plans/dark_dungeonsEasyStandard.py)
+	- [Standard](btd6bot/plans/dark_dungeonsEasyStandard.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -427,7 +427,7 @@
 			_______________________________________
 			
 - Hard
-	- [Chimps](../btd6bot/plans/dark_dungeonsHardChimps.py)
+	- [Chimps](btd6bot/plans/dark_dungeonsHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -449,7 +449,7 @@
 			
 ### Dark Path
 - Hard
-	- [Chimps](../btd6bot/plans/dark_pathHardChimps.py)
+	- [Chimps](btd6bot/plans/dark_pathHardChimps.py)
 
 			[Hero] Striker
 			[Monkey Knowledge] -
@@ -469,7 +469,7 @@
 			
 ### Enchanted Glade
 - Hard
-	- [Chimps](../btd6bot/plans/enchanted_gladeHardChimps.py)
+	- [Chimps](btd6bot/plans/enchanted_gladeHardChimps.py)
 
 			[Hero] Etienne
 			[Monkey Knowledge] -
@@ -491,7 +491,7 @@
 			
 ### End Of The Road
 - Hard
-	- [Chimps](../btd6bot/plans/end_of_the_roadHardChimps.py)
+	- [Chimps](btd6bot/plans/end_of_the_roadHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -510,7 +510,7 @@
 			
 ### Erosion
 - Hard
-	- [Chimps](../btd6bot/plans/erosionHardChimps.py)
+	- [Chimps](btd6bot/plans/erosionHardChimps.py)
 
 			[Hero] Psi
 			[Monkey Knowledge] -
@@ -541,7 +541,7 @@
 			
 ### Flooded Valley
 - Easy
-	- [Standard](../btd6bot/plans/flooded_valleyEasyStandard.py)
+	- [Standard](btd6bot/plans/flooded_valleyEasyStandard.py)
 
 			[Hero] -
 			[Monkey Knowledge] -
@@ -552,7 +552,7 @@
 			_______________________________________
 			
 - Hard
-	- [Chimps](../btd6bot/plans/flooded_valleyHardChimps.py)
+	- [Chimps](btd6bot/plans/flooded_valleyHardChimps.py)
 
 			[Hero] Pat
 			[Monkey Knowledge] -
@@ -573,7 +573,7 @@
 			
 ### Four Circles
 - Hard
-	- [Chimps](../btd6bot/plans/four_circlesHardChimps.py)
+	- [Chimps](btd6bot/plans/four_circlesHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -592,7 +592,7 @@
 			
 ### Frozen Over
 - Hard
-	- [Chimps](../btd6bot/plans/frozen_overHardChimps.py)
+	- [Chimps](btd6bot/plans/frozen_overHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -611,7 +611,7 @@
 			
 ### Geared
 - Hard
-	- [Chimps](../btd6bot/plans/gearedHardChimps.py)
+	- [Chimps](btd6bot/plans/gearedHardChimps.py)
 
 			[Hero] Rosalia
 			[Monkey Knowledge] -
@@ -630,7 +630,7 @@
 			
 ### Glacial Trail
 - Easy
-	- [Standard](../btd6bot/plans/glacial_trailEasyStandard.py)
+	- [Standard](btd6bot/plans/glacial_trailEasyStandard.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -646,7 +646,7 @@
 			engineer 4-2-0
 			_______________________________________
 			
-	- [Primary](../btd6bot/plans/glacial_trailEasyPrimary.py)
+	- [Primary](btd6bot/plans/glacial_trailEasyPrimary.py)
 
 			[Hero] Silas
 			[Monkey Knowledge] -
@@ -655,7 +655,7 @@
 			_______________________________________
 			
 - Medium
-	- [Standard](../btd6bot/plans/glacial_trailMediumStandard.py)
+	- [Standard](btd6bot/plans/glacial_trailMediumStandard.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -673,7 +673,7 @@
 			_______________________________________
 			
 - Hard
-	- [Standard](../btd6bot/plans/glacial_trailHardStandard.py)
+	- [Standard](btd6bot/plans/glacial_trailHardStandard.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -691,7 +691,7 @@
 			_______________________________________
 			Derived from glacial_trailHardChimps.
 			
-	- [Chimps](../btd6bot/plans/glacial_trailHardChimps.py)
+	- [Chimps](btd6bot/plans/glacial_trailHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -713,7 +713,7 @@
 			
 ### Hedge
 - Hard
-	- [Chimps](../btd6bot/plans/hedgeHardChimps.py)
+	- [Chimps](btd6bot/plans/hedgeHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -732,7 +732,7 @@
 			
 ### High Finance
 - Hard
-	- [Chimps](../btd6bot/plans/high_financeHardChimps.py)
+	- [Chimps](btd6bot/plans/high_financeHardChimps.py)
 
 			[Hero] Gwen
 			[Monkey Knowledge] -
@@ -753,7 +753,7 @@
 			
 ### In The Loop
 - Hard
-	- [Chimps](../btd6bot/plans/in_the_loopHardChimps.py)
+	- [Chimps](btd6bot/plans/in_the_loopHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -772,7 +772,7 @@
 			
 ### Infernal
 - Easy
-	- [Standard](../btd6bot/plans/infernalEasyStandard.py)
+	- [Standard](btd6bot/plans/infernalEasyStandard.py)
 
 			[Hero] -
 			[Monkey Knowledge] -
@@ -783,7 +783,7 @@
 			_______________________________________
 			
 - Medium
-	- [Apopalypse](../btd6bot/plans/infernalMediumApopalypse.py)
+	- [Apopalypse](btd6bot/plans/infernalMediumApopalypse.py)
 
 			[Hero] Psi
 			[Monkey Knowledge] -
@@ -803,7 +803,7 @@
 			Apopalypse round rng might fail you. Should work after a few tries, though.
 			
 - Hard
-	- [Chimps](../btd6bot/plans/infernalHardChimps.py)
+	- [Chimps](btd6bot/plans/infernalHardChimps.py)
 
 			[Hero] Quincy
 			[Monkey Knowledge] -
@@ -825,7 +825,7 @@
 			
 ### Kartsndarts
 - Hard
-	- [Chimps](../btd6bot/plans/kartsndartsHardChimps.py)
+	- [Chimps](btd6bot/plans/kartsndartsHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -844,7 +844,7 @@
 			
 ### Last Resort
 - Hard
-	- [Chimps](../btd6bot/plans/last_resortHardChimps.py)
+	- [Chimps](btd6bot/plans/last_resortHardChimps.py)
 
 			[Hero] Adora
 			[Monkey Knowledge] -
@@ -867,7 +867,7 @@
 			
 ### Logs
 - Hard
-	- [Chimps](../btd6bot/plans/logsHardChimps.py)
+	- [Chimps](btd6bot/plans/logsHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -883,7 +883,7 @@
 			
 ### Lost Crevasse
 - Hard
-	- [Chimps](../btd6bot/plans/lost_crevasseHardChimps.py)
+	- [Chimps](btd6bot/plans/lost_crevasseHardChimps.py)
 
 			[Hero] Silas
 			[Monkey Knowledge] -
@@ -905,7 +905,7 @@
 			
 ### Lotus Island
 - Hard
-	- [Chimps](../btd6bot/plans/lotus_islandHardChimps.py)
+	- [Chimps](btd6bot/plans/lotus_islandHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -921,7 +921,7 @@
 			
 ### Luminous Cove
 - Hard
-	- [Chimps](../btd6bot/plans/luminous_coveHardChimps.py)
+	- [Chimps](btd6bot/plans/luminous_coveHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -940,7 +940,7 @@
 			
 ### Mesa
 - Hard
-	- [Chimps](../btd6bot/plans/mesaHardChimps.py)
+	- [Chimps](btd6bot/plans/mesaHardChimps.py)
 
 			[Hero] Etienne
 			[Monkey Knowledge] -
@@ -963,7 +963,7 @@
 			
 ### Middle Of The Road
 - Hard
-	- [Chimps](../btd6bot/plans/middle_of_the_roadHardChimps.py)
+	- [Chimps](btd6bot/plans/middle_of_the_roadHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -981,7 +981,7 @@
 			
 ### Midnight Mansion
 - Hard
-	- [Chimps](../btd6bot/plans/midnight_mansionHardChimps.py)
+	- [Chimps](btd6bot/plans/midnight_mansionHardChimps.py)
 
 			[Hero] Ezili
 			[Monkey Knowledge] -
@@ -1003,7 +1003,7 @@
 			
 ### Monkey Meadow
 - Easy
-	- [Standard](../btd6bot/plans/monkey_meadowEasyStandard.py)
+	- [Standard](btd6bot/plans/monkey_meadowEasyStandard.py)
 
 			[Hero] Quincy
 			[Monkey Knowledge] -
@@ -1016,7 +1016,7 @@
 			_______________________________________
 			
 - Hard
-	- [Chimps](../btd6bot/plans/monkey_meadowHardChimps.py)
+	- [Chimps](btd6bot/plans/monkey_meadowHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1032,7 +1032,7 @@
 			
 ### Muddy Puddles
 - Easy
-	- [Standard](../btd6bot/plans/muddy_puddlesEasyStandard.py)
+	- [Standard](btd6bot/plans/muddy_puddlesEasyStandard.py)
 
 			[Hero] -
 			[Monkey Knowledge] -
@@ -1048,7 +1048,7 @@
 			_______________________________________
 			
 - Hard
-	- [Chimps](../btd6bot/plans/muddy_puddlesHardChimps.py)
+	- [Chimps](btd6bot/plans/muddy_puddlesHardChimps.py)
 
 			[Hero] Rosalia
 			[Monkey Knowledge] -
@@ -1069,7 +1069,7 @@
 			
 ### Off The Coast
 - Hard
-	- [Chimps](../btd6bot/plans/off_the_coastHardChimps.py)
+	- [Chimps](btd6bot/plans/off_the_coastHardChimps.py)
 
 			[Hero] Psi
 			[Monkey Knowledge] -
@@ -1091,7 +1091,7 @@
 			
 ### One Two Tree
 - Hard
-	- [Chimps](../btd6bot/plans/one_two_treeHardChimps.py)
+	- [Chimps](btd6bot/plans/one_two_treeHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1111,7 +1111,7 @@
 			
 ### Park Path
 - Hard
-	- [Chimps](../btd6bot/plans/park_pathHardChimps.py)
+	- [Chimps](btd6bot/plans/park_pathHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1130,7 +1130,7 @@
 			
 ### Party Parade
 - Hard
-	- [Chimps](../btd6bot/plans/party_paradeHardChimps.py)
+	- [Chimps](btd6bot/plans/party_paradeHardChimps.py)
 
 			[Hero] Etienne
 			[Monkey Knowledge] -
@@ -1157,7 +1157,7 @@
 			
 ### Pat's Pond
 - Hard
-	- [Chimps](../btd6bot/plans/pat's_pondHardChimps.py)
+	- [Chimps](btd6bot/plans/pat's_pondHardChimps.py)
 
 			[Hero] Obyn
 			[Monkey Knowledge] -
@@ -1176,7 +1176,7 @@
 			
 ### Peninsula
 - Hard
-	- [Chimps](../btd6bot/plans/peninsulaHardChimps.py)
+	- [Chimps](btd6bot/plans/peninsulaHardChimps.py)
 
 			[Hero] Psi
 			[Monkey Knowledge] -
@@ -1199,7 +1199,7 @@
 			
 ### Quad
 - Easy
-	- [Standard](../btd6bot/plans/quadEasyStandard.py)
+	- [Standard](btd6bot/plans/quadEasyStandard.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1211,7 +1211,7 @@
 			_______________________________________
 			
 - Hard
-	- [Chimps](../btd6bot/plans/quadHardChimps.py)
+	- [Chimps](btd6bot/plans/quadHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1241,7 +1241,7 @@
 			
 ### Ravine
 - Easy
-	- [Standard](../btd6bot/plans/ravineEasyStandard.py)
+	- [Standard](btd6bot/plans/ravineEasyStandard.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1257,7 +1257,7 @@
 			_______________________________________
 			
 - Hard
-	- [Chimps](../btd6bot/plans/ravineHardChimps.py)
+	- [Chimps](btd6bot/plans/ravineHardChimps.py)
 
 			[Hero] Psi
 			[Monkey Knowledge] -
@@ -1283,7 +1283,7 @@
 			
 ### Resort
 - Hard
-	- [Chimps](../btd6bot/plans/resortHardChimps.py)
+	- [Chimps](btd6bot/plans/resortHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1302,7 +1302,7 @@
 			
 ### Sanctuary
 - Easy
-	- [Standard](../btd6bot/plans/sanctuaryEasyStandard.py)
+	- [Standard](btd6bot/plans/sanctuaryEasyStandard.py)
 
 			[Hero] -
 			[Monkey Knowledge] -
@@ -1314,7 +1314,7 @@
 			_______________________________________
 			
 - Medium
-	- [Standard](../btd6bot/plans/sanctuaryMediumStandard.py)
+	- [Standard](btd6bot/plans/sanctuaryMediumStandard.py)
 
 			[Hero] Psi
 			[Monkey Knowledge] -
@@ -1333,7 +1333,7 @@
 			_______________________________________
 			
 - Hard
-	- [Standard](../btd6bot/plans/sanctuaryHardStandard.py)
+	- [Standard](btd6bot/plans/sanctuaryHardStandard.py)
 
 			[Hero] Psi
 			[Monkey Knowledge] -
@@ -1350,7 +1350,7 @@
 			_______________________________________
 			Some lives will be lost in early game.
 			
-	- [Chimps](../btd6bot/plans/sanctuaryHardChimps.py)
+	- [Chimps](btd6bot/plans/sanctuaryHardChimps.py)
 
 			[Hero] Churchill
 			[Monkey Knowledge] -
@@ -1373,7 +1373,7 @@
 			
 ### Skates
 - Hard
-	- [Chimps](../btd6bot/plans/skatesHardChimps.py)
+	- [Chimps](btd6bot/plans/skatesHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1389,7 +1389,7 @@
 			
 ### Spa Pits
 - Hard
-	- [Chimps](../btd6bot/plans/spa_pitsHardChimps.py)
+	- [Chimps](btd6bot/plans/spa_pitsHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1408,7 +1408,7 @@
 			
 ### Spillway
 - Hard
-	- [Chimps](../btd6bot/plans/spillwayHardChimps.py)
+	- [Chimps](btd6bot/plans/spillwayHardChimps.py)
 
 			[Hero] Psi
 			[Monkey Knowledge] -
@@ -1430,7 +1430,7 @@
 			
 ### Spring Spring
 - Hard
-	- [Chimps](../btd6bot/plans/spring_springHardChimps.py)
+	- [Chimps](btd6bot/plans/spring_springHardChimps.py)
 
 			[Hero] Striker
 			[Monkey Knowledge] -
@@ -1446,7 +1446,7 @@
 			
 ### Sunken Columns
 - Hard
-	- [Chimps](../btd6bot/plans/sunken_columnsHardChimps.py)
+	- [Chimps](btd6bot/plans/sunken_columnsHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1465,7 +1465,7 @@
 			
 ### Sunset Gulch
 - Hard
-	- [Chimps](../btd6bot/plans/sunset_gulchHardChimps.py)
+	- [Chimps](btd6bot/plans/sunset_gulchHardChimps.py)
 
 			[Hero] Churchill
 			[Monkey Knowledge] -
@@ -1488,7 +1488,7 @@
 			
 ### The Cabin
 - Hard
-	- [Chimps](../btd6bot/plans/the_cabinHardChimps.py)
+	- [Chimps](btd6bot/plans/the_cabinHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1507,7 +1507,7 @@
 			
 ### Three Mines 'round
 - Hard
-	- [Chimps](../btd6bot/plans/three_mines_'roundHardChimps.py)
+	- [Chimps](btd6bot/plans/three_mines_'roundHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1524,7 +1524,7 @@
 			
 ### Tinkerton
 - Hard
-	- [Chimps](../btd6bot/plans/tinkertonHardChimps.py)
+	- [Chimps](btd6bot/plans/tinkertonHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1544,7 +1544,7 @@
 			
 ### Town Center
 - Hard
-	- [Chimps](../btd6bot/plans/town_centerHardChimps.py)
+	- [Chimps](btd6bot/plans/town_centerHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1563,7 +1563,7 @@
 			
 ### Tree Stump
 - Hard
-	- [Chimps](../btd6bot/plans/tree_stumpHardChimps.py)
+	- [Chimps](btd6bot/plans/tree_stumpHardChimps.py)
 
 			[Hero] Corvus
 			[Monkey Knowledge] -
@@ -1582,7 +1582,7 @@
 			
 ### Tricky Tracks
 - Easy
-	- [Standard](../btd6bot/plans/tricky_tracksEasyStandard.py)
+	- [Standard](btd6bot/plans/tricky_tracksEasyStandard.py)
 
 			[Hero] -
 			[Monkey Knowledge] -
@@ -1595,7 +1595,7 @@
 			wizard 3-0-2
 			_______________________________________
 			
-	- [Primary](../btd6bot/plans/tricky_tracksEasyPrimary.py)
+	- [Primary](btd6bot/plans/tricky_tracksEasyPrimary.py)
 
 			[Hero] Quincy
 			[Monkey Knowledge] -
@@ -1607,7 +1607,7 @@
 			_______________________________________
 			
 - Hard
-	- [Chimps](../btd6bot/plans/tricky_tracksHardChimps.py)
+	- [Chimps](btd6bot/plans/tricky_tracksHardChimps.py)
 
 			[Hero] Obyn
 			[Monkey Knowledge] -
@@ -1634,7 +1634,7 @@
 			
 ### Underground
 - Hard
-	- [Chimps](../btd6bot/plans/undergroundHardChimps.py)
+	- [Chimps](btd6bot/plans/undergroundHardChimps.py)
 
 			[Hero] Geraldo
 			[Monkey Knowledge] -
@@ -1658,7 +1658,7 @@
 			
 ### Winter Park
 - Hard
-	- [Chimps](../btd6bot/plans/winter_parkHardChimps.py)
+	- [Chimps](btd6bot/plans/winter_parkHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1677,7 +1677,7 @@
 			
 ### Workshop
 - Easy
-	- [Standard](../btd6bot/plans/workshopEasyStandard.py)
+	- [Standard](btd6bot/plans/workshopEasyStandard.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
@@ -1693,7 +1693,7 @@
 			_______________________________________
 			
 - Hard
-	- [Chimps](../btd6bot/plans/workshopHardChimps.py)
+	- [Chimps](btd6bot/plans/workshopHardChimps.py)
 
 			[Hero] Gwen
 			[Monkey Knowledge] -
@@ -1716,7 +1716,7 @@
 			
 ### X Factor
 - Hard
-	- [Chimps](../btd6bot/plans/x_factorHardChimps.py)
+	- [Chimps](btd6bot/plans/x_factorHardChimps.py)
 
 			[Hero] Obyn
 			[Monkey Knowledge] -
