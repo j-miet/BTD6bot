@@ -1,5 +1,18 @@
 ## How to install BTD6bot using an install script file
 
+- [<u>Scripts</u>](#scripts)
+    - [For Windows users](#for-windows-users)
+- [<u>Optional</u>](#optional)
+    - [Global installation](#global-installation)
+- [<u>Detailed explanation of scripts</u>](#detailed-explanation-of-scripts)
+    - [Windows](#windows)
+        - [Install.bat](#installbat)
+        - [Other .bat scripts](#other-bat-scripts-located-in-win_copy-directory)
+    - [Linux/MacOS](#linuxmacos)
+        - [Install.sh](#installsh)
+        - [Other .sh scripts](#other-sh-scripts-located-in-other_copy-directory)
+
+
 ## Scripts
 
 - *win* includes **install.bat** which has ``.bat`` format and uses Windows Powershell to execute commands and 
@@ -40,7 +53,7 @@ user. You can do this by issuing the following PowerShell command:
 
 => This means Windows users might need to run following command in powershell in order to allow use of virtual environments:
 
-**Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser**
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 
 ## Optional 
@@ -148,7 +161,7 @@ Activate virtual environment
 
 Install required external packages listed in requirements.txt. Because virtual environment is activated, these packages are installed locally under c:/your/path/BTD6bot-main/.venv/Lib/site-packages
 
-#### Other scripts (located in _copy directory)
+#### Other .bat scripts (located in win/_copy directory)
 
     powershell -NoProfile -Command ^
 
@@ -222,6 +235,30 @@ Activate virtual environment. If operating system is Windows (msys/cygwin), use 
     pip3 install -r requirements.txt
 
 In current virtual environment, install external packages listed in requirements.txt. These can then be found in c:/your/path/BTD6bot-main/.venv/Lib/site-packages
+
+
+#### Other .sh scripts (located in other/_copy directory)
+
+    #!/usr/bin/env bash
+    chmod +x run.sh
+    if [[ "$OSTYPE" == "msys" ]]; then
+        source ./.venv/Scripts/activate
+    else
+        source ./.venv/bin/activate
+    fi
+    python3 btd6bot
+
+These all follow similar pattern:
+1. run file using bash
+2. treat file as a script by adding it executable permissions
+3. activate virtual environment:
+    - if Windows, run venv activation script in 'Scripts' dir (generally you want to use .bat script but this also works)
+    -  otherwise run activation script in 'bin' dir
+4. run main file using Python
+    - if run/run no-gui, uses 'python3 btd6bot'. This is same as 'python3 btd6bot/\_\_main\_\_.py'.
+    - for tool scripts, uses 'python3 tool_name.py'
+   
+   Note that specifying python version is required for Unix and some Mac systems, hence python3 is used.
 
 
 
