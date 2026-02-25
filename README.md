@@ -1294,12 +1294,12 @@ Now, open your plan file. It looks like this:
     '''
     from._plan_imports import *
 
-    def play(rounds: tuple[str, str, str, int, int, str]) -> None:
-        BEGIN, END = menu_start.load(*rounds)
+    def play(data):
+        BEGIN, END = menu_start.load(*data)
         round = BEGIN-1
         map_start = time()
         while round < END+1:
-            round = Rounds.round_check(round, map_start, rounds[2])
+            round = Rounds.round_check(round, map_start, data[2])
             if round == BEGIN:     
                 ...
     '''
@@ -1317,12 +1317,12 @@ First remove the two comment lines starting with ''' symbols (not the """) so bo
 
     from._plan_imports import *
 
-    def play(rounds: tuple[str, str, str, int, int, str]) -> None:
-        BEGIN, END = menu_start.load(*rounds)
+    def play(data):
+        BEGIN, END = menu_start.load(*data)
         round = BEGIN-1
         map_start = time()
         while round < END+1:
-            round = Rounds.round_check(round, map_start, rounds[2])
+            round = Rounds.round_check(round, map_start, data[2])
             if round == BEGIN:     
                 ...
 >
@@ -1405,12 +1405,12 @@ Now that you know what the info panel is, let us have a look at the main body:
 
     from._plan_imports import *
 
-    def play(rounds: tuple[str, str, str, int, int, str]) -> None:
-        BEGIN, END = menu_start.load(*rounds)
+    def play(data):
+        BEGIN, END = menu_start.load(*data)
         round = BEGIN-1
         map_start = time()
         while round < END+1:
-            round = Rounds.round_check(round, map_start, rounds[2])
+            round = Rounds.round_check(round, map_start, data[2])
             if round == BEGIN:     
                 ...
 

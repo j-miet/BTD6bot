@@ -9,12 +9,12 @@ _______________________________________
 '''
 from._plan_imports import *
 
-def play(rounds):
-    BEGIN, END = menu_start.load(*rounds)
+def play(data):
+    BEGIN, END = menu_start.load(*data)
     round = BEGIN-1
     map_start = time()
     while round < END+1:
-        round = Rounds.round_check(round, map_start, rounds[2])
+        round = Rounds.round_check(round, map_start, data[2])
         if round == BEGIN:     
             ...
 '''
