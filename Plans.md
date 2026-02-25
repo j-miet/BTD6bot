@@ -1607,6 +1607,51 @@
 			_______________________________________
 			
 - Hard
+	- [Standard](btd6bot/plans/tricky_tracksHardStandard.py)
+
+			[Hero] Obyn
+			[Monkey Knowledge] Yes
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			boomer 0-2-4
+			bomb 4-2-0
+			tack 2-0-4
+			ice 5-1-0
+			glue 0-2-4
+			desperado 0-0-0
+			
+			sniper 1-1-0
+			
+			wizard 5-3-2
+			alch 3-0-1
+			druid 0-0-0
+			mermonkey 4-3-2
+			
+			village 3-0-2
+			_______________________________________
+			Created with all monkey knowledge unlocked.
+			Copy of CHIMPS plan.
+			
+	- [Alternate](btd6bot/plans/tricky_tracksHardAlternate.py)
+
+			[Hero] Etienne
+			[Monkey Knowledge] Yes
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-2
+			boomer 4-0-2
+			
+			sniper 4-2-5
+			
+			ninja 4-0-4
+			mermonkey 4-0-2
+			
+			farm 2-0-3
+			engi 4-2-0
+			_______________________________________
+			Created with all monkey knowledge unlocked.
+			
 	- [Chimps](btd6bot/plans/tricky_tracksHardChimps.py)
 
 			[Hero] Obyn
