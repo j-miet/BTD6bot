@@ -46,8 +46,7 @@ jobs:
           pip install mypy
       - name: Run type checks
         run: |
-          mypy --install-types --non-interactive
-          mypy --strict --ignore-missing-imports
+          mypy --install-types --non-interactive --strict --ignore-missing-imports
 
   ruff:
     runs-on: ubuntu-latest
