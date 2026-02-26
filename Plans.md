@@ -1,4 +1,4 @@
-# Supported game plans (Last updated 2026-02-25)
+# Supported game plans (Last updated 2026-02-26)
 
 - this list is auto-updated using ``scripts/update_plans.py``
 - all implemented plans are listed. Each game mode includes
@@ -1675,7 +1675,12 @@
 			
 			village 3-0-2
 			_______________________________________
-			Possible data where bot might fail: 28, 36, 62.
+			In version 53 this map got changed so there's less space to put towers. For this reason placements have been
+			adjusted, but same strat doesn't seem to be black border viable anymore: it always ends up failing on round 99. Funnily
+			enough it passes round 99 on second try and 100 is also beatable, making this gold border viable if you want to manually
+			finish the last 2 rounds.
+			
+			Plan will be updated on next bot version.
 			
 ### Underground
 - Hard
