@@ -2,4 +2,4 @@ powershell -NoProfile -Command ^
 
 ./../../.venv/Scripts/activate ^
 
-python show_coordinates.py
+python -u show_coordinates.py
