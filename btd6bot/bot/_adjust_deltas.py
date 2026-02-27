@@ -1,14 +1,11 @@
 """Creates a file of adjusted upgrade delta values."""
 
+import copy
 from typing import Any
-import pathlib
-import json
-import os
 import sys
 import time
 
-from bot import kb_mouse
-from bot.bot_vars import BotVars
+from bot import _maindata, kb_mouse
 from bot.commands.monkey import Monkey
 from bot.locations import get_click, get_text
 from bot.kb_mouse import ScreenRes
@@ -20,8 +17,6 @@ from utils import timing
 
 if sys.platform == 'win32':
     import win32gui
-
-_TEMPFILE_PATH = pathlib.Path(__file__).parent.parent/'Files'/'.temp_upg_deltas.json'
 
 def _get_positions(monkey: str, panel_loc: str) -> tuple[float, float, float, float, float, float]:
     if panel_loc == 'left':
@@ -135,34 +130,25 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
     If not, use _ocr_upgradedata.json base values instead. This also means all monkeys are adjusted,
     even if list of checked monkeys was a sublist.
     """
-    base_dict: dict[str, Any] = {}
-    current_dict: dict[str, Any] = {}
-    with open(pathlib.Path(__file__).parent.parent/'Files'/'_ocr_upgradedata.json') as base:
-        base_dict = json.load(base)
-    try:
-        with open(pathlib.Path(__file__).parent.parent/'Files'/'upgrades_current.json') as current:
-            current_dict = json.load(current)
-    except FileNotFoundError:
-        ...
+    base_dict: dict[str, Any] = copy.deepcopy(_maindata.maindata["ocr_basedata"])
+    current_dict: dict[str, Any] = copy.deepcopy(_maindata.maindata["ocr_upgradedata"])
     base_keys = base_dict.keys()
     current_keys = current_dict.keys()
-    baseval_flag = 0
+    baseval_flag: bool = False
+
     for key in base_keys:
         if key not in current_keys:
             cprint("Current upgrades file has missing keys.\nALL monkeys will be adjusted.\n///")
-            with open(_TEMPFILE_PATH, 'w') as tempf:
-                json.dump(base_dict, tempf, indent=2)
-            baseval_flag = 1
+            _maindata.maindata["temp_upg_deltas"].update(base_dict)
+            baseval_flag = True
             break
         elif current_dict[key][0] != base_dict[key][0]:
             cprint("Mismatch in one or more current upgrade names.\nALL monkeys will be adjusted.\n///")
-            with open(_TEMPFILE_PATH, 'w') as tempf:
-                json.dump(base_dict, tempf, indent=2)
-            baseval_flag = 1
+            _maindata.maindata["temp_upg_deltas"].update(base_dict)
+            baseval_flag = True
             break
     if not baseval_flag:
-        with open(_TEMPFILE_PATH, 'w') as tempf:
-            json.dump(current_dict, tempf, indent=2)
+        _maindata.maindata["temp_upg_deltas"].update(current_dict)
         
     monkeys: list[str] = []
     if check_monkeys == ['all'] or baseval_flag:
@@ -175,8 +161,9 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
     if monkeys == []:
         return
     
-    BotVars.print_delta_ocrtext = True
-    BotVars.checking_time_limit = 10
+    previous_settings = copy.deepcopy(_maindata.maindata["bot_vars"])
+    _maindata.maindata["bot_vars"]["delta_ocrtext"] = True
+    _maindata.maindata["bot_vars"]["checking_time_limit"] = 10
     OcrValues._log_ocr_deltas = True
 
     cprint("\nSearching for main menu screen...", end='')
@@ -209,73 +196,68 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
     for m in monkeys:
         cprint(f"=={m}==")
         _check_ocr(m, *_get_positions(m, 'left'))
-    left_deltas: dict[str, Any] = {}
-    with open(_TEMPFILE_PATH) as f:
-        left_deltas = json.load(f)
-
+    if _maindata.maindata["internal"]["defeat_status"]:
+        cprint("Adjusting failed, please try again.")
+        _maindata.maindata["bot_vars"] = previous_settings
+        return
+    left_deltas: dict[str, Any] = copy.deepcopy(_maindata.maindata["temp_upg_deltas"])
     # right upgrade panel
     for m in monkeys:
         cprint(f"=={m}==")
         _check_ocr(m, *_get_positions(m, 'right'))
-    right_deltas: dict[str, Any] = {}
-    with open(_TEMPFILE_PATH) as f:
-        right_deltas = json.load(f)
+    if _maindata.maindata["internal"]["defeat_status"]:
+        cprint("Adjusting failed, please try again.")
+        _maindata.maindata["bot_vars"] = previous_settings
+        return
+    right_deltas: dict[str, Any] = copy.deepcopy(_maindata.maindata["temp_upg_deltas"])
 
     # final deltas i.e. pick the smaller of left and right value
-    delta_dict: dict[str, Any] = left_deltas.copy()
+    delta_dict: dict[str, Any] = copy.deepcopy(left_deltas)
     for key in left_deltas.keys():
         minval = min(left_deltas[key][1], right_deltas[key][1])
         delta_dict[key][1] = minval
-    with open(_TEMPFILE_PATH, 'w') as f:
-        json.dump(delta_dict, f, indent=2)
+    _maindata.maindata["temp_upg_deltas"].update(delta_dict)
 
     # adjusted final deltas
     if delta_adjust > 0:
         adjust_val = delta_adjust*0.01
         cprint("---------------------------------------------------\n"
                 "Adjusting ocr deltas based on delta value...")
-        with open(_TEMPFILE_PATH) as f:
-            adjusted_dict: dict[str, Any] = json.load(f)
+        adjusted_dict: dict[str, Any] = _maindata.maindata["temp_upg_deltas"]
         for key in adjusted_dict.keys():
             for m in monkeys:
-                if m in str(key):
+                if m == key.split()[0]:
                     adjusted_dict[key][1] = round(adjusted_dict[key][1] - adjust_val, 2)
                     break
-        with open(_TEMPFILE_PATH, 'w') as f:
-            json.dump(adjusted_dict, f, indent=2)
 
     # update identifier key
-    with open(_TEMPFILE_PATH) as f:
-        upg_dict: dict[str, Any] = json.load(f)
-    if BotVars.windowed:
+    upg_dict: dict[str, Any] = _maindata.maindata["temp_upg_deltas"]
+    if _maindata.maindata["bot_vars"]["windowed"]:
         win = "windowed"
     else:
         win = "fullscreen"
     upg_dict["__identifier"] = [ScreenRes._width, ScreenRes._height, ScreenRes._w_shift, ScreenRes._h_shift, 
                                 win, f"delta={delta_adjust}"]
-    with open(_TEMPFILE_PATH, 'w') as f:
-        json.dump(upg_dict, f, indent=2)
 
-    with open(pathlib.Path(__file__).parent.parent/'Files'/'upgrades_current.json', 'w') as f:
-        json.dump(upg_dict, f, indent=2)
+    _maindata.maindata["ocr_upgradedata"].update(upg_dict)
+    _maindata.write_ocr_upgrades(upg_dict)
     cprint("-Deltas updated in upgrades_current.json")
-    warning_flag = 1
+    warning_flag: bool = True
     for monkey_vals in upg_dict.keys():
         if monkey_vals != "__identifier" and upg_dict[monkey_vals][1] <= 0.5:
             if warning_flag:
                 cprint("#!# Following deltas are unusually low #!#")
-                warning_flag = 0
+                warning_flag = False
             cprint(f"{monkey_vals}, {upg_dict[monkey_vals][0]}: {upg_dict[monkey_vals][1]}")
 
     # automatically reset toggle value from settings after updating
-    with open(pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json') as guivars_f:
-        guivars_dict: dict[str, Any] = json.load(guivars_f)
-    guivars_dict["ocr_adjust_deltas"] = False
-    with open(pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json', 'w') as guivars_f:
-        json.dump(guivars_dict, guivars_f, indent=4)
-    cprint("-Auto-adjust set to False.\n")
+    previous_settings["ocr_adjust_deltas"] = False
+    _maindata.maindata["bot_vars"].update(previous_settings)
+    _maindata.write_botvars(previous_settings)
+    _maindata.init_maindata()
+    OcrValues._log_ocr_deltas = False
+    cprint("\n-Auto-adjust set to False.\n")
 
-    os.remove(_TEMPFILE_PATH)   # delete temp file .temp_upg_deltas.json
     time.sleep(2)
     kb_mouse.press_esc()
     time.sleep(1)
@@ -286,9 +268,11 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
     cprint("Adjusting process complete!")
 
 def run() -> None:
-    with open(pathlib.Path(__file__).parent.parent/'Files'/'gui_vars.json') as f:
-        gui_vars_adjust_args: str = json.load(f)["adjust_args"]
-    args_list = gui_vars_adjust_args.split()
+    if not _maindata.init_maindata():
+        cprint("Adjusting process halted.")
+        return
+    bot_vars_adjust_args: str = _maindata.maindata["bot_vars"]["adjust_args"]
+    args_list = bot_vars_adjust_args.split()
     monkey_list: list[str]
     delta: int
     winpos: str
@@ -299,9 +283,9 @@ def run() -> None:
         elif 'win=' in args:
             win_val = int(args[4])
             if win_val == 1:
-                BotVars.windowed = True
+                _maindata.maindata["bot_vars"]["windowed"] = True
             elif win_val == 0:
-                BotVars.windowed = False
+                _maindata.maindata["bot_vars"]["windowed"] = False
         elif 'winpos=' in args:
             if sys.platform == 'win32' and args[7:] == 'auto':
                 winpos = 'auto'
@@ -327,7 +311,7 @@ def run() -> None:
                 delta = delta_val       
     cprint("Updating upgrade deltas with following arguments:\n" \
             f"Resolution: {res_vals[0]}x{res_vals[1]}\n"
-            f"Windowed: {BotVars.windowed}\n"
+            f"Windowed: {_maindata.maindata["bot_vars"]["windowed"]}\n"
             f"  -Window top-left position: {winpos}\n"
             f"Coordinate shift: {shift_vals[0]}x{shift_vals[1]}\n"
             f"Monkeys: {monkey_list}\n"

@@ -1,0 +1,9 @@
+# Assign file content and end-of-line type
+*.txt text
+*.bat text eol=crlf
+*.sh  text eol=lf
+
+# Github Release source code zip file contents; use export-ignore to drop files
+# Example => 
+# .github/**/* export-ignore
+# This would ignore .github directory

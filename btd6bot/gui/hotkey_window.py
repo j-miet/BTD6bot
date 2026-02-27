@@ -50,55 +50,69 @@ class HotkeyWindow:
         with open(gui_paths.GUIHOTKEYS_PATH) as guihotkey_read:
             self.guihotkey_list: list[str] = plan_data.list_format(guihotkey_read.readlines())
 
-        hotkeylabel = tk.Label(self.hotkeywindow, 
-                                text='Hotkeys', 
-                                height=1, 
-                                relief="groove", 
-                                font=os_font)
+        hotkeylabel = tk.Label(
+            self.hotkeywindow, 
+            text='Hotkeys', 
+            height=1, 
+            relief="groove", 
+            font=os_font
+        )
         hotkeylabel.grid(column=0, row=0, sticky="nsew", padx=20, pady=5)
-        self.hotkeyoptionlist = tk.Listbox(self.hotkeywindow, 
-                                            width=30, 
-                                            font=os_font)
+        self.hotkeyoptionlist = tk.Listbox(
+            self.hotkeywindow, 
+            width=30, 
+            font=os_font
+        )
         self.hotkeyoptionlist.grid(column=0, row=1, padx=20, sticky="nsew")
 
-        self.guihotkeyoptionlist = tk.Listbox(self.hotkeywindow, 
-                                                width=30, 
-                                                height=3, 
-                                                font=os_font)
+        self.guihotkeyoptionlist = tk.Listbox(
+            self.hotkeywindow, 
+            width=30, 
+            height=3, 
+            font=os_font
+        )
         self.guihotkeyoptionlist.grid(column=0, row=2, padx=20, sticky="nsew")
 
-        self.sethotkeybutton = tk.Button(self.hotkeywindow, 
-                                            text='Set hotkey', 
-                                            width=15, 
-                                            height=1, 
-                                            font=os_font,
-                                            command=self._set_hotkey)
+        self.sethotkeybutton = tk.Button(
+            self.hotkeywindow, 
+            text='Set hotkey', 
+            width=15, 
+            height=1, 
+            font=os_font,
+            command=self._set_hotkey
+        )
         self.sethotkeybutton.grid(column=0, row=3, sticky="s")
 
-        hotkeyhelplabel = tk.Label(self.hotkeywindow, 
-                                    text='Instructions', 
-                                    height=1, 
-                                    relief="groove", 
-                                    font=os_font)
+        hotkeyhelplabel = tk.Label(
+            self.hotkeywindow, 
+            text='Instructions', 
+            height=1, 
+            relief="groove", 
+            font=os_font
+        )
         hotkeyhelplabel.grid(column=1, row=0, sticky="nsew", padx=20, pady=5)
         
-        self.info = tk.Label(self.hotkeywindow, 
-                                justify='left', 
-                                relief='sunken', 
-                                text=self._showhotkeyhelp(), 
-                                font=os_font)
+        self.info = tk.Label(
+            self.hotkeywindow, 
+            justify='left', 
+            relief='sunken', 
+            text=self._showhotkeyhelp(), 
+            font=os_font
+        )
         self.info.grid(column=1, row=1, padx=20, sticky="nsew")
 
         self._read_hotkeys()
         if sys.platform != 'darwin':
             self._read_guihotkeys()
         else:
-            self.sethotkeybutton = tk.Button(self.hotkeywindow, 
-                                                text='Edit selected entry', 
-                                                width=15, 
-                                                height=1, 
-                                                font=os_font,
-                                                command=self._save_hotkeys)
+            self.sethotkeybutton = tk.Button(
+                self.hotkeywindow, 
+                text='Edit selected entry', 
+                width=15, 
+                height=1, 
+                font=os_font,
+                command=self._save_hotkeys
+            )
             self.sethotkeybutton.grid(column=0, row=3, sticky="s")
             self.guihotkeyoptionlist.insert(0, "Gui hotkeys are disabled")
             self.guihotkeyoptionlist.insert(1, "for MacOS platforms")
@@ -114,13 +128,13 @@ class HotkeyWindow:
         alongside tkinter gui.
         """
         self.sethotkeybutton.configure(state='disabled')
-        new_input = self.hotkeyoptionlist.curselection() # type: ignore
-        new_input2 = self.guihotkeyoptionlist.curselection() # type: ignore
+        new_input = self.hotkeyoptionlist.curselection()
+        new_input2 = self.guihotkeyoptionlist.curselection()
         if new_input == () and new_input2 == ():
             self.sethotkeybutton.configure(state='active')
             return
         elif new_input != ():
-            selected = self.hotkeyoptionlist.curselection()[0] # type: ignore
+            selected = self.hotkeyoptionlist.curselection()[0]
             selected_text = self.hotkey_list[selected].split(' = ')[0]
             user_input = simpledialog.askstring(title="Hotkey", prompt="Insert a new key value for: "+selected_text)
             if user_input is not None:
@@ -133,7 +147,7 @@ class HotkeyWindow:
                     self._read_hotkeys()
             self.sethotkeybutton.configure(state='active')
         elif new_input2 != ():
-            selected = self.guihotkeyoptionlist.curselection()[0] # type: ignore
+            selected = self.guihotkeyoptionlist.curselection()[0]
             selected_text = self.guihotkey_list[selected].split(' = ')[0]
             user_input = simpledialog.askstring(title="Hotkey", prompt="Insert a new key value for: "+selected_text)
             if user_input is not None:
@@ -162,17 +176,17 @@ class HotkeyWindow:
         function.
         """
         self.sethotkeybutton.configure(state='disabled')
-        new_input = self.hotkeyoptionlist.curselection() # type: ignore
-        new_input2 = self.guihotkeyoptionlist.curselection() # type: ignore
+        new_input = self.hotkeyoptionlist.curselection()
+        new_input2 = self.guihotkeyoptionlist.curselection()
         if new_input == () and new_input2 == ():
             self.sethotkeybutton.configure(state='active')
             return
         elif new_input != ():
-            selected = self.hotkeyoptionlist.curselection()[0] # type: ignore
+            selected = self.hotkeyoptionlist.curselection()[0]
             self.input_key = pynput.keyboard.Listener(on_press=lambda event: 
                                                     self._press_hotkey(key=event, selected_row=selected))
         elif new_input2 != ():
-            selected = self.guihotkeyoptionlist.curselection()[0] # type: ignore
+            selected = self.guihotkeyoptionlist.curselection()[0]
             self.input_key = pynput.keyboard.Listener(on_press=lambda event: 
                                                     self._press_guihotkey(key=event, selected_row=selected))
         HotkeyWindow.input_key_listener = self.input_key

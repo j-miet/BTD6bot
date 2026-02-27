@@ -27,7 +27,7 @@ def terminate_thread(thread: Thread) -> None:
         return
 
     exc = ctypes.py_object(SystemExit)
-    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread.ident), exc) # type: ignore
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread.ident), exc) # type: ignore[arg-type]
     if res == 0:
         raise ValueError("nonexistent thread id")
     elif res > 1:

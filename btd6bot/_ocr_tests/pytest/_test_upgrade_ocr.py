@@ -1,24 +1,22 @@
-"""Tests for checking upgrade path ocr matching. 
-
-Go to bot.ocr.ocr -> strong_delta_check -> uncomment the print line to see ocr string outputs.
-(Just remember to comment it back after testing is done)
--->After ocr text debug setting has been added, can set it True instead by 'logging = True' or something similar.
-"""
+"""Tests for checking upgrade path ocr matching."""
 
 import time
 
-from bot import kb_mouse
-from bot.bot_vars import BotVars
-from bot.commands.monkey import Monkey, _MonkeyConstants
+from bot import _maindata, kb_mouse
+from bot.commands.monkey import Monkey
+from bot.locations import get_click, get_text
 from bot.menu_start import _choose_map, _choose_diff
-from bot.menu_start import OcrLocations, MouseLocations
 from bot.ocr.ocr import weak_substring_check
 from bot.ocr.ocr_reader import OCR_READER
-from bot.rounds import Rounds
+
+# Uncomment lines below for logging purposes
+#_maindata.maindata["bot_vars"]["logging"] = True
+#_maindata.maindata["bot_vars"]["delta_ocrtext"] = True
+#_maindata.maindata["bot_vars"]["substring_ocrtext"] = True
 
 def test_upgrades(capsys) -> None:
     timer = time.time()
-    while not weak_substring_check('Play', OcrLocations.MENU_PLAYTEXT, OCR_READER):
+    while not weak_substring_check("Play", get_text('menu', 'menu_playtext'), OCR_READER):
         if time.time()-timer >= 10:
             assert "Failed to find main menu screen" == False # this prevents test from continuing
             return
@@ -34,10 +32,10 @@ def test_upgrades(capsys) -> None:
 
     _choose_map('in the loop')
     _choose_diff('EASY')
-    kb_mouse.click(MouseLocations.MODES['bottom_left'])
-    BotVars.checking_time_limit = 10
+    kb_mouse.click(get_click('modes', 'bottom_left'))
+    _maindata.maindata["bot_vars"]["checking_time_limit"] = 10
     
-    while not weak_substring_check('Upgrades', Rounds.UPGRADE_TEXT, OCR_READER):
+    while not weak_substring_check("Upgrades", get_text('ingame','upgrade_text'), OCR_READER):
         print("Waiting map screen...")
         kb_mouse.click((0.5036458333333, 0.7064814814815))
         time.sleep(1)
@@ -46,7 +44,7 @@ def test_upgrades(capsys) -> None:
     captured = capsys.readouterr()
     assert captured.out == "Map screen found!\n"
 
-    monkeys = list(_MonkeyConstants._MONKEY_NAMES[:])
+    monkeys = list(Monkey._MONKEY_NAMES[:])
     monkeys.remove('hero')
     monkeys.remove('beast')  # remove this after beast merging has been implemented.
 

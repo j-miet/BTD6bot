@@ -57,3 +57,6 @@ def scale_images() -> None:
         except FileNotFoundError:
             ... # skipping over 
     print('Done!')
+
+if __name__ == "__main__":
+    scale_images()

@@ -1,3 +1,5 @@
+# Outdated, but can be used as reference
+
 //type hinting, docstrings and linting//
 
 #type hints (with mypy)

@@ -5,7 +5,6 @@ Cannot change settings or enable game modes, as these are controlled via gui.
 Can play any currently supported plan, though, as bot is entirely separated from gui functionality-wise. 
 """
 
-import json
 import os
 from pathlib import Path
 import signal
@@ -16,7 +15,7 @@ import time
 import pynput.keyboard
 from pynput.keyboard import Key, KeyCode
 
-from bot.bot_vars import BotVars
+from bot import _maindata
 from customprint import cprint, cinput
 import set_plan
 import utils.plan_data
@@ -24,6 +23,8 @@ import gui.gui_tools as gui_tools
 from gui.guihotkeys import GuiHotkeys
 
 class NoGui:
+    """CLI version of BTD6bot"""
+
     def __init__(self) -> None:
         self.replay: bool = False
         self.bot_thread: threading.Thread
@@ -38,8 +39,6 @@ class NoGui:
             'adjust = if ocr adjust setting is enabled, runs adjusting process\n'
             'plans = lists all available plans.\n'
             'run plan_name = run the plan plan_name <- replace this with an existing plan name.\n'
-            '                  >Note that when you use \'run ...\' command first time after running this script,\n'
-            '                   the ocr reader is loaded into memory which might take a bit, just wait.\n'
             '                  >Example: run dark_castleEasyStandard\n'
             'queue = run all plans listed in queue_list.txt\n'
             'exit = exit program.'
@@ -53,21 +52,21 @@ class NoGui:
             input_str: str = input("[modes]=>")
             match input_str:
                 case 'event':
-                    if BotVars.current_event_status == 'On': 
-                        BotVars.current_event_status = 'Off' 
+                    if _maindata.maindata["toggle"]["event_status"]: 
+                        _maindata.maindata["toggle"]["event_status"] = False 
                     else:
-                        BotVars.current_event_status = 'On'
-                    cprint(f"Event status: {BotVars.current_event_status}.")
+                        _maindata.maindata["toggle"]["event_status"] = True
+                    cprint(f"Event status: {_maindata.maindata["toggle"]["event_status"]}.")
                 case 'farming':
-                    if BotVars.current_farming_status == 'On':
-                        BotVars.current_farming_status = 'Off'
+                    if _maindata.maindata["toggle"]["farming_status"]:
+                        _maindata.maindata["toggle"]["farming_status"] = False
                     else:
-                        BotVars.current_farming_status = 'On'
-                        BotVars.current_event_status = 'On'
-                    cprint(f"Farming status: {BotVars.current_farming_status}.")
-                    if BotVars.current_farming_status == 'On' and self.replay:
+                        _maindata.maindata["toggle"]["farming_status"] = True
+                        _maindata.maindata["toggle"]["event_status"] = True
+                    cprint(f"Farming status: {_maindata.maindata["toggle"]["farming_status"]}.")
+                    if _maindata.maindata["toggle"]["farming_status"] and self.replay:
                         self.replay = False
-                        cprint("Event status set to On (farming mode requires this); Replay status set to Off.")
+                        cprint("Event status set to True (farming mode requires this); Replay status set to False.")
                 case 'replay':
                     self.replay = not self.replay
                     cprint(f"Replay status: {self.replay}.")
@@ -75,7 +74,7 @@ class NoGui:
                     return
 
     def _run_queue(self) -> None:
-        if BotVars.current_farming_status == 'On':
+        if _maindata.maindata["toggle"]["farming_status"]:
             cprint("Can't use queue mode while farming mode is enabled.")
             return
         with open(Path(__file__).parent/'Files'/'text files'/'queue_list.txt') as f:
@@ -86,7 +85,9 @@ class NoGui:
 
     def _start_farming_loop(self) -> None:
         set_plan.farming_print()
-        set_plan.select_defaulthero()
+        if not set_plan.select_defaulthero():
+            cprint('\n#####Unable to select default hero, bot terminated#####')
+            return
         while True:
             rewardplan: str = set_plan.select_rewardplan()
             if rewardplan == '':
@@ -122,9 +123,7 @@ class NoGui:
             cprint("Invalid plan input.")
 
     def _perform_autoadjust(self) -> None:
-        with open(Path(__file__).parent/'Files'/'gui_vars.json') as f:
-            gui_vars_dict= json.load(f)
-        if gui_vars_dict["ocr_adjust_deltas"]:
+        if _maindata.maindata["bot_vars"]["ocr_adjust_deltas"]:
             print(".-------------------------.\n"
             "| Ocr adjust mode enabled |\n"
             ".-------------------------.\n")
@@ -135,11 +134,11 @@ class NoGui:
     def run(self) -> None:
         """Main loop for no-gui version of BTD6bot."""
 
-        def exit(key: Key | KeyCode | None) -> None:
+        def _exit(key: Key | KeyCode | None) -> None:
             """Program termination via hotkey.
 
             Args:
-                key: Latest keyboard key the user has pressed.       
+                key: Last keyboard key the user has pressed.       
             """
             if key == GuiHotkeys.exit_hotkey or (isinstance(key, KeyCode) and key.char == GuiHotkeys.exit_hotkey):
                 cprint("Process terminated.")
@@ -150,13 +149,9 @@ class NoGui:
                     gui_tools.terminate_thread(self.bot_thread)
 
         if sys.platform != 'darwin':
-            kb_listener = pynput.keyboard.Listener(on_press = exit)
+            kb_listener = pynput.keyboard.Listener(on_press = _exit)
             kb_listener.daemon = True
             kb_listener.start()
-
-        with open(Path(__file__).parent/'Files'/'gui_vars.json') as f:
-            if json.load(f)["logging"]:
-                BotVars.logging = True
         
         cprint('===================================\n'
             '|   Welcome to gui-free BTD6bot   |\n'
@@ -180,7 +175,7 @@ class NoGui:
                 for p in self.PLANS:
                     print(p)
             elif user_input.split()[0].lower() == 'run':
-                if BotVars.current_farming_status == 'On':
+                if _maindata.maindata["toggle"]["farming_status"]:
                     self._run_farming()
                 elif len(user_input.split()) == 2:
                     self._run_plan(user_input.split()[1])

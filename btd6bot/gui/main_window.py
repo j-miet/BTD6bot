@@ -20,7 +20,6 @@ from tkinter import ttk
 import pynput
 from pynput.keyboard import Key, KeyCode
 
-from bot.bot_vars import BotVars
 from gui.guihotkeys import GuiHotkeys
 import gui.gui_tools as gui_tools
 from gui.help_window import HelpWindow
@@ -49,20 +48,20 @@ class MainWindowCombobox(ttk.Combobox):
     Original:
     https://stackoverflow.com/questions/53848622/how-to-bind-keypress-event-for-combobox-drop-out-menu-in-tkinter-python-3-7/53864105#53864105
     """
-    def __init__(self, mainwindow: MainWindow, *args, **kwargs):
+    def __init__(self, mainwindow: MainWindow, *args, **kwargs): # type: ignore[no-untyped-def]
         super().__init__(*args, **kwargs)
         self.mainwindow = mainwindow
 
         pd = self.tk.call('ttk::combobox::PopdownWindow', self) # get popdownWindow reference 
         lb = pd + '.f.l' # get popdown listbox
-        self._bind(('bind', lb), "<KeyPress>", self._comboboxsearch, None)
+        self._bind(('bind', lb), "<KeyPress>", self._comboboxsearch, None) # type: ignore[attr-defined]
 
     def _updateselection(self, i: int, event: Event) -> None:
         self.current(i)
         self.icursor(i)
-        self.tk.eval(event.widget + ' selection clear 0 end') # clear current selection
-        self.tk.eval(event.widget + ' selection set ' + str(i)) # select new element
-        self.tk.eval(event.widget + ' see ' + str(i)) # spin combobox popdown for selected element will be
+        self.tk.eval(str(event.widget) + ' selection clear 0 end') # clear current selection
+        self.tk.eval(str(event.widget) + ' selection set ' + str(i)) # select new element
+        self.tk.eval(str(event.widget) + ' see ' + str(i)) # spin combobox popdown for selected element will be
 
     def _comboboxsearch(self, event: Event) -> str:
         """Implements custom combobox behavior.
@@ -78,25 +77,25 @@ class MainWindowCombobox(ttk.Combobox):
                     self.focus_displayof() # 'Enter' to unfocus combobox. Throws KeyError which must be handled.
                 except KeyError:
                     ...
-                return
+                return ""
             case "Up":
                 if self.current() <= 0:
-                    return
+                    return ""
                 i: int = self.current()-1
                 self._updateselection(i, event)
             case "Down":
                 if self.current() >= len(values)-1:
-                    return
-                i: int = self.current()+1
+                    return ""
+                i = self.current()+1
                 self._updateselection(i, event)
             case _:
                 for i in it.chain(range(self.current() + 1,len(values)), range(0,self.current())):
                     if event.char.lower() == values[i][0].lower():
                         self._updateselection(i, event)
                         break
-        if self._name == 'mapbox':
+        if self._name == 'mapbox': # type: ignore[attr-defined]
             self.mainwindow._update_mapconfig() # auto-update map info panel when for currently selected element
-        elif self._name == 'stratbox':
+        elif self._name == 'stratbox': # type: ignore[attr-defined]
             self.mainwindow._update_stratconfig()
         return "break"
 
@@ -158,44 +157,54 @@ class MainWindow:
         self.reader_init: bool = False
         self.init_button_first_time: bool = True
 
-        mainframe = tk.Frame(root, 
-                             borderwidth=5, 
-                             relief='groove', 
-                             padx=15, 
-                             pady=15)
+        mainframe = tk.Frame(
+            root, 
+            borderwidth=5, 
+            relief='groove', 
+            padx=15, 
+            pady=15
+        )
         mainframe.columnconfigure(0, weight=1)
         mainframe.rowconfigure(0, weight=1)
         mainframe.grid(sticky='nwes')
         mainframe.bind("<ButtonRelease-1>", lambda _: self.root.focus())
         
         self.current_map: str = 'dark castle'
-        self.maps_box = MainWindowCombobox(mainwindow=self,
-                                            master=mainframe, 
-                                            state='readonly', 
-                                            values=self._get_maps(),
-                                            name='mapbox')
+        self.maps_box = MainWindowCombobox(
+            mainwindow=self,
+            master=mainframe, 
+            state='readonly', 
+            values=self._get_maps(),
+            name='mapbox'
+        )
         self.maps_box.grid(column=0, row=5, sticky='sw', pady=10)
         self.maps_box.bind("<<ComboboxSelected>>", lambda _: self._update_mapconfig())
         self.maps_box.bind("<<ComboboxSelected>>", lambda _: self.root.focus(), add='+')
         self.maps_box.set(self.current_map) # initialize with default value
 
-        info_window_scroll = ttk.Scrollbar(mainframe, 
-                                            orient='vertical')
+        info_window_scroll = ttk.Scrollbar(
+            mainframe, 
+            orient='vertical'
+        )
         info_window_scroll.grid(column=2, row=3, rowspan=2, sticky="nsw")
 
-        self.info_window = tk.Text(mainframe,
-                                    height=9, 
-                                    yscrollcommand=info_window_scroll.set, 
-                                    font=("Times New Roman", 11),
-                                    wrap=tk.WORD, relief='sunken')
+        self.info_window = tk.Text(
+            mainframe,
+            height=9, 
+            yscrollcommand=info_window_scroll.set, 
+            font=("Times New Roman", 11),
+            wrap=tk.WORD, relief='sunken'
+        )
         self.info_window.grid(column=0, columnspan=2, row=3, rowspan=2)
         info_window_scroll.configure(command=self.info_window.yview)
 
         self.current_strat: str = 'Easy-Standard'
-        self.strat_box = MainWindowCombobox(mainwindow=self,
-                                            master=mainframe, 
-                                            state='readonly',
-                                            name='stratbox')
+        self.strat_box = MainWindowCombobox(
+            mainwindow=self,
+            master=mainframe, 
+            state='readonly',
+            name='stratbox'
+        )
         self.strat_box.grid(column=1, row=5, sticky='sw', pady=10)
         self.strat_box.bind("<<ComboboxSelected>>", lambda _: self._update_stratconfig())
         self.strat_box.bind("<<ComboboxSelected>>", lambda _: self.root.focus(), add='+')
@@ -217,120 +226,145 @@ class MainWindow:
         style.configure('Style.TButton', font='TkFixedFont')
         try:
             map_image = tk.PhotoImage(file=gui_paths.MAP_IMAGES_PATH/'dark castle.png')
-            self.mapscreen = ttk.Label(mainframe, 
-                                        image=map_image, 
-                                        compound='top', 
-                                        anchor='nw', 
-                                        relief='sunken', 
-                                        justify='left', 
-                                        style='Style.TButton')
+            self.mapscreen = ttk.Label(
+                mainframe, 
+                image=map_image, 
+                compound='top', 
+                anchor='nw', 
+                relief='sunken', 
+                justify='left', 
+                style='Style.TButton'
+            )
             # Save image reference; otherwise Python garbage collection destroys it.
-            # For some reason, image is not recognized as an attribute of Label. Thus type ignore to avoid mypy errors.
-            self.mapscreen.image = map_image # type: ignore
+            # See following archived link for more:
+            # https://web.archive.org/web/20201111190625/http://effbot.org/pyfaq/why-do-my-tkinter-images-not-appear.htm
+            self.mapscreen.image = map_image # type: ignore[attr-defined]
             self.mapscreen.grid(column=0, row=0, columnspan=3, rowspan=3, sticky='nw')
         except (FileNotFoundError, tk.TclError):
-            self.mapscreen = ttk.Label(mainframe, 
-                                        relief='sunken', 
-                                        style='Style.TButton', 
-                                        justify='left')
+            self.mapscreen = ttk.Label(
+                mainframe, 
+                relief='sunken', 
+                style='Style.TButton', 
+                justify='left'
+            )
             self.mapscreen.grid(column=0, row=0, columnspan=2, rowspan=3)
             # Text generated with 'Graceful' font on https://patorjk.com/software/taag
             # Picture is self-made.
             self.mapscreen['text'] = self.MAPSCREEN_TEXT_STR
 
-        self.help_button= tk.Button(mainframe, 
-                                    text="Help", 
-                                    height=2, 
-                                    width=5, 
-                                    command=self._help_window, 
-                                    padx=20,
-                                    pady=5)
+        self.help_button= tk.Button(
+            mainframe, 
+            text="Help", 
+            height=2, 
+            width=5, 
+            command=self._help_window, 
+            padx=20,
+            pady=5
+        )
         self.help_button.grid(column=2, row=0, padx=30, pady=10, sticky='nwe')
 
-        self.settings_button= tk.Button(mainframe, 
-                                        text="Settings", 
-                                        height=2, 
-                                        width=5,
-                                        command=self._settings_window, 
-                                        padx=20, 
-                                        pady=5)
+        self.settings_button= tk.Button(
+            mainframe, 
+            text="Settings", 
+            height=2, 
+            width=5,
+            command=self._settings_window, 
+            padx=20, 
+            pady=5
+        )
         self.settings_button.grid(column=3, row=0, pady=10, sticky='nwe')
 
-        self.hotkey_button = tk.Button(mainframe, 
-                                        text="Set\nhotkeys", 
-                                        height=2, 
-                                        width=5, 
-                                        command=self._hotkey_window,
-                                        padx=20, 
-                                        pady=5)
+        self.hotkey_button = tk.Button(
+            mainframe, 
+            text="Set\nhotkeys", 
+            height=2, 
+            width=5, 
+            command=self._hotkey_window,
+            padx=20, 
+            pady=5
+        )
         self.hotkey_button.grid(column=3, row=1, pady=10, sticky='we')
 
-        self.queueoptions_button = tk.Button(mainframe, 
-                                                text="Queue mode\nmaplist", 
-                                                height=2, 
-                                                width=5, 
-                                                command=self._queue_mode_window, 
-                                                padx=20, 
-                                                pady=5)
+        self.queueoptions_button = tk.Button(
+            mainframe, 
+            text="Queue mode\nmaplist", 
+            height=2, 
+            width=5, 
+            command=self._queue_mode_window, 
+            padx=20, 
+            pady=5
+        )
         self.queueoptions_button.grid(column=3, row=2, pady=10, sticky='wes') 
 
         self.collection = tk.StringVar(value='Off')
-        self.collection_toggle = tk.Checkbutton(mainframe, 
-                                                text='Collection Event', 
-                                                anchor='e', 
-                                                variable=self.collection,
-                                                command=self._collection_mode_check,
-                                                offvalue='Off', 
-                                                onvalue='On', 
-                                                state='disabled')
+        self.collection_toggle = tk.Checkbutton(
+            mainframe, 
+            text='Collection Event', 
+            anchor='e', 
+            variable=self.collection,
+            command=self._collection_mode_check,
+            offvalue='Off', 
+            onvalue='On', 
+            state='disabled'
+        )
         self.collection_toggle.grid(column=3, row=3, sticky='se', pady=(1,1))
 
         self.farming = tk.StringVar(value='Off')
-        self.collection_farm_toggle = tk.Checkbutton(mainframe, 
-                                                        text='Farm mode', 
-                                                        anchor='e', 
-                                                        variable=self.farming,
-                                                        command=self._farming_mode_check,
-                                                        offvalue='Off', 
-                                                        onvalue='On', 
-                                                        state='disabled')
+        self.collection_farm_toggle = tk.Checkbutton(
+            mainframe, 
+            text='Farm mode', 
+            anchor='e', 
+            variable=self.farming,
+            command=self._farming_mode_check,
+            offvalue='Off', 
+            onvalue='On', 
+            state='disabled'
+        )
         self.collection_farm_toggle.grid(column=3, row=4, sticky='ne', pady=(1,2))
 
         self.queue = tk.StringVar(value='Off')
-        self.queue_toggle = tk.Checkbutton(mainframe, 
-                                            text='Queue mode', 
-                                            anchor='e', 
-                                            variable=self.queue,
-                                            command=self._queue_mode_check, 
-                                            offvalue='Off', 
-                                            onvalue='On', 
-                                            state='disabled')
+        self.queue_toggle = tk.Checkbutton(
+            mainframe, 
+            text='Queue mode', 
+            anchor='e', 
+            variable=self.queue,
+            command=self._queue_mode_check, 
+            offvalue='Off', 
+            onvalue='On', 
+            state='disabled'
+        )
         self.queue_toggle.grid(column=3, row=4, sticky='e', pady=(2,2))
 
         self.replay = tk.StringVar(value='Off')
-        self.replay_toggle = tk.Checkbutton(mainframe, 
-                                            text='Replay mode', 
-                                            anchor='e', 
-                                            variable=self.replay,
-                                            offvalue='Off', 
-                                            onvalue='On', 
-                                            state='disabled')
+        self.replay_toggle = tk.Checkbutton(
+            mainframe, 
+            text='Replay mode', 
+            anchor='e', 
+            variable=self.replay,
+            offvalue='Off', 
+            onvalue='On', 
+            state='disabled'
+        )
         self.replay_toggle.grid(column=3, row=4, sticky='se', pady=(2,5))
 
-        self.monitor_plot_button = tk.Button(mainframe, 
-                                                text='Show plot', 
-                                                height=1, 
-                                                state='normal',
-                                                command=lambda: roundplot.plot_plan(self._get_original()))
+        self.monitor_plot_button = tk.Button(
+            mainframe, 
+            text='Show plot', 
+            height=1, 
+            state='normal',
+            command=lambda: roundplot.plot_plan(self._get_original())
+        )
         self.monitor_plot_button.grid(column=2, row=5, sticky='e', padx=55)
 
-        self.start_button = tk.Button(mainframe, 
-                                        text="Initialize bot", 
-                                        height=2, 
-                                        command=self._monitoring_window,
-                                        state='active', 
-                                        padx=10, 
-                                        pady=0)
+        self.start_button = tk.Button(
+            mainframe, 
+            text="Initialize bot", 
+            height=2, 
+            command=self._monitoring_window,
+            state='active', 
+            padx=10, 
+            pady=0
+        )
         self.start_button.grid(column=3, row=5, sticky='e')
     
         if sys.platform == "darwin": # adjust gui element placements if macOS
@@ -364,7 +398,7 @@ class MainWindow:
     def _reorder_strats(self, strategies: list[str]) -> list[str]:
         filter = {"Easy": 1, "Medium": 2, "Hard": 3} # change plan list order: Easy first then Medium and last Hard
         strats: list[str] = strategies.copy()
-        current: int
+        current: str
         for i in range(0, len(strats)-1):
             strat_current: str = strats[i].split('-')[0]
             strat_next: str = strats[i+1].split('-')[0]
@@ -412,7 +446,7 @@ class MainWindow:
                                         MainWindow._MAP_IMAGES[MainWindow._MAP_IMAGES.index(self.current_map+'.png')])
                     self.mapscreen['text'] = ''
                     self.mapscreen.configure(image=temp)
-                    self.mapscreen.image = temp # type: ignore 
+                    self.mapscreen.image = temp # type: ignore[attr-defined]
                 except (AttributeError, ValueError):
                     self.mapscreen.configure(image='', compound='center', anchor='center', justify='left')
                     self.mapscreen['text'] = self.MAPSCREEN_TEXT_STR
@@ -492,7 +526,7 @@ class MainWindow:
             return [self._get_original()]
         else:
             with open(gui_paths.QUEUE_LIST_PATH) as file_read:
-                return plan_data.list_format(file_read.readlines())
+                return plan_data.list_format(file_read.readlines()) # type: ignore[no-any-return]
 
     def _ocr_init(self, init_win: tk.Toplevel) -> None:
         """Imports ocr Reader object from bot.ocr.ocr_reader, which also initializes it for use.
@@ -504,17 +538,7 @@ class MainWindow:
         Initialization process takes several seconds as the ocr model is loaded into memory: afterwards, all initially 
         disabled buttons are enabled and free to use. Current init label window is destroyed at the end.
         """
-        try:
-            with open(gui_paths.FILES_PATH/'gui_vars.json') as f:
-                gpu_enabled: bool = json.load(f)["use_gpu"]
-            if gpu_enabled:
-                BotVars.use_gpu = True
-            else:
-                BotVars.use_gpu = False
-        except json.decoder.JSONDecodeError:
-            print("use_gpu value not found in gui_vars.json, defaulting to CPU.")
-            BotVars.use_gpu = False
-        from bot.ocr.ocr_reader import OCR_READER
+        from bot.ocr.ocr_reader import OCR_READER # this is required here for reader initialization
         init_win.destroy()
         self.start_button['state'] = 'active'
         self.start_button['text'] = "Open\nbot window"
@@ -572,25 +596,26 @@ class MainWindow:
             self.start_button.configure(state='disabled')
             return
         self.start_button.configure(state='disabled')
-        monitoringwindow = MonitoringWindow(self._choose_mode(), 
-                                            self.replay.get(), 
-                                            self.queue.get(),
-                                            self.collection.get(),
-                                            self.farming.get())
-        monitoringthread = threading.Thread(target=self._is_monitoringwindow, 
-                                            args=[monitoringwindow.get_monitoringwindow(),
-                                                  monitoringwindow.get_old_output()],
-                                            daemon=True)
+        monitoringwindow = MonitoringWindow(
+            self._choose_mode(), 
+            self.replay.get(), 
+            self.queue.get(),
+            self.collection.get(),
+            self.farming.get()
+        )
+        monitoringthread = threading.Thread(
+            target=self._is_monitoringwindow, 
+            args=[monitoringwindow.get_monitoringwindow(), monitoringwindow.get_old_output()],
+            daemon=True)
         monitoringthread.start()
 
     def _is_monitoringwindow(self, current_monitoringwin: tk.Toplevel, old_stdout: TextIO | Any) -> None:
         """MainWindow method that tracks existence of a MonitoringWindow.
 
         If current MonitoringWindow object no longer exists, enables start button for main screen again and also 
-        terminates existing thread allocated to bot program; see gui_vars.py docstring for info. Manual termination 
-        is important because if monitoring window was closed during bot runtime, the thread its allocated to would
-        still keep executing code. This in turn would prevent you from stopping the current bot execution until it
-        finishes, eating up CPU and memory. 
+        terminates existing thread allocated to bot program. Manual termination is important because if monitoring 
+        window was closed during bot runtime, the thread its allocated to would still keep executing code. This in turn 
+        would prevent you from stopping the current bot execution until it finishes, eating up CPU and memory. 
 
         Another, more serious issue would be that user could repeat this as start button gets enabled after any window,
         not just MonitoringWindow, no longer exists. You could then open another window, run bot, close window
@@ -629,7 +654,10 @@ class MainWindow:
         self.queueoptions_button.configure(state='disabled')
         self.start_button.configure(state='disabled')
         queuewindow = QueueModeWindow()
-        queuewindowthread = threading.Thread(target=self._is_queue_mode_screen, args=[queuewindow.get_queuewindow()])
+        queuewindowthread = threading.Thread(
+            target=self._is_queue_mode_screen, 
+            args=[queuewindow.get_queuewindow()]
+        )
         queuewindowthread.daemon = True
         queuewindowthread.start()
 
@@ -674,7 +702,10 @@ class MainWindow:
         self.hotkey_button.configure(state='disabled')
         self.start_button.configure(state='disabled')
         hotkeywindow = HotkeyWindow()
-        hotkeywindowthread = threading.Thread(target=self._is_hotkeywindow, args=[hotkeywindow.get_hotkeywindow()])
+        hotkeywindowthread = threading.Thread(
+            target=self._is_hotkeywindow, 
+            args=[hotkeywindow.get_hotkeywindow()]
+        )
         hotkeywindowthread.daemon = True
         hotkeywindowthread.start()
 
@@ -706,7 +737,10 @@ class MainWindow:
         """Open help window which operates on its own thread."""
         self.help_button.configure(state='disabled')
         helpwindow = HelpWindow()
-        helpwindowthread = threading.Thread(target=self._is_helpwindow, args=[helpwindow.get_helpwindow()])
+        helpwindowthread = threading.Thread(
+            target=self._is_helpwindow, 
+            args=[helpwindow.get_helpwindow()]
+        )
         helpwindowthread.daemon = True
         helpwindowthread.start()
 
@@ -737,7 +771,10 @@ class MainWindow:
         self.settings_button.configure(state='disabled')
         self.start_button.configure(state='disabled')
         settingswindow = SettingsWindow()
-        settingsthread = threading.Thread(target=self._is_settingswindow, args=[settingswindow.get_settingswindow()])
+        settingsthread = threading.Thread(
+            target=self._is_settingswindow, 
+            args=[settingswindow.get_settingswindow()]
+        )
         settingsthread.daemon = True
         settingsthread.start()
 

@@ -6,8 +6,7 @@ abilities depend on the order they become available, not the type of monkey.
 
 import time
 
-from bot import kb_mouse, times
-from bot.bot_vars import BotVars
+from bot import _maindata, kb_mouse, times
 from bot.hotkeys import hotkeys
 from bot.rounds import Rounds
 from bot.times import PauseControl
@@ -54,7 +53,7 @@ def ability(key: int, timer: float = 0, xy: tuple[float, float] | None = None, d
             ability(2, 10, xy=(0.5, 0.5), delay=1)
     """
     PauseControl.pause_bot()
-    if BotVars.defeat_status:
+    if _maindata.maindata["internal"]["defeat_status"]:
         return
     begin_time = Rounds.current_round_begin_time
     if timer == 0:
@@ -91,7 +90,7 @@ def click(x: float, y: float, N: int = 1) -> None:
         y: Y-coordinate.
     """
     PauseControl.pause_bot()
-    if BotVars.defeat_status:
+    if _maindata.maindata["internal"]["defeat_status"]:
         return
     kb_mouse.click((x, y), clicks=N, shifted=True)
     if N > 1:
@@ -102,6 +101,6 @@ def click(x: float, y: float, N: int = 1) -> None:
 def move_cursor(x: float, y: float) -> None:
     """Move mouse cursor to target location"""
     PauseControl.pause_bot()
-    if BotVars.defeat_status:
+    if _maindata.maindata["internal"]["defeat_status"]:
         return
     kb_mouse.move_cursor((x, y))

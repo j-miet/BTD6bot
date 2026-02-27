@@ -12,37 +12,37 @@ _______________________________________
 
 from._plan_imports import *
 
-def play(rounds):
-    BEGIN, END = menu_start.load(*rounds)
-    current_round = BEGIN-1
+def play(data):
+    BEGIN, END = menu_start.load(*data)
+    round = BEGIN-1
     map_start = time()
-    while current_round < END+1:
-        current_round = Rounds.round_check(current_round, map_start, rounds[2])
-        if current_round == BEGIN:
+    while round < END+1:
+        round = Rounds.round_check(round, map_start, data[2])
+        if round == BEGIN:
             hero = Hero(0.14, 0.35)
             hero.target('strong')
-        elif current_round == 2:
+        elif round == 2:
             ninja1 = Monkey('ninja', 0.19529, 0.48332)
-        elif current_round == 4: 
+        elif round == 4: 
             ninja1.upgrade(['1-0-0'])
-        elif current_round == 8:
+        elif round == 8:
             ninja1.upgrade(['2-0-0'])
             alch1 = Monkey('alch', 0.24277, 0.48333)
-        elif current_round == 10:
+        elif round == 10:
             ninja1.upgrade(['2-0-1'])
-        elif current_round == 15:
+        elif round == 15:
             ninja1.upgrade(['3-0-1'])
-        elif current_round == 17:
+        elif round == 17:
             alch1.upgrade(['1-0-0', '2-0-0'])
-        elif current_round == 25:
+        elif round == 25:
             alch1.upgrade(['3-0-0'])
-        elif current_round == 30:
+        elif round == 30:
             ninja1.upgrade(['4-0-1'])
-        elif current_round == 35:
+        elif round == 35:
             alch1.upgrade(['3-1-0', '3-2-0'])
-        elif current_round == 38:
+        elif round == 38:
             sniper1 = Monkey('sniper', 0.76094, 0.30463)
             sniper1.target('strong')
             sniper1.upgrade(['1-0-0', '2-0-0', '2-0-1', '2-0-2', '2-0-3'])
-        elif current_round == END:
+        elif round == END:
             sniper1.upgrade(['2-0-4'])

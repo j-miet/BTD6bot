@@ -1,1 +1,0 @@
-python btd6bot

@@ -10,30 +10,30 @@ _______________________________________
 
 from._plan_imports import *
 
-def play(rounds):
-    BEGIN, END = menu_start.load(*rounds)
-    current_round = BEGIN-1
+def play(data):
+    BEGIN, END = menu_start.load(*data)
+    round = BEGIN-1
     map_start = time()
-    while current_round < END+1:
-        current_round = Rounds.round_check(current_round, map_start, rounds[2])
-        if current_round == BEGIN:
+    while round < END+1:
+        round = Rounds.round_check(round, map_start, data[2])
+        if round == BEGIN:
             sub1 = Monkey('sub', 0.5557291666667, 0.8203703703704)
             sub2 = Monkey('sub', 0.4817708333333, 0.1407407407407)
-        elif current_round == 3:
+        elif round == 3:
             boat = Monkey('boat', 0.5276041666667, 0.7712962962963)
-        elif current_round == 6:
+        elif round == 6:
             sub1.upgrade(['0-0-1'])
-        elif current_round == 8:
+        elif round == 8:
             sub1.upgrade(['0-1-1'])
-        elif current_round == 10:
+        elif round == 10:
             boat.upgrade(['0-0-1','0-0-2'])
-        elif current_round == 13:
+        elif round == 13:
             boat.upgrade(['1-0-2', '2-0-2'])
-        elif current_round == 16:
+        elif round == 16:
             sub1.upgrade(['0-2-1'])
-        elif current_round == 18:
+        elif round == 18:
             sub2.upgrade(['0-1-0','0-2-0','0-2-1'])
-        elif current_round == 27:
+        elif round == 27:
             boat.upgrade(['3-0-2'])
-        elif current_round == 37:
+        elif round == 37:
             boat.upgrade(['4-0-2'])
