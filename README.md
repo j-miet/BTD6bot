@@ -167,7 +167,7 @@ Supported versions: **3.12**, **3.13** and **3.14**
 
 To install bot you have two options:
 
-1. (**New/experimental**) automatic installation using a script file. Running the script will 
+1. (**New in v.0.1.0**) automatic installation using a script file. Running the script will 
     - download a zip file of main branch files of this project. Zip file is placed into same directory 
   where you ran the script,
     - extract bot project directory from the zip. This is again placed into same location where you ran the script.
@@ -221,7 +221,7 @@ might prefer this in case you
     isolated and won't cause issues if you happen to use other Python programs.
 
 [**Notes**] 
-- You can move and rename ``BTD6bot-main`` directory freely, just don't rename any files inside it manually 
+- You can move and rename ``BTD6bot-main`` directory freely, just don't rename any files inside it 
 unless you know what you're doing.
 - for more details such as step-by-step explanation of script code, check [here](_install/INSTALL.md)
 
@@ -2143,7 +2143,7 @@ where ``your_branch`` should be main branch of forked BTD66bot repo.
 This is because
 
 - ``dev`` is meant for adding and testing new features. Pull request code can be checked, possible fixes can be made then it can be merged with current development code to make sure everything works. After current set of new features/fixes in dev branch have been tested thoroughly, only then it gets moved to main branch so that all users can access them and expect minimal bugs.
-- ``main`` as stated above is the production/user branch. It's the current version of bot all users should download and therefore must have minimal amount of bugs. Any undetected bugs can be hotfixed and tested again in ``dev`` branch then merged into ``main`` only by creating a new pull request. This way unfinished dev code and production code are strictly separated.
+- ``main`` is the production/user branch. It's the current version of bot all users should download and therefore must have minimal amount of bugs. Any undetected bugs can be hotfixed and tested again in ``dev`` branch then merged into ``main`` only by creating a new pull request. This way unfinished dev code and production code are strictly separated.
 
 
 **[Issues]**
