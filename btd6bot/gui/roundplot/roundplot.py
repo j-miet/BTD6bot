@@ -64,6 +64,8 @@ So just removing those two lines that I added long time ago solved the issue ent
 """
 import json
 import multiprocessing as mp
+import os
+from tkinter import PhotoImage
 from typing import Any
 
 from matplotlib import rcParams
@@ -197,11 +199,13 @@ def plot(round_labels: list[str], rounds: list[list[str]], plan_name: str) -> No
     plt.subplots_adjust(left=0.05, bottom=0.1, right=0.99, top=0.9, wspace=None, hspace=None)
     rcParams['toolbar'] = 'None'
     winmanager = plt.get_current_fig_manager()
-    winmanager.window.wm_iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
-    try:
-        winmanager.window.state('zoomed')
-    except AttributeError:
-        ...
+    if os.platform == 'win32': # don't bother with window icon on non-windows os
+        img = PhotoImage(file=gui_paths.FILES_PATH/'btd6bot.png')
+        winmanager.window.tk.call('wm', 'iconphoto', winmanager.window._w, img)
+        try:
+            winmanager.window.state('zoomed')
+        except AttributeError:
+            ...
     fig.suptitle(f'Round commands and round times of current plan "{plan_name}"')
 
     # Axis 'round times'

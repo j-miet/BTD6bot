@@ -24,7 +24,8 @@ class SettingsWindow:
         """Initialize settings window."""
         self.settings_window = tk.Toplevel()
         self.settings_window.title("Settings")
-        self.settings_window.iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
+        icon = tk.PhotoImage(file=gui_paths.FILES_PATH/'btd6bot.png')
+        self.settings_window.iconphoto(True, icon)
         self.settings_window.geometry('580x750+100+150')
         self.settings_window.minsize(580,750)
         self.settings_window.maxsize(580,750)

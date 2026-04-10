@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 
 import itertools as it
 import json
+import multiprocessing as mp
 import os
 import signal
 import sys
@@ -156,6 +157,10 @@ class MainWindow:
 
         self.reader_init: bool = False
         self.init_button_first_time: bool = True
+
+         # use 'spawn' instead of default 'fork' on Linux systems when multiprocessing roundplot windows
+        if sys.platform == 'linux':
+            mp.set_start_method("spawn");
 
         mainframe = tk.Frame(
             root, 

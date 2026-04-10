@@ -66,7 +66,8 @@ class MonitoringWindow:
         
         self.monitoringwindow = tk.Toplevel()
         self.monitoringwindow.title("Bot Monitoring Window")
-        self.monitoringwindow.iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
+        icon = tk.PhotoImage(file=gui_paths.FILES_PATH/'btd6bot.png')
+        self.monitoringwindow.iconphoto(True, icon)
         self.monitoringwindow.geometry('800x480')
         self.monitoringwindow.minsize(800,480)
         self.monitoringwindow.maxsize(800,480)

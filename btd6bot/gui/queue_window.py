@@ -20,7 +20,8 @@ class QueueModeWindow:
         """Initialize queue mode window."""
         self.queuewindow = tk.Toplevel()
         self.queuewindow.title("Queue map list")
-        self.queuewindow.iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
+        icon = tk.PhotoImage(file=gui_paths.FILES_PATH/'btd6bot.png')
+        self.queuewindow.iconphoto(True, icon)
         self.queuewindow.geometry('930x400+100+550')
         self.queuewindow.minsize(930,400)
         self.queuewindow.maxsize(930,400)
@@ -192,12 +193,12 @@ class QueueModeWindow:
         _allowed_shiftchars = {'#'} # set of allowed Shift+CHAR combinations in plan names
         values = list_type.get(0, 'end')
         selected = list_type.curselection()
+        key = event.char.lower()
         if selected != ():
             current = selected[0]
             for i in it.chain(range(current + 1, list_type.size()), range(0, current)):
-                key = event.char.lower()
                 if (key == values[i][0].lower() and 
-                    (key in _allowed_shiftchars or event.state != 9)): # event.state == 9 means holding Shift key
+                    (key in _allowed_shiftchars or not (event.state & 0x0001))): # bit '1' means holding Shift key
                     list_type.select_clear(0, 'end')
                     list_type.select_set(i)
                     list_type.activate(i)

@@ -36,7 +36,8 @@ class HotkeyWindow:
         """Initialize hotkey window."""   
         self.hotkeywindow = tk.Toplevel()
         self.hotkeywindow.title("Hotkeys")
-        self.hotkeywindow.iconbitmap(gui_paths.FILES_PATH/'btd6bot.ico')
+        icon = tk.PhotoImage(file=gui_paths.FILES_PATH/'btd6bot.png')
+        self.hotkeywindow.iconphoto(True, icon)
         self.hotkeywindow.columnconfigure(0, minsize=190, weight=1)
         self.hotkeywindow.rowconfigure(0, weight=1)
         self.hotkeywindow.geometry('800x600+900+350')
