@@ -32,6 +32,8 @@ if TYPE_CHECKING:
 if sys.platform == 'win32':
     import win32gui
 
+MENU_TIMELIMIT: float = 10
+MAPSEARCH_LIMIT: float = 5
 
 def _scroll_down_heroes() -> None:
     """Scrolls down hero screen allowing access to more heroes."""
@@ -70,7 +72,7 @@ def _choose_hero(hero_name: str | None) -> bool:
             for letter in ('s','e','l','e','c','t','e','d'):
                 if not weak_substring_check(letter, (0.5296875, 0.5472222222222, 0.6338541666667, 0.5916666666667),
                                        OCR_READER):
-                    if time.time()-start >= 10:
+                    if time.time()-start >= MENU_TIMELIMIT:
                         return False
                     time.sleep(0.3)
                 else:
@@ -105,7 +107,7 @@ def _choose_map(map_name: str) -> bool:
     while loop:
         for letter in ('p','l','a','y'):
             if not weak_substring_check(letter, get_text('menu', 'menu_playtext'), OCR_READER):
-                if time.time()-start >= 10:
+                if time.time()-start >= MENU_TIMELIMIT:
                     return False
                 time.sleep(0.3)
             else:
@@ -120,7 +122,7 @@ def _choose_map(map_name: str) -> bool:
     kb_mouse.click(get_click('menu', 'search_map'))
     if _maindata.maindata["bot_vars"]["windowed"]:
         loop = True
-        while time.time()-start <= 5 and loop:
+        while time.time()-start <= MAPSEARCH_LIMIT and loop:
             for letter in ('s','e','a','r','c','h'):
                 if weak_substring_check(letter, 
                                         get_text('menu', 'map_searchtext'),
@@ -134,7 +136,7 @@ def _choose_map(map_name: str) -> bool:
             search_found = 0
             kb_mouse.click(get_click('menu', 'search_map'), ignore_windowed=True)
             start = time.time()
-            while time.time()-start <= 5 and loop:
+            while time.time()-start <= MAPSEARCH_LIMIT and loop:
                 for letter in ('s','e','a','r','c','h'):
                     if weak_substring_check(letter, 
                                             get_text('menu', 'map_searchtext'), 

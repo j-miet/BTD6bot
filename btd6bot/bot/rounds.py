@@ -41,6 +41,7 @@ class Rounds:
     """    
     DEFEAT_CHECK_FREQUENCY: int = 12
     LEVEL_UP_CHECK_FREQUENCY: int = 30
+    ENTERMAP_TIMELIMIT: float = 15
 
     begin_round: int = 0
     end_round: int = 0
@@ -184,7 +185,7 @@ class Rounds:
             for letter in ('u','p','g','r','a','d','e'):
                 kb_mouse.click(get_click('ingame', 'apopalypse_start')) # if mode is 'Apopalypse', click start
                 if not weak_substring_check(letter, get_text('ingame','upgrade_text'), OCR_READER): 
-                    if times.current_time() - start_time > 15:
+                    if times.current_time() - start_time > Rounds.ENTERMAP_TIMELIMIT:
                         for _ in range(3):
                             kb_mouse.press_esc()
                         raise BotError("Failed to enter game: wrong map name in plan file, or map/game mode not "
