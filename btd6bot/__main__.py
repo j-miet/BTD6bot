@@ -19,7 +19,8 @@ def main(argv: list[str]) -> None:
         nogui.run()
     else:
         root = tk.Tk()
-        root.iconbitmap(pathlib.Path(__file__).parent/'Files'/"btd6bot.ico")
+        icon = tk.PhotoImage(file=pathlib.Path(__file__).parent/'Files'/"btd6bot.png")
+        root.iconphoto(True, icon)
         MainWindow(root)
         root.mainloop()
 
