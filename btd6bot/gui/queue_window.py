@@ -198,7 +198,7 @@ class QueueModeWindow:
             current = selected[0]
             for i in it.chain(range(current + 1, list_type.size()), range(0, current)):
                 if (key == values[i][0].lower() and 
-                    (key in _allowed_shiftchars or not (event.state & 0x0001))): # bit '1' means holding Shift key
+                    (key in _allowed_shiftchars or not (int(event.state) & 0x0001))): # bit '1' means holding Shift key
                     list_type.select_clear(0, 'end')
                     list_type.select_set(i)
                     list_type.activate(i)

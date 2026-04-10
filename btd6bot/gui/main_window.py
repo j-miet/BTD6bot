@@ -160,7 +160,7 @@ class MainWindow:
 
          # use 'spawn' instead of default 'fork' on Linux systems when multiprocessing roundplot windows
         if sys.platform == 'linux':
-            mp.set_start_method("spawn");
+            mp.set_start_method("spawn")
 
         mainframe = tk.Frame(
             root, 
