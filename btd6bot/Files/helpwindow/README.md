@@ -1,21 +1,21 @@
 # BTD6bot
 
-| ![](docs/images/overview.png) |
+| ![](images/overview.png) |
 |:--:|
 | *Overview of different gui windows (help window excluded)*|
 
 
-
 ``BTD6bot`` is a program for automating **Bloons Tower Defense 6** game.  
-It includes a simple graphical user interface (**gui**): not visually impressive, but easy to use.
+It includes a simple graphical user interface: not visually impressive, but easy to use.
 
 **Supports only <u>single player game modes</u> accessed under the main menu 'Play' button.**  
 Support for multiplayer/competitive modes such as races, bosses, contested territory, boss rush, etc. will not be 
-added.
+added.   
+-> *Only exception would be a possible achievement farming support, but there's **no** estimated time of arrival for this feature.*
 
 Bot is quite complex and has been tested thoroughly, but you may still encounter bugs.  
 
-Btd6 includes elements of **randomness**, which cannot be removed entirely. On top of this, bot's text 
+Btd6 includes elements of **randomness**, which cannot be removed entirely. On top of this bot's text 
 detection times can vary ever so slightly which alters upgrade and ability timings etc. So if you plan to use bot to
 obtain *Chimps black medals* on harder advanced and expert maps, it could take several attempts before
  getting a successful run.
@@ -26,14 +26,16 @@ imposes the risk of flagging your account for cheating, or worst case, getting i
 I'm not certain how they could enforce this ruleset in a single player environment, though. If you're concerned,
 you can always run bot offline. <u>You have been warned</u>.***
 
+**-- Contributions --**  
+If you'd like to contribute to project, for example add new game plans, see [Contributions](#contributing-to-project) section.
 
 ---
 **[Update status]    
-Updated for Bloons TD 6 version ``52``**
+Updated for Bloons TD 6 version ``53``**
 
-- For now, bot is planned to be updated after each major game update
+- For now, bot is planned to be updated after each major version update
 - New game plans might also get added on an infrequent basis
-    - All available plans are listed [here](docs/Plans.md)
+    - All available plans are listed [here](Plans.md)
 
 **[Supported display resolutions]**
 
@@ -59,19 +61,23 @@ all of them. Currently:
 
 - **MacOS**:
   - Custom gui-only hotkeys are disabled for Mac systems. Reason is Python libraries used for gui and 
-  hotkeys (``tkinter`` & ``pynput`` respectively) interfere with each other due to them running on same main thread. Bot can be still halted by dragging mouse cursor to upper-left corner.
+  hotkeys (``tkinter`` & ``pynput`` respectively) interfere with each other due to them running on same main thread. 
+  Bot can be still halted by dragging mouse cursor to upper-left corner.
   - Mac uses ``16:10`` aspect ratio as a baseline and lacks the support for recommended ``16:9`` resolutions. Again, 
   this can probably be fixed by using the tricks explained above in resolution section.
 
-- **Linux/Unix** has not been tested.
+- **Linux/Unix** has not been tested yet.
 
-The only "OS-free solution" would be to use virtual machine with Windows installation, then install and run btd6 + bot inside it.
+The only "OS-free solution" would be to use virtual machine with Windows installation, then install and run btd6 + 
+bot inside it.
 
 
 ## Table of contents
 
 - [<u>Features</u>](#features)
 - [<u>Installation</u>](#installation)
+    - [Use batch/shell script file](#use-batchshell-script-file)
+    - [Manual install](#manual-install)
 - [<u>First-time setup</u>](#first-time-setup)
     - [Quick tutorial](#quick-tutorial)
     - [Full tutorial](#full-tutorial)
@@ -96,6 +102,7 @@ The only "OS-free solution" would be to use virtual machine with Windows install
         - [General](#general)
     - [Table: Monkeys, heroes and targeting options](#table-monkeys-heroes-and-targeting-options)
 - [<u>Updating the bot</u>](#updating-the-bot)
+- [<u>Contributing to project</u>](#contributing-to-project)
 
 # <u>Features</u>
 
@@ -104,16 +111,17 @@ The only "OS-free solution" would be to use virtual machine with Windows install
 All **beginner, advanced and expert maps on CHIMPS difficulty are supported**. As bot is required to finish any plan in 
 one go, this also means CHIMPS includes **black medal/border**.
 
-- Graphical user interface, made with Python's build-in Tkinter library. Very simple when it comes to visuals,
+- Graphical user interface (**GUI**) made with Python's build-in Tkinter library. Very simple when it comes to visuals,
 but easy to use. Here are some of the properties:
 
     - set bot hotkeys
     - change display settings to match your in-game settings like custom resolution or windowed mode
-    - run a single plan or create a customized queue of multiple plans
+    - run a single plan or create a customized queue of multiple plans. Plans can be searched and sorted with custom 
+    regex
     - **farm collection event rewards**. Bot selects only Expert maps with bonus rewards and runs them on Easy-Standard
     - see info for currently selected plan if available
-    - auto-record round times and check the generated time graph with 'Show plot' button
-    - see all the printed text that bot outputs during runtime, etc.
+    - auto-record round times and check the generated time graph of most recent record with 'Show plot' button
+    - see all the printed text that bot outputs during runtime
  
     For gui visuals and in-depth look on all features, see [GUI windows](#gui-windows) section.
 
@@ -138,9 +146,9 @@ but easy to use. Here are some of the properties:
 - Support for creating custom plans files. Plans include all the commands bot performs on each round until a map 
 finishes. 
 
-    - Note that commands are Python code, so plan files are stored in .py format. In particular, monkeys and heroes are 
-    custom class objects because this makes implementing new features for them much easier. It also simplifies writing 
-    more complex plans. Commands are not very hard to write, but using them effortlessly can take time.
+    - Note that commands are Python code so plan files are stored in **.py** format. In particular, monkeys and heroes 
+    are custom class objects because this makes implementing new features for them much easier. It also simplifies 
+    writing more complex plans. Commands are not very hard to write, but using them effortlessly can take time.
     - A plan template is provided which can then be copied and modified. Furthermore, the *command_tracker* tool is 
     specifically designed for setting up new plans although it's somewhat convoluted. An alternative is to use simpler 
     *show_coordinates* tool and write commands manually.
@@ -154,69 +162,146 @@ content should this project no longer receive updates.
 
 # <u>Installation</u>
 
-First you need to install [Python](https://www.python.org/downloads/).  
-Most of bot was programmed in Python versions 3.12.5 or higher so **Python 3.12+** is recommended.
+First you need to install [Python](https://www.python.org/downloads/)  
+Supported versions: **3.12**, **3.13** and **3.14**
 
-Then download *BTD6bot* files.  
-<u>Main branch is selected by default. It's the recommended way to run bot</u>:
+To install bot you have two options:
+
+1. (**New in v.0.1.0**) automatic installation using a script file. Running the script will 
+    - download a zip file of main branch files of this project. Zip file is placed into same directory 
+  where you ran the script,
+    - extract bot project directory from the zip. This is again placed into same location where you ran the script.
+   Then delete this zip file,
+    - setup script executables to run bot + include dev tools scripts
+    - setup a Python [venv](https://docs.python.org/3/library/ven) virtual environment for bot project
+    - install external packages from requirements.txt to this virtual environment
+
+    After installation you simply go to bot install directory and run ``run.bat``/``run.sh`` file to start bot.
+
+    See [Use batch/shell script file](#use-batchshell-script-file) for details
+
+2. manual installation by downloading source files and installing dependencies yourself. **Still very easy to do** and you 
+might prefer this in case you
+    - want to customize your installation, 
+    - failed to install bot with auto-install script, or
+    - don't trust/want to use install script files
+
+    See [Manual install](#manual-install) for details
+
+## Use batch/shell script file
+
+> *Windows user* -> you might need to do [this](_install/INSTALL.md#for-windows-users) if you have not used Python virtual environments before
+
+1. Navigate to [Releases](https://github.com/j-miet/BTD6bot/releases) page
+2. Select newest available version
+3. Download <u>one of the two</u> script files depending on your operating system
+   - ``install.bat`` for Windows users
+   - ``install.sh`` for others
+
+   You **shouldn't** download the auto-generated ``Source code.zip`` (or .tar.gz) file. This is for manual installation
+    only.
+
+   Below you can replace ``.bat`` with ``.sh`` and it works the same
+4. When you run install script, it will download the current github main branch as a zip file and automatically unzip
+ the contents under a directory ``BTD6bot-main`` in script location. So for example
+    - You move install script into custom location 'c:/your/path/install.bat'
+    - You run ``install.bat`` -> bot files are generated under 'c:/your/path/BTD6bot-main'
+
+    After this, it will copy bot scripts for from 'c:/your/path/BTD6bot-main/_install' and move them to other
+     directories. These include
+
+    - ``run.bat`` and ``run-nogui.bat`` into 'c:/your/path/BTD6bot-main' so you can run the bot in default gui mode or 
+    in non-gui mode.
+    - tools scripts: ``command_tracker.bat``, ``image_scaler.bat``, ``move_mouse.bat`` and ``show_coordinates.bat`` 
+    into ``c:/your/path/BTD6bot-main/tools/{script_name}``. Unless you want to create your own plan files or add own 
+    features to bot, you don't need to interact with these at all.
+
+    Finally it will create a virtual environment under c:/your/path/BTD6bot-main/.venv and install external Python 
+    packages listed in requirements.txt to this environment. This way Python packages required for bot are 
+    isolated and won't cause issues if you happen to use other Python programs.
+
+[**Notes**] 
+- You can move and rename ``BTD6bot-main`` directory freely, just don't rename any files inside it 
+unless you know what you're doing.
+- for more details such as step-by-step explanation of script code, check [here](_install/INSTALL.md)
+
+## Manual install
+
+Download *BTD6bot* files. <u>Main branch is selected by default and it's the recommended way to run bot</u>:
 - ``main`` is the release branch. It has the most stable version of bot with minimal amount of bugs.
 - ``dev`` is the development branch. All upcoming features are added and tested here before they get merged into main.
 Expect this version to be less stable and include numerous bugs.  
 $~$ 
 
+For manual install, you have two options
+
+[**Method 1**] go to [Releases](https://github.com/j-miet/BTD6bot/releases), click the latest version and download the 
+``Source code.zip``. Unzip the directory to your desired location
+
+[**Method 2**]
 Click the green [<> Code] button at the top of github page.
 
-![](docs/images/github_codebutton.png)
+![](images/github_codebutton.png)
 
 Then either
 
 - clone this repo to your local machine, or
 - click 'Download ZIP' and extract the contents
 
-Next, external dependencies. Install the following third party packages:
+---
+---
 
+After following either method 1 or 2, you should have project files ready.
+
+Next: external dependencies. Install the following third party packages:
+
+    matplotlib==3.10.8; python_version >= '3.14'
+    matplotlib==3.10.1; python_version <= '3.13'
+    numpy==2.4.2; python_version >= '3.14'
+    numpy==2.2.3; python_version == '3.13'
+    numpy==1.26.4; python_version <= '3.12'
+    pillow==12.1.1; python_version >= '3.14'
+    pillow==11.1.0; python_version <= '3.13'
     easyocr==1.7.2
     markdown==3.8
-    matplotlib==3.10.1
-    numpy==1.26.4; python_version < '3.13' # for Python versions < 3.13
-    numpy==2.2.3; python_version >= '3.13' # for Python versions >= 3.13
-    pillow==11.1.0
     pyautogui==0.9.54
     pynput==1.7.8
     pyperclip==1.9.0
-    pywin32==311; sys_platform == 'win32' # only if operating system is Windows
+    pywin32==311; sys_platform == 'win32'
     mss==10.1.0
     tkinterweb==4.3.1
     tkinterweb-tkhtml==1.0
 
+To install dependencies easily: open command terminal, change your current directory to ``<your path>/btd6bot`` 
+where you installed BTD6bot, then type  
+
+``pip install -r requirements.txt``
+
+This might take a while so just wait patiently. When process is done, you can move onto *First-time setup*.
+
+[**Note 1**]
 *easyocr* library defaults to cpu for text detection/reading. **Cpu works just fine**, but if you'd prefer it to use 
 gpu instead, check out [PyTorch local install guide](https://pytorch.org/get-started/locally/) and select appropriate 
 CUDA version.
 
-If you use Windows, an easy way to install dependencies is to open your BTD6bot folder, then run ``reqs.bat``. 
-
-If this isn't working/you use another OS: open command terminal, change your current directory to 
-``<your path>/btd6bot`` where you installed BTD6bot, then type
-``pip install -r requirements.txt``.
-
-[**Note**] Exact versions as listed above might not be required, but are always recommended. For *pynput* and 
-*tkinterweb-tkhtml* however they are mandatory:
+[**Note 2**] Exact versions of packages as listed above might not be required, but are always recommended. For *pynput* 
+and *tkinterweb-tkhtml* however they are mandatory:
  - pynput 1.7.8 throws a critical error if any gui hotkey is used
  - tkinterweb-tkhtml 2.0 raises ImportError if tkinterweb library is imported
 
 
 # <u>First-time setup</u>
-| ![](docs/images/main/main.png) |
+| ![](images/main/main.png) |
 |:--:|
 | *Main window default view*|
 
 To run ``BTD6bot``, try <u>one</u> of the following:
 
-- Open your BTD6bot folder, then run the ``run.bat`` file
-- Open command terminal, set current directory to ``<your path>/btd6bot`` then type ``py btd6bot`` 
+- If you used install script, open your BTD6bot folder then run the ``run.bat`` or ``run.sh`` file
+- Otherwise open command terminal, set current directory to ``<your path>/btd6bot`` then type ``py btd6bot`` 
     - if you'd like to run non-gui version instead, use ``py btd6bot -nogui``
 
-If you managed to run BTD6bot, then a window similar to above should have opened.
+If you managed to run BTD6bot then a window similar to above should have opened.
 There's plenty of stuff in here, but for now focus is on getting the bot to work properly in your system.  
 <u>Following steps must be done in order to make bot work properly for each user</u>:  
 
@@ -249,13 +334,13 @@ done, close hotkeys window.
     - If you use fullscreen, **don't** enable custom resolution, or use windowed mode. Just 
     leave it untoggled.
 
-        ![](docs/images/settings/disable_custom.png)
+        ![](images/settings/disable_custom.png)
 
     - If you use custom resolution, set width & height values, then update values.
         - Toggle windowed mode on if you wish to use it. **It's recommended to always use fullscreen**, but windowed 
         should also work - just requires a bit more setup.
 
-        ![](docs/images/settings/custom_windowed.png)
+        ![](images/settings/custom_windowed.png)
 
         For windowed mode you should head to [GUI settings](#settings) page as it's a little more complicated to explain
         here.
@@ -274,7 +359,7 @@ Finally, ``monkeys=all`` and ``delta=4`` values should be automatically set.
 Easiest way to do setup all of this is to just press ``Reset args`` then ``Set args`` button to save args.  
 Your argument prompt should look similar to this:
 
-    ![](docs/images/settings/auto_adjust.png)
+    ![](images/settings/auto_adjust.png)
 
     ***Why adjusting is needed**: monkey upgrading process is based on reading upgrade path names from screen and 
     matching these to static values. Different resolutions change the reading accuracy so bot will automatically adjust
@@ -289,7 +374,8 @@ Your argument prompt should look similar to this:
     to open monitoring window.
     
     Have your Btd6 game opened on main
-    monitor (or if windowed mode then possibly on any secondary monitor), placed in main/home menu screen with ``Play`` button visible. Now run the bot and let it finish auto-adjusting.
+    monitor (or if windowed mode then possibly on any secondary monitor), placed in main/home menu screen with ``Play`` 
+    button visible. Now run the bot and let it finish auto-adjusting.
     This process can take a while.  
     After adjusting process is finished, bot should be able to detect in-game upgrade texts properly based on your
     current resolution settings.
@@ -314,7 +400,7 @@ Click the gear symbol and open hotkeys menu.
 
 Now, update your game hotkeys for bot. Press 'Set hotkeys' button in gui. Following window opens:
 
-| ![](docs/images/hotkeys/hotkeys.png) |
+| ![](images/hotkeys/hotkeys.png) |
 |:--:|
 | *Hotkey window*|
 
@@ -353,7 +439,7 @@ After you've updated all the keys, close the hotkey window.
 
 Next, open settings window by pressing 'Settings' button.
 
-| ![](docs/images/settings/settings.png) |
+| ![](images/settings/settings.png) |
 |:--:|
 | *Settings window*|
 
@@ -383,7 +469,7 @@ option off, you should see your current resolution next to 'Current resolution' 
 
     For example, if your monitor is ``1920x1080``, you see following 
 
-    ![](docs/images/settings/disable_custom.png)
+    ![](images/settings/disable_custom.png)
 
 - *custom resolution*: type width and height in their respective entry boxes, then click the 'Update resolution'
 button.  
@@ -392,11 +478,11 @@ Custom value is stored in a file and will be loaded back if you disable and re-e
     Example: if you have ``1920x1080`` as native res and set a custom res ``1600x900``, then toggling setting on and off
     would display following resolutions:
 
-    ![](docs/images/settings/difference.png)
+    ![](images/settings/difference.png)
 
     With custom resolutions, you can enable *windowed mode*.
     
-    ![](docs/images/settings/windowed.png)
+    ![](images/settings/windowed.png)
     
     Setting up windowed mode requires a bit more explanation so go check [GUI settings](#settings) section.
 
@@ -407,7 +493,7 @@ Custom value is stored in a file and will be loaded back if you disable and re-e
 Lastly, enable the 'Auto-adjust ocr upgrade data the next time a plan is run' option. 
 For 1920x1080 with fullscreen enabled, it looks like this:
 
-![](docs/images/settings/auto_adjust.png)
+![](images/settings/auto_adjust.png)
 
 
 It should include following parts, each separated by space:
@@ -431,11 +517,11 @@ Then just press 'Set args' and you're done! You may now close the settings windo
 For last part, you need to enter the monitoring window. Click the 'Initialize bot' button, located at bottom
 right of main window:
 
-![](docs/images/main/init_button.png)
+![](images/main/init_button.png)
 
 Following load message appears (or might just quickly flash if your computer is fast enough)
 
-![](docs/images/main/load_msg.png)
+![](images/main/load_msg.png)
 
 Program needs to load the ocr model into your temporary memory (RAM) each time you initialize bot and is therefore only
 required once per runtime loop. If you close the entire program and reopen it, the model must be loaded again.
@@ -443,11 +529,11 @@ required once per runtime loop. If you close the entire program and reopen it, t
 After the message disappears, model has been loaded and initialize button should now display 'Open bot window'
 instead.
 
-![](docs/images/main/openbotwin_button.png)
+![](images/main/openbotwin_button.png)
 
 Click the button to open monitoring window.
 
-| ![](docs/images/monitoring/monitoring.png) |
+| ![](images/monitoring/monitoring.png) |
 |:--:|
 | *Monitoring window*|
 
@@ -534,7 +620,7 @@ This issue can be completely ignored now.
 
 ---
 
-| ![](docs/images/monitoring/monitoring_adjustbegin.png) |
+| ![](images/monitoring/monitoring_adjustbegin.png) |
 |:--:|
 | *After 'Run' button is pressed and menu play button is detected, bot sets a countdown from 5 to 0, then begins the auto-adjusting process*|
 
@@ -573,7 +659,7 @@ following:
     just open setting and enable it again with appropriate arguments.
 
 
-| ![](docs/images/monitoring/monitoring_adjustend.png) |
+| ![](images/monitoring/monitoring_adjustend.png) |
 |:--:|
 | *Adjusting process complete. Current monitoring window must be closed in order to continue.*|
 
@@ -583,11 +669,11 @@ your bot is ready to be tested with an actual plan.
 To run your first plan, it's recommended to pick something simple. Close the monitoring window and select either
 ``monkey meadow, easy-standard`` or ``dark castle, easy-standard`` in main window:
 
-![](docs/images/main/monkeymeadow.png)
+![](images/main/monkeymeadow.png)
 
 or
 
-![](docs/images/main/darkcastle.png)
+![](images/main/darkcastle.png)
 
 Make sure you have the required hero, all monkeys and their upgrade paths unlocked. For upgrade paths:
 
@@ -617,7 +703,7 @@ to leave in-game resolution to your **native fullscreen resolution**, but still 
 
 When you run ``Btd6bot`` with windowed mode, it uses the logic described in following image
 
-![](docs/images/settings/ultrawide.png)
+![](images/settings/ultrawide.png)
 
 Because windowed mode normally leaves empty space around, you could limit the readable area to the middle of screen.
 A good example would be ``3440x1440`` resolution: it adds extra borders during maps which is 440 pixels each side. This
@@ -630,11 +716,11 @@ _Example:_ So if you have a ``3440x1440`` monitor and wish to play on this resol
 
 - enable custom resolution and set it as ``2560x1440``
 
-    ![](docs/images/settings/3440x1440_settings.png)
+    ![](images/settings/3440x1440_settings.png)
 
 - enable windowed mode and keep top-left value as 'centered'
 
-    ![](docs/images/settings/windowed.png)
+    ![](images/settings/windowed.png)
 
     If value is not centered, simply type 'centered' in one of the width/height fields and update
 
@@ -643,7 +729,7 @@ _Example:_ So if you have a ``3440x1440`` monitor and wish to play on this resol
 
 Here's a visual explanation on the situation (in main menu screen, but this applies to in-game ui as well):
 
-![](docs/images/settings/3440x1440example.png)
+![](images/settings/3440x1440example.png)
 
 
 In general, check the following:
@@ -712,12 +798,13 @@ promises)
 - Gui interacts with ``Files`` folder. Don't change data values of these files manually unless you know what you're
 doing
 
-    - only exception is ``Files/map images`` in case you'd like to replace ascii texts with map images. Check sections for [Main](#main) or [Queue](#queue) for more info.
+    - only exception is ``Files/map images`` in case you'd like to replace ascii texts with map images. Check sections 
+    for [Main](#main) or [Queue](#queue) for more info.
 
 
 ## Main
 
-| ![](docs/images/main/main_modified.png) |
+| ![](images/main/main_modified.png) |
 |:--:|
 | *Main window, with ocr already initialized. Currently selected plan is bloody_puddlesHardChimps, with collection event and replay modes enabled.*|
 
@@ -765,7 +852,7 @@ i.e. selected map + strategy combination. Info is stored in each plan file and c
 
 ## Help
 
-| ![](docs/images/help/help.png) |
+| ![](images/help/help.png) |
 |:--:|
 | *Help window, expanded to fullscreen. It displays the same README contents, however none of the links are in working condition*|
 
@@ -790,7 +877,7 @@ or reopening the Main window, this file gets deleted again!
 
 ## Queue
 
-| ![](docs/images/queue/queue.png) |
+| ![](images/queue/queue.png) |
 |:--:|
 | *Queue window with infernal_EasyStandard and flooded_valleyHardChimps plans placed in queue. When a plan is selected, its info text gets displayed.*|
 
@@ -850,7 +937,7 @@ window.
 
 ## Hotkeys
 
-| ![](docs/images/hotkeys/hotkeys.png) |
+| ![](images/hotkeys/hotkeys.png) |
 |:--:|
 | *Hotkey window.*|
 
@@ -867,15 +954,18 @@ window.
 
     >Note that some symbols might show up weirdly, but the hotkey should still work.
 
-    >MacOS: the gui and hotkey libraries have some issues with one another so hotkey names must be typed manually. 
+    >**MacOS**: the gui and hotkey libraries have some issues with one another so hotkey names must be typed manually. 
     Unfortunately the gui hotkeys also become unusable so closing the bot during runtime can only be done by quickly 
     dragging mouse to top-left corner of monitor.
+
+- hotkeys are reloaded each time you open a new monitoring window. So remember to close current one if you updated 
+any of them.
      
 
 
 ## Settings
 
-| ![](docs/images/settings/settings.png) |
+| ![](images/settings/settings.png) |
 |:--:|
 | *Settings window*|
 
@@ -896,12 +986,13 @@ option, which was already introduced when setting up the bot first time.
     To setup -popupwindow: if you use Steam version: library -> bloons td 6 -> right-click -> properties, then set the 
     following
 
-    ![](docs/images/settings/launchoption.png)
+    ![](images/settings/launchoption.png)
 
-    You can also add optional ``-screen-width X`` and ``-screen-height Y`` args here to force custom resolution, e.g. ``-popupwindow -screen-width 1920 -screen-height 1080``.
+    You can also add optional ``-screen-width X`` and ``-screen-height Y`` args here to force custom resolution, e.g. 
+    ``-popupwindow -screen-width 1920 -screen-height 1080``.
 
-    Alternatively make a desktop shortcut of BloonsTD6.exe, right-click Properties and add -popupwindow (and any other args) at the
-    end of target path e.g. ``"...\BloonsTD6\BloonsTD6.exe" -popupwindow``.
+    Alternatively make a desktop shortcut of BloonsTD6.exe, right-click Properties and add -popupwindow 
+    (and any other args) at the end of target path e.g. ``"...\BloonsTD6\BloonsTD6.exe" -popupwindow``.
     
     ---
 
@@ -1029,8 +1120,8 @@ finding current round number uses substring matching.
 
 - **Auto-adjust ocr upgrade data the next time a plan is run**: <u>This was already introduced under
 [first-time setup](#update-resolution-and-enable-ocr-auto-adjust)</u>. Updates all upgrade ocr values based on current
-resolution settings. As bot uses upgrade labels to determine whether is has successfully upgraded a monkey or has to keep
-on trying, these texts must be as precisely readable as possible. For upgrades, bot has three cases:
+resolution settings. As bot uses upgrade labels to determine whether is has successfully upgraded a monkey or has to 
+keep on trying, these texts must be as precisely readable as possible. For upgrades, bot has three cases:
 
      1. not mixing and accepting similar strings like 'sharp shots' & 'razor sharp shots',
      2. not accept too weak a string
@@ -1055,7 +1146,7 @@ on trying, these texts must be as precisely readable as possible. For upgrades, 
 
 ## Monitoring
 
-| ![](docs/images/monitoring/monitoring.png) |
+| ![](images/monitoring/monitoring.png) |
 |:--:|
 | *Monitoring window, with queue mode enabled. Current plan is quadHardChimps, with dark_castleHardChimps coming after.*|
 
@@ -1125,14 +1216,14 @@ Python. This is not required, but some things can be be harder to understand.
 
 ## Create a plan file
 
-First, you need a plan template. One can be found in 'plan template' folder, located in project root folder. Then,
-simply copy this plan_template.py to your plan folder.
+First, you need a plan template. One can be found in 'plan_template' folder, located in project root folder. Then
+simply copy the *map_nameDifficultyMode.py* file into 'btd6bot/plans' folder.
 
 
 **<u>Plan file: naming</u>**
 
-File names follow specific standard. This was originally implemented to make working with plan files simple for gui and
-it has stayed the same to this day.
+File names follow a specific standard, which was implemented long time ago to handle plan files inside gui, and has 
+remained the same ever since:
 
 1. <u>Map name</u>:
 
@@ -1160,8 +1251,8 @@ it has stayed the same to this day.
     | | | Impoppable|
     | | | Chimps |
 
-    (**Optional**) if plan with same map, difficulty and game mode exists and you want to make another on same settings,
-    simply add number 2-9 at the end. This means you can have up to 9 different plans on same setting.  
+    (**Optional**) if a plan with same map, difficulty and game mode exists and you wish to make another sharing same 
+    settings, simply add number 2-9 at the end. This means you can have up to 9 different plans on same setting.  
     *Example*: cubismHardStandard, cubismHardStandard2, cubismHardStandard3, ..., cubismHardStandard9, *are all valid*. 
 
 <u>Examples for each game mode:</u>
@@ -1183,6 +1274,9 @@ it has stayed the same to this day.
     workshopHardImpoppable.py
     #ouchHardChimps.py
 
+    =>a second #ouch hard chimps plan
+    #ouchHardChimps2.py
+
 
 **<u>Plan files: info panel and round block structure</u>**
 
@@ -1190,33 +1284,28 @@ Now, open your plan file. It looks like this:
 
 
     """  
-    [Hero]  
+    [Hero] -
     [Monkey Knowledge] -
     -------------------------------------------------------------
     ===Monkeys & upgrades required===
-    *list all monkeys + their highest crosspaths here*
-    Example: sniper 5-3-1 means plan uses tier 5 top path, tier 3 middle path, and tier 1 bottom path for snipers.
     _______________________________________
-    *put description/any additional comments here*
     """
 
-    # copy this file into btd6bot/plans, then uncomment all the code below this line
     '''
     from._plan_imports import *
 
-    def play(rounds: tuple[str, str, str, int, int, str]) -> None:
-        BEGIN, END = menu_start.load(*rounds)
-        current_round = BEGIN-1
+    def play(data):
+        BEGIN, END = menu_start.load(*data)
+        round = BEGIN-1
         map_start = time()
-        while current_round < END+1:
-            current_round = Rounds.round_check(current_round, map_start, rounds[2])
-            if current_round == BEGIN:     
+        while round < END+1:
+            round = Rounds.round_check(round, map_start, data[2])
+            if round == BEGIN:     
                 ...
     '''
 >
 
-First, remove the comments by removing the ''' symbols (not the """) + remove the comment line itself (begins with #). You can also remove the 
-placeholder text from info section. Now contents should look like similar to this:
+First remove the two comment lines starting with ''' symbols (not the """) so bot is able to execute plan code:
 
     """  
     [Hero]  
@@ -1228,13 +1317,13 @@ placeholder text from info section. Now contents should look like similar to thi
 
     from._plan_imports import *
 
-    def play(rounds: tuple[str, str, str, int, int, str]) -> None:
-        BEGIN, END = menu_start.load(*rounds)
-        current_round = BEGIN-1
+    def play(data):
+        BEGIN, END = menu_start.load(*data)
+        round = BEGIN-1
         map_start = time()
-        while current_round < END+1:
-            current_round = Rounds.round_check(current_round, map_start, rounds[2])
-            if current_round == BEGIN:     
+        while round < END+1:
+            round = Rounds.round_check(round, map_start, data[2])
+            if round == BEGIN:     
                 ...
 >
 
@@ -1246,12 +1335,13 @@ for current plan: it will be displayed both under main and queue windows. It con
     1. [Hero] which is the hero used for this plan. For example, if you wanted to use Quincy, you simply leave one empty
     space, then type Quincy:
 
-            ``[Hero] Quincy``.
+            [Hero] Quincy
 
-        Names are not case sensitive so ``[Hero] quincy`` would also work. For all available heroes, have a look at
-    [this](#heroes-1). If your plan does not need a hero, you can leave at default or add a dash i.e. ``[Hero] -``
-    2. [Monkey knowledge] states if plan requires monkey knowledge. Use ``[Monkey knowledge] Yes`` or 
-    ``[Monkey knowledge] -``. To give information on required mk, see 4.
+        Names are not case sensitive so ``[Hero] quincy`` would also work. All available heroes can be 
+        found [here](#heroes-1).  
+        If your plan does not need a hero, use a dash instead i.e. ``[Hero] -``
+    2. [Monkey knowledge] states if plan requires monkey knowledge. Use ``[Monkey knowledge] Yes`` if yes or 
+    ``[Monkey knowledge] -`` if not. To give information on required mk, see 4.
     3. List of required monkeys and <u>highest</u> crosspaths.  
 
         Examples: 
@@ -1271,15 +1361,21 @@ for current plan: it will be displayed both under main and queue windows. It con
         You can write all the requirements without separating categories, but in above example, primary/military/support
         are separated by empty line each.
     4. General info: here you can write anything you'd like the user to know about e.g. monkey knowledge
-    requirements or just comment something.
+    requirements (list them or give a general explanation) or just comment something.
     Example:
 
-            ``
+            ===Monkeys & upgrades required===
+            .
+            .
+            .
             _______________________________________
             this is a test plan and this is a comment
-            ``
+            comments can span multiple rows
     
-    With all sections 1.-4. combined, here's a simple info text:
+        Text will auto-wrap in gui menu so, while not recommended, you could also just write all of this on a single 
+        row.
+
+    With sections 1.-4. combined, here's a simple info text example:
   
         [Hero] Quincy
         [Monkey Knowledge] -
@@ -1292,6 +1388,7 @@ for current plan: it will be displayed both under main and queue windows. It con
         beast 0-0-5
         _______________________________________
         this is a test plan and this is a comment
+        comments can span multiple rows
 
     *For better examples, you should check other existing plans in plans folder*.
 
@@ -1308,13 +1405,13 @@ Now that you know what the info panel is, let us have a look at the main body:
 
     from._plan_imports import *
 
-    def play(rounds: tuple[str, str, str, int, int, str]) -> None:
-        BEGIN, END = menu_start.load(*rounds)
-        current_round = BEGIN-1
+    def play(data):
+        BEGIN, END = menu_start.load(*data)
+        round = BEGIN-1
         map_start = time()
-        while current_round < END+1:
-            current_round = Rounds.round_check(current_round, map_start, rounds[2])
-            if current_round == BEGIN:     
+        while round < END+1:
+            round = Rounds.round_check(round, map_start, data[2])
+            if round == BEGIN:     
                 ...
 
 This block is Python code. It includes
@@ -1324,43 +1421,43 @@ This block is Python code. It includes
 - initialization through menu_start.load; select hero, map, difficulty and game mode
 - set a starting point to track total time
 - and finally, the main round loop: this begins from round BEGIN (value depends of difficulty and game mode) and
-continues until you finish final round (reach END+1). After it does checks and updates current_round value, it matches
+continues until you finish final round (reach END+1). After it does checks and updates 'round' value, it matches
 this to corresponding if/elif block to perform command for that round.
 
 Thus, you only need to interact with the part starting from
     
-        if current_round == BEGIN:
+        if round == BEGIN:
             ...
 
 Note that BEGIN is a variable: <u>YOU DON'T NEED TO CHANGE THIS VALUE</u>, it will always stand for first round.
 
 Usually you have multiple rounds which means rounds look like this:
 
-        if current_round == BEGIN:
+        if round == BEGIN:
             ...
-        elif current_round == 7:
+        elif round == 7:
             ...
-        elif current_round == 10:
+        elif round == 10:
         .
         .
         .
-        elif current_round == 99:
+        elif round == 99:
             ...
 
 Previous block could serve as chimps mode plan template: here BEGIN stands for 6. Note that if nothing happens during a
 round, you can exclude it from if/elif: here rounds 8 and 9 are skipped over. For final round you can just use the round
 number or variable END:
         
-        elif current_round == 100:
+        elif round == 100:
             ...
         # or 
-        elif current_round == END:
+        elif round == END:
             ...
 Again, no need to include final round block if it has no commands.
 
 On two special cases, you can just use the first if-block
 
-        if current_round == BEGIN:
+        if round == BEGIN:
             ...
 to include all commands. These are deflation and apopalypse. In fact, for apopalypse, you 
 **have to use only the first round block!**. After first round ends, bot sets internal flag for end round and stops
@@ -1471,10 +1568,10 @@ For practical examples, check any plan file in ``btd6bot/plans`` folder.
     <tr>
         <td>force_target()</td>
         <td>Currently, only use is to update internal targeting flag for bot when <code>Etienne</code> hits level 
-            <code>11</code>: because bot is unable to <br>track hero xp, it cannot auto-update divide & conquer to zone 
+            <code>11</code>: because bot is unable to <br>track hero xp, it cannot auto-update current targeting mode to zone 
             control. If you use <code>Etienne</code> and plan to change his <br>targeting after lvl 11, you must call 
             this command at the beginning of the round he reaches this milestone; otherwise <br>bot and game have 
-            different targeting value which could cause issues.</td>
+            different targeting value which will most likely cause issues.</td>
         <td><pre>hero.force_target() </pre></td>
     </tr>
     <tr>
@@ -1702,14 +1799,16 @@ Use these values when placing a new monkey with ``Monkey(name, pos_x, pos_y)`` c
  Hero for current plan is selected based on ``[Hero]`` value inside the plan file info panel.  
 *In the following table, Heroes are categorized by their xp ratio. Higher ratio means slower xp gain.*
 
-| x1            | x1.425        | x1.5          | x1.71
+| x1                | x1.425        | x1.5          | x1.71
 |-|-|-|-|
-| Etienne       | Brickell      | Benjamin      | Adora
-| Geraldo       | Corvus        | Psi           | Churchill
-| Gwen          | Ezili         | Silas         |
-| Obyn          | Pat
-| Quincy        | Rosalia
-| Striker       | Sauda
+| Etienne (**1**)   | Brickell      | Benjamin      | Adora
+| Geraldo           | Corvus        | Psi           | Churchill
+| Gwen              | Ezili         | Silas         |
+| Obyn              | Pat
+| Quincy            | Rosalia
+| Striker           | Sauda
+
+**1**: When Etienne hits level **11**, he auto-updates targeting mode from whatever you currently use to 'zone control'. If you plan to change Etienne's targeting afterwards, you must call ``force_target()`` on same turn as Etienne levels up to 11. This command sets bot targeting internally to 'zone control'. Otherwise game and bot have different targeting values which will most likely cause issues.
 
 <p id='targetingchoices'></p>
 
@@ -1735,9 +1834,9 @@ to take wingmonkey into account with targeting changes; without the flag enabled
 going to be desynced.  
 Afterwards, you place aces normally using ``ace``. 
 
-**3**: When a ``x-5-x sniper`` is bought, a global flag tracking ``elite`` targeting is set to ``1``. Bot can then 
+**3**: When a ``x-5-x sniper`` is bought, a global flag tracking ``elite`` targeting is set to ``True``. Bot can then 
 automatically adjust targeting system around elite targeting. And, when ``x-5-x sniper`` is sold with ``sell()``, this
-status is reverted back to ``0``.  
+status is reverted back to ``False``.  
 After selling bot automatically keeps track of any targeting changes caused by losing elite targeting option.
 
 **4**: Mortars cannot be targeted using ``target`` command. Use ``special(1, x, y)`` instead.
@@ -1780,8 +1879,8 @@ You should also use a code editor like VS Code for optimal experience.
     _no_gui.py
     set_plan.py
 
-For in-game updates, only ``bot`` and ``Files`` necessary, as only somewhat frequent additions would be new monkeys and
-heroes. 
+For in-game updates only ``bot`` and ``Files`` are  necessary, as only somewhat frequent additions would be new monkeys
+ and heroes. 
 
 - Maps don't require any changes because bot selects a map using the plan file: if a new map called ``Bloons Map`` 
 was added and you wanted to create a plan for it on *hard, standard* then simply name the plan file 
@@ -1794,16 +1893,17 @@ be handled individually.
 Bot and files directory can be summed shortly:
 
 - ``bot`` contains the entire bot library which is responsible of all in-game bot actions. It includes the logic for
- menu navigation, round and defeat checks, time flow, keyboard and mouse controls, text detecing and reading etc. It 
+ menu navigation, round and defeat checks, time flow, keyboard and mouse controls, text detection and reading etc. It 
  also implements all bot commands used in plan files.
 
-- ``Files`` includes all the non-Python files gui and bot need. Only upgrade ocr template and hotkeys
+- ``Files`` includes all non-Python files gui and bot need. Only upgrade ocr template and hotkeys
  need to be updated.
 
 So only files you likely need to modify are
 
 - ``bot``
     - ``locations.py``
+    - ``_adjust_deltas.py``
     - ``commands/monkey.py``
     - ``commands/hero.py``
 - ``Files``
@@ -2029,3 +2129,25 @@ This in in fact the only mandatory step for adding heroes. However, if hero uses
     - implement any other required internal methods (e.g. ``_prepare_hero_menu`` for Geraldo and Corvus)
     - **(Optional)** Add pause flag, cpos checks so method can be used in maps with changing positions; see other 
     existing methods for examples.
+
+## Contributing to project
+
+**[Pull requests]**
+
+Always set pull requests to merge from your branch into BTD6bot ``dev`` branch, i.e. 
+
+>base: ``dev`` <- compare: ``your_branch``
+
+where ``your_branch`` should be main branch of forked BTD66bot repo.
+
+This is because
+
+- ``dev`` is meant for adding and testing new features. Pull request code can be checked, possible fixes can be made then it can be merged with current development code to make sure everything works. After current set of new features/fixes in dev branch have been tested thoroughly, only then it gets moved to main branch so that all users can access them and expect minimal bugs.
+- ``main`` is the production/user branch. It's the current version of bot all users should download and therefore must have minimal amount of bugs. Any undetected bugs can be hotfixed and tested again in ``dev`` branch then merged into ``main`` only by creating a new pull request. This way unfinished dev code and production code are strictly separated.
+
+
+**[Issues]**
+
+- State your issue in your own words. If possible try to explain what you did before the issue happened. No need to be super-detailed, just the general details are enough.
+- If there was an error message or other type of text that indicates this wasn't supposed to happen, please include it.
+    - Mention your operating system. Usually this can easily be interpreted from the context but not always.
