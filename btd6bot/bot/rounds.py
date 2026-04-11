@@ -228,7 +228,7 @@ class Rounds:
             time.sleep(1)
             kb_mouse.press_esc()
             return Rounds.end_round + 1
-        current_round: int
+        
         if _maindata.maindata["internal"]["defeat_status"]:
             kb_mouse.press_esc()
             BotData.set_data(current_round=Rounds.end_round+1)
@@ -256,36 +256,40 @@ class Rounds:
             total_time: float = times.current_time()
             defeat_check: int = 1
             levelup_check: int = 1
-            while True:
-                round_value = strong_substring_check(str(current_round)+'/'+str(Rounds.end_round), 
-                                                     get_text('ingame', 'current_round'), 
-                                                     OCR_READER)
-                if not round_value[0]:
-                    PauseControl.pause_bot()
-                    if levelup_check == Rounds.LEVEL_UP_CHECK_FREQUENCY:
-                        kb_mouse.click((0.9994791666667, 0))
-                        levelup_check = 0
-                    levelup_check += 1
-                    if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
-                        defeat_check = 1
-                    if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
-                        Rounds._defeat_return(Rounds.exit_type)
-                        return Rounds.end_round+1
-                    if '/' in round_value[1]:
-                        try:
-                            if int(round_value[1].split('/')[0]) >= current_round:
-                                break
-                        except ValueError:
-                            ...
-                    elif _maindata.maindata["toggle"]["event_status"] and '7' in round_value[1]:
-                        try:
-                            if int(round_value[1].split('7')[0]) >= current_round:
-                                break
-                        except ValueError:
-                            ...
-                    defeat_check += 1
-                else:
-                    break
+
+            if _maindata.maindata["internal"]["skip_roundcheck"]:
+                _maindata.maindata["internal"]["skip_roundcheck"] = False
+            else:
+                while True:
+                    round_value = strong_substring_check(str(current_round)+'/'+str(Rounds.end_round), 
+                                                        get_text('ingame', 'current_round'), 
+                                                        OCR_READER)
+                    if not round_value[0]:
+                        PauseControl.pause_bot()
+                        if levelup_check == Rounds.LEVEL_UP_CHECK_FREQUENCY:
+                            kb_mouse.click((0.9994791666667, 0))
+                            levelup_check = 0
+                        levelup_check += 1
+                        if defeat_check > Rounds.DEFEAT_CHECK_FREQUENCY:
+                            defeat_check = 1
+                        if Rounds.defeat_check(total_time, defeat_check, Rounds.DEFEAT_CHECK_FREQUENCY):
+                            Rounds._defeat_return(Rounds.exit_type)
+                            return Rounds.end_round+1
+                        if '/' in round_value[1]:
+                            try:
+                                if int(round_value[1].split('/')[0]) >= current_round:
+                                    break
+                            except ValueError:
+                                ...
+                        elif _maindata.maindata["toggle"]["event_status"] and '7' in round_value[1]:
+                            try:
+                                if int(round_value[1].split('7')[0]) >= current_round:
+                                    break
+                            except ValueError:
+                                ...
+                        defeat_check += 1
+                    else:
+                        break
             times.time_print(Rounds.current_round_begin_time, times.current_time(), f'Round {current_round-1}')
             cprint('=== Current round:', current_round, '===')
         PauseControl.pause_bot()
