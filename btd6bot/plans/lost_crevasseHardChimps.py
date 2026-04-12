@@ -11,22 +11,23 @@ sniper 0-1-0
 
 alch 5-0-0
 druid 1-3-0
-mermonkey 4-2-0
+mermonkey 3-0-0
 
 village 3-3-2
 _______________________________________
-Possible RNG pre-round 40
+Possible pre-round 40 RNG
 """
 
-from._plan_imports import *
+from ._plan_imports import *
+
 
 def play(data: tuple[str, str, str, int, int, str]) -> None:
     BEGIN, END = menu_start.load(*data)
-    round = BEGIN-1
+    round = BEGIN - 1
     map_start = time()
-    while round < END+1:
+    while round < END + 1:
         round = Rounds.round_check(round, map_start)
-        if round == BEGIN:     
+        if round == BEGIN:
             desp0 = Monkey('desperado', 0.2213541666667, 0.6138888888889)
             desp1 = Monkey('desperado', 0.5463541666667, 0.612037037037)
         elif round == 8:
@@ -95,9 +96,9 @@ def play(data: tuple[str, str, str, int, int, str]) -> None:
             alch.upgrade(['4-0-0'])
         elif round == 84:
             alch.upgrade(['5-0-0'])
-        elif round == 93:
+        elif round == 94:
             ice0.upgrade(['5-1-0'])
         elif round == 98:
             ice1.upgrade(['0-2-5'])
             mermonkey = Monkey('mermonkey', 0.5026041666667, 0.2074074074074)
-            mermonkey.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-1-0','4-2-0'])
+            mermonkey.upgrade(['1-0-0','2-0-0','3-0-0'])

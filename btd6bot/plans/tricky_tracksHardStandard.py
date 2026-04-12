@@ -28,106 +28,106 @@ def play(data):
     while round < END + 1:
         round = Rounds.round_check(round, map_start, data[2])
         if round == BEGIN:
-            desp1 = Monkey('desperado', 0.3151041666667, 0.5111111111111)
-            desp2 = Monkey('desperado', 0.553125, 0.537962962963)
+            desp1 = Monkey("desperado", 0.3151041666667, 0.5111111111111)
+            desp2 = Monkey("desperado", 0.553125, 0.537962962963)
         elif round == 8:
-            dart1 = Monkey('dart', 0.3505208333333, 0.4675925925926)
+            dart1 = Monkey("dart", 0.3505208333333, 0.4675925925926)
         elif round == 9:
-            dart2 = Monkey('dart', 0.5161458333333, 0.5361111111111)
+            dart2 = Monkey("dart", 0.5161458333333, 0.5361111111111)
         elif round == 10:
-            mermonkey1 = Monkey('mermonkey', 0.2859375, 0.2638888888889)
-            dart1.target('close')
-            dart2.target('close')
+            mermonkey1 = Monkey("mermonkey", 0.2859375, 0.2638888888889)
+            dart1.target("close")
+            dart2.target("close")
         elif round == 11:
-            dart1.target('first')
-            dart2.target('first')
+            dart1.target("first")
+            dart2.target("first")
         elif round == 13:
             hero = Hero(0.540625, 0.462037037037)
         elif round == 14:
-            hero.target('close', cpos=(0.5369791666667, 0.4638888888889))
-            mermonkey2 = Monkey('mermonkey', 0.34375, 0.4009259259259)
+            hero.target("close", cpos=(0.5369791666667, 0.4638888888889))
+            mermonkey2 = Monkey("mermonkey", 0.34375, 0.4009259259259)
         elif round == 15:
-            mermonkey3 = Monkey('mermonkey', 0.5828125, 0.7064814814815)
+            mermonkey3 = Monkey("mermonkey", 0.5828125, 0.7064814814815)
         elif round == 17:
-            sniper = Monkey('sniper', 0.8276041666667, 0.5481481481481)
-            sniper.target('strong')
+            sniper = Monkey("sniper", 0.8276041666667, 0.5481481481481)
+            sniper.target("strong")
         elif round == 19:
-            wizard = Monkey('wizard', 0.4776041666667, 0.5333333333333)
-            wizard.upgrade(['1-0-0'])
+            wizard = Monkey("wizard", 0.4776041666667, 0.5333333333333)
+            wizard.upgrade(["1-0-0"])
         elif round == 21:
-            wizard.upgrade(['2-0-0'])
+            wizard.upgrade(["2-0-0"])
         elif round == 22:
-            sniper.upgrade(['1-0-0'])
+            sniper.upgrade(["1-0-0"])
         elif round == 23:
-            sniper.upgrade(['1-1-0'])
+            sniper.upgrade(["1-1-0"])
         elif round == 25:
-            druid1 = Monkey('druid', 0.5057291666667, 0.5898148148148)
+            druid1 = Monkey("druid", 0.5057291666667, 0.5898148148148)
         elif round == 28:
             ability(1)
         elif round == 29:
-            wizard.upgrade(['3-0-0'])
+            wizard.upgrade(["3-0-0"])
         elif round == 30:
-            wizard.upgrade(['3-0-1','3-0-2'])
+            wizard.upgrade(["3-0-1", "3-0-2"])
         elif round == 31:
-            mermonkey1.upgrade(['0-0-1'])
+            mermonkey1.upgrade(["0-0-1"])
         elif round == 34:
-            mermonkey1.upgrade(['0-1-1','0-2-1','0-3-1','0-3-2'])
+            mermonkey1.upgrade(["0-1-1", "0-2-1", "0-3-1", "0-3-2"])
         elif round == 35:
-            wizard2 = Monkey('wizard', 0.3848958333333, 0.4416666666667)
-            wizard2.upgrade(['0-1-0','0-1-1','0-1-2'])
+            wizard2 = Monkey("wizard", 0.3848958333333, 0.4416666666667)
+            wizard2.upgrade(["0-1-0", "0-1-1", "0-1-2"])
         elif round == 36:
             ability(1)
         elif round == 37:
-            druid2 = Monkey('druid', 0.465625, 0.5916666666667)
+            druid2 = Monkey("druid", 0.465625, 0.5916666666667)
         elif round == 39:
-            wizard2.upgrade(['0-2-2','0-3-2'])
+            wizard2.upgrade(["0-2-2", "0-3-2"])
         elif round == 40:
             ability(1)
         elif round == 41:
-            mermonkey2.upgrade(['1-0-0','2-0-0','3-0-0','3-0-1','3-0-2'])
+            mermonkey2.upgrade(["1-0-0", "2-0-0", "3-0-0", "3-0-1", "3-0-2"])
         elif round == 43:
-            village1 = Monkey('village', 0.5640625, 0.7842592592593)
-            village1.upgrade(['0-0-1','0-0-2'])
+            village1 = Monkey("village", 0.5640625, 0.7842592592593)
+            village1.upgrade(["0-0-1", "0-0-2"])
         elif round == 44:
-            mermonkey3.upgrade(['0-0-1','0-0-2'])
-            mermonkey4 = Monkey('mermonkey', 0.5109375, 0.7925925925926)
-            mermonkey4.upgrade(['0-0-1','0-0-2'])
+            mermonkey3.upgrade(["0-0-1", "0-0-2"])
+            mermonkey4 = Monkey("mermonkey", 0.5109375, 0.7925925925926)
+            mermonkey4.upgrade(["0-0-1", "0-0-2"])
         elif round == 45:
-            mermonkey3.upgrade(['0-1-2','0-2-2','0-3-2'])
+            mermonkey3.upgrade(["0-1-2", "0-2-2", "0-3-2"])
         elif round == 46:
-            mermonkey4.upgrade(['0-1-2','0-2-2','0-3-2'])
-            mermonkey5 = Monkey('mermonkey', 0.6208333333333, 0.6648148148148)
+            mermonkey4.upgrade(["0-1-2", "0-2-2", "0-3-2"])
+            mermonkey5 = Monkey("mermonkey", 0.6208333333333, 0.6648148148148)
         elif round == 47:
-            mermonkey5.upgrade(['0-0-1','0-0-2','0-1-2','0-2-2','0-3-2'])
+            mermonkey5.upgrade(["0-0-1", "0-0-2", "0-1-2", "0-2-2", "0-3-2"])
         elif round == 49:
-            mermonkey2.upgrade(['4-0-2'])
-            mermonkey6 = Monkey('mermonkey', 0.4776041666667, 0.8388888888889)
-            mermonkey6.upgrade(['0-0-1','0-0-2','0-1-2','0-2-2','0-3-2'])
+            mermonkey2.upgrade(["4-0-2"])
+            mermonkey6 = Monkey("mermonkey", 0.4776041666667, 0.8388888888889)
+            mermonkey6.upgrade(["0-0-1", "0-0-2", "0-1-2", "0-2-2", "0-3-2"])
         elif round == 50:
-            village1.upgrade(['1-0-2','2-0-2'])
+            village1.upgrade(["1-0-2", "2-0-2"])
         elif round == 51:
-            mermonkey7 = Monkey('mermonkey', 0.6822916666667, 0.6888888888889)
-            mermonkey7.upgrade(['0-0-1','0-0-2','0-1-2','0-2-2','0-3-2'])
+            mermonkey7 = Monkey("mermonkey", 0.6822916666667, 0.6888888888889)
+            mermonkey7.upgrade(["0-0-1", "0-0-2", "0-1-2", "0-2-2", "0-3-2"])
         elif round == 52:
-            mermonkey8 = Monkey('mermonkey', 0.4697916666667, 0.9074074074074)
-            mermonkey8.upgrade(['0-0-1','0-0-2','0-1-2','0-2-2','0-3-2'])
+            mermonkey8 = Monkey("mermonkey", 0.4697916666667, 0.9074074074074)
+            mermonkey8.upgrade(["0-0-1", "0-0-2", "0-1-2", "0-2-2", "0-3-2"])
         elif round == 54:
-            mermonkey9 = Monkey('mermonkey', 0.7239583333333, 0.5648148148148)
+            mermonkey9 = Monkey("mermonkey", 0.7239583333333, 0.5648148148148)
             # leave this mermonkey to 0-2-2 in order to afford wizard on 61
-            mermonkey9.upgrade(['0-0-1','0-0-2','0-1-2','0-2-2','0-2-2'])
+            mermonkey9.upgrade(["0-0-1", "0-0-2", "0-1-2", "0-2-2", "0-2-2"])
         elif round == 55:
-            mermonkey10 = Monkey('mermonkey', 0.4255208333333, 0.8916666666667)
-            mermonkey10.upgrade(['0-0-1','0-0-2','0-1-2','0-2-2','0-3-2'])
+            mermonkey10 = Monkey("mermonkey", 0.4255208333333, 0.8916666666667)
+            mermonkey10.upgrade(["0-0-1", "0-0-2", "0-1-2", "0-2-2", "0-3-2"])
         elif round == 61:
             ability(1)
-            wizard.upgrade(['4-0-2'])
+            wizard.upgrade(["4-0-2"])
         elif round == 62:
             ability(1)
-            village2 = Monkey('village', 0.4177083333333, 0.6240740740741)
-            village2.upgrade(['1-0-0'])
+            village2 = Monkey("village", 0.4177083333333, 0.6240740740741)
+            village2.upgrade(["1-0-0"])
         elif round == 63:
-            village2.upgrade(['2-0-0','2-0-1','2-0-2'])
+            village2.upgrade(["2-0-0", "2-0-1", "2-0-2"])
         elif round == 74:
-            dart1.upgrade(['0-1-0','0-2-0','0-2-1','0-2-2','0-2-3','0-2-4'])
+            dart1.upgrade(["0-1-0", "0-2-0", "0-2-1", "0-2-2", "0-2-3", "0-2-4"])
         elif round == 79:
-            dart1.upgrade(['0-2-5'])
+            dart1.upgrade(["0-2-5"])

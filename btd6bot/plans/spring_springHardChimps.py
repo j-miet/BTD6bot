@@ -12,13 +12,14 @@ village 4-2-0
 _______________________________________
 """
 
-from._plan_imports import *
+from ._plan_imports import *
+
 
 def play(data):
     BEGIN, END = menu_start.load(*data)
-    round = BEGIN-1
+    round = BEGIN - 1
     map_start = time()
-    while round < END+1:
+    while round < END + 1:
         round = Rounds.round_check(round, map_start, data[2])
         if round == BEGIN:
             sub1 = Monkey('sub', 0.7510416667, 0.4601851852)
