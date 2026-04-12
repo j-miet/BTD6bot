@@ -28,15 +28,16 @@ finish the last 2 rounds.
 Plan will be updated on next bot version.
 """
 
-from._plan_imports import *
+from ._plan_imports import *
+
 
 def play(data):
     BEGIN, END = menu_start.load(*data)
-    round = BEGIN-1
+    round = BEGIN - 1
     map_start = time()
-    while round < END+1:
+    while round < END + 1:
         round = Rounds.round_check(round, map_start, data[2])
-        if round == BEGIN:     
+        if round == BEGIN:
             desp1 = Monkey('desperado', 0.3151041666667, 0.5111111111111)
             desp2 = Monkey('desperado', 0.553125, 0.537962962963)
         elif round == 8:
@@ -69,8 +70,12 @@ def play(data):
             sniper.upgrade(['1-0-0'])
         elif round == 23:
             sniper.upgrade(['1-1-0'])
+        elif round == 24:
+            sniper.target('first')
         elif round == 25:
             druid1 = Monkey('druid', 0.5057291666667, 0.5898148148148)
+        elif round == 26:
+            sniper.target('strong')
         elif round == 28:
             ability(1)
         elif round == 29:
@@ -153,6 +158,8 @@ def play(data):
             bomb = Monkey('bomb', 0.4276041666667, 0.3916666666667)
             bomb.upgrade(['1-0-0','2-0-0','3-0-0','3-1-0','3-2-0'])
         elif round == 88:
+            ability(1)
+        elif round == 90:
             ability(1)
         elif round == 92:
             ice.upgrade(['5-1-0'])

@@ -17,13 +17,14 @@ _______________________________________
 Created with all monkey knowledge unlocked.
 """
 
-from._plan_imports import *
+from ._plan_imports import *
+
 
 def play(data):
     BEGIN, END = menu_start.load(*data)
-    round = BEGIN-1
+    round = BEGIN - 1
     map_start = time()
-    while round < END+1:
+    while round < END + 1:
         round = Rounds.round_check(round, map_start, data[2])
         if round == BEGIN:
             hero = Hero(0.45625, 0.5607407407407)
@@ -80,12 +81,10 @@ def play(data):
         elif round == 39:
             engi1.upgrade(['3-2-0'])
             sniper1.upgrade(['1-2-0'])
-            forward(1)
         elif round == 40:
             ability(1)
             sniper1.upgrade(['2-2-0'])
         elif round == 42:
-            forward(1)
             ninja1.upgrade(['0-0-1','1-0-1','1-0-2','2-0-2'])
             ninja2.upgrade(['0-0-1','1-0-1','1-0-2','2-0-2'])
         elif round == 43:
@@ -129,17 +128,6 @@ def play(data):
             sniper2.upgrade(['3-0-2'])
         elif round == 61:
             sniper2.upgrade(['4-0-2'])
-
-        # elif round == 62:
-        #     sniper3 = Monkey('sniper', 0.8208333333333, 0.5416666666667)
-        #     sniper3.upgrade(['0-1-0','0-1-1','0-2-1','0-2-2'])
-        # elif round == 63:
-        #     sniper3.upgrade(['0-2-3'])
-        # elif round == 65:
-        #     ninja2.upgrade(['2-0-4'])
-        # elif round == 67:
-        #     sniper3.upgrade(['0-2-4'])
-
         elif round == 62:
             mermonkey1 = Monkey('mermonkey', 0.5322916666667, 0.5185185185185)
             mermonkey1.upgrade(['1-0-0','1-0-1','2-0-1','2-0-2'])
@@ -153,10 +141,10 @@ def play(data):
             mermonkey2.upgrade(['4-0-2'])
         elif round == 68:
             mermonkey3 = Monkey('mermonkey', 0.6307291666667, 0.4064814814815)
-            mermonkey3.upgrade(['0-0-0','0-0-1','0-0-2'])
+            mermonkey3.upgrade(['0-0-1','0-0-2'])
         elif round == 69:
             mermonkey4 = Monkey('mermonkey', 0.5213541666667, 0.2296296296296)
-            mermonkey4.upgrade(['0-0-0','0-0-1','0-0-2'])
+            mermonkey4.upgrade(['0-0-1','0-0-2'])
         elif round == 70:
             ability(2)
             sniper3 = Monkey('sniper', 0.8208333333333, 0.5416666666667)
@@ -165,21 +153,12 @@ def play(data):
             sniper3.upgrade(['0-2-3'])
         elif round == 73:
             sniper3.upgrade(['0-2-4'])
-        elif round == 74:
-            mermonkey5 = Monkey('mermonkey', 0.3328125, 0.1731481481481)
-            mermonkey5.upgrade(['0-0-0','0-0-1','0-0-2'])
-            mermonkey6 = Monkey('mermonkey', 0.2479166666667, 0.275)
-            mermonkey6.upgrade(['0-0-0','0-0-1','0-0-2'])
         elif round == 76:
             farm1.sell()
+            farm2.sell()
+            ability(1)
             sniper3.upgrade(['0-2-5'])
         elif round == 77:
             ability(2)
         elif round == 78:
-            farm2.sell()
             ninja2.upgrade(['2-0-4'])
-        elif round == 79:
-            mermonkey7 = Monkey('mermonkey', 0.4088541666667, 0.0888888888889)
-            mermonkey7.upgrade(['0-0-0','0-0-1','0-0-2'])
-            mermonkey8 = Monkey('mermonkey', 0.1578125, 0.3768518518519)
-            mermonkey8.upgrade(['0-0-0','0-0-1','0-0-2'])

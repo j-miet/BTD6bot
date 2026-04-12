@@ -3,89 +3,68 @@
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
-desperado 0-2-4
+glue 0-2-4
 
-druid 2-5-0
+sniper 4-2-0
+heli 5-0-5
 
 village 2-3-0
-beast 0-5-0
 _______________________________________
-Beast handler test plan.
 """
 
-from._plan_imports import *
+from ._plan_imports import *
+
 
 def play(data):
     BEGIN, END = menu_start.load(*data)
-    round = BEGIN-1
+    round = BEGIN - 1
     map_start = time()
-    while round < END+1:
+    while round < END + 1:
         round = Rounds.round_check(round, map_start, data[2])
-        if round == BEGIN:     
-            hero = Monkey('hero', 0.3911458333333, 0.2148148148148)
+        if round == BEGIN:
+            hero = Hero(0.3895833333333, 0.2222222222222)
         elif round == 8:
-            beast1 = Monkey('beast', 0.3536458333333, 0.5185185185185)
-        elif round == 9:
-            beast1.upgrade(['0-1-0'])
-            beast1.special(2, 0.3255208333333, 0.2981481481481)
-        elif round == 13:
-            beast1.upgrade(['0-2-0'])
-            beast1.target('strong')
+            sniper1 = Monkey('sniper', 0.1677083333333, 0.787037037037)
+            sniper1.target('strong')
         elif round == 15:
-            click(0.4151041666667, 0.8037037037037)
-            wait(1)
-            click(0.4796875, 0.8907407407407)
-        elif round == 17:
-            druid = Monkey('druid', 0.4505208333333, 0.3055555555556)
-        elif round == 25:
-            click(0.1213541666667, 0.5518518518519)
-            wait(1)
-            click(0.2369791666667, 0.6240740740741)
-        elif round == 26:
-            druid.upgrade(['1-0-0','1-1-0'])
-        elif round == 30:
-            druid.upgrade(['1-2-0','1-3-0'])
+            heli1 = Monkey('heli', 0.5510416666667, 0.4314814814815)
+        elif round == 19:
+            heli1.upgrade(['1-0-0'])
+        elif round == 21:
+            heli1.upgrade(['2-0-0'])
+        elif round == 27:
+            heli1.upgrade(['3-0-0'])
+        elif round == 31:
+            village1 = Monkey('village', 0.4677083333333, 0.3444444444444)
+            village1.upgrade(['0-1-0'])
         elif round == 35:
-            village = Monkey('village', 0.4432291666667, 0.3925925925926)
-            village.upgrade(['0-1-0','0-2-0','1-2-0','2-2-0'])
+            village1.upgrade(['0-2-0'])
         elif round == 36:
-            beast1.upgrade(['0-3-0'])
-        elif round == 39:
-            desperado = Monkey('desperado', 0.4192708333333, 0.4851851851852)
-            desperado.upgrade(['0-0-1','0-0-2','0-0-3','0-1-3','0-2-3'])
-        elif round == 47:
-            click(0.5609375, 0.6037037037037)
-            wait(1)
-            click(0.6130208333333, 0.6814814814815) 
-        elif round == 50:
-            beast1.upgrade(['0-4-0'])
+            heli2 = Monkey('heli', 0.4614583333333, 0.4944444444444)
+        elif round == 37:
+            heli2.upgrade(['1-0-0','2-0-0'])
+        elif round == 38:
+            heli2.upgrade(['2-0-1','2-0-2'])
+        elif round == 41:
+            heli2.upgrade(['2-0-3'])
+            heli1.upgrade(['3-0-1','3-0-2'])
+        elif round == 48:
+            heli2.upgrade(['2-0-4'])
         elif round == 57:
-            click(0.4942708333333, 0.1666666666667)
-            wait(1)
-            click(0.5619791666667, 0.2537037037037)
-        elif round == 60:
-            druid.upgrade(['1-4-0'])
-        elif round == 67:
-            click(0.3859375, 0.3555555555556)
-            wait(1)
-            click(0.4453125, 0.4574074074074)
-        elif round == 71:
-            desperado.upgrade(['0-2-4'])
-        elif round == 77:
-            druid.upgrade(['1-5-0','2-5-0'])
-            beast2 = Monkey('beast', 0.5140625, 0.337037037037)
-            beast3 = Monkey('beast', 0.5463541666667, 0.3925925925926)
-            beast4 = Monkey('beast', 0.5015625, 0.4351851851852)
-        elif round == 78:
-            beast2.upgrade(['0-1-0','0-2-0','0-3-0','0-4-0'])
-            beast2.merge(0.3536458333333, 0.5185185185185)
-        elif round == 79:
-            beast3.upgrade(['0-1-0','0-2-0','0-3-0','0-4-0'])
-            beast3.merge(0.3536458333333, 0.5185185185185)
+            heli1.upgrade(['4-0-2'])
+        elif round == 59:
+            village1.upgrade(['1-2-0','2-2-0'])
         elif round == 81:
-            beast4.upgrade(['0-1-0','0-2-0','0-3-0','0-4-0'])
-            beast4.merge(0.3536458333333, 0.5185185185185)
+            heli1.upgrade(['5-0-2'])
         elif round == 89:
-            village.upgrade(['2-3-0'])
+            village1.upgrade(['2-3-0'])
+        elif round == 94:
+            heli2.upgrade(['2-0-5'])
         elif round == 95:
-            beast1.upgrade(['0-5-0'])
+            glue1 = Monkey('glue', 0.4239583333333, 0.1648148148148)
+            glue1.upgrade(['0-1-0','0-2-0','0-2-1','0-2-2','0-2-3'])
+        elif round == 96:
+            glue1.upgrade(['0-2-4'])
+            sniper1.upgrade(['1-0-0','2-0-0','3-0-0'])
+        elif round == 98:
+            sniper1.upgrade(['4-0-0','4-1-0','4-2-0'])

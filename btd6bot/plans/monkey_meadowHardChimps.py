@@ -12,15 +12,16 @@ village 2-3-0
 _______________________________________
 """
 
-from._plan_imports import *
+from ._plan_imports import *
+
 
 def play(data):
     BEGIN, END = menu_start.load(*data)
-    round = BEGIN-1
+    round = BEGIN - 1
     map_start = time()
-    while round < END+1:
+    while round < END + 1:
         round = Rounds.round_check(round, map_start, data[2])
-        if round == BEGIN:     
+        if round == BEGIN:
             hero = Hero(0.2505208333333, 0.487962962963)
         elif round == 8:
             sniper1 = Monkey('sniper', 0.3182291666667, 0.1194444444444)
@@ -51,19 +52,17 @@ def play(data):
             heli2.upgrade(['2-0-4'])
         elif round == 57:
             heli1.upgrade(['4-0-2'])
-        elif round == 62:
-            village1.upgrade(['0-3-0','1-3-0'])
-        elif round == 63:
-            village1.upgrade(['2-3-0'])
-        elif round == 64:
-            glue1 = Monkey('glue', 0.2526041666667, 0.3657407407407)
-            glue1.upgrade(['0-1-0','0-2-0','0-2-1','0-2-2'])
-        elif round == 66:
-            glue1.upgrade(['0-2-3'])
-        elif round == 84:
+        elif round == 59:
+            village1.upgrade(['1-2-0','2-2-0'])
+        elif round == 81:
             heli1.upgrade(['5-0-2'])
-        elif round == 95:
+        elif round == 89:
+            village1.upgrade(['2-3-0'])
+        elif round == 94:
             heli2.upgrade(['2-0-5'])
+        elif round == 95:
+            glue1 = Monkey('glue', 0.2526041666667, 0.3657407407407)
+            glue1.upgrade(['0-1-0','0-2-0','0-2-1','0-2-2','0-2-3'])
         elif round == 96:
             glue1.upgrade(['0-2-4'])
             sniper1.upgrade(['1-0-0','2-0-0','3-0-0'])
