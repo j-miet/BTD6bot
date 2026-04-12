@@ -40,6 +40,7 @@ disable_error_code = ["operator", "assignment", "union-attr", "arg-type"]
 
 # Ruff
 [tool.ruff]
+line-length = 120
 exclude = [
     "docs",
     "btd6bot/plans",
