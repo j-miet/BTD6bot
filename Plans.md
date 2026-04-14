@@ -1,4 +1,4 @@
-# Supported game plans (Last updated 2026-02-27)
+# Supported game plans (Last updated 2026-04-12)
 
 - this list is auto-updated using ``scripts/update_plans.py``
 - all implemented plans are listed. Each game mode includes
@@ -57,6 +57,7 @@
 - [Ravine](#ravine)
 - [Resort](#resort)
 - [Sanctuary](#sanctuary)
+- [Scrapyard](#scrapyard)
 - [Skates](#skates)
 - [Spa Pits](#spa-pits)
 - [Spillway](#spillway)
@@ -126,9 +127,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Ancient Portal
 - Hard
@@ -222,9 +220,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of tinkertonHardChimps:
-			    - tower position changed
 			
 ### Cargo
 - Hard
@@ -259,9 +254,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Castle Revenge
 - Hard
@@ -317,9 +309,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Cubism
 - Hard
@@ -336,9 +325,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Dark Castle
 - Easy
@@ -504,9 +490,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Erosion
 - Hard
@@ -586,9 +569,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Frozen Over
 - Hard
@@ -605,9 +585,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Geared
 - Hard
@@ -726,9 +703,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### High Finance
 - Hard
@@ -766,9 +740,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Infernal
 - Easy
@@ -873,10 +844,10 @@
 			[Monkey Knowledge] -
 			-------------------------------------------------------------
 			===Monkeys & upgrades required===
-			sniper 1-0-3
-			heli 5-0-5
+			glue 0-2-4
 			
-			alch 4-2-0
+			sniper 4-2-0
+			heli 5-0-5
 			
 			village 2-3-0
 			_______________________________________
@@ -911,10 +882,10 @@
 			[Monkey Knowledge] -
 			-------------------------------------------------------------
 			===Monkeys & upgrades required===
-			sniper 1-0-3
-			heli 5-0-5
+			glue 0-2-4
 			
-			alch 4-2-0
+			sniper 4-2-0
+			heli 5-0-5
 			
 			village 2-3-0
 			_______________________________________
@@ -971,13 +942,11 @@
 			===Monkeys & upgrades required===
 			glue 0-2-4
 			
-			sniper 0-0-0
+			sniper 4-2-0
 			heli 5-0-5
 			
 			village 2-3-0
 			_______________________________________
-			If price change to heli where 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of tinkertonHardChimps (tower position changed).
 			
 ### Midnight Mansion
 - Hard
@@ -1099,15 +1068,11 @@
 			===Monkeys & upgrades required===
 			glue 0-2-4
 			
-			sniper 4-0-2
+			sniper 4-2-0
 			heli 5-0-5
 			
 			village 2-3-0
 			_______________________________________
-			Inspired by monkey_meadowHardChimps: 
-			    - tower position changed 
-			    - sniper upgraded earlier
-			    - different upgrade path for sniper
 			
 ### Park Path
 - Hard
@@ -1124,9 +1089,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Party Parade
 - Hard
@@ -1296,9 +1258,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Sanctuary
 - Easy
@@ -1371,6 +1330,22 @@
 			engineer 0-0-0
 			_______________________________________
 			
+### Scrapyard
+- Hard
+	- [Chimps](btd6bot/plans/scrapyardHardChimps.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			glue 0-2-4
+			
+			sniper 4-2-0
+			heli 5-0-5
+			
+			village 2-3-0
+			_______________________________________
+			
 ### Skates
 - Hard
 	- [Chimps](btd6bot/plans/skatesHardChimps.py)
@@ -1379,10 +1354,10 @@
 			[Monkey Knowledge] -
 			-------------------------------------------------------------
 			===Monkeys & upgrades required===
-			sniper 1-0-3
-			heli 5-0-5
+			glue 0-2-4
 			
-			alch 4-2-0
+			sniper 4-2-0
+			heli 5-0-5
 			
 			village 2-3-0
 			_______________________________________
@@ -1402,9 +1377,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Spillway
 - Hard
@@ -1501,9 +1473,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Three Mines 'round
 - Hard
@@ -1513,14 +1482,13 @@
 			[Monkey Knowledge] -
 			-------------------------------------------------------------
 			===Monkeys & upgrades required===
-			desperado 0-2-4
+			glue 0-2-4
 			
-			druid 2-5-0
+			sniper 4-2-0
+			heli 5-0-5
 			
 			village 2-3-0
-			beast 0-5-0
 			_______________________________________
-			Beast handler test plan.
 			
 ### Tinkerton
 - Hard
@@ -1537,10 +1505,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Inspired by monkey_meadowHardChimps:
-			    - tower position changed
-			    - village bigger range upgrade bougth earlier
 			
 ### Town Center
 - Hard
@@ -1557,28 +1521,22 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Tree Stump
 - Hard
 	- [Chimps](btd6bot/plans/tree_stumpHardChimps.py)
 
-			[Hero] Corvus
+			[Hero] Sauda
 			[Monkey Knowledge] -
 			-------------------------------------------------------------
 			===Monkeys & upgrades required===
-			desperado 0-0-0
+			glue 0-2-4
 			
-			super 2-0-4
-			alch 5-0-0
-			druid 1-3-0
-			mermonkey 0-3-2
+			sniper 4-2-0
+			heli 5-0-5
 			
-			village 2-0-0
+			village 2-3-0
 			_______________________________________
-			Uses Corvus as hero and a 0-2-4 super so saving money requires a lot of ability and spellbook usage.
 			
 ### Tricky Tracks
 - Easy
@@ -1613,25 +1571,19 @@
 			[Monkey Knowledge] Yes
 			-------------------------------------------------------------
 			===Monkeys & upgrades required===
-			dart 0-0-0
-			boomer 0-2-4
-			bomb 4-2-0
-			tack 2-0-4
-			ice 5-1-0
+			dart 0-2-5
 			glue 0-2-4
 			desperado 0-0-0
 			
 			sniper 1-1-0
 			
-			wizard 5-3-2
-			alch 3-0-1
+			wizard 4-3-2
 			druid 0-0-0
 			mermonkey 4-3-2
 			
-			village 3-0-2
+			village 2-0-2
 			_______________________________________
 			Created with all monkey knowledge unlocked.
-			Copy of CHIMPS plan.
 			
 	- [Alternate](btd6bot/plans/tricky_tracksHardAlternate.py)
 
@@ -1721,9 +1673,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Workshop
 - Easy
