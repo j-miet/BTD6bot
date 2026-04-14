@@ -6,6 +6,7 @@ from bot import _maindata, kb_mouse
 from bot.bot_data import BotData
 from customprint import cprint
 
+
 class PauseControl:
     pause_length: float = 0
 
@@ -17,25 +18,28 @@ class PauseControl:
             kb_mouse.click((0.9994791666667, 0.0))
             kb_mouse.press_esc()
             BotData.update_pause(_maindata.maindata["internal"]["paused"])
-            cprint('>>> Bot paused')
+            cprint(">>> Bot paused")
             while _maindata.maindata["internal"]["paused"]:
                 time.sleep(0.1)
+
             PauseControl.pause_length += time.time() - pause_start
             kb_mouse.click((0.9994791666667, 0.0))
             kb_mouse.press_esc()
             BotData.update_pause(_maindata.maindata["internal"]["paused"])
-            cprint('Bot unpaused')
+            cprint("Bot unpaused")
+
 
 def _record_time(time_str: str) -> None:
     """Appends a time string to a temporary text file."""
-    _maindata.maindata["times_temp"].append(time_str+'\n')
+    _maindata.maindata["times_temp"].append(time_str + "\n")
+
 
 def time_print(start: float, end: float, str: str) -> None:
     """Prints the time passed between start and end. Used with times.current_time().
 
     Returns the time string in 'm:ss' format (m=minutes, ss=seconds).
 
-    Will also pass the time values to record_time function if time_recording_status is True. Data is stored to 
+    Will also pass the time values to record_time function if time_recording_status is True. Data is stored to
     Files/times_temp.txt, which can be loaded and parsed by shared_api.save_bot_times.
 
     Args:
@@ -46,21 +50,23 @@ def time_print(start: float, end: float, str: str) -> None:
     Returns:
         Time in 'm:ss' string format.
     """
-    total = end-start
-    minutes = int(total/60)
+    total = end - start
+    minutes = int(total / 60)
     seconds = int(total % 60)
-    cprint(f'###{str} --- {minutes}:{seconds:02d}###')
+
+    cprint(f"###{str} --- {minutes}:{seconds:02d}###")
     if _maindata.maindata["internal"]["time_recording_status"]:
         try:
             round_num = str.split()[1]
-            _record_time(f'{round_num},{minutes}:{seconds:02d}')
+            _record_time(f"{round_num},{minutes}:{seconds:02d}")
         except IndexError:
-            _record_time(f'{minutes}:{seconds:02d}')
+            _record_time(f"{minutes}:{seconds:02d}")
+
 
 def current_time() -> float:
     """Returns current time.
-    
-    Takes pauses in to account, meaning the returned value is  
+
+    Takes pauses in to account, meaning the returned value is
     time.time() - total pause length for current bot loop.
     """
-    return time.time()-PauseControl.pause_length
+    return time.time() - PauseControl.pause_length

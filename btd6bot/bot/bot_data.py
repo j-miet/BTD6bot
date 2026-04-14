@@ -1,5 +1,6 @@
 """BotData class for passing information to gui."""
 
+
 class BotData:
     """Stores various pieces of data into variables which can be utilized by gui.
 
@@ -11,6 +12,7 @@ class BotData:
         begin_r (int, class attribute): Begin round of current plan.
         end_r (int, class attribute): End round of current plan.
     """
+
     round_time: float = 0
     current_round: int = 0
     begin_r: int = 0
@@ -19,11 +21,8 @@ class BotData:
     victory: bool = False
 
     @staticmethod
-    def set_data(round_time: float = 0,
-                 current_round: int = 0,
-                 begin_round: int = 0,
-                 end_round: int = 0) -> None:
-        """Set new values for BotData variables.  
+    def set_data(round_time: float = 0, current_round: int = 0, begin_round: int = 0, end_round: int = 0) -> None:
+        """Set new values for BotData variables.
 
         Default values are initial values: if you need to reset all settings, just call BotData.set_data().
 
