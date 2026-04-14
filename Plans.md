@@ -1,4 +1,4 @@
-# Supported game plans (Last updated 2026-04-12)
+# Supported game plans (Last updated 2026-04-14)
 
 - this list is auto-updated using ``scripts/update_plans.py``
 - all implemented plans are listed. Each game mode includes
@@ -19,6 +19,7 @@
 - [Carved](#carved)
 - [Castle Revenge](#castle-revenge)
 - [Cornfield](#cornfield)
+- [Covered Garden](#covered-garden)
 - [Cracked](#cracked)
 - [Cubism](#cubism)
 - [Dark Castle](#dark-castle)
@@ -53,7 +54,9 @@
 - [Party Parade](#party-parade)
 - [Pat's Pond](#pat's-pond)
 - [Peninsula](#peninsula)
+- [Polyphemus](#polyphemus)
 - [Quad](#quad)
+- [Quarry](#quarry)
 - [Ravine](#ravine)
 - [Resort](#resort)
 - [Sanctuary](#sanctuary)
@@ -62,6 +65,7 @@
 - [Spa Pits](#spa-pits)
 - [Spillway](#spillway)
 - [Spring Spring](#spring-spring)
+- [Sulfur Springs](#sulfur-springs)
 - [Sunken Columns](#sunken-columns)
 - [Sunset Gulch](#sunset-gulch)
 - [The Cabin](#the-cabin)
@@ -71,6 +75,7 @@
 - [Tree Stump](#tree-stump)
 - [Tricky Tracks](#tricky-tracks)
 - [Underground](#underground)
+- [Water Park](#water-park)
 - [Winter Park](#winter-park)
 - [Workshop](#workshop)
 - [X Factor](#x-factor)
@@ -293,6 +298,28 @@
 			village 2-0-2
 			_______________________________________
 			No corn is removed which unlocks 'No Harvest' achievement.
+			
+### Covered Garden
+- Hard
+	- [Chimps](btd6bot/plans/covered_gardenHardChimps.py)
+
+			[Hero] Psi
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			
+			sniper 4-2-0
+			heli 5-0-5
+			
+			ninja 0-0-4
+			
+			village 2-3-0
+			engineer 1-0-0
+			_______________________________________
+			The white garder borders will unfortunately cause bad round detection issues because round number has also white color.
+			Now the plan itself is very simple and works just fine, but each round must be ended manually which no doubt adds
+			a few minutes to final time.
 			
 ### Cracked
 - Hard
@@ -809,9 +836,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Last Resort
 - Hard
@@ -868,11 +892,11 @@
 			
 			alch 5-0-0
 			druid 1-3-0
-			mermonkey 4-2-0
+			mermonkey 3-0-0
 			
 			village 3-3-2
 			_______________________________________
-			Possible RNG pre-round 40
+			Possible pre-round 40 RNG
 			
 ### Lotus Island
 - Hard
@@ -905,9 +929,6 @@
 			
 			village 2-3-0
 			_______________________________________
-			If price changes to heli make 3-0-0 not available for round 28, please update to pop lead bloons.
-			Copy of monkey_meadowHardChimps:
-			    - tower position changed
 			
 ### Mesa
 - Hard
@@ -1159,6 +1180,25 @@
 			engineer 0-3-3
 			_______________________________________
 			
+### Polyphemus
+- Hard
+	- [Chimps](btd6bot/plans/polyphemusHardChimps.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			glue 0-2-4
+			
+			sniper 2-5-5
+			
+			alch 5-2-0
+			
+			village 2-0-2
+			engineer 0-3-0
+			_______________________________________
+			Sniper strat, copied from sunken columns Chimps
+			
 ### Quad
 - Easy
 	- [Standard](btd6bot/plans/quadEasyStandard.py)
@@ -1200,6 +1240,22 @@
 			Depends on rng a bit, but should be quite consistent.
 			Rounds 37-40, in particular 40, can leak randomly: the issue is with how quickly bot detects round change and times ability use correctly, and sometimes ability is not required at all if wizard firewall timing is just right.
 			Round 100 has unfortunately some rng as well.
+			
+### Quarry
+- Hard
+	- [Chimps](btd6bot/plans/quarryHardChimps.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			glue 0-2-4
+			
+			sniper 4-2-0
+			heli 5-0-5
+			
+			village 2-3-0
+			_______________________________________
 			
 ### Ravine
 - Easy
@@ -1414,6 +1470,22 @@
 			boat 5-0-2
 			
 			village 4-2-0
+			_______________________________________
+			
+### Sulfur Springs
+- Hard
+	- [Chimps](btd6bot/plans/sulfur_springsHardChimps.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			glue 0-2-4
+			
+			sniper 4-2-0
+			heli 5-0-5
+			
+			village 2-3-0
 			_______________________________________
 			
 ### Sunken Columns
@@ -1657,6 +1729,22 @@
 			_______________________________________
 			Strat is build around testing Geraldo so it's bit scuffed and unoptimized.
 			Still, should work quite consistently with minimal rng.
+			
+### Water Park
+- Hard
+	- [Chimps](btd6bot/plans/water_parkHardChimps.py)
+
+			[Hero] Quincy
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			glue 0-2-4
+			
+			sniper 4-2-0
+			heli 5-0-5
+			
+			village 2-3-0
+			_______________________________________
 			
 ### Winter Park
 - Hard
