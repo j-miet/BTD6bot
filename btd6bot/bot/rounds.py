@@ -262,7 +262,7 @@ class Rounds:
             Rounds.start()
         elif current_round == Rounds.end_round + 1:
             if _maindata.debug_get_mode() == _maindata.Debug.SETUP_STATIC_STATE:
-                dprint(f"Reached the end of current plan, stopping here!")
+                dprint("Reached the end of current plan, stopping here!")
                 return current_round
 
             Rounds.return_menu(Rounds.current_round_begin_time, map_start, Rounds.end_round)

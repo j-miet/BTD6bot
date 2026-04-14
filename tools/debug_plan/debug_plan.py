@@ -1,3 +1,9 @@
+"""Test any plan file.
+
+Currently only static tower position checking is supported. If map has dynamic positioning i.e. towers move between
+rounds, this tool won't work.
+"""
+
 import os
 from pathlib import Path
 import signal
@@ -5,12 +11,6 @@ import sys
 import threading
 import time
 
-
-"""Test any plan file.
-
-Currently only static tower position checking is supported. If map has dynamic positioning i.e. towers move between
-rounds, this tool won't work.
-"""
 
 import pynput.keyboard
 from pynput.keyboard import Key, KeyCode
@@ -62,6 +62,7 @@ def exit(key: Key | KeyCode | None) -> None:
     elif key == Key.f8:
         if bot_thread_active:
             gui_tools.terminate_thread(bot_thread)
+
 
 
 def run_plan(plan_name: str, debug_mode: str, start_round: int = -1, start_herolvl=-1) -> None:
