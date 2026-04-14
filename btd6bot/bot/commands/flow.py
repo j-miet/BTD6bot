@@ -28,7 +28,7 @@ class AutoStart:
 
 
 def wait(timer: float | int = 0) -> None:
-    """Pause everything for specified amount of time.
+    """Pause command execution for specified amount of time.
 
     Used in plans to buffer commands and avoid on executing them before certain time has passed.
 
@@ -36,8 +36,9 @@ def wait(timer: float | int = 0) -> None:
         timer: Wait timer, can be integer or float. Integer counts down, float will just display the waiting time.
             Default value is 0.
     """
-    if _maindata.maindata["internal"]["defeat_status"]:
+    if _maindata.maindata["internal"]["defeat_status"] or _maindata.debug_pos() or _maindata.debug_get_ignore_flag():
         return
+
     cprint("Waiting... ", end="")
     timing.counter(timer)
     cprint(" -> Continuing.")
@@ -57,8 +58,9 @@ def forward(speed: int = 2) -> None:
     Args:
         speed: Default value is 2 for fast-forward. Use value 1 for a single click. Other values do nothing.
     """
-    if _maindata.maindata["internal"]["defeat_status"]:
+    if _maindata.maindata["internal"]["defeat_status"] or _maindata.debug_pos() or _maindata.debug_get_ignore_flag():
         return
+
     if speed == 1:
         kb_mouse.kb_input(hotkeys["play/fast forward"])
         time.sleep(0.2)
@@ -69,6 +71,7 @@ def forward(speed: int = 2) -> None:
     else:
         cprint("Speed value must be either 1 or 2.")
         return
+
     AutoStart.called_forward = True
 
 
@@ -79,15 +82,15 @@ def change_autostart() -> None:
 
     Called only within a plan file AND called once, preferable as the very first command on first round:
     bot.menu will handle the re-enabling of autostart before bot starts doing any in-game tower commands, as default
-    value is always 'True'.
+    value is always "True".
 
     This is used only for harder plans where, after the round is finished, you need the end of round gold for
     placing/upgrading towers before starting the following round and/or if tower placements are altered after start,
     as is the case in maps like Geared or Sanctuary.
 
-    Should autostart be set to 'False', you need to use end_round command on ---every single round---.
+    Should autostart be set to "False", you need to use end_round command on ---every single round---.
     """
-    if _maindata.maindata["internal"]["defeat_status"]:
+    if _maindata.maindata["internal"]["defeat_status"] or _maindata.debug_pos() or _maindata.debug_get_ignore_flag():
         return
 
     time.sleep(0.5)
@@ -111,7 +114,7 @@ def end_round(time_limit: int = 0) -> None:
     to manually insert calls for end_round and optionally give them a max time limit after which it will force start
     next round.
 
-    You should check some Expert Chimps plans inside 'plans' folder for comparison, and to understand how they use it
+    You should check some Expert Chimps plans inside "plans" folder for comparison, and to understand how they use it
     in practice.
 
     One final thing: calling this function will add a temporary round check ignore flag. This means bot will not attempt
@@ -120,7 +123,7 @@ def end_round(time_limit: int = 0) -> None:
     Args:
         time_limit: Waiting period before start button is clicked. Measured in seconds.
     """
-    if _maindata.maindata["internal"]["defeat_status"]:
+    if _maindata.maindata["internal"]["defeat_status"] or _maindata.debug_pos() or _maindata.debug_get_ignore_flag():
         return
 
     if time_limit >= 2:
