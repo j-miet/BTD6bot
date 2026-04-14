@@ -19,7 +19,7 @@ _DEFAULT_LOCATIONS: dict[str, Any] = {
             "sauda": (0.2161458333333, 0.7453703703704),
             "adora": (0.0526041666667, 0.9157407407407),
             "brickell": (0.1307291666667, 0.9203703703704),
-            "psi": (0.2104166666667, 0.9148148148148)
+            "psi": (0.2104166666667, 0.9148148148148),
         },
         "heroes2": {
             "geraldo": (0.0541666666667, 0.835185185185266667),
@@ -42,12 +42,12 @@ _DEFAULT_LOCATIONS: dict[str, Any] = {
             "collection_two_right": (0.5807291666667, 0.5092592592593),
             "collection_three_left": (0.3130208333333, 0.5027777777778),
             "collection_three_middle": (0.5015625, 0.5009259259259),
-            "collection_three_right": (0.6911458333333, 0.4935185185185)
+            "collection_three_right": (0.6911458333333, 0.4935185185185),
         },
         "difficulty": {
             "EASY": (0.3255208333333, 0.3814814814815),
             "MEDIUM": (0.5026041666667, 0.3833333333333),
-            "HARD": (0.6744791666667, 0.3861111111111)
+            "HARD": (0.6744791666667, 0.3861111111111),
         },
         "modes": {
             "standard": (0.3276041666667, 0.5564814814815),
@@ -56,7 +56,7 @@ _DEFAULT_LOCATIONS: dict[str, Any] = {
             "top_right": (0.8348958333333, 0.4296296296296),
             "bottom_left": (0.503125, 0.7027777777778),
             "bottom_middle": (0.6682291666667, 0.6981481481481),
-            "bottom_right": (0.8411458333333, 0.6990740740741)
+            "bottom_right": (0.8411458333333, 0.6990740740741),
         },
         "ingame": {
             "dragdrop": (0.4427083333333, 0.2777777777778),
@@ -72,7 +72,9 @@ _DEFAULT_LOCATIONS: dict[str, Any] = {
             "target_leftpanel_leftarrow": (0.044, 0.294),
             "target_leftpanel_rightarrow": (0.185, 0.292),
             "target_rightpanel_leftarrow": (0.680, 0.292),
-            "target_rightpanel_rightarrow": (0.822, 0.292)
+            "target_rightpanel_rightarrow": (0.822, 0.292),
+            "hero_leftpanel_upgradelevel": (0.120, 0.64),
+            "hero_rightpanel_upgradelevel": (0.754, 0.64),
         },
         "hero_left_menu": {
             "1": (0.0453125, 0.1712962962963),
@@ -90,7 +92,7 @@ _DEFAULT_LOCATIONS: dict[str, Any] = {
             "13": (0.0453125, 0.6101851851852),
             "14": (0.0932291666667, 0.6101851851852),
             "15": (0.1432291666667, 0.6101851851852),
-            "16": (0.1901041666667, 0.6101851851852)
+            "16": (0.1901041666667, 0.6101851851852),
         },
         "hero_right_menu": {
             "1": (0.6817708333333, 0.175),
@@ -108,16 +110,16 @@ _DEFAULT_LOCATIONS: dict[str, Any] = {
             "13": (0.6817708333333, 0.6083333333333),
             "14": (0.7307291666667, 0.6083333333333),
             "15": (0.7786458333333, 0.6083333333333),
-            "16": (0.8255208333333, 0.6083333333333)
-        }
+            "16": (0.8255208333333, 0.6083333333333),
+        },
     },
     "TEXT": {
         "menu": {
             "menu_playtext": (0.4560416666667, 0.932962962963, 0.55875, 0.9914814814815),
             "map_searchtext": (0.4140625, 0.0203703703704, 0.4651041666667, 0.0537037037037),
             "map_namebotleft": (0.1901041666667, 0.4666666666667, 0.3703125, 0.5),
-            "collection_collect": (0.43, 0.59, 0.534375, 0.6453703703704)
-        },    
+            "collection_collect": (0.43, 0.59, 0.534375, 0.6453703703704),
+        },
         "ingame": {
             "current_round": (0.7181666666667, 0.027001, 0.8119791666667, 0.0685185185185),
             "upgrade_text": (0.875, 0.0175925925926, 0.9682291666667, 0.0638888888889),
@@ -131,9 +133,9 @@ _DEFAULT_LOCATIONS: dict[str, Any] = {
             "mid_upg_current_leftwindow": (0.0333333333333, 0.5122222222222, 0.121875, 0.5861111111111),
             "mid_upg_current_rightwindow": (0.6777083333333, 0.5122222222222, 0.7661458333333, 0.5861111111111),
             "bot_upg_current_leftwindow": (0.0333333333333, 0.6492592592593, 0.121875, 0.7231481481481),
-            "bot_upg_current_rightwindow": (0.6777083333333, 0.6492592592593, 0.7661458333333, 0.7231481481481)
-        }
-    }
+            "bot_upg_current_rightwindow": (0.6777083333333, 0.6492592592593, 0.7661458333333, 0.7231481481481),
+        },
+    },
 }
 """All default locations for 16:9 aspect ratio resolutions.
 
@@ -213,6 +215,10 @@ CLICK (2-tuple):
             Same as left panel"s left arrow, but when panel opens on right.
         target_rightpanel_rightarrow:
             Panel on the right and right arrow.
+        hero_leftpanel_upgradelevel:
+            Hero level up button when left panel
+        hero_rightpanel_upgradelevel:
+            Hero level up button when right panel
         
     hero_left_menu (Hero utility panel button locations for Geraldo shop, Corvus spellbook etc., if panel opens on the  
         left => hero is placed on the right side of gameplay screen middle point).
@@ -268,16 +274,18 @@ Values should be recorded in the resolution you"re planning to use. In-game shif
 coordinate scaling for all TEXT values and only shifts CLICK positions.
 """
 
+
 def update_customlocations(locations_dict: dict[str, Any], source: dict[str, Any]) -> None:
     locations_dict.update(source)
 
+
 def get_click(category: str, value: str) -> Any:
     """Return a click location (2-tuple) from selected category dictionary.
-    
+
     Args:
         category (str): A dictionary key
         value (str): Value of dictionary, a 2-tuple
-    
+
     Returns:
         A 2-tuple value
     """
@@ -286,13 +294,14 @@ def get_click(category: str, value: str) -> Any:
     else:
         return _DEFAULT_LOCATIONS["CLICK"][category][value]
 
+
 def get_text(category: str, value: str) -> Any:
     """Return a text box location (4-tuple) from selected category dictionary.
-    
+
     Args:
         category (str): A dictionary key
         value (str): Value of dictionary, a 4-tuple
-    
+
     Returns:
         A 4-tuple value
     """
@@ -300,10 +309,11 @@ def get_text(category: str, value: str) -> Any:
         return _custom_locations["TEXT"][category][value]
     else:
         return _DEFAULT_LOCATIONS["TEXT"][category][value]
-    
+
+
 def get_locationdict() -> dict[str, Any]:
     """Return entire dictionary of all click and text positions.
-    
+
     If in-game resolution shift is enabled, a custom location dictionary is returned instead.
 
     Returns:
@@ -313,4 +323,3 @@ def get_locationdict() -> dict[str, Any]:
         return _custom_locations
     else:
         return _DEFAULT_LOCATIONS
-
