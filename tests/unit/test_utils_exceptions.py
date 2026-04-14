@@ -4,23 +4,33 @@ import pytest
 
 from utils.exceptions import SetPlanError, BotError
 
+
 def test_setplanerror_args():
     err = SetPlanError("SyntaxError")
     assert err.code == "SyntaxError"
 
-@pytest.mark.parametrize("error, message", [
-    (SetPlanError("SyntaxError"), "Current plan file has invalid syntax: Correct syntax is map_nameDifficultyMode."),
-    (SetPlanError("DifficultyError"), "Current plan file has invalid difficulty."),
-    (SetPlanError("GamemodeError"), "Current plan file has invalid game mode for selected difficulty."),
-    (SetPlanError(""), "Undefined error.")
-])
+
+@pytest.mark.parametrize(
+    "error, message",
+    [
+        (
+            SetPlanError("SyntaxError"),
+            "Current plan file has invalid syntax: Correct syntax is map_nameDifficultyMode.",
+        ),
+        (SetPlanError("DifficultyError"), "Current plan file has invalid difficulty."),
+        (SetPlanError("GamemodeError"), "Current plan file has invalid game mode for selected difficulty."),
+        (SetPlanError(""), "Undefined error."),
+    ],
+)
 def test_setplanerror_msg(error: SetPlanError, message: str):
     assert error.__str__() == message
+
 
 def test_boterror_args():
     err = BotError("test message", 10)
     assert err.msg == "test message"
     assert err.code == 10
+
 
 def test_boterror_msg():
     boterror1 = BotError("test message", "Error code")
