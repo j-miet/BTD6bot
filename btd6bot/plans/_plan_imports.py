@@ -9,5 +9,17 @@ from bot.commands.hero import Hero
 import bot.menu_start as menu_start
 from bot.rounds import Rounds
 
-__all__ = ['time', 'menu_start', 'Rounds', 'Monkey', 'Hero',
-            'ability', 'click', 'forward', 'end_round', 'change_autostart', 'wait', 'move_cursor']
+__all__ = [
+    "time",
+    "menu_start",
+    "Rounds",
+    "Monkey",
+    "Hero",
+    "ability",
+    "click",
+    "forward",
+    "end_round",
+    "change_autostart",
+    "wait",
+    "move_cursor",
+]
