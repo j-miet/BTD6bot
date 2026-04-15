@@ -1,4 +1,4 @@
-# Supported game plans (Last updated 2026-04-14)
+# Supported game plans (Last updated 2026-04-15)
 
 - this list is auto-updated using ``scripts/update_plans.py``
 - all implemented plans are listed. Each game mode includes
@@ -708,7 +708,7 @@
 			sub 0-4-0
 			mortar 0-2-3
 			
-			alch 4-2-0
+			alch 4-0-1
 			druid 1-3-0
 			
 			spike 2-0-5
@@ -818,7 +818,7 @@
 			
 			village 2-3-0
 			_______________________________________
-			-Apache prime for dps  
+			-Apache prime for dps
 			-Pre-Emptive Strike for ddts, late game moab damage, and round 100.
 			
 ### Kartsndarts
@@ -1221,7 +1221,6 @@
 			===Monkeys & upgrades required===
 			dart 0-0-0
 			boomer 0-2-4
-			bomb 0-3-0
 			tack 2-0-5
 			ice 4-1-1
 			glue 0-2-4
@@ -1238,7 +1237,7 @@
 			engineer 3-3-2
 			_______________________________________
 			Depends on rng a bit, but should be quite consistent.
-			Rounds 37-40, in particular 40, can leak randomly: the issue is with how quickly bot detects round change and times ability use correctly, and sometimes ability is not required at all if wizard firewall timing is just right.
+			Rounds 37-40, 40 in particular, can leak randomly: the issue is with how quickly bot detects round change and times ability use correctly, and sometimes ability is not required at all if wizard firewall timing is just right.
 			Round 100 has unfortunately some rng as well.
 			
 ### Quarry
@@ -1293,11 +1292,11 @@
 			alch 4-2-1
 			druid 1-3-0
 			
-			spike 3-0-3
+			spike 3-0-2
 			village 2-0-2
 			engineer 0-3-2
 			_______________________________________
-			Round 79 has annoiyng rng depending on how many BFBs path to middle instead of right.
+			Quite a bit of rng, mostly on rounds 21, 35, 79 and 98. 79 specifically has annoying rng depending on how many BFBs path to middle instead of right.
 			
 ### Resort
 - Hard
@@ -1385,6 +1384,8 @@
 			village 4-2-0
 			engineer 0-0-0
 			_______________________________________
+			Plan has not been adjusted for x-x-4 boomerangs price increase which will delay late game round transitions a bit.
+			Still works, though.
 			
 ### Scrapyard
 - Hard
@@ -1678,33 +1679,24 @@
 			
 	- [Chimps](btd6bot/plans/tricky_tracksHardChimps.py)
 
-			[Hero] Obyn
+			[Hero] Etienne
 			[Monkey Knowledge] -
 			-------------------------------------------------------------
 			===Monkeys & upgrades required===
 			dart 0-0-0
 			boomer 0-2-4
-			bomb 4-2-0
 			tack 2-0-4
-			ice 5-1-0
+			ice 5-2-0
 			glue 0-2-4
-			desperado 0-0-0
 			
-			sniper 1-1-0
+			sniper 4-1-2
 			
 			wizard 5-3-2
-			alch 3-0-1
-			druid 0-0-0
+			alch 4-2-0
 			mermonkey 4-3-2
 			
-			village 3-0-2
+			village 4-0-2
 			_______________________________________
-			In version 53 this map got changed so there's less space to put towers. For this reason placements have been
-			adjusted, but same strat doesn't seem to be black border viable anymore: it always ends up failing on round 99. Funnily
-			enough it passes round 99 on second try and 100 is also beatable, making this gold border viable if you want to manually
-			finish the last 2 rounds.
-			
-			Plan will be updated on next bot version.
 			
 ### Underground
 - Hard
