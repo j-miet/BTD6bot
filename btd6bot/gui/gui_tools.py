@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from threading import Thread
     from tkinter import Text
 
+
 def terminate_thread(thread: Thread) -> None:
     """
     Terminates a python thread from another thread --- Use with caution!
@@ -27,7 +28,7 @@ def terminate_thread(thread: Thread) -> None:
         return
 
     exc = ctypes.py_object(SystemExit)
-    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread.ident), exc) # type: ignore[arg-type]
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(ctypes.c_long(thread.ident), exc)  # type: ignore[arg-type]
     if res == 0:
         raise ValueError("nonexistent thread id")
     elif res > 1:
@@ -36,22 +37,25 @@ def terminate_thread(thread: Thread) -> None:
         ctypes.pythonapi.PyThreadState_SetAsyncExc(thread.ident, None)
         raise SystemError("PyThreadState_SetAsyncExc failed")
 
+
 def get_osfont() -> tuple[str, int]:
     """Font size for each operating system."""
     if platform == "win32":
-        return ('Arial', 9)
+        return ("Arial", 9)
     elif platform == "darwin":
-        return ('Arial', 12)
-    else: # after testing other OS such as linux, add them here too
-        return ('Arial', 9)
-    
+        return ("Arial", 12)
+    else:  # after testing other OS such as linux, add them here too
+        return ("Arial", 9)
+
+
 os_font: tuple[str, int] = get_osfont()
 """Font for current operating system."""
+
 
 class TextRedirector(object):
     """Class to redirect standard output into tkinter Text. Implements its own print method with write.
 
-    If forced to shut down when MonitoringWindow is still open and not knowing how to handle buffered output, throws an 
+    If forced to shut down when MonitoringWindow is still open and not knowing how to handle buffered output, throws an
     AttributeError: for this reason, a flush() prototype is implemented.
 
     Original:
@@ -61,6 +65,7 @@ class TextRedirector(object):
         widget: A tkinter.Text object.
         tag: String tag for optional text formatting purposes.
     """
+
     def __init__(self, widget: Text, tag: str = "stdout"):
         """Initializes TextRedirector.
 
@@ -71,11 +76,11 @@ class TextRedirector(object):
         self.widget = widget
         self.tag = tag
 
-    def write(self, string : str) -> None:
+    def write(self, string: str) -> None:
         """print() implementation for Text widget.
-        
-        If user closes the monitoring window during bot running, and it happens so that widget existence status is 
-        confirmed just before it closes, then print might get access no non-existent window (even if this time window 
+
+        If user closes the monitoring window during bot running, and it happens so that widget existence status is
+        confirmed just before it closes, then print might get access no non-existent window (even if this time window
         is incredibly brief) and throw tkinter.TclError. This error will be handled, even if user is very unlikely to
         notice anything as it gets printed to command line.
         """
@@ -90,9 +95,9 @@ class TextRedirector(object):
 
     def flush(self) -> None:
         """Flush prototype for Text widget; only used through write() so don't call it on its own.
-        
-        After closing current monitoring window and redirecting stdout back to standard stream, current stream's 
-        buffered output needs to flushed. This method's only purpose is to handle the possible error with flushing 
+
+        After closing current monitoring window and redirecting stdout back to standard stream, current stream's
+        buffered output needs to flushed. This method's only purpose is to handle the possible error with flushing
         after Text widget is dereferenced.
         """
         ...
