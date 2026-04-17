@@ -276,7 +276,6 @@ class Rounds:
             if current_round == _maindata.debug_get_startround():
                 _maindata.debug_set_ignore_flag(False)
                 dprint(f"Starting plan from round {current_round} in ...")
-                cprint(f"Starting plan from round {current_round} in ...")
                 timing.counter(3)
                 forward()
             else:
