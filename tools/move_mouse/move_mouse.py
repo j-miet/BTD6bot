@@ -8,11 +8,9 @@ import signal
 
 import pyautogui
 
-ACCURACY = 13
 
-
-def pixel_position(sx: float, sy: float) -> tuple[float, float]:
-    """Scalar coordinates to decimals. Can change accuracy of output and choose desired screen resolution.
+def pixel_position(sx: float, sy: float) -> tuple[int, int]:
+    """Scalar coordinates to pixels. Can change accuracy of output and choose desired screen resolution.
 
     Args:
         sx: Scalar x value.
@@ -22,7 +20,7 @@ def pixel_position(sx: float, sy: float) -> tuple[float, float]:
         Converted pixel coordinates as a tuple.
     """
     res_x, res_y = pyautogui.size()
-    px, py = round(res_x * sx, ACCURACY), round(res_y * sy, ACCURACY)
+    px, py = round(res_x * sx), round(res_y * sy)
     return px, py
 
 
@@ -42,6 +40,7 @@ def run() -> None:
                 pos_input = pos_input.strip().removesuffix("\n")
                 x, y = pos_input.split(",")
                 px, py = pixel_position(float(x), float(y))
+                print(f"Actual: {px}, {py}")
                 pyautogui.moveTo(px, py)
                 print(f"Mouse moved to scalar location ({x}, {y})")
             except ValueError:
