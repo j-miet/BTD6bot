@@ -17,20 +17,27 @@
     editor doesn't have a setting to auto-level hero to match actual leveling. For this user must
         - check hero level and pass this value e.g. use [this xp calculator](https://svrng.github.io/BTD6-Hero-XP-Calculator/)
         - and because hero is leveled in-game, you must add the total cost **on top of start round income**
+        - IF YOU USED THE XP CALCULATOR LINK ABOVE: it actually includes the hero cost as well so you need to subtract
+        this value, too!
     
     Example:
     - challenge editor: select map, difficulty and start round. Also set starting income for that round e.g. 
     using [this round income chart](https://topper64.co.uk/nk/btd6/income/chimps)
     
          => so let's assume Dark Castle, Hard difficulty on Chimps. Start round is 90. Based on that link you would 
-         set income at the end of 89 which would be **131120** (rounded down). Let's assume hero is Psi: using the xp 
-         calculator, on Expert map on Chimps round 90 would be lvl 16 and costs **210855**. Unfortunately exact xp 
-         cannot be entered so this is the best bot has to do with. Now combining income and hero cash yields **341975**
-         as required start income.
+         set income at the end of 89 which would be **131120** (rounded down). Let's assume hero is Psi: 
+        - using the xp calculator, on Expert map on Chimps round 90 would be lvl 16 and costs **210855**.
+        - psi costs 1080 so subtracting this from xp costs leaves the value **209806**
+
+        Unfortunately exact xp cannot be entered so this is the best bot has to do with. Now combining income value 131120 and hero xp requirement 209806 yields **340926** as required start income.
         
     - then start the challenge and game start at round 90/100
     - run the script and type command `debug dark_castleHardChimps start 90 16`. As stated this runs dark castle on 
     chimps with 90 as starting round and hero level 16.
     - now bot will simply setup game state to round 89 end. It will then continue normally from 90 and onward.
+        - if your plan requires interacting with map e.g. spend cash to remove blocking objects then these can only be
+        done after starting the initial start round. This means that you either
+            - start from an earlier round before removal happens so bot does it as usual, or
+            - during idle rounds, you quickly perform such interactions manually
     - when it hits 100 and finishes successfully, it will simply stop here.
         
