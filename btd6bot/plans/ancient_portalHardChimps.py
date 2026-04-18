@@ -3,7 +3,6 @@
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
-
 ice 0-1-4
 glue 0-2-3
 

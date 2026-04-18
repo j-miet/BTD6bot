@@ -2,7 +2,7 @@
 [Hero] Obyn
 [Monkey Knowledge] -
 -------------------------------------------------------------
-===Monkeys required===
+===Monkeys & upgrades required===
 dart 0-0-0
 
 sub 0-0-0
