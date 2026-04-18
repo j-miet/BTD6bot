@@ -16,97 +16,98 @@ village 2-2-0
 _______________________________________
 """
 
-from._plan_imports import *
+from ._plan_imports import *
+
 
 def play(data):
     BEGIN, END = menu_start.load(*data)
-    round = BEGIN-1
+    round = BEGIN - 1
     map_start = time()
-    while round < END+1:
+    while round < END + 1:
         round = Rounds.round_check(round, map_start, data[2])
-        if round == BEGIN:     
-            dart1 = Monkey('dart', 0.828125, 0.2481481481481)
-            sniper1 = Monkey('sniper', 0.6005208333333, 0.6638888888889)
-            sniper1.target('strong')
+        if round == BEGIN:
+            dart1 = Monkey("dart", 0.828125, 0.2481481481481)
+            sniper1 = Monkey("sniper", 0.6005208333333, 0.6638888888889)
+            sniper1.target("strong")
         elif round == 8:
-            sniper2 = Monkey('sniper', 0.6348958333333, 0.7175925925926)
+            sniper2 = Monkey("sniper", 0.6348958333333, 0.7175925925926)
         elif round == 10:
-            druid = Monkey('druid', 0.5338541666667, 0.3009259259259)
+            druid = Monkey("druid", 0.5338541666667, 0.3009259259259)
         elif round == 13:
             Hero(0.4713541666667, 0.2842592592593)
         elif round == 14:
-            druid.upgrade(['0-1-0'])
+            druid.upgrade(["0-1-0"])
         elif round == 20:
-            druid.upgrade(['0-2-0','0-3-0'])
+            druid.upgrade(["0-2-0", "0-3-0"])
         elif round == 22:
-            sniper1.upgrade(['0-1-0'])
+            sniper1.upgrade(["0-1-0"])
         elif round == 24:
-            druid.upgrade(['1-3-0'])
+            druid.upgrade(["1-3-0"])
         elif round == 27:
-            mortar1 = Monkey('mortar', 0.6744791666667, 0.1416666666667)
+            mortar1 = Monkey("mortar", 0.6744791666667, 0.1416666666667)
             mortar1.special(1, 0.4994791666667, 0.4805555555556)
         elif round == 31:
-            mortar1.upgrade(['0-0-1','0-0-2','0-0-3'])
+            mortar1.upgrade(["0-0-1", "0-0-2", "0-0-3"])
         elif round == 35:
-            mortar2 = Monkey('mortar', 0.6119791666667, 0.0935185185185)
+            mortar2 = Monkey("mortar", 0.6119791666667, 0.0935185185185)
             mortar2.special(1, 0.4546875, 0.4935185185185)
-            mortar2.upgrade(['0-1-0','0-2-0','0-3-0','1-3-0'])
+            mortar2.upgrade(["0-1-0", "0-2-0", "0-3-0", "1-3-0"])
         elif round == 36:
-            mortar2.upgrade(['2-3-0'])
+            mortar2.upgrade(["2-3-0"])
         elif round == 37:
-            mortar3 = Monkey('mortar', 0.5536458333333, 0.0472222222222)
+            mortar3 = Monkey("mortar", 0.5536458333333, 0.0472222222222)
             mortar3.special(1, 0.4546875, 0.4935185185185)
-            mortar3.upgrade(['1-0-0','2-0-0'])
+            mortar3.upgrade(["1-0-0", "2-0-0"])
         elif round == 39:
-            bomb = Monkey('bomb', 0.4526041666667, 0.2268518518519)
-            bomb.target('strong')
-            bomb.upgrade(['0-1-0','0-2-0','0-3-0','0-3-1'])
+            bomb = Monkey("bomb", 0.4526041666667, 0.2268518518519)
+            bomb.target("strong")
+            bomb.upgrade(["0-1-0", "0-2-0", "0-3-0", "0-3-1"])
         elif round == 40:
-            mortar3.upgrade(['3-0-0'])
-            ability(1,2)
+            mortar3.upgrade(["3-0-0"])
+            ability(1, 2)
         elif round == 41:
-            mortar3.upgrade(['3-1-0','3-2-0'])
-            mortar1.upgrade(['0-1-3','0-2-3'])
+            mortar3.upgrade(["3-1-0", "3-2-0"])
+            mortar1.upgrade(["0-1-3", "0-2-3"])
         elif round == 46:
-            mortar2.upgrade(['2-4-0'])
+            mortar2.upgrade(["2-4-0"])
         elif round == 49:
-            mortar3.upgrade(['4-2-0'])
+            mortar3.upgrade(["4-2-0"])
         elif round == 50:
-            village = Monkey('village', 0.5630208333333, 0.2175925925926)
-            village.upgrade(['0-1-0','0-2-0'])
+            village = Monkey("village", 0.5630208333333, 0.2175925925926)
+            village.upgrade(["0-1-0", "0-2-0"])
         elif round == 51:
-            village.upgrade(['1-2-0','2-2-0'])
+            village.upgrade(["1-2-0", "2-2-0"])
         elif round == 75:
-            mortar2.upgrade(['2-5-0'])
+            mortar2.upgrade(["2-5-0"])
         elif round == 79:
-            mortar1.upgrade(['0-2-4'])
+            mortar1.upgrade(["0-2-4"])
         elif round == 80:
-            ability(4,12)
+            ability(4, 12)
         elif round == 85:
-            ability(4,14)
+            ability(4, 14)
         elif round == 87:
-            ability(4,14)
+            ability(4, 14)
             ability(3)
         elif round == 88:
-            ability(4,14)
+            ability(4, 14)
         elif round == 91:
-            mortar1.upgrade(['0-2-5'])
+            mortar1.upgrade(["0-2-5"])
         elif round == 92:
-            glue = Monkey('glue', 0.5994791666667, 0.2675925925926)
-            glue.target('strong')
-            glue.upgrade(['0-0-1','0-0-2','0-0-3'])
+            glue = Monkey("glue", 0.5994791666667, 0.2675925925926)
+            glue.target("strong")
+            glue.upgrade(["0-0-1", "0-0-2", "0-0-3"])
         elif round == 93:
-            glue.upgrade(['0-1-3','0-2-3'])
+            glue.upgrade(["0-1-3", "0-2-3"])
         elif round == 94:
-            bomb.upgrade(['0-4-1'])
+            bomb.upgrade(["0-4-1"])
         elif round == 98:
-            ability(4,14)
+            ability(4, 14)
         elif round == 99:
-            bomb.upgrade(['0-5-1'])
-            ability(1,3)
+            bomb.upgrade(["0-5-1"])
+            ability(1, 3)
         elif round == 100:
-            ability(5,1)
-            ability(5,5)
-            ability(5,9)
-            ability(5,13)
-            ability(4,14)
+            ability(5, 1)
+            ability(5, 5)
+            ability(5, 9)
+            ability(5, 13)
+            ability(4, 14)

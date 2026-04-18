@@ -15,73 +15,74 @@ village 2-3-0
 _______________________________________
 """
 
-from._plan_imports import *
+from ._plan_imports import *
+
 
 def play(data):
     BEGIN, END = menu_start.load(*data)
-    round = BEGIN-1
+    round = BEGIN - 1
     map_start = time()
-    while round < END+1:
+    while round < END + 1:
         round = Rounds.round_check(round, map_start, data[2])
         if round == BEGIN:
-            dart1 = Monkey('dart', 0.3026041666667, 0.3231481481481) 
-            dart2 = Monkey('dart', 0.5473958333333, 0.3194444444444)
-            dart3 = Monkey('dart', 0.8192708333333, 0.4138888888889)
+            dart1 = Monkey("dart", 0.3026041666667, 0.3231481481481)
+            dart2 = Monkey("dart", 0.5473958333333, 0.3194444444444)
+            dart3 = Monkey("dart", 0.8192708333333, 0.4138888888889)
         elif round == 8:
-            dart2.upgrade(['0-1-0','0-2-0'])
+            dart2.upgrade(["0-1-0", "0-2-0"])
         elif round == 10:
-            dart2.upgrade(['0-3-0'])
+            dart2.upgrade(["0-3-0"])
         elif round == 15:
             hero = Hero(0.7244791666667, 0.3175925925926)
-            hero.target('strong')
+            hero.target("strong")
         elif round == 21:
-            hero.target('first')
-            heli = Monkey('heli', 0.7223958333333, 0.0787037037037)
+            hero.target("first")
+            heli = Monkey("heli", 0.7223958333333, 0.0787037037037)
             heli.special(1, 0.2484375, 0.4138888888889)
         elif round == 23:
-            hero.target('strong')
+            hero.target("strong")
         elif round == 25:
-            heli.upgrade(['1-0-0'])
+            heli.upgrade(["1-0-0"])
         elif round == 26:
-            sub = Monkey('sub', 0.6817708333333, 0.2768518518519)
+            sub = Monkey("sub", 0.6817708333333, 0.2768518518519)
         elif round == 27:
-            sub.upgrade(['0-1-0','0-2-0'])
+            sub.upgrade(["0-1-0", "0-2-0"])
         elif round == 28:
-            heli.upgrade(['2-0-0'])
+            heli.upgrade(["2-0-0"])
         elif round == 31:
-            dart2.upgrade(['0-3-1','0-3-2'])
+            dart2.upgrade(["0-3-1", "0-3-2"])
         elif round == 34:
-            heli.upgrade(['3-0-0'])
+            heli.upgrade(["3-0-0"])
         elif round == 35:
-            heli.upgrade(['3-0-1','3-0-2'])
+            heli.upgrade(["3-0-1", "3-0-2"])
         elif round == 37:
-            alch = Monkey('alch', 0.7890625, 0.0731481481481)
-            alch.upgrade(['1-0-0','2-0-0','3-0-0'])
+            alch = Monkey("alch", 0.7890625, 0.0731481481481)
+            alch.upgrade(["1-0-0", "2-0-0", "3-0-0"])
         elif round == 41:
-            village = Monkey('village', 0.7651041666667, 0.2157407407407)
-            village.upgrade(['0-1-0','0-2-0'])
+            village = Monkey("village", 0.7651041666667, 0.2157407407407)
+            village.upgrade(["0-1-0", "0-2-0"])
         elif round == 43:
-            village.upgrade(['1-2-0','2-2-0'])
+            village.upgrade(["1-2-0", "2-2-0"])
         elif round == 52:
-            heli.upgrade(['4-0-2'])
+            heli.upgrade(["4-0-2"])
         elif round == 53:
-            alch.upgrade(['3-1-0','3-2-0'])
+            alch.upgrade(["3-1-0", "3-2-0"])
         elif round == 79:
-            heli.upgrade(['5-0-2'])
+            heli.upgrade(["5-0-2"])
         elif round == 81:
-            village.upgrade(['2-3-0'])
-            alch.upgrade(['4-2-0'])
+            village.upgrade(["2-3-0"])
+            alch.upgrade(["4-2-0"])
         elif round == 94:
-            sub.upgrade(['0-3-0','0-4-0'])
+            sub.upgrade(["0-3-0", "0-4-0"])
         elif round == 95:
-            sub.upgrade(['0-5-0','1-5-0','2-5-0'])
+            sub.upgrade(["0-5-0", "1-5-0", "2-5-0"])
         elif round == 96:
-            glue = Monkey('glue', 0.7723958333333, 0.3166666666667)
-            glue.upgrade(['0-1-0','0-2-0','0-3-0','0-4-0'])
+            glue = Monkey("glue", 0.7723958333333, 0.3166666666667)
+            glue.upgrade(["0-1-0", "0-2-0", "0-3-0", "0-4-0"])
         elif round == 98:
-            ability(2,10)
-            glue.upgrade(['0-5-0','0-5-1','0-5-2'])
+            ability(2, 10)
+            glue.upgrade(["0-5-0", "0-5-1", "0-5-2"])
         elif round == 99:
-            ability(4,2)
+            ability(4, 2)
         elif round == 100:
-            ability(3,2)
+            ability(3, 2)
