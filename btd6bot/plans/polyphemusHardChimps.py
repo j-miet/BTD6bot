@@ -66,7 +66,7 @@ def play(data):
         elif round == 81:
             alch.upgrade(['5-2-0'])
         elif round == 82:
-            glue.upgrade(['0-2-4'])
+            glue.upgrade(['0-2-3'])
         elif round == 84:
             sniper1.upgrade(['1-4-0'])
         elif round == 88:
