@@ -153,9 +153,15 @@ class MainWindow:
         self.root.title("BTD6bot")
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
-        self.root.geometry("655x442+700+300")
-        self.root.minsize(655, 442)
-        self.root.maxsize(655, 442)
+        # Linux
+        if sys.platform == "linux":
+            self.root.geometry("690x465+700+300")
+            self.root.minsize(690, 465)
+            self.root.maxsize(690, 465)
+        else:
+            self.root.geometry("655x442+700+300")
+            self.root.minsize(655, 442)
+            self.root.maxsize(655, 442)
         self.MAP_NAMES_AND_STRATS_DICT = plan_data.return_maps_and_strats(plan_data.read_plans())
 
         self.reader_init: bool = False

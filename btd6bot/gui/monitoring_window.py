@@ -70,9 +70,14 @@ class MonitoringWindow:
         self.monitoringwindow.title("Bot Monitoring Window")
         icon = tk.PhotoImage(file=gui_paths.FILES_PATH / "btd6bot.png")
         self.monitoringwindow.iconphoto(True, icon)
-        self.monitoringwindow.geometry("800x480")
-        self.monitoringwindow.minsize(800, 480)
-        self.monitoringwindow.maxsize(800, 480)
+        if sys.platform == "linux":
+            self.monitoringwindow.geometry("805x505")
+            self.monitoringwindow.minsize(805, 505)
+            self.monitoringwindow.maxsize(805, 505)
+        else:
+            self.monitoringwindow.geometry("800x480")
+            self.monitoringwindow.minsize(800, 480)
+            self.monitoringwindow.maxsize(800, 480)
 
         self.textbox = tk.Text(self.monitoringwindow, width=55, height=25, state="normal", wrap=tk.WORD)
         self.textbox.grid(column=0, columnspan=2, row=0, rowspan=4, sticky="n")
