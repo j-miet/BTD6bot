@@ -1,4 +1,4 @@
-# Supported game plans (Last updated 2026-04-15)
+# Supported game plans (Last updated 2026-04-19)
 
 - this list is auto-updated using ``scripts/update_plans.py``
 - all implemented plans are listed. Each game mode includes
@@ -10,14 +10,19 @@
 ---
 
 - [#Ouch](##ouch)
+- [Adora's Temple](#adora's-temple)
 - [Alpine Run](#alpine-run)
 - [Ancient Portal](#ancient-portal)
 - [Another Brick](#another-brick)
+- [Balance](#balance)
+- [Bazaar](#bazaar)
 - [Bloody Puddles](#bloody-puddles)
+- [Bloonarius Prime](#bloonarius-prime)
 - [Candy Falls](#candy-falls)
 - [Cargo](#cargo)
 - [Carved](#carved)
 - [Castle Revenge](#castle-revenge)
+- [Chutes](#chutes)
 - [Cornfield](#cornfield)
 - [Covered Garden](#covered-garden)
 - [Cracked](#cracked)
@@ -25,14 +30,18 @@
 - [Dark Castle](#dark-castle)
 - [Dark Dungeons](#dark-dungeons)
 - [Dark Path](#dark-path)
+- [Downstream](#downstream)
 - [Enchanted Glade](#enchanted-glade)
+- [Encrypted](#encrypted)
 - [End Of The Road](#end-of-the-road)
 - [Erosion](#erosion)
+- [Firing Range](#firing-range)
 - [Flooded Valley](#flooded-valley)
 - [Four Circles](#four-circles)
 - [Frozen Over](#frozen-over)
 - [Geared](#geared)
 - [Glacial Trail](#glacial-trail)
+- [Haunted](#haunted)
 - [Hedge](#hedge)
 - [High Finance](#high-finance)
 - [In The Loop](#in-the-loop)
@@ -47,7 +56,9 @@
 - [Middle Of The Road](#middle-of-the-road)
 - [Midnight Mansion](#midnight-mansion)
 - [Monkey Meadow](#monkey-meadow)
+- [Moon Landing](#moon-landing)
 - [Muddy Puddles](#muddy-puddles)
+- [Mushroom Grotto](#mushroom-grotto)
 - [Off The Coast](#off-the-coast)
 - [One Two Tree](#one-two-tree)
 - [Park Path](#park-path)
@@ -57,14 +68,18 @@
 - [Polyphemus](#polyphemus)
 - [Quad](#quad)
 - [Quarry](#quarry)
+- [Quiet Street](#quiet-street)
+- [Rake](#rake)
 - [Ravine](#ravine)
 - [Resort](#resort)
 - [Sanctuary](#sanctuary)
 - [Scrapyard](#scrapyard)
 - [Skates](#skates)
 - [Spa Pits](#spa-pits)
+- [Spice Island](#spice-island)
 - [Spillway](#spillway)
 - [Spring Spring](#spring-spring)
+- [Streambed](#streambed)
 - [Sulfur Springs](#sulfur-springs)
 - [Sunken Columns](#sunken-columns)
 - [Sunset Gulch](#sunset-gulch)
@@ -117,6 +132,26 @@
 			engineer 0-4-0
 			_______________________________________
 			
+### Adora's Temple
+- Hard
+	- [Chimps](btd6bot/plans/adora's_templeHardChimps.py)
+
+			[Hero] Psi
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			glue 0-2-3
+			bomb 2-0-5
+			
+			sniper 5-5-5
+			sub 0-0-0
+			
+			alch 4-2-0
+			
+			village 2-3-0
+			_______________________________________
+			
 ### Alpine Run
 - Hard
 	- [Chimps](btd6bot/plans/alpine_runHardChimps.py)
@@ -141,7 +176,6 @@
 			[Monkey Knowledge] -
 			-------------------------------------------------------------
 			===Monkeys & upgrades required===
-			
 			ice 0-1-4
 			glue 0-2-3
 			
@@ -171,6 +205,41 @@
 			alch 4-2-0
 			
 			village 2-3-0
+			_______________________________________
+			
+### Balance
+- Hard
+	- [Chimps](btd6bot/plans/balanceHardChimps.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			ace 2-0-5
+			
+			alch 3-2-0
+			druid 1-3-0
+			
+			village 2-2-2
+			_______________________________________
+			
+### Bazaar
+- Hard
+	- [Chimps](btd6bot/plans/bazaarHardChimps.py)
+
+			[Hero] Rosalia
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			boomer 0-0-0
+			
+			ace 2-0-5
+			
+			alch 3-2-0
+			druid 1-3-0
+			
+			village 2-2-0
 			_______________________________________
 			
 ### Bloody Puddles
@@ -210,6 +279,26 @@
 			village 3-2-2
 			_______________________________________
 			
+### Bloonarius Prime
+- Hard
+	- [Chimps](btd6bot/plans/bloonarius_primeHardChimps.py)
+
+			[Hero] Rosalia
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			
+			sub 0-0-0
+			sniper 0-2-2
+			ace 2-0-5
+			
+			alch 3-2-0
+			druid 1-3-0
+			
+			village 2-2-2
+			_______________________________________
+			
 ### Candy Falls
 - Hard
 	- [Chimps](btd6bot/plans/candy_fallsHardChimps.py)
@@ -230,7 +319,7 @@
 - Hard
 	- [Chimps](btd6bot/plans/cargoHardChimps.py)
 
-			[Hero] Sauda
+			[Hero] Obyn
 			[Monkey Knowledge] -
 			-------------------------------------------------------------
 			===Monkeys & upgrades required===
@@ -243,6 +332,7 @@
 			
 			village 2-0-2
 			_______________________________________
+			Some rng in early game rounds due to Obyn's totem placements
 			
 ### Carved
 - Hard
@@ -278,8 +368,27 @@
 			
 			village 2-0-2
 			_______________________________________
+			Round 40 has some rng.
 			On round 83 hero is manually leveled up to in order to increase consistency.
 			Some late data like 87, 89, 90 and 95 might also cause issues if gwen's heat up timing is off.
+			
+### Chutes
+- Hard
+	- [Chimps](btd6bot/plans/chutesHardChimps.py)
+
+			[Hero] Psi
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-3-1
+			glue 0-2-4
+			desperado 0-0-0
+			
+			sniper 4-2-0
+			heli 5-0-5
+			
+			village 2-3-0
+			_______________________________________
 			
 ### Cornfield
 - Hard
@@ -409,7 +518,7 @@
 			[Hero] Obyn
 			[Monkey Knowledge] -
 			-------------------------------------------------------------
-			===Monkeys required===
+			===Monkeys & upgrades required===
 			dart 0-0-0
 			
 			sub 0-0-0
@@ -480,6 +589,22 @@
 			village 2-2-0
 			_______________________________________
 			
+### Downstream
+- Hard
+	- [Chimps](btd6bot/plans/downstreamHardChimps.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			glue 0-2-4
+			
+			sniper 4-2-0
+			heli 5-0-5
+			
+			village 2-3-0
+			_______________________________________
+			
 ### Enchanted Glade
 - Hard
 	- [Chimps](btd6bot/plans/enchanted_gladeHardChimps.py)
@@ -500,6 +625,20 @@
 			spike 1-3-0
 			village 2-0-2
 			engineer 0-0-0
+			_______________________________________
+			
+### Encrypted
+- Hard
+	- [Chimps](btd6bot/plans/encryptedHardChimps.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			wizard 5-0-2
+			druid 1-5-0
+			
+			spike 2-5-0
 			_______________________________________
 			
 ### End Of The Road
@@ -527,27 +666,45 @@
 			-------------------------------------------------------------
 			===Monkeys & upgrades required===
 			dart 0-0-1
-			bomb 5-2-0
-			glue 0-1-3
+			glue 0-2-4
 			
-			sniper 1-2-5
+			sniper 5-5-5
 			sub 2-0-2
 			
 			ninja 0-0-0
 			alch 4-2-0
-			druid 3-0-2
 			
-			spike 0-4-2
-			village 2-4-2
+			spike 2-0-5
+			village 2-2-0
 			_______________________________________
-			Gameplay-wise, should be viable for black bordering.
+			Gameplay-wise viable for black borders.
 			
-			For late game data (90+), bot might skip ahead and begin executing commands for upcoming data.
-			Reason is there's lot of projectiles/bloons moving around round label, which can cause false positives.
-			This should not matter, as long as 99 => 100 is detected normally; 100 requires abilities and if bot uses them earlier than intended, you will 100% lose.
-			Another harmless effect is incorrectly saved round times: some display too short and other too long round durations.
+			Bot will falsely detect round changes. Reason is there are lots of projectiles/bloons moving around round label,
+			especially in the later stages of game, which can cause false positives. This is not really an issue as long as there
+			are no abilities/targeting changes so it can stay on from start to round 79. After 79 there are retargeting/ability
+			requirements: to fix this, the late game rounds are timed manually to prevent round auto-detection and instead force
+			them after specific time has passed.
 			
-			Should issues rise with 99 => 100 transition, solution is to use manual round ending with end_round() command. With it enabled, bot won't begin to search for the next round until countdown ends.
+			Another harmless effect is incorrectly saved round times: some display too short (0:00) and other too long round
+			durations (multiple minutes)
+			
+### Firing Range
+- Hard
+	- [Chimps](btd6bot/plans/firing_rangeHardChimps.py)
+
+			[Hero] Rosalia
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			
+			sniper 0-2-2
+			ace 2-0-5
+			
+			alch 3-2-0
+			
+			village 2-2-2
+			_______________________________________
 			
 ### Flooded Valley
 - Easy
@@ -655,6 +812,7 @@
 			[Hero] Silas
 			[Monkey Knowledge] -
 			-------------------------------------------------------------
+			===Monkeys & upgrades required===
 			ice 4-2-4
 			_______________________________________
 			
@@ -713,6 +871,20 @@
 			
 			spike 2-0-5
 			engineer 5-2-0
+			_______________________________________
+			
+### Haunted
+- Hard
+	- [Chimps](btd6bot/plans/hauntedHardChimps.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			wizard 5-0-2
+			druid 1-5-0
+			
+			spike 2-5-0
 			_______________________________________
 			
 ### Hedge
@@ -857,7 +1029,8 @@
 			engineer 5-2-0
 			spike 4-0-5
 			_______________________________________
-			Some data can get skipped because bot incorrectly detects different value.
+			Early rounds require manual round timings as bot tends to otherwise skip over them. This step isn't really necessary
+			because there are no ability timing, but is done just to keep round times correct.
 			This should mostly happen in early/mid game and thus not affect later data where ability timings are important.
 			
 ### Logs
@@ -1020,6 +1193,25 @@
 			village 2-3-0
 			_______________________________________
 			
+### Moon Landing
+- Hard
+	- [Chimps](btd6bot/plans/moon_landingHardChimps.py)
+
+			[Hero] Psi
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			glue 0-2-4
+			desperado 0-0-0
+			
+			heli 5-0-5
+			
+			druid 1-0-0
+			
+			village 2-3-0
+			_______________________________________
+			
 ### Muddy Puddles
 - Easy
 	- [Standard](btd6bot/plans/muddy_puddlesEasyStandard.py)
@@ -1055,6 +1247,25 @@
 			village 2-2-2
 			
 			engineer 0-0-0
+			_______________________________________
+			
+### Mushroom Grotto
+- Hard
+	- [Chimps](btd6bot/plans/mushroom_grottoHardChimps.py)
+
+			[Hero] Obyn
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-2-4
+			
+			sniper 2-0-5
+			
+			alch 4-2-0
+			druid 5-1-4
+			mermonkey 0-0-0
+			
+			village 2-0-2
 			_______________________________________
 			
 ### Off The Coast
@@ -1256,6 +1467,39 @@
 			village 2-3-0
 			_______________________________________
 			
+### Quiet Street
+- Hard
+	- [Chimps](btd6bot/plans/quiet_streetHardChimps.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			wizard 5-0-2
+			druid 1-5-0
+			
+			spike 2-5-0
+			_______________________________________
+			
+### Rake
+- Hard
+	- [Chimps](btd6bot/plans/rakeHardChimps.py)
+
+			[Hero] Rosalia
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			
+			sub 1-0-2
+			sniper 0-2-2
+			ace 2-0-5
+			
+			alch 3-2-0
+			
+			village 2-2-2
+			_______________________________________
+			
 ### Ravine
 - Easy
 	- [Standard](btd6bot/plans/ravineEasyStandard.py)
@@ -1435,6 +1679,25 @@
 			village 2-3-0
 			_______________________________________
 			
+### Spice Island
+- Hard
+	- [Chimps](btd6bot/plans/spice_islandHardChimps.py)
+
+			[Hero] Rosalia
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			
+			sub 1-0-1
+			sniper 1-2-2
+			ace 2-0-5
+			
+			alch 3-2-0
+			
+			village 2-2-0
+			_______________________________________
+			
 ### Spillway
 - Hard
 	- [Chimps](btd6bot/plans/spillwayHardChimps.py)
@@ -1471,6 +1734,22 @@
 			boat 5-0-2
 			
 			village 4-2-0
+			_______________________________________
+			
+### Streambed
+- Hard
+	- [Chimps](btd6bot/plans/streambedHardChimps.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			glue 0-2-4
+			
+			sniper 4-2-0
+			heli 5-0-5
+			
+			village 2-3-0
 			_______________________________________
 			
 ### Sulfur Springs
@@ -1702,25 +1981,20 @@
 - Hard
 	- [Chimps](btd6bot/plans/undergroundHardChimps.py)
 
-			[Hero] Geraldo
+			[Hero] Obyn
 			[Monkey Knowledge] -
 			-------------------------------------------------------------
 			===Monkeys & upgrades required===
 			dart 0-0-0
-			boomer 0-2-4
-			tack 5-0-2
-			ice 4-2-0
-			glue 0-2-3
 			
-			sniper 1-0-0
+			sniper 2-2-5
 			
-			ninja 4-0-2
-			alch 4-2-1
+			super 3-2-2
+			ninja 2-2-0
+			alch 5-2-0
 			
-			village 4-3-2
+			village 2-0-2
 			_______________________________________
-			Strat is build around testing Geraldo so it's bit scuffed and unoptimized.
-			Still, should work quite consistently with minimal rng.
 			
 ### Water Park
 - Hard
@@ -1811,7 +2085,7 @@
 			
 			village 2-0-2
 			_______________________________________
-			Similar to maps like Erosion, sometimes bot can detect next round(s) too early because there are too many projectiles/bloons moving around round label, causing false positives. 
+			Similar to maps like Erosion, sometimes bot can detect next round(s) too early because there are too many projectiles/bloons moving around round label, causing false positives.
 			Good thing is, this doesn't affect gameplay for this particular plan as ability timings are not needed late game.
 			This only affects saved round times: some data could immediately skip over, causing other data falsely display extremely long durations.
 			
