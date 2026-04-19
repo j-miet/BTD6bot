@@ -1,25 +1,88 @@
-## How to install BTD6bot using an install script file
+## How to install BTD6bot
 
-- [<u>Scripts</u>](#scripts)
-    - [For Windows users](#for-windows-users)
-    - [For Linux users](#for-linux-users)
-- [<u>Optional</u>](#optional)
-    - [Global installation](#global-installation)
+*Make sure to read **Operating systems** section for your preferred OS*
+
+- [<u>Operating systems</u>](#operating-systems)
+    - [Windows](#for-windows-users)
+    - [Linux](#for-linux-users)
+- [<u>Auto-install scripts</u>](#auto-install-scripts)
+- [<u>Manual installation</u>](#manual-installation)
 - [<u>Detailed explanation of scripts</u>](#detailed-explanation-of-scripts)
     - [Windows](#windows)
         - [Install.bat](#installbat)
         - [Other .bat scripts](#other-bat-scripts-located-in-win_copy-directory)
-    - [Linux/MacOS](#linuxmacos)
+    - [Linux](#linux)
         - [Install.sh](#installsh)
         - [Other .sh scripts](#other-sh-scripts-located-in-other_copy-directory)
 
 
 
-## Scripts
+## Operating systems
+
+### Windows
+
+**If you use venv virtual environment, either manually or via install.bat:**
+
+From https://docs.python.org/3/library/venv.html#creating-virtual-environments
+
+
+>On Microsoft Windows, it may be required to enable the Activate.ps1 script by setting the execution policy for the 
+user. You can do this by issuing the following PowerShell command:
+>
+>PS C:\> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+=> This means Windows users might need to run following command in powershell in order to allow use of virtual 
+environments:
+
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+
+### Linux
+
+Following observations are based on testing the bot on
+- *Linux Mint 22.3* 
+- *Debian 13.4 GNOME Desktop*
+
+========================================
+
+- for Python you need to `sudo apt install` the following:
+    - python3
+    - python3-pip
+    - python3-venv
+    - python3-tk
+    - curl 
+        - for auto-downloading btd6bot github repo contents
+    - gnome-screenshot 
+        - to enable image capturing for Python's 'mss' library so that OCR works properly
+
+    You can also specify python version in all python-based installations e.g. python3.13.10
+
+- You also need X11 environment to run the bot because OCR (easyocr -> torch) and kb+mouse (pyautogui, pynput) cannot 
+operate on stricter ones such as *Wayland*. 
+    - on some distros, for example Mint, this is the default (at least for now) so no need to do any changes
+    - but if not, for example Debian + GNOME, you can do the following:
+        - log out
+        - switch from GNOME to *GNOME on Xorg*
+        - log back in
+        - finally, run `sudo apt install libx11-dev`
+    
+- Before running any script, you **must** use `sudo chmod +x SCRIPT_NAME.sh` to treat shell file as an executable. 
+For example, first typing `sudo chmod +x run.sh` then `./run.sh` runs the bash script for btd6bot gui program.
+
+- If you'd like to use tooling scripts, you most likely need clipboard copy support. For this you can for 
+example install xclip with `sudo apt xclip`
+
+    While this step is somewhat optional, but you might be required to readjust game's resolution + window position. 
+    This is where `show_coordinates.sh` script in "./tools/show_coordinates" becomes useful and helps you to determine game window's top-left 
+    coordinate.
+
+
+
+## Auto-install scripts
 
 - *win* includes **install.bat** which has ``.bat`` format and uses Windows Powershell to execute commands and 
 therefore cannot be run on non-Windows systems
- - *other* includes **install.sh** which has ``.sh`` format which requires 'bash': this is included in Mac and Unix 
+ - *other* includes **install.sh** which has ``.sh`` format which requires bash: this is included in Unix 
  systems by default but not on Windows
 
 <u>Both 'install.sh' and 'install.bat' will automatically perform following operations</u>:
@@ -43,107 +106,43 @@ therefore cannot be run on non-Windows systems
  8. install all packages with **pip install -r requirements.txt** under your currently activate virtual environment
 
 
-### For Windows users
 
-From https://docs.python.org/3/library/venv.html#creating-virtual-environments
+## Manual installation
 
+*These are for Windows, but are very similar for other OS*
 
->On Microsoft Windows, it may be required to enable the Activate.ps1 script by setting the execution policy for the 
-user. You can do this by issuing the following PowerShell command:
->
->PS C:\> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-
-=> This means Windows users might need to run following command in powershell in order to allow use of virtual 
-environments:
-
-    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-
-
-### For Linux users
-
-Following observations are from testing the bot on *Debian 13.4 GNOME Desktop* **VirtualBox installation**.
-
-- If you haven't installed Python already, you should `sudo apt install` the following:
-    - python3
-    - python3-pip
-    - python3-venv
-    - python3-tk
-    - curl (for auto-downloading btd6bot github repo contents)
-
-    You can also specify python version in all python-based installations e.g. python3.13.10
-
-- You also need X11 environment to run the bot because OCR (easyocr -> torch) and kb+mouse (pyautogui, pynput) cannot 
-operate on stricter ones such as *Wayland*. On Debian + GNOME, you can do the following:
-    - log out
-    - switch from GNOME to *GNOME on Xorg*
-    - log back in
-    - finally, run `sudo apt install` for
-         - libx11-dev
-         - gnome-screenshot  
-
-     Doing these steps ensures Python's `mss` library image capture works properly for OCR
-
-- Before running any script, you **must** use `sudo chmod +x SCRIPT_NAME.sh` to treat shell file as an executable. 
-For example, first typing `sudo chmod +x run.sh` then `./run.sh` runs the bash script for btd6bot gui program.
-
-- If you'd like to use tooling scripts, you most likely need clipboard copy support. For this you can for 
-example install xclip with `sudo apt xclip`
-    - this step is somewhat optional, but you might require readjusting of game's resolution + window position. This is where `show_coordinates.sh` script becomes useful and helps you to determine game window top-left coordinate.
-
-
-#### Stuff that is most likely caused by virtual machine (99% safe to ignore)
-
-- During Python package installation, pip's tmp directory might run out of space. If this happens, create a new temp 
-folder with something like
-
-        mkdir -p ~/pip-temp
-        export TMPDIR=~/pip-temp
-
-    and carefully remove pip-temp after having installed all packages
-
-
-
-## Optional 
-
-### Global installation
-
-*These are for Windows, but very similar for other OS*
-
-If for some reason you'd prefer a manual installation, for example 
-- you wish to enable ocr gpu support for bot (you can still do this with script installation, just need to install 
+Manual installation is preferred if you
+- wish to enable ocr gpu support for bot (you can still do this with script installation, just need to install 
 pytorch+cuda locally to venv),
-- you couldn't get the install script to work,
+- couldn't get the install script to work,
+- would rather just not use install script at all for whatever reason
 
-then you can
+Instructions:
 
-1. Download source files
+1. Download source files with one of the following methods:
    - clone the repo from https://github.com/j-miet/BTD6bot.git
-
-    OR
-
-   - *github*: download ZIP file
+   - download ZIP file of repo
+   - download source code zip under newest release version
  
+2. read the operating-system help section. For Windows you probably don't need to do anything unless you install venv (step 3). For Linux there are multiple things you should check out.
 
-2. (optional) create and activate a virtual environment for local install; this way all required python packages 
+3. (optional) create and activate a virtual environment for local install; this way all required python packages 
 reside under 
     same local location as other bot files and importantly don't bloat your global Python package collection.
 
-
-3. Install packages via command
+4. Install packages via command
 
 	    pip install -r -requirements.txt
 
    >This installs packages globally unless you have venv activated
 
-   - (Windows/Linux only; Mac has no CUDA support)
+    - If you'd like to install pytorch gpu CUDA support, uninstall existing cpu packages
 
-        If you'd like to install pytorch gpu CUDA support, uninstall existing cpu packages
-
-   	    pip uninstall torch torchvision
+   	        pip uninstall torch torchvision
 
         then go to https://pytorch.org/get-started/locally/ and follow instructions
 
-3. Run bot with following command
+5. Run bot with following command
         
         python btd6bot
 
@@ -234,10 +233,9 @@ These all follow similar pattern:
     - if run/run no-gui, uses 'python btd6bot'. This is same as 'python btd6bot/\_\_main\_\_.py'.
     - for tool scripts, uses 'python tool_name.py'
 
-### Linux/macOS
+### Linux
 
-<u>Important</u>
-- all bash scripts have been tested on Linux (Debian) and Windows, but **not** on MacOS
+- all bash scripts have been tested on Linux (Debian, Mint, WSL) and Windows
 
 #### install.sh
 
@@ -317,4 +315,4 @@ These all follow similar pattern:
     - if run/run no-gui, uses 'python3 btd6bot'. This is same as 'python3 btd6bot/\_\_main\_\_.py'.
     - for tool scripts, uses 'python3 tool_name.py'
    
-   Note that specifying python version is required for Unix and some Mac systems, hence python3 is used.
+   Note that specifying python version is required for Unix, hence python3 is used.
