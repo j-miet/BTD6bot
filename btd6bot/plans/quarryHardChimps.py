@@ -14,7 +14,7 @@ _______________________________________
 
 from ._plan_imports import *
 
- 
+
 def play(data):
     BEGIN, END = menu_start.load(*data)
     round = BEGIN - 1

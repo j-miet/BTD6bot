@@ -13,9 +13,6 @@ alch 5-2-0
 
 village 2-0-2
 _______________________________________
-Similar to maps like Erosion, sometimes bot can detect next round(s) too early because there are too many projectiles/bloons moving around round label, causing false positives.
-Good thing is, this doesn't affect gameplay for this particular plan as ability timings are not needed late game.
-This only affects saved round times: some data could immediately skip over, causing other data falsely display extremely long durations.
 """
 
 from ._plan_imports import *

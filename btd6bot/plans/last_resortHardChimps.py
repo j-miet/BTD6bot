@@ -15,7 +15,8 @@ village 2-0-2
 engineer 5-2-0
 spike 4-0-5
 _______________________________________
-Some data can get skipped because bot incorrectly detects different value.
+Early rounds require manual round timings as bot tends to otherwise skip over them. This step isn't really necessary
+because there are no ability timing, but is done just to keep round times correct.
 This should mostly happen in early/mid game and thus not affect later data where ability timings are important.
 """
 
