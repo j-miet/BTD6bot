@@ -412,7 +412,7 @@ class MainWindow:
                     self.mapscreen["text"] = ""
                     self.mapscreen.configure(image=temp)
                     self.mapscreen.image = temp  # type: ignore[attr-defined]
-                except (AttributeError, ValueError):
+                except (AttributeError, ValueError, tk.TclError):
                     self.mapscreen.configure(image="", compound="center", anchor="center", justify="left")
                     self.mapscreen["text"] = self.MAPSCREEN_TEXT_STR
                 self.strat_box.set(self.MAP_NAMES_AND_STRATS_DICT[map_name][0])

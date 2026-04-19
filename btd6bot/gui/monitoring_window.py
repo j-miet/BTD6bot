@@ -584,6 +584,7 @@ class MonitoringWindow:
                 self.monitor_mapscreen_frame,
                 compound="top",
                 anchor="nw",
+                style="Style.TButton",
                 justify="left",
                 text=self.MONITOR_MAPSCREEN_ASCII,
             )
