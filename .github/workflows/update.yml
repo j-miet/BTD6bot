@@ -14,6 +14,9 @@ on:
 jobs:
   update-plans:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
     steps:
       - name: Checkout dev repository
         uses: actions/checkout@v4
@@ -26,7 +29,6 @@ jobs:
           python-version: 3.x
       - name: Check if Plans.md was modified
         id: check_plans
-        shell: pwsh
         run: |
           $readmebefore = Get-Content .\Plans.md -Raw
 
@@ -38,17 +40,19 @@ jobs:
           Write-Output "plans_changed=$hasdiff" >> $env:GITHUB_OUTPUT
       - name: Commit and push Plans.md changes
         if: steps.check_plans.outputs.plans_changed == 'true'
-        shell: pwsh
         run: |
           git config --global user.name "autoupdate"
           git config --global user.email "auto@update.com"
           git add Plans.md
-          git commit -m "Updated plan list"
+          git commit -m "Update plan list"
           git push
 
   update-images:
     needs: update-plans
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
     steps:
       - name: Checkout dev repository
         uses: actions/checkout@v4
@@ -61,16 +65,17 @@ jobs:
           python-version: 3.x
       - name: Check if docs/images was modified
         id: check_images
-        shell: pwsh
         run: |
           $diff = git diff --name-only ${{ github.event.before }} ${{ github.event.after }}
           $sourcediff = $diff | Where-Object { $_ -match 'docs/images'}
           $hasdiff = $sourcediff.Length -gt 0
 
           Write-Output "images_changed=$hasdiff" >> $env:GITHUB_OUTPUT
+      - name: Update helpwindow images
+        if: steps.check_images.outputs.images_changed == 'true'
+        run: python scripts/update_helpwindow_imgs.py
       - name: Commit and push image changes
         if: steps.check_images.outputs.images_changed == 'true'
-        shell: pwsh
         run: |
           git config --global user.name "autoupdate"
           git config --global user.email "auto@update.com"
@@ -81,6 +86,9 @@ jobs:
   update-readme:
     needs: update-images
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: pwsh
     steps:
       - name: Checkout dev repository
         uses: actions/checkout@v4
@@ -93,19 +101,20 @@ jobs:
           python-version: 3.x
       - name: Check if README.md was modified.
         id: check_readme
-        shell: pwsh
         run: |
           $diff = git diff --name-only ${{ github.event.before }} ${{ github.event.after }}
           $sourcediff = $diff | Where-Object { $_ -match 'README.md'}
           $hasdiff = $sourcediff.Length -gt 0
 
           Write-Output "readme_changed=$hasdiff" >> $env:GITHUB_OUTPUT
+      - name: Update helpwindow README
+        if: steps.check_readme.outputs.readme_changed == 'true'
+        run: python scripts/update_helpwindow_readme.py
       - name: Commit and push readme changes
         if: steps.check_readme.outputs.readme_changed == 'true'
-        shell: pwsh
         run: |
           git config --global user.name "autoupdate"
           git config --global user.email "auto@update.com"
           git add btd6bot/Files/helpwindow/README.md
-          git commit -m "Updated readme"
+          git commit -m "Update readme"
           git push
