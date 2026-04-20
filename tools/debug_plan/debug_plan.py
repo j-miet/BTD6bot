@@ -126,7 +126,7 @@ def run() -> None:
             if len(inputs) == 3:
                 run_plan(inputs[1], inputs[2].lower())
             elif len(inputs) == 4:
-                run_plan(inputs[1], inputs[2].lower(), int(inputs[2]))
+                run_plan(inputs[1], inputs[2].lower(), int(inputs[3]))
             elif len(inputs) == 5:
                 run_plan(inputs[1], inputs[2].lower(), int(inputs[3]), int(inputs[4]))
         else:
