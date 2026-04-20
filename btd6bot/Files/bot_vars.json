@@ -3,7 +3,7 @@
     "custom_resolution": "1600 x 900",
     "windowed": false,
     "windowed_position": "centered",
-    "version": 53,
+    "version": 54,
     "retries": 5,
     "check_ingame_resolution": false,
     "ingame_res_shift": "0 x 0",

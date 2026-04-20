@@ -3,64 +3,68 @@
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
-sniper 1-0-3
-heli 5-0-5
+glue 0-2-4
 
-alch 4-2-0
+sniper 4-2-0
+heli 5-0-5
 
 village 2-3-0
 _______________________________________
 """
 
-from._plan_imports import *
+from ._plan_imports import *
+
 
 def play(data):
     BEGIN, END = menu_start.load(*data)
-    round = BEGIN-1
+    round = BEGIN - 1
     map_start = time()
-    while round < END+1:
+    while round < END + 1:
         round = Rounds.round_check(round, map_start, data[2])
-        if round == BEGIN:     
-            hero = Monkey('hero', 0.6932291666667, 0.7907407407407)
+        if round == BEGIN:
+            hero = Hero(0.690625, 0.8027777777778)
         elif round == 8:
-            sniper = Monkey('sniper', 0.4546875, 0.3074074074074)
-            sniper.target('strong')
+            sniper1 = Monkey("sniper", 0.4416666666667, 0.3175925925926)
+            sniper1.target("strong")
         elif round == 15:
-            heli1 = Monkey('heli', 0.7203125, 0.512962962963)
+            heli1 = Monkey("heli", 0.7208333333333, 0.5194444444444)
+        elif round == 19:
+            heli1.upgrade(["1-0-0"])
         elif round == 21:
-            heli1.upgrade(['1-0-0','2-0-0'])
-        elif round == 25:
-            sniper.upgrade(['1-0-0'])
-        elif round == 29:
-            heli1.upgrade(['3-0-0'])
+            heli1.upgrade(["2-0-0"])
+        elif round == 27:
+            heli1.upgrade(["3-0-0"])
         elif round == 31:
-            heli1.upgrade(['3-0-1','3-0-2'])
-        elif round == 34:
-            village = Monkey('village', 0.6578125, 0.6296296296296)
+            village1 = Monkey("village", 0.659375, 0.6472222222222)
+            village1.upgrade(["0-1-0"])
+        elif round == 35:
+            village1.upgrade(["0-2-0"])
         elif round == 36:
-            village.upgrade(['0-1-0','0-2-0'])
+            heli2 = Monkey("heli", 0.63125, 0.4972222222222)
+        elif round == 37:
+            heli2.upgrade(["1-0-0", "2-0-0"])
         elif round == 38:
-            alch = Monkey('alch', 0.7348958333333, 0.4203703703704)
-            alch.upgrade(['1-0-0','2-0-0','3-0-0'])
-        elif round == 39:
-            sniper.upgrade(['1-0-1','1-0-2'])
-        elif round == 42:
-            village.upgrade(['1-2-0','2-2-0'])
-        elif round == 45:
-            sniper.upgrade(['1-0-3'])
-        elif round == 54:
-            heli1.upgrade(['4-0-2'])
-        elif round == 55:
-            heli2 = Monkey('heli', 0.5828125, 0.5166666666667)
-            heli2.upgrade(['1-0-0','2-0-0','2-0-1','2-0-2'])
-        elif round == 79:
-            heli1.upgrade(['5-0-2'])
+            heli2.upgrade(["2-0-1", "2-0-2"])
+        elif round == 41:
+            heli2.upgrade(["2-0-3"])
+            heli1.upgrade(["3-0-1", "3-0-2"])
+        elif round == 48:
+            heli2.upgrade(["2-0-4"])
+        elif round == 57:
+            heli1.upgrade(["4-0-2"])
+        elif round == 59:
+            village1.upgrade(["1-2-0", "2-2-0"])
         elif round == 81:
-            hero.target('strong')
-            alch.upgrade(['4-0-0','4-1-0','4-2-0'])
-        elif round == 83:
-            village.upgrade(['2-3-0'])
-        elif round == 85:
-            heli2.upgrade(['2-0-3','2-0-4'])
+            heli1.upgrade(["5-0-2"])
+        elif round == 89:
+            village1.upgrade(["2-3-0"])
+        elif round == 94:
+            heli2.upgrade(["2-0-5"])
+        elif round == 95:
+            glue1 = Monkey("glue", 0.6994791666667, 0.7472222222222)
+            glue1.upgrade(["0-1-0", "0-2-0", "0-2-1", "0-2-2", "0-2-3"])
         elif round == 96:
-            heli2.upgrade(['2-0-5'])
+            glue1.upgrade(["0-2-4"])
+            sniper1.upgrade(["1-0-0", "2-0-0", "3-0-0"])
+        elif round == 98:
+            sniper1.upgrade(["4-0-0", "4-1-0", "4-2-0"])

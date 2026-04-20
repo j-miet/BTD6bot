@@ -26,6 +26,8 @@ Copy-Item './_install/win/_copy/image_scaler.bat' -Destination './tools/image_sc
 
 Copy-Item './_install/win/_copy/command_tracker.bat' -Destination './tools/command_tracker/run.bat' ^
 
+Copy-Item './_install/win/_copy/debug_plan.bat' -Destination './tools/debug_plan/run.bat' ^
+
 python -m venv ./.venv ^
 
 ./.venv/Scripts/activate ^

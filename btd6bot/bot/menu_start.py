@@ -2,9 +2,6 @@
 
 Menu navigation is done with simulating mouse inputs on predetermined locations.
 Initial start condition is to search for main menu 'Play' button using ocr.
-
-Handles a chunk of constant values: these are wrapped under separate classes to avoid polluting module 
-namespace.
 """
 
 from __future__ import annotations
@@ -29,16 +26,20 @@ from customprint import cprint
 
 if TYPE_CHECKING:
     from typing import Any
-if sys.platform == 'win32':
+if sys.platform == "win32":
     import win32gui
+
+MENU_TIMELIMIT: float = 10
+MAPSEARCH_LIMIT: float = 5
 
 
 def _scroll_down_heroes() -> None:
     """Scrolls down hero screen allowing access to more heroes."""
-    pyautogui.moveTo(kb_mouse.pixel_position(get_click('menu', 'heroscreen_scroll')))
-    for _ in range(0,4):
+    pyautogui.moveTo(kb_mouse.pixel_position(get_click("menu", "heroscreen_scroll")))
+    for _ in range(0, 4):
         pyautogui.scroll(clicks=-1000)
         time.sleep(0.1)
+
 
 def _choose_hero(hero_name: str | None) -> bool:
     """In menu screen, chooses the correct hero.
@@ -54,45 +55,49 @@ def _choose_hero(hero_name: str | None) -> bool:
         If hero selection could be verified (even if None) return True; otherwise hero selection screen couldn't be
         processed and returns False.
     """
-    hero_dict: dict[str, Any] = get_locationdict()['CLICK']
-    all_heroes = (tuple(hero_dict['heroes'].keys()),
-                  tuple(hero_dict['heroes2'].keys()))
+    hero_dict: dict[str, Any] = get_locationdict()["CLICK"]
+
+    all_heroes = (tuple(hero_dict["heroes"].keys()), tuple(hero_dict["heroes2"].keys()))
     if hero_name is None or hero_name.lower() not in set().union(*all_heroes):
-        cprint('No hero used in current plan')
+        cprint("No hero used in current plan")
         Hero.current_plan_hero_name = hero_name
         return True
     else:
-        cprint("Selecting", hero_name.capitalize(), "as hero... ", end='')
-        kb_mouse.click(get_click('menu', 'hero_window'))
+        cprint("Selecting", hero_name.capitalize(), "as hero... ", end="")
+        kb_mouse.click(get_click("menu", "hero_window"))
         start: float = time.time()
         loop: bool = True
         while loop:
-            for letter in ('s','e','l','e','c','t','e','d'):
-                if not weak_substring_check(letter, (0.5296875, 0.5472222222222, 0.6338541666667, 0.5916666666667),
-                                       OCR_READER):
-                    if time.time()-start >= 10:
+            for letter in ("s", "e", "l", "e", "c", "t", "e", "d"):
+                if not weak_substring_check(
+                    letter, (0.5296875, 0.5472222222222, 0.6338541666667, 0.5916666666667), OCR_READER
+                ):
+                    if time.time() - start >= MENU_TIMELIMIT:
                         return False
                     time.sleep(0.3)
                 else:
                     loop = False
                     break
-        if hero_name.lower() in hero_dict['heroes']:
-            kb_mouse.click(get_click('heroes', hero_name.lower()))
+
+        if hero_name.lower() in hero_dict["heroes"]:
+            kb_mouse.click(get_click("heroes", hero_name.lower()))
             Hero.current_plan_hero_name = hero_name
-        elif hero_name.lower() in hero_dict['heroes2']:
+        elif hero_name.lower() in hero_dict["heroes2"]:
             _scroll_down_heroes()
-            kb_mouse.click(get_click('heroes2', hero_name.lower()))
+            kb_mouse.click(get_click("heroes2", hero_name.lower()))
             Hero.current_plan_hero_name = hero_name
+
     time.sleep(0.3)
-    kb_mouse.click(get_click('menu', 'hero_select'))
+    kb_mouse.click(get_click("menu", "hero_select"))
     time.sleep(0.3)
     kb_mouse.press_esc()
     cprint("Hero selected!")
     return True
 
+
 def _choose_map(map_name: str) -> bool:
     """Chooses correct map by first clicking the map search bar and then typing the map name.
-    
+
     Args:
         map_name: Map name.
 
@@ -103,55 +108,55 @@ def _choose_map(map_name: str) -> bool:
     start: float = time.time()
     loop: bool = True
     while loop:
-        for letter in ('p','l','a','y'):
-            if not weak_substring_check(letter, get_text('menu', 'menu_playtext'), OCR_READER):
-                if time.time()-start >= 10:
+        for letter in ("p", "l", "a", "y"):
+            if not weak_substring_check(letter, get_text("menu", "menu_playtext"), OCR_READER):
+                if time.time() - start >= MENU_TIMELIMIT:
                     return False
                 time.sleep(0.3)
             else:
                 loop = False
                 break
     time.sleep(0.5)
-    map_str = map_name.replace('_', ' ')
-    kb_mouse.click(get_click('menu', 'menu_play'))
+
+    map_str = map_name.replace("_", " ")
+    kb_mouse.click(get_click("menu", "menu_play"))
     start = time.time()
     search_found = 0
     time.sleep(0.4)
-    kb_mouse.click(get_click('menu', 'search_map'))
+    kb_mouse.click(get_click("menu", "search_map"))
     if _maindata.maindata["bot_vars"]["windowed"]:
         loop = True
-        while time.time()-start <= 5 and loop:
-            for letter in ('s','e','a','r','c','h'):
-                if weak_substring_check(letter, 
-                                        get_text('menu', 'map_searchtext'),
-                                        OCR_READER):
+        while time.time() - start <= MAPSEARCH_LIMIT and loop:
+            for letter in ("s", "e", "a", "r", "c", "h"):
+                if weak_substring_check(letter, get_text("menu", "map_searchtext"), OCR_READER):
                     search_found = 1
                     loop = False
                     break
                 else:
                     time.sleep(0.3)
+
         if not search_found:
             search_found = 0
-            kb_mouse.click(get_click('menu', 'search_map'), ignore_windowed=True)
+            kb_mouse.click(get_click("menu", "search_map"), ignore_windowed=True)
             start = time.time()
-            while time.time()-start <= 5 and loop:
-                for letter in ('s','e','a','r','c','h'):
-                    if weak_substring_check(letter, 
-                                            get_text('menu', 'map_searchtext'), 
-                                            OCR_READER):
+            while time.time() - start <= MAPSEARCH_LIMIT and loop:
+                for letter in ("s", "e", "a", "r", "c", "h"):
+                    if weak_substring_check(letter, get_text("menu", "map_searchtext"), OCR_READER):
                         search_found = 1
                         loop = False
                         break
                     else:
                         time.sleep(0.3)
             if not search_found:
-                return False        
+                return False
+
     time.sleep(0.4)
-    kb_mouse.click(get_click('menu', 'search_map_bar'))
+    kb_mouse.click(get_click("menu", "search_map_bar"))
     time.sleep(0.4)
-    pyautogui.write(map_str) # types map name to search bar.
-    kb_mouse.click(get_click('menu', 'choose_map'))
+    pyautogui.write(map_str)  # types map name to search bar.
+    kb_mouse.click(get_click("menu", "choose_map"))
     return True
+
 
 def _choose_diff(d: str) -> None:
     """Chooses correct difficulty setting.
@@ -161,7 +166,8 @@ def _choose_diff(d: str) -> None:
     Args:
         d: Difficulty.
     """
-    kb_mouse.click(get_click('difficulty', d))
+    kb_mouse.click(get_click("difficulty", d))
+
 
 def _choose_mode(m: str) -> None:
     """Chooses correct game mode.
@@ -171,29 +177,31 @@ def _choose_mode(m: str) -> None:
     Args:
         m: Game mode.
     """
-    if m == 'STANDARD':
-        kb_mouse.click(get_click('modes', 'standard'))
-    elif m in {'PRIMARY', 'MILITARY', 'MAGIC'}:
-        kb_mouse.click(get_click('modes', 'top_left'))
-    elif m in {'DEFLATION', 'APOPALYPSE', 'DOUBLE_HP'}:
-        kb_mouse.click(get_click('modes', 'top_middle'))
-    elif m == 'HALF_CASH':
-        kb_mouse.click(get_click('modes', 'top_right'))
-    elif m in {'REVERSE', 'ALTERNATE'}:
-        kb_mouse.click(get_click('modes', 'bottom_left'))
-    elif m == 'IMPOPPABLE':
-        kb_mouse.click(get_click('modes', 'bottom_middle'))
-    elif m == 'CHIMPS':                                          
-        kb_mouse.click(get_click('modes', 'bottom_right'))
-    kb_mouse.click(get_click('menu', 'save_overwrite'))  # if a previous save exists, overwrite it.
+    if m == "STANDARD":
+        kb_mouse.click(get_click("modes", "standard"))
+    elif m in {"PRIMARY", "MILITARY", "MAGIC"}:
+        kb_mouse.click(get_click("modes", "top_left"))
+    elif m in {"DEFLATION", "APOPALYPSE", "DOUBLE_HP"}:
+        kb_mouse.click(get_click("modes", "top_middle"))
+    elif m == "HALF_CASH":
+        kb_mouse.click(get_click("modes", "top_right"))
+    elif m in {"REVERSE", "ALTERNATE", "SANDBOX"}:  # sandbox on easy difficulty
+        kb_mouse.click(get_click("modes", "bottom_left"))
+    elif m == "IMPOPPABLE":
+        kb_mouse.click(get_click("modes", "bottom_middle"))
+    elif m == "CHIMPS":
+        kb_mouse.click(get_click("modes", "bottom_right"))
+    kb_mouse.click(get_click("menu", "save_overwrite"))  # if a previous save exists, overwrite it.
+
 
 def _reset_global_targeting() -> None:
     Monkey._wingmonkey = False
     Monkey._elite_sniper = False
 
+
 def _update_external_variables(begin_r: int, end_r: int) -> None:
     """Initializes all external class-level variables used within bot package.
-    
+
     This function should only be called by 'load'.
 
     Args:
@@ -201,80 +209,77 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
         end_r: Final round.
     """
     _maindata.maindata["bot_vars"]["check_ingame_resolution"] = False
-    ScreenRes.update_shift(0, 0) # shift must not be applied during menu navigations
-    ScreenRes.update_winpos_status('centered')
+    ScreenRes.update_shift(0, 0)  # shift must not be applied during menu navigation
+    ScreenRes.update_winpos_status("centered")
     bot.hotkeys.generate_hotkeys(bot.hotkeys.hotkeys, _maindata.maindata["hotkeys"])
-    Rounds.begin_round, Rounds.end_round = begin_r, end_r
     _maindata.maindata["internal"]["defeat_status"] = False
-    Rounds.exit_type = 'defeat'
+    _maindata.maindata["internal"]["paused"] = False
+    Rounds.begin_round, Rounds.end_round = begin_r, end_r
+    Rounds.exit_type = "defeat"
     AutoStart.called_forward = False
     PauseControl.pause_length = 0
-    _maindata.maindata["internal"]["paused"] = False 
     _reset_global_targeting()
 
     bot_vars_dict = _maindata.maindata["bot_vars"]
     customres_val: bool = bot_vars_dict["check_resolution"]
     if customres_val:
-        resolution_val: tuple[int, ...] = tuple(map(int, bot_vars_dict["custom_resolution"].split('x')))
+        resolution_val: tuple[int, ...] = tuple(map(int, bot_vars_dict["custom_resolution"].split("x")))
         ScreenRes.update_res(resolution_val[0], resolution_val[1])
     else:
         ScreenRes.update_res(ScreenRes.BASE_RES[0], ScreenRes.BASE_RES[1])
-    
+
     ingameres_val: bool = bot_vars_dict["check_ingame_resolution"]
     if ingameres_val:
-        ingame_shift_val: tuple[int, ...] = tuple(map(int, bot_vars_dict["ingame_res_shift"].split('x')))
+        ingame_shift_val: tuple[int, ...] = tuple(map(int, bot_vars_dict["ingame_res_shift"].split("x")))
         ScreenRes.update_shift(ingame_shift_val[0], ingame_shift_val[1])
         locations.update_customlocations(locations._custom_locations, _maindata.maindata["custom_locations"])
-        cprint("#Custom location values loaded.")  
-    
+        cprint("#Custom location values loaded.")
+
     windowed_val: bool = bot_vars_dict["windowed"]
     if windowed_val:
         winpos_val: str = bot_vars_dict["windowed_position"]
-        if winpos_val == 'auto' and sys.platform == 'win32':
-            ScreenRes.update_winpos_status('auto')
+        if winpos_val == "auto" and sys.platform == "win32":
+            ScreenRes.update_winpos_status("auto")
             try:
                 ScreenRes._phandle = win32gui.FindWindow(None, "BloonsTD6")
                 winrect = win32gui.GetWindowRect(ScreenRes._phandle)
-                ScreenRes.update_res(winrect[2]-winrect[0], winrect[3]-winrect[1]) # auto-update window res
+                ScreenRes.update_res(winrect[2] - winrect[0], winrect[3] - winrect[1])  # auto-update window res
             except Exception:
                 cprint("Can't find Bloons TD 6 game instance. Stop bot, open the game and try again.")
                 while True:
                     time.sleep(1)
-        elif winpos_val == 'centered':
-            ScreenRes.update_winpos_status('centered')
+        elif winpos_val == "centered":
+            ScreenRes.update_winpos_status("centered")
         else:
-            ScreenRes.update_winpos_status('custom')
-            winpos: tuple[int, ...] = tuple(map(int, bot_vars_dict["windowed_position"].split('x')))
+            ScreenRes.update_winpos_status("custom")
+            winpos: tuple[int, ...] = tuple(map(int, bot_vars_dict["windowed_position"].split("x")))
             ScreenRes.update_winpos(winpos[0], winpos[1])
+
 
 def _start_plan() -> None:
     """Resets counter if mouse moves during it."""
-    cprint('Starting plan in...', end=' ')
-    timer = 3
+    cprint("Starting plan in...", end=" ")
+    timer: int = 3
     x, y = pyautogui.position()
     while timer > 0:
         for i in range(3, 0, -1):
             if (x, y) != tuple(pyautogui.position()):
                 cprint("\nMouse moved, reseting timer!")
-                cprint('Starting plan in...', end=' ')
+                cprint("Starting plan in...", end=" ")
                 time.sleep(0.1)
                 timer = 3
                 x, y = pyautogui.position()
                 break
-            cprint(i, end=' ', flush=True)
+            cprint(i, end=" ", flush=True)
             time.sleep(1)
             timer -= 1
     cprint()
-    cprint('--> *Bot running*')
-            
-def load(map_name: str, 
-         diff: str, 
-         mode: str, 
-         begin_round: int, 
-         end_round: int, 
-         hero: str, 
-         farm: bool = False
-         ) -> tuple[int, int]:
+    cprint("--> *Bot running*")
+
+
+def load(
+    map_name: str, diff: str, mode: str, begin_round: int, end_round: int, hero: str, farm: bool = False
+) -> tuple[int, int]:
     """Sets up pre-game conditions for the plan by choosing correct hero, map, difficulty and game mode.
 
     Updates begin and end rounds for bot.rounds.
@@ -292,12 +297,17 @@ def load(map_name: str,
         Begin and end rounds.
     """
     _update_external_variables(begin_round, end_round)
+
+    if _maindata.debug_get_mode() == _maindata.Debug.SETUP_STATIC_STATE:
+        _maindata.debug_set_ignore_flag(True)
+        return begin_round, end_round
+
     loop: bool = True
     if not farm:
-        cprint('Searching for main menu screen...')
+        cprint("Searching for main menu screen...")
         while loop:
-            for letter in ('p','l','a','y'):
-                if not weak_substring_check(letter, get_text('menu', 'menu_playtext'), OCR_READER):
+            for letter in ("p", "l", "a", "y"):
+                if not weak_substring_check(letter, get_text("menu", "menu_playtext"), OCR_READER):
                     time.sleep(0.3)
                 else:
                     loop = False
@@ -307,6 +317,11 @@ def load(map_name: str,
             return 0, 0
         if not _choose_map(map_name):
             return 0, 0
-    _choose_diff(diff)
-    _choose_mode(mode)
+    if _maindata.debug_get_mode() == _maindata.Debug.POS_STATIC:
+        _choose_diff("EASY")
+        _choose_mode("SANDBOX")
+    else:
+        _choose_diff(diff)
+        _choose_mode(mode)
+
     return begin_round, end_round

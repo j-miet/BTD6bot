@@ -10,22 +10,22 @@ ROOT = Path(__file__).parent.parent
 
     (Original implementation with os module) 
     '\\'.join(os.path.dirname(os.path.abspath(__file__)).split('\\'))"""
-FILES_PATH = ROOT/'Files'
+FILES_PATH = ROOT / "Files"
 """Location of all non-python files."""
-MAP_IMAGES_PATH = FILES_PATH/'map images'
+MAP_IMAGES_PATH = FILES_PATH / "map images"
 """File path to map images."""
-TEXT_FILES_PATH = FILES_PATH/'text files'
+TEXT_FILES_PATH = FILES_PATH / "text files"
 """File path to gui text files. These store gui static data like Readme and also mutable data which 
     can be modified and saved through gui functions."""
-QUEUE_LIST_PATH = TEXT_FILES_PATH/'queue_list.txt'
+QUEUE_LIST_PATH = TEXT_FILES_PATH / "queue_list.txt"
 """Path to currently saved plan queue data."""
-HELP_PATH = TEXT_FILES_PATH/'help.txt'
+HELP_PATH = TEXT_FILES_PATH / "help.txt"
 """Readme text path."""
-HOTKEYS_PATH = TEXT_FILES_PATH/'hotkeys.txt'
+HOTKEYS_PATH = TEXT_FILES_PATH / "hotkeys.txt"
 """Hotkeys data path."""
-GUIHOTKEYS_PATH = TEXT_FILES_PATH/'guihotkeys.txt'
+GUIHOTKEYS_PATH = TEXT_FILES_PATH / "guihotkeys.txt"
 """Gui hotkeys data path."""
-HOTKEY_HELP_PATH = TEXT_FILES_PATH/'hotkeyhelp.txt'
+HOTKEY_HELP_PATH = TEXT_FILES_PATH / "hotkeyhelp.txt"
 """Hotkey help text path."""
-PLANS_PATH = ROOT/'plans'
+PLANS_PATH = ROOT / "plans"
 """All .py plan files."""

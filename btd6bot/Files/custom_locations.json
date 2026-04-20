@@ -68,7 +68,9 @@
             "target_leftpanel_leftarrow": [0.044, 0.294],
             "target_leftpanel_rightarrow": [0.185, 0.292],
             "target_rightpanel_leftarrow": [0.680, 0.292],
-            "target_rightpanel_rightarrow": [0.822, 0.292]
+            "target_rightpanel_rightarrow": [0.822, 0.292],
+            "hero_leftpanel_upgradelevel": [0.120, 0.64],
+            "hero_rightpanel_upgradelevel": [0.754, 0.64]
         },
         "hero_left_menu": {
             "1": [0.0453125, 0.1712962962963],

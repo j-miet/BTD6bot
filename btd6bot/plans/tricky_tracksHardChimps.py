@@ -1,189 +1,206 @@
 """
-[Hero] Obyn
+[Hero] Etienne
 [Monkey Knowledge] -
 -------------------------------------------------------------
 ===Monkeys & upgrades required===
 dart 0-0-0
 boomer 0-2-4
-bomb 4-2-0
 tack 2-0-4
-ice 5-1-0
+ice 5-2-0
 glue 0-2-4
-desperado 0-0-0
 
-sniper 1-1-0
+sniper 4-1-2
 
 wizard 5-3-2
-alch 3-0-1
-druid 0-0-0
+alch 4-2-0
 mermonkey 4-3-2
 
-village 3-0-2
+village 4-0-2
 _______________________________________
-In version 53 this map got changed so there's less space to put towers. For this reason placements have been
-adjusted, but same strat doesn't seem to be black border viable anymore: it always ends up failing on round 99. Funnily
-enough it passes round 99 on second try and 100 is also beatable, making this gold border viable if you want to manually
-finish the last 2 rounds.
-
-Plan will be updated on next bot version.
 """
 
-from._plan_imports import *
+from ._plan_imports import *
+
 
 def play(data):
     BEGIN, END = menu_start.load(*data)
-    round = BEGIN-1
+    round = BEGIN - 1
     map_start = time()
-    while round < END+1:
+    while round < END + 1:
         round = Rounds.round_check(round, map_start, data[2])
-        if round == BEGIN:     
-            desp1 = Monkey('desperado', 0.3151041666667, 0.5111111111111)
-            desp2 = Monkey('desperado', 0.553125, 0.537962962963)
-        elif round == 8:
-            dart1 = Monkey('dart', 0.3505208333333, 0.4675925925926)
+        if round == BEGIN:
+            dart1 = Monkey("dart", 0.3916666666667, 0.337962962963)
+            dart2 = Monkey("dart", 0.4166666666667, 0.4083333333333)
+            dart3 = Monkey("dart", 0.5223958333333, 0.5787037037037)
+        if round == 7:
+            dart3.upgrade(["0-1-0"])
         elif round == 9:
-            dart2 = Monkey('dart', 0.5161458333333, 0.5361111111111)
+            mermonkey1 = Monkey("mermonkey", 0.4921875, 0.5231481481481)
         elif round == 10:
-            mermonkey1 = Monkey('mermonkey', 0.2859375, 0.2638888888889)
-            dart1.target('close')
-            dart2.target('close')
-        elif round == 11:
-            dart1.target('first')
-            dart2.target('first')
+            mermonkey2 = Monkey("mermonkey", 0.3036458333333, 0.2435185185185)
         elif round == 13:
-            hero = Hero(0.540625, 0.462037037037)
+            hero = Hero(0.4567708333333, 0.5583333333333)
         elif round == 14:
-            hero.target('close', cpos=(0.5369791666667, 0.4638888888889))
-            mermonkey2 = Monkey('mermonkey', 0.34375, 0.4009259259259)
+            wizard = Monkey("wizard", 0.3864583333333, 0.4398148148148)
+            wizard.target("close")
         elif round == 15:
-            mermonkey3 = Monkey('mermonkey', 0.5828125, 0.7064814814815)
+            wizard.upgrade(["1-0-0"])
         elif round == 17:
-            sniper = Monkey('sniper', 0.8276041666667, 0.5481481481481)
-            sniper.target('strong')
+            wizard.upgrade(["2-0-0"])
+        elif round == 18:
+            ability(1, 3.5)
         elif round == 19:
-            wizard = Monkey('wizard', 0.4776041666667, 0.5333333333333)
-            wizard.upgrade(['1-0-0'])
+            sniper = Monkey("sniper", 0.3046875, 0.7342592592593)
+            sniper.target("strong")
+        elif round == 20:
+            sniper2 = Monkey("sniper", 0.6859375, 0.7083333333333)
         elif round == 21:
-            wizard.upgrade(['2-0-0'])
+            mermonkey3 = Monkey("mermonkey", 0.5609375, 0.7305555555556)
         elif round == 22:
-            sniper.upgrade(['1-0-0'])
+            sniper.upgrade(["1-0-0"])
         elif round == 23:
-            sniper.upgrade(['1-1-0'])
-        elif round == 25:
-            druid1 = Monkey('druid', 0.5057291666667, 0.5898148148148)
-        elif round == 28:
             ability(1)
-        elif round == 29:
-            wizard.upgrade(['3-0-0'])
+        elif round == 24:
+            sniper.upgrade(["1-0-1"])
+        elif round == 26:
+            sniper.upgrade(["1-0-2"])
+        elif round == 27:
+            ability(1, 5.5)
         elif round == 30:
-            wizard.upgrade(['3-0-1','3-0-2'])
+            wizard.upgrade(["3-0-0"])
         elif round == 31:
-            mermonkey1.upgrade(['0-0-1'])
+            mermonkey4 = Monkey("mermonkey", 0.35, 0.4768518518519)
+            mermonkey4.upgrade(["0-0-1"])
+        elif round == 32:
+            mermonkey4.upgrade(["1-0-1", "2-0-1"])
+            sniper2.upgrade(["0-1-0"])
         elif round == 34:
-            mermonkey1.upgrade(['0-1-1','0-2-1','0-3-1','0-3-2'])
+            mermonkey3.upgrade(["0-0-1", "0-1-1", "0-2-1"])
         elif round == 35:
-            wizard2 = Monkey('wizard', 0.3848958333333, 0.4416666666667)
-            wizard2.upgrade(['0-1-0','0-1-1','0-1-2'])
+            mermonkey4.upgrade(["3-0-1"])
         elif round == 36:
             ability(1)
-        elif round == 37:
-            druid2 = Monkey('druid', 0.465625, 0.5916666666667)
+            wizard.upgrade(["3-1-0", "3-2-0"])
+            wizard.target("first")
+        elif round == 38:
+            sniper.upgrade(["2-0-2"])
         elif round == 39:
-            change_autostart()
-            wait(14)
-            wizard2.upgrade(['0-2-2','0-3-2'])
-            change_autostart()
-            end_round()
+            sniper.upgrade(["3-0-2"])
         elif round == 40:
             ability(1)
         elif round == 41:
-            mermonkey2.upgrade(['1-0-0','2-0-0','3-0-0','3-0-1','3-0-2'])
-        elif round == 43:
-            village1 = Monkey('village', 0.5640625, 0.7842592592593)
-            village1.upgrade(['0-0-1','0-0-2'])
-        elif round == 44:
-            mermonkey3.upgrade(['0-0-1','0-0-2'])
-            mermonkey4 = Monkey('mermonkey', 0.5109375, 0.7925925925926)
-            mermonkey4.upgrade(['0-0-1','0-0-2'])
-        elif round == 45:
-            mermonkey3.upgrade(['0-1-2','0-2-2','0-3-2'])
-        elif round == 46:
-            mermonkey4.upgrade(['0-1-2','0-2-2','0-3-2'])
-            mermonkey5 = Monkey('mermonkey', 0.6208333333333, 0.6648148148148)
-        elif round == 47:
-            mermonkey5.upgrade(['0-0-1','0-0-2','0-1-2','0-2-2','0-3-2'])
+            village = Monkey("village", 0.4208333333333, 0.6175925925926)
+            village.upgrade(["1-0-0"])
+        elif round == 42:
+            village.upgrade(["2-0-0"])
         elif round == 49:
-            mermonkey2.upgrade(['4-0-2'])
-            mermonkey6 = Monkey('mermonkey', 0.4776041666667, 0.8388888888889)
-            mermonkey6.upgrade(['0-0-1','0-0-2','0-1-2','0-2-2','0-3-2'])
-        elif round == 50:
-            village1.upgrade(['1-0-2','2-0-2'])
+            wizard.upgrade(["4-2-0"])
         elif round == 51:
-            mermonkey7 = Monkey('mermonkey', 0.6822916666667, 0.6888888888889)
-            mermonkey7.upgrade(['0-0-1','0-0-2','0-1-2','0-2-2','0-3-2'])
+            village.upgrade(["3-0-0", "4-0-0", "4-0-1", "4-0-2"])
+            mermonkey4.upgrade(["3-0-2"])
+            mermonkey3.upgrade(["0-3-1", "0-3-2"])
+            mermonkey5 = Monkey("mermonkey", 0.3140625, 0.5194444444444)
         elif round == 52:
-            mermonkey8 = Monkey('mermonkey', 0.4697916666667, 0.9074074074074)
-            mermonkey8.upgrade(['0-0-1','0-0-2','0-1-2','0-2-2','0-3-2'])
+            ability(2, 2)
+        elif round == 53:
+            mermonkey5.upgrade(["0-1-0", "0-2-0", "0-3-0", "0-3-1", "0-3-2"])
+            mermonkey1.upgrade(["0-1-0", "0-2-0", "0-2-1", "0-2-2"])  # skip 0-3-2
         elif round == 54:
-            mermonkey9 = Monkey('mermonkey', 0.7239583333333, 0.5648148148148)
-            mermonkey9.upgrade(['0-0-1','0-0-2','0-1-2','0-2-2','0-2-2'])
+            ability(1)
+            mermonkey6 = Monkey("mermonkey", 0.5270833333333, 0.7768518518519)
+            mermonkey6.upgrade(["0-1-0", "0-2-0", "0-3-0", "0-3-1", "0-3-2"])
         elif round == 55:
-            mermonkey10 = Monkey('mermonkey', 0.4255208333333, 0.8916666666667)
-            mermonkey10.upgrade(['0-0-1','0-0-2','0-1-2','0-2-2','0-2-2'])
-        elif round == 61:
-            ability(1)
-            wizard.upgrade(['4-0-2'])
-        elif round == 62:
-            ability(1)
-            village2 = Monkey('village', 0.4177083333333, 0.6240740740741)
-            village2.upgrade(['1-0-0'])
-        elif round == 63:
-            village2.upgrade(['2-0-0','2-0-1','2-0-2'])
-        elif round == 79:
-            wizard.upgrade(['5-0-2'])
-        elif round == 81:
-            village2.upgrade(['3-0-2'])
-            ice = Monkey('ice', 0.3901041666667, 0.3842592592593)
-            ice.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0','4-1-0'])
-        elif round == 82:
-            boomer = Monkey('boomer', 0.4072916666667, 0.7)
-            boomer.target('strong')
-            boomer.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-1-4','0-2-4'])
-        elif round == 83:
-            bomb = Monkey('bomb', 0.4276041666667, 0.3916666666667)
-            bomb.upgrade(['1-0-0','2-0-0','3-0-0','3-1-0','3-2-0'])
-        elif round == 88:
-            ability(1)
-        elif round == 92:
-            ice.upgrade(['5-1-0'])
-        elif round == 94:
-            alch = Monkey('alch', 0.4036458333333, 0.3361111111111)
-            alch.upgrade(['1-0-0','2-0-0','3-0-0','3-0-1'])
-            boomer2 = Monkey('boomer', 0.6234375, 0.7305555555556)
-            boomer2.target('strong')
-            glue = Monkey('glue', 0.4630208333333, 0.6490740740741)
-            glue.target('strong')
-        elif round == 95:
-            boomer2.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','0-1-4','0-2-4'])
-            glue.upgrade(['0-0-1','0-0-2','0-0-3','0-1-3','0-2-3'])
-        elif round == 96:
-            glue.upgrade(['0-2-4'])
-            hero.special(1, 0.428125, 0.4981481481481)
-        elif round == 97:
-            tack = Monkey('tack', 0.4630208333333, 0.3527777777778)
-            tack.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','1-0-4','2-0-4'])
-            tack2 = Monkey('tack', 0.5135416666667, 0.2935185185185)
-            tack3 = Monkey('tack', 0.3739583333333, 0.6555555555556)
-            tack4 = Monkey('tack', 0.434375, 0.2935185185185)
-        elif round == 98:
-            tack2.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','1-0-4','2-0-4'])
-            tack3.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','1-0-4','2-0-4'])
-            tack4.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4','1-0-4','2-0-4'])
-        elif round == 99:
+            mermonkey7 = Monkey("mermonkey", 0.4864583333333, 0.612037037037)
+            mermonkey7.upgrade(["0-1-0", "0-2-0"])
+        elif round == 56:
             ability(2)
-            wizard.target('strong')
-            tack5 = Monkey('tack', 0.290625, 0.5574074074074)
-        elif round == 100:
+            mermonkey7.upgrade(["0-3-0", "0-3-1", "0-3-2"])
+        elif round == 60:
+            ability(2)
             ability(1)
-            wizard.target('first')
-            tack5.upgrade(['0-0-1','0-0-2','0-0-3','1-0-3'])
+            mermonkey4.upgrade(["4-0-2"])
+        elif round == 61:
+            ice = Monkey("ice", 0.4260416666667, 0.6916666666667)
+            ice.upgrade(["1-0-0", "2-0-0", "3-0-0"])
+        elif round == 62:
+            ice.upgrade(["4-0-0", "4-1-0", "4-2-0"])
+        elif round == 63:
+            ability(1)
+            ice2 = Monkey("ice", 0.35625, 0.4046296296296)
+            ice2.upgrade(["1-0-0", "2-0-0"])
+            ability(2, 6.5)
+            ice2.upgrade(["3-0-0", "3-1-0"])
+        elif round == 65:
+            ice2.upgrade(["4-1-0", "4-2-0"])
+            ability(2, 16.5)
+        elif round == 68:
+            ability(1, 2)
+            ability(2, 4)
+        elif round == 75:
+            ability(1)
+            ability(2, 6)
+        elif round == 77:
+            ability(1, 6)
+        elif round == 78:
+            ability(2)
+            ability(1, 12)
+            ability(2, 27)
+        elif round == 79:
+            wizard.upgrade(["5-2-0"])
+        elif round == 80:
+            ability(1)
+        elif round == 81:
+            glue = Monkey("glue", 0.5203125, 0.4805555555556)
+            glue.target("strong")
+            glue.upgrade(["0-0-1", "0-0-2", "0-0-3", "0-1-3"])
+        elif round == 87:
+            ability(1)
+        elif round == 88:
+            ability(2)
+        elif round == 89:
+            ice.upgrade(["5-2-0"])
+            glue.upgrade(["0-2-3"])
+        elif round == 91:
+            glue.upgrade(["0-2-4"])
+        elif round == 93:
+            ice3 = Monkey("ice", 0.4463541666667, 0.3731481481481)
+            ice3.upgrade(["0-1-0", "0-2-0", "0-3-0"])
+        elif round == 94:
+            ability(2)
+            ability(1)
+            forward(1)
+            ice3.upgrade(["0-4-0", "1-4-0", "2-4-0"])
+            tack = Monkey("tack", 0.3765625, 0.6490740740741)
+            forward(1)
+            tack.upgrade(["0-0-1", "0-0-2", "0-0-3", "0-0-4", "1-0-4", "2-0-4"])
+        elif round == 95:
+            boomer = Monkey("boomer", 0.3442708333333, 0.6916666666667)
+            boomer.target("strong")
+            boomer.upgrade(["0-0-1", "0-0-2", "0-0-3"])
+            ability(3, 11)
+            ability(2, 14)
+        elif round == 96:
+            boomer.upgrade(["0-0-4", "0-1-4", "0-2-4"])
+            alch = Monkey("alch", 0.39375, 0.7064814814815)
+            ability(3, 12)
+        elif round == 97:
+            alch.upgrade(["1-0-0", "2-0-0", "3-0-0", "4-0-0", "4-1-0", "4-2-0"])
+        elif round == 98:
+            ability(1)
+            ability(2)
+            ability(3, 2.5)
+            sniper.upgrade(["4-0-2"])
+            forward(1)
+            tack = Monkey("tack", 0.5364583333333, 0.5259259259259)
+            tack.upgrade(["0-0-1", "0-0-2", "0-0-3", "0-0-4", "1-0-4", "2-0-4"])
+            tack2 = Monkey("tack", 0.2854166666667, 0.5638888888889)
+            tack2.upgrade(["0-0-1", "0-0-2", "0-0-3", "0-0-4", "1-0-4", "2-0-4"])
+            forward(1)
+        elif round == 99:
+            ability(3, 2.25)
+            forward(1)
+            tack3 = Monkey("tack", 0.3135416666667, 0.4546296296296)
+            tack3.upgrade(["0-0-1", "0-0-2", "0-0-3", "1-0-3", "2-0-3"])
+            forward(1)
+        elif round == 100:
+            ability(1, 1)

@@ -15,16 +15,17 @@ from bot.ocr.ocr_reader import OCR_READER
 from customprint import cprint
 from utils import timing
 
-if sys.platform == 'win32':
+if sys.platform == "win32":
     import win32gui
 
+
 def _get_positions(monkey: str, panel_loc: str) -> tuple[float, float, float, float, float, float]:
-    if panel_loc == 'left':
-        if monkey == 'super':
+    if panel_loc == "left":
+        if monkey == "super":
             lefttop_x, lefttop_y = 0.7609375, 0.4666666666667
             leftmid_x, leftmid_y = 0.7557291666667, 0.6407407407407
             leftbot_x, leftbot_y = 0.6859375, 0.7314814814815
-        elif monkey in ('sub', 'boat'):
+        elif monkey in ("sub", "boat"):
             lefttop_x, lefttop_y = 0.6036458333333, 0.387037037037
             leftmid_x, leftmid_y = 0.6734375, 0.4333333333333
             leftbot_x, leftbot_y = 0.6130208333333, 0.5055555555556
@@ -33,12 +34,12 @@ def _get_positions(monkey: str, panel_loc: str) -> tuple[float, float, float, fl
             leftmid_x, leftmid_y = 0.7494791666667, 0.5888888888889
             leftbot_x, leftbot_y = 0.6932291666667, 0.7277777777778
         return lefttop_x, lefttop_y, leftmid_x, leftmid_y, leftbot_x, leftbot_y
-    elif panel_loc == 'right':
-        if monkey == 'super':
+    elif panel_loc == "right":
+        if monkey == "super":
             righttop_x, righttop_y = 0.1213541666667, 0.5092592592593
             rightmid_x, rightmid_y = 0.2140625, 0.6555555555556
             rightbot_x, rightbot_y = 0.1109375, 0.7203703703704
-        elif monkey in ('sub', 'boat'):
+        elif monkey in ("sub", "boat"):
             righttop_x, righttop_y = 0.2067708333333, 0.3574074074074
             rightmid_x, rightmid_y = 0.2786458333333, 0.3925925925926
             rightbot_x, rightbot_y = 0.2151041666667, 0.4962962962963
@@ -50,51 +51,48 @@ def _get_positions(monkey: str, panel_loc: str) -> tuple[float, float, float, fl
     else:
         return 0, 0, 0, 0, 0, 0
 
-def _check_ocr(m: str, 
-              top_x: float, top_y: float,
-              mid_x: float, mid_y: float, 
-              bot_x: float, bot_y: float
-              ) -> None:
-    if m == 'beast':
-        beast_top1 = Monkey('beast', 0.5348958333333, 0.3351851851852)
-        beast_top2 = Monkey('beast', 0.5734375, 0.2537037037037)
-        beast_top3 = Monkey('beast', 0.6338541666667, 0.2277777777778)
-        beast_top1.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0'])
-        beast_top2.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0'])
-        beast_top3.upgrade(['1-0-0','2-0-0','3-0-0','4-0-0'])
-        beast_mid1 = Monkey('beast', 0.5265625, 0.0472222222222)
-        beast_mid2 = Monkey('beast', 0.5807291666667, 0.0564814814815)
-        beast_mid3 = Monkey('beast', 0.5473958333333, 0.1212962962963)
-        beast_mid1.upgrade(['0-1-0','0-2-0','0-3-0','0-4-0'])
-        beast_mid2.upgrade(['0-1-0','0-2-0','0-3-0','0-4-0'])
-        beast_mid3.upgrade(['0-1-0','0-2-0','0-3-0','0-4-0'])
-        beast_bot1 = Monkey('beast', 0.3130208333333, 0.2314814814815)
-        beast_bot2 = Monkey('beast', 0.2661458333333, 0.2)
-        beast_bot3 = Monkey('beast', 0.2130208333333, 0.2074074074074)
-        beast_bot1.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4'])
-        beast_bot2.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4'])
-        beast_bot3.upgrade(['0-0-1','0-0-2','0-0-3','0-0-4'])
+
+def _check_ocr(m: str, top_x: float, top_y: float, mid_x: float, mid_y: float, bot_x: float, bot_y: float) -> None:
+    if m == "beast":
+        beast_top1 = Monkey("beast", 0.5348958333333, 0.3351851851852)
+        beast_top2 = Monkey("beast", 0.5734375, 0.2537037037037)
+        beast_top3 = Monkey("beast", 0.6338541666667, 0.2277777777778)
+        beast_top1.upgrade(["1-0-0", "2-0-0", "3-0-0", "4-0-0"])
+        beast_top2.upgrade(["1-0-0", "2-0-0", "3-0-0", "4-0-0"])
+        beast_top3.upgrade(["1-0-0", "2-0-0", "3-0-0", "4-0-0"])
+        beast_mid1 = Monkey("beast", 0.5265625, 0.0472222222222)
+        beast_mid2 = Monkey("beast", 0.5807291666667, 0.0564814814815)
+        beast_mid3 = Monkey("beast", 0.5473958333333, 0.1212962962963)
+        beast_mid1.upgrade(["0-1-0", "0-2-0", "0-3-0", "0-4-0"])
+        beast_mid2.upgrade(["0-1-0", "0-2-0", "0-3-0", "0-4-0"])
+        beast_mid3.upgrade(["0-1-0", "0-2-0", "0-3-0", "0-4-0"])
+        beast_bot1 = Monkey("beast", 0.3130208333333, 0.2314814814815)
+        beast_bot2 = Monkey("beast", 0.2661458333333, 0.2)
+        beast_bot3 = Monkey("beast", 0.2130208333333, 0.2074074074074)
+        beast_bot1.upgrade(["0-0-1", "0-0-2", "0-0-3", "0-0-4"])
+        beast_bot2.upgrade(["0-0-1", "0-0-2", "0-0-3", "0-0-4"])
+        beast_bot3.upgrade(["0-0-1", "0-0-2", "0-0-3", "0-0-4"])
 
         top = Monkey(m, top_x, top_y)
-        top.upgrade(['1-0-0', '2-0-0', '3-0-0', '4-0-0'])
+        top.upgrade(["1-0-0", "2-0-0", "3-0-0", "4-0-0"])
         beast_top1.merge(top_x, top_y)
         beast_top2.merge(top_x, top_y)
         beast_top3.merge(top_x, top_y)
-        top.upgrade(['5-0-0'])
+        top.upgrade(["5-0-0"])
 
         mid = Monkey(m, mid_x, mid_y)
-        mid.upgrade(['0-1-0', '0-2-0', '0-3-0', '0-4-0'])
+        mid.upgrade(["0-1-0", "0-2-0", "0-3-0", "0-4-0"])
         beast_mid1.merge(mid_x, mid_y)
         beast_mid2.merge(mid_x, mid_y)
         beast_mid3.merge(mid_x, mid_y)
-        mid.upgrade(['0-5-0'])
+        mid.upgrade(["0-5-0"])
 
         bot = Monkey(m, bot_x, bot_y)
-        bot.upgrade(['0-0-1', '0-0-2', '0-0-3', '0-0-4'])
+        bot.upgrade(["0-0-1", "0-0-2", "0-0-3", "0-0-4"])
         beast_bot1.merge(bot_x, bot_y)
         beast_bot2.merge(bot_x, bot_y)
         beast_bot3.merge(bot_x, bot_y)
-        bot.upgrade(['0-0-5'])
+        bot.upgrade(["0-0-5"])
 
         beast_top1.sell()
         beast_top2.sell()
@@ -105,24 +103,25 @@ def _check_ocr(m: str,
         beast_bot1.sell()
         beast_bot2.sell()
         beast_bot3.sell()
-    
     else:
         top = Monkey(m, top_x, top_y)
-        top.upgrade(['1-0-0', '2-0-0', '3-0-0', '4-0-0', '5-0-0'])
+        top.upgrade(["1-0-0", "2-0-0", "3-0-0", "4-0-0", "5-0-0"])
 
         mid = Monkey(m, mid_x, mid_y)
-        mid.upgrade(['0-1-0', '0-2-0', '0-3-0', '0-4-0', '0-5-0'])
+        mid.upgrade(["0-1-0", "0-2-0", "0-3-0", "0-4-0", "0-5-0"])
 
         bot = Monkey(m, bot_x, bot_y)
-        if m == 'village':
+        if m == "village":
             if bot_x >= 0.65:
-                Monkey('farm', 0.8109375, 0.7574074074074)
+                Monkey("farm", 0.8109375, 0.7574074074074)
             else:
-                Monkey('farm', 0.0630208333333, 0.7277777777778)
-        bot.upgrade(['0-0-1', '0-0-2', '0-0-3', '0-0-4', '0-0-5'])
+                Monkey("farm", 0.0630208333333, 0.7277777777778)
+        bot.upgrade(["0-0-1", "0-0-2", "0-0-3", "0-0-4", "0-0-5"])
+
     top.sell()
     mid.sell()
     bot.sell()
+
 
 def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
     """Check if upgrade_current.json dictionary has all required keys and values.
@@ -149,41 +148,40 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
             break
     if not baseval_flag:
         _maindata.maindata["temp_upg_deltas"].update(current_dict)
-        
+
     monkeys: list[str] = []
-    if check_monkeys == ['all'] or baseval_flag:
+    if check_monkeys == ["all"] or baseval_flag:
         monkeys = list(Monkey._MONKEY_NAMES[:])
-        monkeys.remove('hero')
+        monkeys.remove("hero")
     else:
         for name in check_monkeys:
             if name in list(Monkey._MONKEY_NAMES):
                 monkeys.append(name)
     if monkeys == []:
         return
-    
+
     previous_settings = copy.deepcopy(_maindata.maindata["bot_vars"])
     _maindata.maindata["bot_vars"]["delta_ocrtext"] = True
     _maindata.maindata["bot_vars"]["checking_time_limit"] = 10
     OcrValues._log_ocr_deltas = True
 
-    cprint("\nSearching for main menu screen...", end='')
-    while not weak_substring_check('Play', get_text('menu', 'menu_playtext'), OCR_READER):
+    cprint("\nSearching for main menu screen...", end="")
+    while not weak_substring_check("Play", get_text("menu", "menu_playtext"), OCR_READER):
         time.sleep(0.5)
     cprint(" <Menu detected>\n")
-    cprint("-Updating values will take a while.\n"
-            "-Do not use mouse or keyboard during this process.")
-    cprint("Starting in... ", end='')
+    cprint("-Updating values will take a while.\n" "-Do not use mouse or keyboard during this process.")
+    cprint("Starting in... ", end="")
     timing.counter(5)
     cprint("\n--Begin--")
 
-    _choose_map('spa pits')
-    _choose_diff('EASY')
-    kb_mouse.click(get_click('modes','bottom_left')) # sandbox mode
+    _choose_map("spa pits")
+    _choose_diff("EASY")
+    kb_mouse.click(get_click("modes", "bottom_left"))  # sandbox mode
 
     start = time.time()
     cprint("\nWaiting for map screen...")
-    while not weak_substring_check('Upgrades', get_text('ingame','upgrade_text'), OCR_READER):
-        if time.time()-start > 20:
+    while not weak_substring_check("Upgrades", get_text("ingame", "upgrade_text"), OCR_READER):
+        if time.time() - start > 20:
             cprint("Could not find map screen in 20 seconds, script halted.")
             return
         kb_mouse.click((0.5036458333333, 0.7064814814815))
@@ -195,16 +193,17 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
     # left upgrade panel
     for m in monkeys:
         cprint(f"=={m}==")
-        _check_ocr(m, *_get_positions(m, 'left'))
+        _check_ocr(m, *_get_positions(m, "left"))
     if _maindata.maindata["internal"]["defeat_status"]:
         cprint("Adjusting failed, please try again.")
         _maindata.maindata["bot_vars"] = previous_settings
         return
     left_deltas: dict[str, Any] = copy.deepcopy(_maindata.maindata["temp_upg_deltas"])
+
     # right upgrade panel
     for m in monkeys:
         cprint(f"=={m}==")
-        _check_ocr(m, *_get_positions(m, 'right'))
+        _check_ocr(m, *_get_positions(m, "right"))
     if _maindata.maindata["internal"]["defeat_status"]:
         cprint("Adjusting failed, please try again.")
         _maindata.maindata["bot_vars"] = previous_settings
@@ -220,9 +219,8 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
 
     # adjusted final deltas
     if delta_adjust > 0:
-        adjust_val = delta_adjust*0.01
-        cprint("---------------------------------------------------\n"
-                "Adjusting ocr deltas based on delta value...")
+        adjust_val = delta_adjust * 0.01
+        cprint("---------------------------------------------------\n" "Adjusting ocr deltas based on delta value...")
         adjusted_dict: dict[str, Any] = _maindata.maindata["temp_upg_deltas"]
         for key in adjusted_dict.keys():
             for m in monkeys:
@@ -236,8 +234,14 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
         win = "windowed"
     else:
         win = "fullscreen"
-    upg_dict["__identifier"] = [ScreenRes._width, ScreenRes._height, ScreenRes._w_shift, ScreenRes._h_shift, 
-                                win, f"delta={delta_adjust}"]
+    upg_dict["__identifier"] = [
+        ScreenRes._width,
+        ScreenRes._height,
+        ScreenRes._w_shift,
+        ScreenRes._h_shift,
+        win,
+        f"delta={delta_adjust}",
+    ]
 
     _maindata.maindata["ocr_upgradedata"].update(upg_dict)
     _maindata.write_ocr_upgrades(upg_dict)
@@ -263,58 +267,63 @@ def _adjust_upg_deltas(check_monkeys: list[str], delta_adjust: int) -> None:
     time.sleep(1)
     kb_mouse.click((0.4442708333333, 0.7759259259259))
 
-    while not weak_substring_check('Play', get_text('menu', 'menu_playtext'), OCR_READER):
+    while not weak_substring_check("Play", get_text("menu", "menu_playtext"), OCR_READER):
         time.sleep(0.5)
     cprint("Adjusting process complete!")
+
 
 def run() -> None:
     if not _maindata.init_maindata():
         cprint("Adjusting process halted.")
         return
+
     bot_vars_adjust_args: str = _maindata.maindata["bot_vars"]["adjust_args"]
     args_list = bot_vars_adjust_args.split()
     monkey_list: list[str]
     delta: int
     winpos: str
+
     for args in args_list:
-        if 'res=' in args:
-            res_vals = args[4:].split('x')
+        if "res=" in args:
+            res_vals = args[4:].split("x")
             ScreenRes.update_res(int(res_vals[0]), int(res_vals[1]))
-        elif 'win=' in args:
+        elif "win=" in args:
             win_val = int(args[4])
             if win_val == 1:
                 _maindata.maindata["bot_vars"]["windowed"] = True
             elif win_val == 0:
                 _maindata.maindata["bot_vars"]["windowed"] = False
-        elif 'winpos=' in args:
-            if sys.platform == 'win32' and args[7:] == 'auto':
-                winpos = 'auto'
-                ScreenRes.update_winpos_status('auto')
+        elif "winpos=" in args:
+            if sys.platform == "win32" and args[7:] == "auto":
+                winpos = "auto"
+                ScreenRes.update_winpos_status("auto")
                 winrect = win32gui.GetWindowRect(ScreenRes._phandle)
-                ScreenRes.update_res(winrect[2]-winrect[0], winrect[3]-winrect[1])
-            elif args[7:] == 'centered':
-                winpos = 'centered'
-                ScreenRes.update_winpos_status('centered')
+                ScreenRes.update_res(winrect[2] - winrect[0], winrect[3] - winrect[1])
+            elif args[7:] == "centered":
+                winpos = "centered"
+                ScreenRes.update_winpos_status("centered")
             else:
-                winpos_vals = args[7:].split('x')
-                winpos = winpos_vals[0]+'x'+winpos_vals[1]
-                ScreenRes.update_winpos_status('custom')
+                winpos_vals = args[7:].split("x")
+                winpos = winpos_vals[0] + "x" + winpos_vals[1]
+                ScreenRes.update_winpos_status("custom")
                 ScreenRes.update_winpos(int(winpos_vals[0]), int(winpos_vals[1]))
-        elif 'shift=' in args:
-            shift_vals = args[6:].split('x')
+        elif "shift=" in args:
+            shift_vals = args[6:].split("x")
             ScreenRes.update_shift(int(shift_vals[0]), int(shift_vals[1]))
-        elif 'monkeys=' in args:
+        elif "monkeys=" in args:
             monkey_list = args[8:].split(",")
-        elif 'delta=' in args:
+        elif "delta=" in args:
             delta_val = int(args[6:])
             if 0 <= delta_val <= 9:
-                delta = delta_val       
-    cprint("Updating upgrade deltas with following arguments:\n" \
-            f"Resolution: {res_vals[0]}x{res_vals[1]}\n"
-            f"Windowed: {_maindata.maindata["bot_vars"]["windowed"]}\n"
-            f"  -Window top-left position: {winpos}\n"
-            f"Coordinate shift: {shift_vals[0]}x{shift_vals[1]}\n"
-            f"Monkeys: {monkey_list}\n"
-            f"Delta: {delta}\n\n"
-            "=>Bot will next enter 'spa pits' map in sandbox mode.")
+                delta = delta_val
+    cprint(
+        "Updating upgrade deltas with following arguments:\n"
+        f"Resolution: {res_vals[0]}x{res_vals[1]}\n"
+        f"Windowed: {_maindata.maindata["bot_vars"]["windowed"]}\n"
+        f"  -Window top-left position: {winpos}\n"
+        f"Coordinate shift: {shift_vals[0]}x{shift_vals[1]}\n"
+        f"Monkeys: {monkey_list}\n"
+        f"Delta: {delta}\n\n"
+        "=>Bot will next enter 'spa pits' map in sandbox mode."
+    )
     _adjust_upg_deltas(monkey_list, delta)

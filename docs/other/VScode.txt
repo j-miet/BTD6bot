@@ -1,4 +1,4 @@
-[.vscode/settings.json]
+- copy the following contents into .vscode/settings.json
 
 
 {
@@ -10,5 +10,14 @@
     "python.analysis.extraPaths": [
         "./btd6bot"
     ],
-    "python.analysis.autoImportCompletions": false
+    "python.analysis.autoImportCompletions": false,
+    "explorer.autoReveal": false,
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": false,
+    "black-formatter.args": [
+        "--config",
+        "${workspaceFolder}/pyproject.toml",
+        "--line-length",
+        "120"
+  ]
 }

@@ -1,4 +1,4 @@
-Tools used for development
+[Tools used for development]
 
 pip install =>
 
@@ -8,9 +8,11 @@ mypy # type checking
 ruff # linting
 pigar # for generating requirements.txt
 
+VS Code Extensions =>
+Python
+Black Formatter
 
-
-Usage:
+--Usage--
 [how to run command -> what running the command does]
 
 pytest 
@@ -24,3 +26,9 @@ ruff
 (optional)
 pigar
     pigar generate -> generated requirements.txt file; just for detecting main packages and removing others if needed
+
+(other)
+black (either package or simpler VS Code extension)
+- ruff is more about finding programmatic errors, Black is for quick and standardized formatting
+- very useful for enforcing a single consistent style in larger code bases. This leaves more resources to parsing and 
+  separating code logic rather than focusing on the visual aspects
