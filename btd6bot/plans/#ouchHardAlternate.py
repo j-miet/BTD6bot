@@ -93,6 +93,7 @@ def play(data):
         elif round == 63:
             ability(1,2)
             ability(2,4)
+        elif round == 64:
             boat1.upgrade(['5-2-0'])
         elif round == 75:
             mermonkey1.upgrade(['5-0-2'])
