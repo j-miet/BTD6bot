@@ -1,4 +1,4 @@
-# Supported game plans (Last updated 2026-04-19)
+# Supported game plans (Last updated 2026-04-20)
 
 - this list is auto-updated using ``scripts/update_plans.py``
 - all implemented plans are listed. Each game mode includes
@@ -110,6 +110,22 @@
 			_______________________________________
 			
 - Hard
+	- [Alternate](btd6bot/plans/#ouchHardAlternate.py)
+
+			[Hero] Etienne
+			[Monkey Knowledge] Yes
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			boat 5-2-0
+			sub 2-3-4
+			
+			ninja 0-0-0
+			mermonkey 5-0-3
+			
+			farm 2-0-3
+			_______________________________________
+			Created with all monkey knowledge unlocked.
+			
 	- [Chimps](btd6bot/plans/#ouchHardChimps.py)
 
 			[Hero] Obyn
@@ -1324,6 +1340,42 @@
 			
 ### Party Parade
 - Hard
+	- [Standard](btd6bot/plans/party_paradeHardStandard.py)
+
+			[Hero] Benjamin
+			[Monkey Knowledge] Yes
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-3
+			
+			druid 1-4-0
+			mermonkey 5-0-2
+			
+			farm 2-0-3
+			spike 4-0-4
+			_______________________________________
+			Created with all monkey knowledge unlocked.
+			
+	- [Alternate](btd6bot/plans/party_paradeHardAlternate.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] Yes
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-3-2
+			boomer 4-2-4
+			
+			sniper 2-2-0
+			ace 2-0-3
+			
+			alch 3-0-0
+			mermonkey 4-0-2
+			
+			spike 3-0-4
+			village 2-2-0
+			_______________________________________
+			Created with all monkey knowledge unlocked.
+			
 	- [Chimps](btd6bot/plans/party_paradeHardChimps.py)
 
 			[Hero] Etienne
