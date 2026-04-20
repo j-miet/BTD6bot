@@ -120,7 +120,7 @@ def run() -> None:
         elif user_input.lower() == "exit":
             return
         elif user_input.split()[0].lower() == "debug":
-            with open(Path(__file__).parent / "DebugLogs.txt", "w") as logfile:
+            with open(Path(__file__).parent.parent.parent / "DebugLogs.txt", "w") as logfile:
                 logfile.write("")  # flush debug logs
             inputs = user_input.split()
             if len(inputs) == 3:
