@@ -54,6 +54,7 @@ class Rounds:
     @staticmethod
     def _check_gamesettings() -> None:
         if Rounds.escsettings_check:
+            cprint(">Checking game settings...")
             kb_mouse.press_esc()
             time.sleep(0.5)
 
@@ -68,7 +69,7 @@ class Rounds:
                 time.sleep(0.5)
             if nugde[2] != 0:
                 kb_mouse.click(get_click("ingame", "nudge"))
-                cprint("Disabled nugde mode'")
+                cprint("Disabled 'nugde mode'")
                 time.sleep(0.5)
             if autostart[2] != 0:
                 kb_mouse.click(get_click("ingame", "autostart"))
@@ -77,11 +78,12 @@ class Rounds:
                 time.sleep(0.5)
             if hints[2] == 0:
                 kb_mouse.click(get_click("ingame", "hints"))
-                cprint("Disabled game hints")
+                cprint("Disabled 'game hints'")
                 time.sleep(0.5)
 
             kb_mouse.press_esc()
             Rounds.escsettings_check = False
+            cprint(">Check completed.\n")
 
     @staticmethod
     def _defeat_return(exit_str: str) -> None:
