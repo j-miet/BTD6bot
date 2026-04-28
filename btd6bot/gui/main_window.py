@@ -155,9 +155,9 @@ class MainWindow:
         self.root.rowconfigure(0, weight=1)
         # Linux
         if sys.platform == "linux":
-            self.root.geometry("690x465+700+300")
-            self.root.minsize(690, 465)
-            self.root.maxsize(690, 465)
+            self.root.geometry("700x465+700+300")
+            self.root.minsize(700, 465)
+            self.root.maxsize(700, 465)
         else:
             self.root.geometry("655x442+700+300")
             self.root.minsize(655, 442)
