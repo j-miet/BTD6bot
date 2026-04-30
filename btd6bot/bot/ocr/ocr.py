@@ -29,6 +29,9 @@ from PIL import Image
 import pyautogui
 from numpy import array, repeat
 
+from bot import _maindata, kb_mouse
+from customprint import cprint
+
 # desktop mode, mainly for selecting screenshot function for Linux X11 and Wayland, but includes also Win and Mac values
 # Linux: bot only supports
 # - x11 -> uses mss
@@ -46,7 +49,9 @@ elif sys.platform == "darwin":
 
     os_env = "mac"
 elif sys.platform == "linux":
-    session = os.environ.get("XDG_SESSION_TYPE").lower()
+    session = os.environ.get("XDG_SESSION_TYPE")
+    if session is not None:
+        session = session.lower()
 
     if session == "wayland":
         # don't use mss on Wayland. Instead use grim (https://gitlab.freedesktop.org/emersion/grim) subprocess calls
@@ -63,10 +68,6 @@ elif sys.platform == "linux":
         os_env = "x11"
     else:
         os_env = "unknown"
-
-
-from bot import _maindata, kb_mouse
-from customprint import cprint
 
 if TYPE_CHECKING:
     from easyocr import Reader
@@ -227,7 +228,6 @@ def weak_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> st
     tl_x, tl_y, br_x, br_y = coordinates[0], coordinates[1], coordinates[2], coordinates[3]
     width, height = br_x - tl_x, br_y - tl_y
     img: Any
-    ocr_img: Any
     final: Any
     if os_env in OcrValues._MSS_SUPPORTED and OcrValues._sct is not None:
         monitor = {"left": tl_x, "top": tl_y, "width": width, "height": height}
@@ -329,8 +329,8 @@ def weak_substring_check(input_str: str, coords: tuple[float, float, float, floa
     Returns:
         A boolean value depending on if the substring matched ocr string or not.
     """
-    (tl_x, tl_y) = kb_mouse.pixel_position((coords[0], coords[1]))
-    (br_x, br_y) = kb_mouse.pixel_position((coords[2], coords[3]))
+    tl_x, tl_y = kb_mouse.pixel_position((coords[0], coords[1]))
+    br_x, br_y = kb_mouse.pixel_position((coords[2], coords[3]))
     text = weak_image_ocr((tl_x, tl_y, br_x, br_y), reader)
     if _maindata.maindata["bot_vars"]["substring_ocrtext"]:
         cprint("\nText: " + text.lower() + "\nInput: " + input_str.lower())
@@ -387,8 +387,8 @@ def strong_delta_check(
     Returns:
         A boolean value depending on if upgrade strings are similar enough (above DELTA threshold) or not.
     """
-    (tl_x, tl_y) = kb_mouse.pixel_position((coords[0], coords[1]))
-    (br_x, br_y) = kb_mouse.pixel_position((coords[2], coords[3]))
+    tl_x, tl_y = kb_mouse.pixel_position((coords[0], coords[1]))
+    br_x, br_y = kb_mouse.pixel_position((coords[2], coords[3]))
     text = strong_image_ocr((tl_x, tl_y, br_x, br_y), reader)
     if len(text) != 0:
         if input_str == "_upgrade_":
@@ -449,8 +449,8 @@ def strong_substring_check(
         A tuple of boolean value and found ocr string in lowercase. Boolean is True if text is found as substring in
             input, otherwise False.
     """
-    (tl_x, tl_y) = kb_mouse.pixel_position((coords[0], coords[1]))
-    (br_x, br_y) = kb_mouse.pixel_position((coords[2], coords[3]))
+    tl_x, tl_y = kb_mouse.pixel_position((coords[0], coords[1]))
+    br_x, br_y = kb_mouse.pixel_position((coords[2], coords[3]))
     text = strong_image_ocr((tl_x, tl_y, br_x, br_y), reader)
     text_lower = text.lower()
     if _maindata.maindata["bot_vars"]["substring_ocrtext"]:
