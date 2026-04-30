@@ -40,31 +40,54 @@ environments:
 ### Linux
 
 Following observations are based on testing the bot on
-- *Linux Mint 22.3* 
-- *Debian 13.4 GNOME Desktop*
+- *Linux Mint 22.3 Xfce Edition* 
+- *Debian 13.4 + GNOME Desktop*
+- *Linux Arch + Wayland with Hyprland*
 
-========================================
+**Please read all the bullet points below carefully, especially <u>the one explaining display servers</u>**
+
+================================================================
 
 - for Python you need to `sudo apt install` the following:
     - python3
     - python3-pip
     - python3-venv
     - python3-tk
-    - curl 
-        - for auto-downloading btd6bot github repo contents
-    - gnome-screenshot 
-        - to enable image capturing for Python's 'mss' library so that OCR works properly
 
-    You can also specify python version in all python-based installations e.g. python3.13.10
+    You can also specify python version in all python-based installations e.g. python3.13.10. Bot supports currently 
+    versions 3.12-3.14.
 
-- You also need X11 environment to run the bot because OCR (easyocr -> torch) and kb+mouse (pyautogui, pynput) cannot 
-operate on stricter ones such as *Wayland*. 
-    - on some distros, for example Mint, this is the default (at least for now) so no need to do any changes
-    - but if not, for example Debian + GNOME, you can do the following:
-        - log out
-        - switch from GNOME to *GNOME on Xorg*
-        - log back in
-        - finally, run `sudo apt install libx11-dev`
+- if you plan to use the install script, you also need `sudo apt install curl`. Curl handles the BTD6bot github repo content 
+downloading.
+
+- Linux has two different display protocols: **X (most recent version X11)** and **Wayland**. Modern distros use Wayland by default which is 
+build to be safer+modernized but also stricter than X11, and this causes some issues with ocr screenshot functions:
+    - on **X11**, Python library `mss` is used. It's the same one that bot's Windows version uses so no problems here. 
+    You probably need to 
+        - `sudo apt install libx11-dev` for X11 dependencies, and
+        - `sudo apt install gnome-screenshot` as a fallback (not 100% sure if required)
+        
+        but after these, everything should work just fine.
+    - on **Wayland**, `mss` doesn't work because its Linux version uses Xlib with XGetImage under the hood which then 
+    requires X11 again. There are currently no Python libraries that supports Wayland. On top of this, Wayland has different display implementations which will function differently.
+    
+        <u>Currently following compositor backends are supported:</u>
+        - x11 (works with mss)
+        - wlroots (requires *grim*, see **2.** below)
+
+        => So your only options are:
+
+        1. **Switch from Wayland display to X11 (if possible):**  
+        For example Debian + GNOME desktop uses GNOME Wayland which is not supported. However you can do the following:
+            - log out
+            - switch from GNOME to *GNOME on Xorg*
+            - log back in
+            - then `sudo apt install libx11-dev` + `sudo apt install gnome-screenshot` as mentioned earlier
+
+        2. **If wlroots-based display server, use *grim*:**  
+        Install [grim](https://gitlab.freedesktop.org/emersion/grim) if it's not already installed. With this, bot 
+        can use Python subprocess to call *grim* inside the code and take screenshots. Performance-wise very good and 
+        bot should operate as usual.
     
 - Before running any script, you **must** use `sudo chmod +x SCRIPT_NAME.sh` to treat shell file as an executable. 
 For example, first typing `sudo chmod +x run.sh` then `./run.sh` runs the bash script for btd6bot gui program.
@@ -73,7 +96,8 @@ For example, first typing `sudo chmod +x run.sh` then `./run.sh` runs the bash s
 example install xclip with `sudo apt xclip`
 
     While this step is somewhat optional, but you might be required to readjust game's resolution + window position. 
-    This is where `show_coordinates.sh` script in "./tools/show_coordinates" becomes useful and helps you to determine game window's top-left 
+    This is where `show_coordinates.sh` script in "./tools/show_coordinates" becomes useful and helps you to determine 
+    game window's top-left 
     coordinate.
 
 
@@ -124,7 +148,8 @@ Instructions:
    - download ZIP file of repo
    - download source code zip under newest release version
  
-2. read the operating-system help section. For Windows you probably don't need to do anything unless you install venv (step 3). For Linux there are multiple things you should check out.
+2. read the operating-system help section. For Windows you probably don't need to do anything unless you install venv 
+(step 3). For Linux there are multiple things you should check out.
 
 3. (optional) create and activate a virtual environment for local install; this way all required python packages 
 reside under 

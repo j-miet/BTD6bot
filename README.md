@@ -75,15 +75,22 @@ Because of limited access to other operating systems than Windows, it's very dif
 all of them. Currently:
 - **Windows (10 or higher) is fully supported and thus recommended.**
 
-- **Linux**: tested partially on
-    - **Linux Mint 22.3 (Xfce)**
-    - **Debian 13.4 (GNOME)**
-    
-    Not all features have been tested, but since main functionalities (gui, kb+mouse automation, ocr) do work, bot 
-    should operate just fine.
+- **Linux**: 
 
-    Linux requires some additional dependencies to make Python, ocr, kb+mouse etc. function properly. These are 
-    documented and explained during installation process
+    Tested on following distros:
+    - **Linux Mint 22.3 (Xfce)**
+    - **Debian 13.4 (GNOME on Xorg)**
+    - **Linux Arch (Wayland with Hyprland)**
+    
+    At least gui, kb+mouse automation, and ocr functions have been tested on these distros which means bot should operate just fine.
+
+    => In general, **bot supports X11 or wlroots-based displays.** If your system has one of these available, you should be able to run the bot even if it's not listed above. How these relate to tested distros:
+    - Linux Mint uses X11
+    - Debian GNOME uses *GNOME Wayland* by default, which is based on KDE. This on itself will not work, but you can easily switch to *GNOME on Xorg* which uses X11
+    - Hyprland uses it's custom *aquamarine* compositor for Wayland which also retains wlroots compatibility.
+    
+    For more info, see [this section](_install/INSTALL.md#linux) of the install guide. It will used as a reference later and explains the X11/Wayland compatibility in more detail.
+
 - **MacOS => Not supported, but could still work** 
 
     Bot functionality remains largely untested without access to modern native Mac system i.e. owning a Mac PC. 
@@ -281,7 +288,7 @@ When you run the install script, it will download the current github main branch
 [**Notes**] 
 - You can move and rename `BTD6bot-main` directory freely, just don't rename any files inside it 
 unless you know what you're doing.
-- for more details such as step-by-step explanation of script code, check [here](_install/INSTALL.md)
+- for more details about what the scripts actually do, check [this](_install/INSTALL#detailed-explanation-of-scripts)
 
 ## Option 2: Manual install
 
