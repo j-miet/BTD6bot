@@ -6,16 +6,20 @@ this was much slower, like 25-30% slower with monkey upgrades than screen_ocr, b
 
 Now, current one is easyocr: it seems even more accurate, or at least ocr temp get very good matches from one another
 so upgrading monkeys works consistently so far; obviously there could be problematic cases but only time will tell.
-Also similar speed-wise to tesseract; would be a lot slower with all the processing, but now for example zooming of 
+Also similar speed-wise to tesseract; would be a lot slower with all the processing, but now for example zooming of
 images is no longer necessary which saves time. Easyocr does have the initial reader setup delay, which is done before
 launching program: it takes like 10 seconds, but isn't required afterwards as reader is loaded from ocr_reader and
-passed as a variable to all implemented reader-utilizing tools. Also a major plus with easyocr is that it can be 
+passed as a variable to all implemented reader-utilizing tools. Also a major plus with easyocr is that it can be
 installed entirely as a Python package whereas tesseract requires an executable file on top of its code library.
 
 After reader is initialized, it will reserve quite a sizeable chunk in memory: at least about 400MB.
 """
 
 from __future__ import annotations
+import io
+import os
+import shutil
+import subprocess
 from typing import TYPE_CHECKING
 import difflib
 import sys
@@ -24,53 +28,118 @@ import time
 from PIL import Image
 import pyautogui
 from numpy import array, repeat
-# https://python-mss.readthedocs.io/usage.html#import
-if sys.platform == 'win32': 
-    from mss.windows import MSS as mss
-elif sys.platform == 'darwin':
-    from mss.darwin import MSS as mss
-elif sys.platform == 'linux':
-    from mss.linux import MSS as mss
 
 from bot import _maindata, kb_mouse
 from customprint import cprint
 
+# desktop mode, mainly for selecting screenshot function for Linux X11 and Wayland, but includes also Win and Mac values
+# Linux: bot only supports
+# - x11 -> uses mss
+# - wlroots -> uses grim via subprocess calls
+# Other wayland displays = not yet as there's no easy way to add support for them
+os_env: str = "unknown"
+
+if sys.platform == "win32":
+    # https://python-mss.readthedocs.io/usage.html#import
+    from mss.windows import MSS as mss
+
+    os_env = "windows"
+elif sys.platform == "darwin":
+    from mss.darwin import MSS as mss
+
+    os_env = "mac"
+elif sys.platform == "linux":
+    session = os.environ.get("XDG_SESSION_TYPE")
+    if session is not None:
+        session = session.lower()
+
+    if session == "wayland":
+        # don't use mss on Wayland. Instead use grim (https://gitlab.freedesktop.org/emersion/grim) subprocess calls
+        # IMPORTANT: grim works only on wlroots displays like Hyprland. For instance, GNOME Wayland has it's custom
+        # gnome-screenshot, but this uses interactive area selection and cannot be passed area flags from CLI
+        if shutil.which("grim"):  # verify grim installation
+            os_env = "wayland_wlroots"
+        else:
+            cprint("Error: grim installation not found")
+            os_env = "unknown"
+    elif session == "x11":
+        from mss.linux import MSS as mss
+
+        os_env = "x11"
+    else:
+        os_env = "unknown"
+
 if TYPE_CHECKING:
     from easyocr import Reader
-    from typing import Any
+    from typing import Any, cast
+
 
 class OcrValues:
     """Wrapper class: constants required for optical character recognition tools.
 
     Attributes:
         DELTA (float, constant class attribute):
-            Controls OCR string matching accuracy in strong_delta_check for general strings - upgrade string are 
-            handled separately. Delta value itself is included i.e. 0.8 means that all deltas on closed interval 
-            [0.8, 1] are valid.
-        
-        read_file_frequency (float, class attribute):
-            Text recognition check rate in both find_text and check_upg_text: lower number increases rate of checking, 
-            but also increases CPU usage significantly. Frequency itself is just a pause timer in seconds so 1 equals 
-            to ~1 check a second, but this doesn't include the other part of process like screenshots, reading text 
-            and comparing text. This means the actual frequency to checks ratio diminishes greatly with smaller value 
-            i.e. 0.01 doesn't match to 100 checks per second.
+            Controls OCR string matching accuracy in strong_delta_check for general strings - upgrade string are
+            handled separately. Delta value itself is included i.e. 0.8 means that all deltas on closed interval
+            [0.8, 1] are valid. Current value is 0.75.
     """
+
     DELTA: float = 0.75
 
-    _baseres: tuple[int, ...] = tuple(map(int, str(_maindata.maindata["bot_vars"]["custom_resolution"]).split('x')))
+    _MSS_SUPPORTED = {"windows", "mac", "x11"}
+
+    _sct = None
+    if os_env in _MSS_SUPPORTED:
+        _sct = mss()
+    _baseres: tuple[int, ...] = tuple(map(int, str(_maindata.maindata["bot_vars"]["custom_resolution"]).split("x")))
     _read_file_frequency: float = _maindata.maindata["bot_vars"]["ocr_frequency"]
-    _log_ocr_deltas: bool = False # only _adjust_deltas.py should set this to True  
+    _log_ocr_deltas: bool = False  # only _adjust_deltas.py should set this to True
     _ocr_upgradedata: dict[str, Any] = _maindata.maindata["ocr_upgradedata"]
     _ocr_upg_basedata: dict[str, Any] = _maindata.maindata["ocr_basedata"]
 
+
+def _wayland_grab(coordinates: tuple[int, int, int, int]) -> Image.Image:
+    raw_img: Any
+    tl_x, tl_y, br_x, br_y = coordinates
+    width, height = br_x - tl_x, br_y - tl_y
+    if width <= 0 or height <= 0:
+        raise ValueError("Invalid screenshot dimensions")
+    time.sleep(0.05)
+    try:
+        region = f"{tl_x},{tl_y}, {width}x{height}"
+        cmd = ["grim", "-g", region, "-t", "ppm", "-"]  # write into stdout -> saving images should not be required
+        raw_img = subprocess.check_output(cmd, timeout=5)
+    except subprocess.CalledProcessError as e:
+        cprint("grim failed: ", e.stderr)
+    return Image.open(io.BytesIO(raw_img)).convert("RGB")
+
+
+def _wayland_pixelcolor(x: float, y: float) -> tuple[int, int, int]:
+    raw_img: Any
+    px, py = kb_mouse.pixel_position((x, y))
+    time.sleep(0.05)
+    try:
+        region = f"{px},{py}, 1x1"
+        cmd = ["grim", "-g", region, "-t", "ppm", "-"]
+        raw_img = subprocess.check_output(cmd, timeout=5)
+    except subprocess.CalledProcessError as e:
+        cprint("grim failed: ", e.stderr)
+    img = Image.open(io.BytesIO(raw_img)).convert("RGB")
+    pixel: tuple[int, int, int] = cast(tuple[int, int, int], img.getpixel((0, 0)))  # type cast for mypy
+    return pixel
+
+
 def get_pixelcolor(x: float, y: float) -> tuple[int, int, int]:
     """Returns rgb color tuple of a coordinate location.
-    
+
     Coordinates are passed as scalar values [0,1).
     """
+    if sys.platform == "linux" and os_env == "wayland_wlroots":
+        return _wayland_pixelcolor(x, y)
     px, py = kb_mouse.pixel_position((x, y))
-    color: tuple[int, int, int] = pyautogui.pixel(px,py) # explicit typing for mypy
+    color: tuple[int, int, int] = pyautogui.pixel(px, py)  # explicit typing for mypy
     return color
+
 
 def white_shades(rgb_range: int = 1) -> list[tuple[int, int, int]]:
     """Returns a list of different shades of white color. By default, only white (255,255,255) is returned.
@@ -80,7 +149,7 @@ def white_shades(rgb_range: int = 1) -> list[tuple[int, int, int]]:
     tools. Is used with strong_image_ocr method.
 
     Args:
-        rgb_range: Integer value that determines the range of shades. Default value is 1. 
+        rgb_range: Integer value that determines the range of shades. Default value is 1.
 
     Returns:
         white_list: List of color tuples.
@@ -89,9 +158,10 @@ def white_shades(rgb_range: int = 1) -> list[tuple[int, int, int]]:
     for i in range(0, rgb_range):
         for j in range(0, rgb_range):
             for k in range(0, rgb_range):
-                w = (255-i, 255-j, 255-k)
+                w = (255 - i, 255 - j, 255 - k)
                 white_list.extend([w])
     return white_list
+
 
 def gray_shades(rgb_range: int = 1) -> list[tuple[int, int, int]]:
     """Returns a list of different shades of gray color. By default, only gray value (160,164,174) is returned.
@@ -108,37 +178,39 @@ def gray_shades(rgb_range: int = 1) -> list[tuple[int, int, int]]:
     for i in range(0, rgb_range):
         for j in range(0, rgb_range):
             for k in range(0, rgb_range):
-                g1 = (160-i, 164-j, 174-k)
-                g2 = (160+i, 164+j, 174+k)
+                g1 = (160 - i, 164 - j, 174 - k)
+                g2 = (160 + i, 164 + j, 174 + k)
                 gray_list.extend([g1, g2])
     return gray_list
 
+
 def img_to_black_and_white(image: Image.Image) -> Image.Image:
     """Return an image with non-white and non-grey shades replaced with black.
-      
-    This leaves white text with black background and makes ocr matching possibly more accurate. 
+
+    This leaves white text with black background and makes ocr matching possibly more accurate.
     Used in strong_image_ocr.
 
     Args:
         image: A PIL.ImageFile.ImageFile object
 
     Returns:
-        img: Original image, but with only white/gray and black colors. Type is the same, ImageFile.
+        img: Original image, but with only white/gray and black colors.
     """
     img = image
-    width, height = img.size[0], img.size[1] 
-    for i in range(0, width): # process all pixels
+    width, height = img.size[0], img.size[1]
+    for i in range(0, width):  # process all pixels
         for j in range(0, height):
-            data = img.getpixel((i,j))
+            data = img.getpixel((i, j))
             if data in gray_shades() or data in white_shades():
-                img.putpixel((i,j), (255, 255, 255))              
+                img.putpixel((i, j), (255, 255, 255))
             else:
-                img.putpixel((i,j),(0, 0, 0))
+                img.putpixel((i, j), (0, 0, 0))
     return img
+
 
 def weak_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> str:
     """Extracts text from an image and returns this text as a string.
-    
+
     Takes a monitor screenshot on passed coordinate location, then open this image in a format the easyocr reader
     can utilize, reads text, and finally return the extracted text string.
 
@@ -155,22 +227,30 @@ def weak_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> st
     """
     tl_x, tl_y, br_x, br_y = coordinates[0], coordinates[1], coordinates[2], coordinates[3]
     width, height = br_x - tl_x, br_y - tl_y
-    with mss() as sct:
+    img: Any
+    final: Any
+    if os_env in OcrValues._MSS_SUPPORTED and OcrValues._sct is not None:
         monitor = {"left": tl_x, "top": tl_y, "width": width, "height": height}
-        ocr_img = sct.grab(monitor)
-    img = array(ocr_img)
+        img = OcrValues._sct.grab(monitor)
+    elif os_env == "wayland_wlroots":
+        img = _wayland_grab((tl_x, tl_y, br_x, br_y))
+    else:
+        raise RuntimeError("Unsupported display environment")
+
+    final = array(img)
     try:
-        result = reader.readtext(img)
-        string = ''
+        result = reader.readtext(final)
+        string = ""
         for r in result:
             string += r[1]
-    except ValueError:  
-        string = ''
+    except ValueError:
+        string = ""
     return string
+
 
 def strong_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> str:
     """Extracts text from an image by making them first black and white/gray-shaded, and then performing ocr on them.
-     
+
     Similar to weak_image_ocr, but images are processed with a function that sets other but white/gray pixels to black:
     white and gray are upgrade text labels. So end results is black background with text elements in white & gray
     colors: this clears most junk so that 2 OCR image strings are easy to match.
@@ -185,47 +265,61 @@ def strong_image_ocr(coordinates: tuple[int, int, int, int], reader: Reader) -> 
     """
     tl_x, tl_y, br_x, br_y = coordinates[0], coordinates[1], coordinates[2], coordinates[3]
     width, height = br_x - tl_x, br_y - tl_y
-    with mss() as sct:
+    img: Any
+    ocr_img: Any
+    final: Any
+    if os_env in OcrValues._MSS_SUPPORTED and OcrValues._sct is not None:
         monitor = {"left": tl_x, "top": tl_y, "width": width, "height": height}
-        img = sct.grab(monitor)
-    ocr_img = Image.frombytes("RGB", img.size, img.bgra, "raw", "BGRX")
-    blackwhite_image = img_to_black_and_white(ocr_img)
+        ocr_img = OcrValues._sct.grab(monitor)
+        img = Image.frombytes("RGB", ocr_img.size, ocr_img.bgra, "raw", "BGRX")  # this is probably not even needed
+    elif os_env == "wayland_wlroots":
+        img = _wayland_grab((tl_x, tl_y, br_x, br_y))
+    else:
+        raise RuntimeError("Unsupported display environment")
+
+    blackwhite_image = img_to_black_and_white(img)
     final = array(blackwhite_image)
-    if (_maindata.maindata["bot_vars"]["windowed"] and
-        (kb_mouse.ScreenRes._width < kb_mouse.ScreenRes.BASE_RES[0] or
-        kb_mouse.ScreenRes._height < kb_mouse.ScreenRes.BASE_RES[1])):
-        zoom_factor: int # add some zoom based on game window size
-        if (kb_mouse.ScreenRes.BASE_RES[0] < 2*kb_mouse.ScreenRes._width or
-            kb_mouse.ScreenRes.BASE_RES[1] < 2*kb_mouse.ScreenRes._height): # if window w/h more than half of native res
+
+    if _maindata.maindata["bot_vars"]["windowed"] and (
+        kb_mouse.ScreenRes._width < kb_mouse.ScreenRes.BASE_RES[0]
+        or kb_mouse.ScreenRes._height < kb_mouse.ScreenRes.BASE_RES[1]
+    ):
+        zoom_factor: int  # add some zoom based on game window size
+        if (
+            kb_mouse.ScreenRes.BASE_RES[0] < 2 * kb_mouse.ScreenRes._width
+            or kb_mouse.ScreenRes.BASE_RES[1] < 2 * kb_mouse.ScreenRes._height
+        ):  # if window w/h more than half of native res
             zoom_factor = 2
         else:
             zoom_factor = 3
-        for i in range(2): # zooming of images, quite expensive to calculate.
+        for i in range(2):  # zooming of images, quite expensive to calculate.
             final = repeat(final, zoom_factor, axis=i)
+
     try:
         result = reader.readtext(final)
-        string = ''
+        string = ""
         for r in result:
             string += r[1]
     except ValueError:
-        string = ''
+        string = ""
     return string
-    
+
+
 def weak_substring_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader) -> bool:
     """Attempts to find inputted string from screenshot ocr string by substring matching.
 
     Tries to read the input_str from screen within specified coordinates. If it's found, returns True, otherwise False.
     Order of coordinates: (left, top, right, bottom), meaning (top_left x, top_left y, bottom_right x, bottom_right y),
     naturally topleft_x < bottomright_x and topleft_y < bottomright_y, otherwise throws error. Uses weak_image_ocr
-    function as text extractor: this does far less modifying of current image, but matches much better with certain 
-    static/pre-typed strings than strong_image_ocr. 
-    
-    Use cases:  
-    -checking menu play button text,  
-    -when game begins i.e. locating 'upgrade' text. Will not check game ending, however, as this still has weird 
-        inconsistencies.  
-    -finding the defeat screen 'bloons leaked' message.  
-    
+    function as text extractor: this does far less modifying of current image, but matches much better with certain
+    static/pre-typed strings than strong_image_ocr.
+
+    Use cases:
+    -checking menu play button text,
+    -when game begins i.e. locating 'upgrade' text. Will not check game ending, however, as this still has weird
+        inconsistencies.
+    -finding the defeat screen 'bloons leaked' message.
+
     Args:
         input_str: The substring that should be contained within ocr string.
         coords: Image location, an integer-valued 4-tuple. First two values correspond to top-left (x,y)
@@ -235,48 +329,50 @@ def weak_substring_check(input_str: str, coords: tuple[float, float, float, floa
     Returns:
         A boolean value depending on if the substring matched ocr string or not.
     """
-    (tl_x, tl_y) = kb_mouse.pixel_position((coords[0], coords[1]))
-    (br_x, br_y) = kb_mouse.pixel_position((coords[2], coords[3]))
+    tl_x, tl_y = kb_mouse.pixel_position((coords[0], coords[1]))
+    br_x, br_y = kb_mouse.pixel_position((coords[2], coords[3]))
     text = weak_image_ocr((tl_x, tl_y, br_x, br_y), reader)
     if _maindata.maindata["bot_vars"]["substring_ocrtext"]:
-        cprint("\nText: "+text.lower()+'\nInput: '+input_str.lower())
+        cprint("\nText: " + text.lower() + "\nInput: " + input_str.lower())
     if len(text) != 0 and text.lower().find(input_str.lower()) != -1:
         return True
     time.sleep(OcrValues._read_file_frequency)
     return False
 
-def strong_delta_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader, upg_match: str = ''
-                       ) -> bool:
+
+def strong_delta_check(
+    input_str: str, coords: tuple[float, float, float, float], reader: Reader, upg_match: str = ""
+) -> bool:
     """Attempts to match a string with strong_image_ocr string by their similarity.
 
     Differs from substring checking by using a delta parameter which compares similar symbols in two strings.
-    This makes it powerful when matching to complex ocr like upgrade texts, or two ocr strings (latter was used before 
-    but has currently no use). However, for simpler static string matching, it faces the problem of over-processing 
-    inputs and thus makes bad errors, like passing rounds and creating mismatch between current round that bot sees and 
-    actual game round. Thus, this responsibility is left for weak_substring_check instead.  
+    This makes it powerful when matching to complex ocr like upgrade texts, or two ocr strings (latter was used before
+    but has currently no use). However, for simpler static string matching, it faces the problem of over-processing
+    inputs and thus makes bad errors, like passing rounds and creating mismatch between current round that bot sees and
+    actual game round. Thus, this responsibility is left for weak_substring_check instead.
     To add to above, delta matching is still very effective on some simple static strings. For example, when a monkey/
-    hero is placed, ocr checks this by reading the 'sell' text. But quite often this string is either missing one of 
-    the letters 'l' or one gets replaced by 'i' or 1, making substring matching ineffective. But with enough delta, ocr 
+    hero is placed, ocr checks this by reading the 'sell' text. But quite often this string is either missing one of
+    the letters 'l' or one gets replaced by 'i' or 1, making substring matching ineffective. But with enough delta, ocr
     can identify them as same.
-    
+
     'difflib' module offers ways to compare objects like strings and return a value which measures their similarity.
     SequenceMatcher matches two strings with optional junk symbol detector: this allows to ignore spaces/tabs and
     possibly other values that shouldn't be part of matching. The quick_ratio is used to return upper bound of
     difference between sequences and is much faster to calculate. Return values (= deltas) are on interval [0,1]
     where 0 is for entirely different strings and 1 for perfect matches.
 
-    Deltas shouldn't be too high either as ocr could reject valid strings. And in some cases, relatively high delta can 
-    still match two different upgrades. For this reason, all upgrade strings are saved in OcrValues.OCR_UPGRADE_DATA 
-    dictionary, where each string has individual delta: this helps with tweaking problematic cases individually. For 
+    Deltas shouldn't be too high either as ocr could reject valid strings. And in some cases, relatively high delta can
+    still match two different upgrades. For this reason, all upgrade strings are saved in OcrValues.OCR_UPGRADE_DATA
+    dictionary, where each string has individual delta: this helps with tweaking problematic cases individually. For
     non-upgrade strings, a general delta value OcrValues.DELTA works just fine, which should be at least 0.7.
 
     Like mentioned, uses quick_ratio() instead of ratio() due to it being considerably faster.
 
-    Use cases:  
-    -upgrading monkeys,  
-    -checking 'sell' text when placing monkeys; high enough DELTA will match even with one letter mismatch when it 
-        spells 'sel' instead,  
-    -end screen 'next' text (again, simple short text but can still cause error in a single letter so high DELTA 
+    Use cases:
+    -upgrading monkeys,
+    -checking 'sell' text when placing monkeys; high enough DELTA will match even with one letter mismatch when it
+        spells 'sel' instead,
+    -end screen 'next' text (again, simple short text but can still cause error in a single letter so high DELTA
         helps),
     -checking collection event 'Collect' text.
 
@@ -285,17 +381,17 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
         coords: Image location, an integer-valued 4-tuple. First two values correspond to top-left (x,y)
             location, last two to bottom-right (x,y) location.
         reader: An easyocr.Reader object that handles reading from image. Loaded from ocr_reader.py.
-        upg_match: Identification string if ocr is performed for upgrade strings. Upgrades are listed under 
+        upg_match: Identification string if ocr is performed for upgrade strings. Upgrades are listed under
             OcrValues.OCR_UPGRADE_DATA
 
     Returns:
         A boolean value depending on if upgrade strings are similar enough (above DELTA threshold) or not.
     """
-    (tl_x, tl_y) = kb_mouse.pixel_position((coords[0], coords[1]))
-    (br_x, br_y) = kb_mouse.pixel_position((coords[2], coords[3]))
+    tl_x, tl_y = kb_mouse.pixel_position((coords[0], coords[1]))
+    br_x, br_y = kb_mouse.pixel_position((coords[2], coords[3]))
     text = strong_image_ocr((tl_x, tl_y, br_x, br_y), reader)
     if len(text) != 0:
-        if input_str == '_upgrade_':
+        if input_str == "_upgrade_":
             if OcrValues._log_ocr_deltas:
                 match = OcrValues._ocr_upg_basedata[upg_match]
                 match_str: str = match[0]
@@ -303,32 +399,36 @@ def strong_delta_check(input_str: str, coords: tuple[float, float, float, float]
                 match = OcrValues._ocr_upgradedata[upg_match]
                 match_str = match[0]
                 delta_limit: float = match[1]
+
             d = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), match_str).quick_ratio()
             if _maindata.maindata["bot_vars"]["delta_ocrtext"]:
-                cprint('\n-Text: '+text.lower())
-                cprint("-Match delta: "+str(d))
+                cprint("\n-Text: " + text.lower())
+                cprint("-Match delta: " + str(d))
                 if OcrValues._log_ocr_deltas:
                     if len(str(d)) <= 4:
                         add_dict = {upg_match: [match_str, d]}
                     else:
-                        add_dict = {upg_match: [match_str, round(d-0.005, 2)]}
+                        add_dict = {upg_match: [match_str, round(d - 0.005, 2)]}
                     _maindata.maindata["temp_upg_deltas"].update(add_dict)
                     return True
+
             if d >= delta_limit:
                 return True
-        elif input_str != '':
+        elif input_str != "":
             r = difflib.SequenceMatcher(lambda x: x in "\t", text.lower(), input_str.lower()).quick_ratio()
             if _maindata.maindata["bot_vars"]["delta_ocrtext"]:
-                cprint('\n-Input: '+input_str.lower()+'\n-Text: '+text.lower()+'\n-Delta: '+str(r))
+                cprint("\n-Input: " + input_str.lower() + "\n-Text: " + text.lower() + "\n-Delta: " + str(r))
             if r >= OcrValues.DELTA:
                 return True
     time.sleep(OcrValues._read_file_frequency)
     return False
 
-def strong_substring_check(input_str: str, coords: tuple[float, float, float, float], reader: Reader
-                           ) -> tuple[bool, str]:
+
+def strong_substring_check(
+    input_str: str, coords: tuple[float, float, float, float], reader: Reader
+) -> tuple[bool, str]:
     """Attempts to find inputted string from screenshot ocr string by substring matching with black and white text box.
-    
+
     Middle ground for weak_substring_check and strong_delta_check: uses strong_image_ocr to get black and white text
     box, but still uses substring matching instead of DELTA.
 
@@ -336,7 +436,7 @@ def strong_substring_check(input_str: str, coords: tuple[float, float, float, fl
     rounds is more complex, so black background makes it easier - this was particularly problematic if round message
     is shorter than, say, 'round .../100' text of impoppable/chimps.
 
-    Use cases:  
+    Use cases:
         -checking current round text.
 
     Args:
@@ -346,15 +446,15 @@ def strong_substring_check(input_str: str, coords: tuple[float, float, float, fl
         reader: An easyocr.Reader object that handles reading text from image. Loaded from ocr_reader.py.
 
     Returns:
-        A tuple of boolean value and found ocr string in lowercase. Boolean is True if text is found as substring in 
+        A tuple of boolean value and found ocr string in lowercase. Boolean is True if text is found as substring in
             input, otherwise False.
     """
-    (tl_x, tl_y) = kb_mouse.pixel_position((coords[0], coords[1]))
-    (br_x, br_y) = kb_mouse.pixel_position((coords[2], coords[3]))
+    tl_x, tl_y = kb_mouse.pixel_position((coords[0], coords[1]))
+    br_x, br_y = kb_mouse.pixel_position((coords[2], coords[3]))
     text = strong_image_ocr((tl_x, tl_y, br_x, br_y), reader)
     text_lower = text.lower()
     if _maindata.maindata["bot_vars"]["substring_ocrtext"]:
-        cprint("\nText: "+text_lower+'\nInput: '+input_str.lower())
+        cprint("\nText: " + text_lower + "\nInput: " + input_str.lower())
     if len(text) != 0 and text_lower.find(input_str.lower()) != -1:
         return (True, text_lower)
     time.sleep(OcrValues._read_file_frequency)
