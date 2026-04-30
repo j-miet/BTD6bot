@@ -1,6 +1,6 @@
 # BTD6bot
 
-| ![](images/overview.png) |
+| ![](docs/images/overview.png) |
 |:--:|
 | *Overview of different gui windows (help window excluded)*|
 
@@ -75,15 +75,22 @@ Because of limited access to other operating systems than Windows, it's very dif
 all of them. Currently:
 - **Windows (10 or higher) is fully supported and thus recommended.**
 
-- **Linux**: tested partially on
-    - **Linux Mint 22.3 (Xfce)**
-    - **Debian 13.4 (GNOME)**
-    
-    Not all features have been tested, but since main functionalities (gui, kb+mouse automation, ocr) do work, bot 
-    should operate just fine.
+- **Linux**: 
 
-    Linux requires some additional dependencies to make Python, ocr, kb+mouse etc. function properly. These are 
-    documented and explained during installation process
+    Tested on following distros:
+    - **Linux Mint 22.3 (Xfce)**
+    - **Debian 13.4 (GNOME on Xorg)**
+    - **Linux Arch (Wayland with Hyprland)**
+    
+    At least gui, kb+mouse automation, and ocr functions have been tested on these distros which means bot should operate just fine.
+
+    => In general, **bot supports X11 or wlroots-based displays.** If your system has one of these available, you should be able to run the bot even if it's not listed above. How these relate to tested distros:
+    - Linux Mint uses X11
+    - Debian GNOME uses *GNOME Wayland* by default, which is based on KDE. This on itself will not work, but you can easily switch to *GNOME on Xorg* which uses X11
+    - Hyprland uses it's custom *aquamarine* compositor for Wayland which also retains wlroots compatibility.
+    
+    For more info, see [this section](_install/INSTALL.md#linux) of the install guide. It will used as a reference later and explains the X11/Wayland compatibility in more detail.
+
 - **MacOS => Not supported, but could still work** 
 
     Bot functionality remains largely untested without access to modern native Mac system i.e. owning a Mac PC. 
@@ -281,7 +288,7 @@ When you run the install script, it will download the current github main branch
 [**Notes**] 
 - You can move and rename `BTD6bot-main` directory freely, just don't rename any files inside it 
 unless you know what you're doing.
-- for more details such as step-by-step explanation of script code, check [here](_install/INSTALL.md)
+- for more details about what the scripts actually do, check [this](_install/INSTALL#detailed-explanation-of-scripts)
 
 ## Option 2: Manual install
 
@@ -301,7 +308,7 @@ For manual install, you have two options
 [**Method 2**]
 Click the green [<> Code] button at the top of github page.
 
-![](images/github_codebutton.png)
+![](docs/images/github_codebutton.png)
 
 Then either
 
@@ -351,7 +358,7 @@ and *tkinterweb-tkhtml* however they are mandatory:
 
 
 # <u>First-time setup</u>
-| ![](images/main/main.png) |
+| ![](docs/images/main/main.png) |
 |:--:|
 | *Main window default view*|
 
@@ -394,13 +401,13 @@ done, close hotkeys window.
     - If you use fullscreen, **don't** enable custom resolution, or use windowed mode. Just 
     leave it untoggled.
 
-        ![](images/settings/disable_custom.png)
+        ![](docs/images/settings/disable_custom.png)
 
     - If you use custom resolution, set width & height values, then update values.
         - Toggle windowed mode on if you wish to use it. **It's recommended to always use fullscreen**, but windowed 
         should also work - just requires a bit more setup.
 
-        ![](images/settings/custom_windowed.png)
+        ![](docs/images/settings/custom_windowed.png)
 
         For windowed mode you should head to [GUI settings](#settings) page as it's a little more complicated to explain
         here.
@@ -422,7 +429,7 @@ Easiest way to do setup all of this is to just press `Reset args` then `Set args
 
     Your argument prompt should look similar to this:
 
-    ![](images/settings/auto_adjust.png)
+    ![](docs/images/settings/auto_adjust.png)
 
     ***Why adjusting is needed**: monkey upgrading process is based on reading upgrade path names from screen and 
     matching these to static values. Different resolutions change the reading accuracy so bot will automatically adjust
@@ -463,7 +470,7 @@ Click the gear symbol and open hotkeys menu.
 
 Now update your game hotkeys for bot. Press "Set hotkeys" button in gui. Following window opens:
 
-| ![](images/hotkeys/hotkeys.png) |
+| ![](docs/images/hotkeys/hotkeys.png) |
 |:--:|
 | *Hotkey window*|
 
@@ -502,7 +509,7 @@ After you've updated all the keys, close the hotkey window.
 
 Next, open settings window by pressing "Settings" button.
 
-| ![](images/settings/settings.png) |
+| ![](docs/images/settings/settings.png) |
 |:--:|
 | *Settings window*|
 
@@ -532,7 +539,7 @@ option off, you should see your current resolution next to "Current resolution" 
 
     For example, if your monitor is `1920x1080`, you see following 
 
-    ![](images/settings/disable_custom.png)
+    ![](docs/images/settings/disable_custom.png)
 
 - *custom resolution*: type width and height in their respective entry boxes, then click the "Update resolution"
 button.  
@@ -541,11 +548,11 @@ Custom value is stored in a file and will be loaded back if you disable and re-e
     Example: if you have `1920x1080` as native res and set a custom res `1600x900`, then toggling setting on and off
     would display following resolutions:
 
-    ![](images/settings/difference.png)
+    ![](docs/images/settings/difference.png)
 
     With custom resolutions, you can enable *windowed mode*.
     
-    ![](images/settings/windowed.png)
+    ![](docs/images/settings/windowed.png)
     
     Setting up windowed mode requires a bit more explanation so go check [GUI settings](#settings) section.
 
@@ -556,7 +563,7 @@ Custom value is stored in a file and will be loaded back if you disable and re-e
 Lastly, enable the "Auto-adjust ocr upgrade data the next time a plan is run" option. 
 For 1920x1080 with fullscreen enabled, it looks like this:
 
-![](images/settings/auto_adjust.png)
+![](docs/images/settings/auto_adjust.png)
 
 
 It should include following parts, each separated by space:
@@ -580,11 +587,11 @@ Then just press "Set args" and you're done! You may now close the settings windo
 For last part, you need to enter the monitoring window. Click the "Initialize bot" button, located at bottom
 right of main window:
 
-![](images/main/init_button.png)
+![](docs/images/main/init_button.png)
 
 Following load message appears (or might just quickly flash if your computer is fast enough)
 
-![](images/main/load_msg.png)
+![](docs/images/main/load_msg.png)
 
 Program needs to load the ocr model into your temporary memory (RAM) each time you initialize bot and is therefore only
 required once per runtime loop. If you close the entire program and reopen it, the model must be loaded again.  
@@ -594,11 +601,11 @@ downloaded automatically by easyocr. This process is only for first-time setups 
 After the message disappears, model has been loaded and initialize button should now display "Open bot window"
 instead.
 
-![](images/main/openbotwin_button.png)
+![](docs/images/main/openbotwin_button.png)
 
 Click the button to open monitoring window.
 
-| ![](images/monitoring/monitoring.png) |
+| ![](docs/images/monitoring/monitoring.png) |
 |:--:|
 | *Monitoring window*|
 
@@ -684,7 +691,7 @@ This issue can be completely ignored now.
 -- End of explanation --
 ---
 
-| ![](images/monitoring/monitoring_adjustbegin.png) |
+| ![](docs/images/monitoring/monitoring_adjustbegin.png) |
 |:--:|
 | *After "Run" button is pressed and menu play button is detected, bot sets a countdown from 5 to 0, then begins the auto-adjusting process*|
 
@@ -723,7 +730,7 @@ following:
     future, just open setting and enable it again with appropriate arguments.
 
 
-| ![](images/monitoring/monitoring_adjustend.png) |
+| ![](docs/images/monitoring/monitoring_adjustend.png) |
 |:--:|
 | *Adjusting process complete. Current monitoring window must be closed in order to continue.*|
 
@@ -733,11 +740,11 @@ your bot is ready to be tested with an actual plan.
 To run your first plan, it's recommended to pick something simple. Close the monitoring window and select either
 `monkey meadow, easy-standard` or `dark castle, easy-standard` in main window:
 
-![](images/main/monkeymeadow.png)
+![](docs/images/main/monkeymeadow.png)
 
 or
 
-![](images/main/darkcastle.png)
+![](docs/images/main/darkcastle.png)
 
 Make sure you have the required hero, all monkeys and their upgrade paths unlocked. For upgrade paths:
 
@@ -767,7 +774,7 @@ to leave in-game resolution to your **native fullscreen resolution**, but still 
 
 When you run `Btd6bot` with windowed mode, it uses the logic described in following image
 
-![](images/settings/ultrawide.png)
+![](docs/images/settings/ultrawide.png)
 
 Because windowed mode normally leaves empty space around, you could limit the readable area to the middle of screen.
 A good example would be `3440x1440` resolution: it adds extra borders during maps which is 440 pixels each side. This
@@ -780,11 +787,11 @@ _Example:_ So if you have a `3440x1440` monitor and wish to play on this resolut
 
 - enable custom resolution and set it as `2560x1440`
 
-    ![](images/settings/3440x1440_settings.png)
+    ![](docs/images/settings/3440x1440_settings.png)
 
 - enable windowed mode and keep top-left value as "centered"
 
-    ![](images/settings/windowed.png)
+    ![](docs/images/settings/windowed.png)
 
     If value is not centered, simply type "centered" in one of the width/height fields and update
 
@@ -793,7 +800,7 @@ _Example:_ So if you have a `3440x1440` monitor and wish to play on this resolut
 
 Here's a visual explanation on the situation (in main menu screen, but this applies to in-game ui as well):
 
-![](images/settings/3440x1440example.png)
+![](docs/images/settings/3440x1440example.png)
 
 
 In general, check the following:
@@ -869,7 +876,7 @@ layout should remain the same.
 
 ## Main
 
-| ![](images/main/main_modified.png) |
+| ![](docs/images/main/main_modified.png) |
 |:--:|
 | *Main window, with ocr already initialized. Currently selected plan is bloody_puddlesHardChimps, with collection event and replay modes enabled.*|
 
@@ -919,7 +926,7 @@ Data is updated after each successful completion and also includes date of compl
 
 ## Help
 
-| ![](images/help/help.png) |
+| ![](docs/images/help/help.png) |
 |:--:|
 | *Help window, expanded to fullscreen. It displays the same README contents, however none of the links are in working condition*|
 
@@ -944,7 +951,7 @@ or reopening the Main window, this file gets deleted again!
 
 ## Queue
 
-| ![](images/queue/queue.png) |
+| ![](docs/images/queue/queue.png) |
 |:--:|
 | *Queue window with infernal_EasyStandard and flooded_valleyHardChimps plans placed in queue. When a plan is selected, its info text gets displayed.*|
 
@@ -1004,7 +1011,7 @@ window.
 
 ## Hotkeys
 
-| ![](images/hotkeys/hotkeys.png) |
+| ![](docs/images/hotkeys/hotkeys.png) |
 |:--:|
 | *Hotkey window.*|
 
@@ -1028,7 +1035,7 @@ any of them.
 
 ## Settings
 
-| ![](images/settings/settings.png) |
+| ![](docs/images/settings/settings.png) |
 |:--:|
 | *Settings window*|
 
@@ -1050,7 +1057,7 @@ option, which was already introduced when setting up the bot first time.
     
         To use windowed mode properly, you have to pinpoint the actual game window top-left coordinate:
 
-        ![](images/settings/windowed_topbar.png)
+        ![](docs/images/settings/windowed_topbar.png)
 
         See the **<u>Set window top left coordinate</u>** part below for more info.
     
@@ -1061,7 +1068,7 @@ option, which was already introduced when setting up the bot first time.
         To setup -popupwindow: if you use Steam version: library -> bloons td 6 -> right-click -> properties, then set 
         the following value
 
-        ![](images/settings/launchoption.png)
+        ![](docs/images/settings/launchoption.png)
 
         You can also add optional `-screen-width X` and `-screen-height Y` args here to force custom resolution, e.g. 
         `-popupwindow -screen-width 1920 -screen-height 1080`.
@@ -1212,7 +1219,7 @@ keep on trying, these texts must be as precisely readable as possible. For upgra
 
 ## Monitoring
 
-| ![](images/monitoring/monitoring.png) |
+| ![](docs/images/monitoring/monitoring.png) |
 |:--:|
 | *Monitoring window, with queue mode enabled. Current plan is quadHardChimps, with dark_castleHardChimps coming after.*|
 
