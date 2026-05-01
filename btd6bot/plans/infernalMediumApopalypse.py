@@ -29,7 +29,6 @@ def play(data):
         if round == BEGIN:
             sub1 = Monkey("sub", 0.2723958333333, 0.7490740740741)
             sub2 = Monkey("sub", 0.6197916666667, 0.2509259259259)
-            forward(1)
             sub2.upgrade(["0-0-1"])
             sub1.upgrade(["0-0-1"])
             druid1 = Monkey("druid", 0.8333333333333, 0.637962962963)
