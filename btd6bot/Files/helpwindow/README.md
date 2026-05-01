@@ -34,7 +34,7 @@ section.
 ---
 #### [Update status]
 
-- Latest version of bot is **1.0.0** which matches BTD6's *Update 54*. 
+- Latest version of bot is **1.0.2** which matches BTD6's *Update 54*. 
 
     => Release notes can be found [here](https://github.com/j-miet/BTD6bot/releases/tag/v1.0.0)
     - For now, bot is planned to be updated after each major game update. These **updates** are marked as `1.X.0`
@@ -45,7 +45,7 @@ section.
 
     => Plans were previously updated in **1.0.0**. Next update cycle is scheduled for **1.2.0**.
 
-    - <u>Main goal is to keep all Chimps plans updated and add any missing ones</u>. This process is repeated 
+    - <u>Main goal is to keep all Chimps plans available and updated</u>. This process is repeated 
     **every 2-3 updates**. Other plans could stay untested for extended periods of time, but then again, are also less 
     affected by tower balancing/price changes.
 
@@ -82,14 +82,19 @@ all of them. Currently:
     - **Debian 13.4 (GNOME on Xorg)**
     - **Linux Arch (Wayland with Hyprland)**
     
-    At least gui, kb+mouse automation, and ocr functions have been tested on these distros which means bot should operate just fine.
+    At least gui, kb+mouse automation, and ocr functions have been tested on these distros which means bot should 
+    operate just fine.
 
-    => In general, **bot supports X11 or wlroots-based displays.** If your system has one of these available, you should be able to run the bot even if it's not listed above. How these relate to tested distros:
+    => In general, **bot supports X11 or wlroots-based displays.** If your system has one of these available, you 
+    should be able to run the bot even if it's not listed above. How these relate to tested distros:
     - Linux Mint uses X11
-    - Debian GNOME uses *GNOME Wayland* by default, which is based on KDE. This on itself will not work, but you can easily switch to *GNOME on Xorg* which uses X11
-    - Hyprland uses it's custom *aquamarine* compositor for Wayland which also retains wlroots compatibility.
+    - Debian GNOME uses *GNOME Wayland* by default, which intentionally limits screenshots to be 
+    interactive/user-controlled, preventing code-level access. However you can easily switch to *GNOME on Xorg* which 
+    uses X11
+    - Hyprland uses it's custom *aquamarine* compositor for Wayland which also retains wlroots compatibility
     
-    For more info, see [this section](_install/INSTALL.md#linux) of the install guide. It will used as a reference later and explains the X11/Wayland compatibility in more detail.
+    For more info, see [this section](_install/INSTALL.md#linux) of the install guide. It will used as a reference 
+    later and explains the X11/Wayland compatibility in more detail.
 
 - **MacOS => Not supported, but could still work** 
 
@@ -99,14 +104,49 @@ all of them. Currently:
     - some code-level testing has been done using VirtualBox on much older versions (Catalina, Big Sur):
         - custom gui-only hotkeys are disabled for Mac systems. Reason is Python libraries used for gui and 
         hotkeys (`tkinter` & `pynput` respectively) interfere with each other due to them running on same main thread. 
-        Thus hotkeys must be typed manually. Also bot can be still halted without hotkeys by quickly dragging mouse cursor to upper-left corner.
+        Thus hotkeys must be typed manually. Also bot can be still halted without hotkeys by quickly dragging mouse 
+        cursor to upper-left corner.
         - mac uses `16:10` aspect ratio as a baseline and lacks the support for recommended `16:9` resolutions. Again, 
     this can probably be fixed by using the tricks explained above in resolution section.
-        - if using running the bot inside gui doesn't work, you can use the no-gui version of bot. You can still use gui to update settings, hotkeys and plan queue, then close gui and switch to no-gui version.
+        - if using running the bot inside gui doesn't work, you can use the no-gui version of bot. You can still use 
+        gui to update settings, hotkeys and plan queue, then close gui and switch to no-gui version.
 
 The only *"OS-independent solution"* would be a dual boot setup: install a separate Windows version/widely supported 
 Linux distribution, then run btd6 + bot in this environment.
 - Don't try to use virtual machine. These cannot properly utilize GPU which makes your game run on extremely low fps.
+
+#### [Keyboard languages]
+
+There's an issue with keyboard value conversion with different input languages on keyboard. This reason is current system stores values in strings instead of keycodes.
+
+Current saving process:
+- user gives input
+- input is parsed. This can happen in three ways:
+    - store a character literal of that value -> `a` -> "a", `+` -> "+", `-` -> "-"
+    - interpret it as a special key (Space, Enter, Shift, Alt, Ctrl etc.), still initially store it as a string
+    but adds a Key suffix e.g. "Key.Enter".
+    -  numpad keys which become become strings from "<96>" (numpad1) to "<105>" (numpad9)
+- save string into a hotkeys.txt file in custom `value = key` syntax
+
+Here the main issue is character literals: keyboards can output different value when key at same position is pressed. For example
+- Nordic and US keyboards => `-` outputs `-`
+- German keyboard => `-` outputs `/`
+
+**Why this (possibly) breaks hotkeys:**  
+Bot uses Python libraries which innately default to US-centric which would also produce the "-" and this same value is now the output. So when user with german keyboard system attempts to input `/`, bot saves this as "-" BUT Bloons TD 6 game still excepts the "/". So the chain becomes
+
+> User sets hotkey "/" -> bot converts this to "-" -> game still expects "/", but instead receives "-"
+
+Fixing this system would require some larger changes in code base. While annoying, this is not a critical issue and won't prevent bot from running. It will be fixed at some point in the future, but **there's no estimated time of arrival for this yet**.
+
+**Temporary fix (until hotkey system gets overhauled)**  
+If your hotfix doesn't map properly, you can edit the hotkeys file directly in `btd6bot/btd6bot/Files/text files/hotkeys.txt`. Simply change the right side of hotkey and save file. For example:
+- you use german keyboard layout and want to replace the default `-` value for bottom path upgrades to match `/`
+- just like above, pressing `-` on a german keyboard results in just `-` again
+- so instead open the file hotkeys.txt file, find the line `upgrade bot = -` and change this to `upgrade bot = /`
+- save the file
+
+And you're good to go.
 
 
 #### [Future updates]
@@ -118,6 +158,7 @@ Will mostly depend on what features/changes BTD6 does. For bot this usually mean
 Since bot has reached version 1.0.0, it's unlikely any major features gets added.  
 Some possible ones **with no specific ETA:**
 - project code/structure changes:
+    - update hotkey system from string chars to keycodes (this would prevent issues with different keyboard language systems)
     - update plans directory structure by adding subdirectories for each map
     - use a proper plan file format like yaml/toml/json instead of python files. Would require a major rework of the codebase, but also make writing plans much easier.
     - go over entire codebase and see if there's anything that absolutely needs to be updated/reworked
@@ -1229,7 +1270,7 @@ Btd6 main menu screen. After menu screen is found, bot then begins it's current 
 
     >Most settings (like resolution) and hotkey values, are updated immediately to current monitoring window. But any
     toggleable modes and current plan list, will only get updated after you close and reopen this window.
-    If you want to be 100% certain your setting are up to date after any changes, just close and reopen monitoring
+    If you want to be 100% certain, just close and reopen monitoring
     window each time you have made changes to settings.
 
 - Has a output window where all printed text is redirected during bot runtime. This way, it's easy to follow what
@@ -1356,51 +1397,53 @@ remained the same ever since:
 Now, open your plan file. It looks like this:
 
 
-    """  
-    [Hero] -
-    [Monkey Knowledge] -
-    -------------------------------------------------------------
-    ===Monkeys & upgrades required===
-    _______________________________________
-    """
+```python 
+"""
+[Hero] -
+[Monkey Knowledge] -
+-------------------------------------------------------------
+===Monkeys & upgrades required===
+_______________________________________
+"""
 
-    '''
-    from ._plan_imports import *
+'''
+from ._plan_imports import *
 
 
-    def play(data):
-        BEGIN, END = menu_start.load(*data)
-        round = BEGIN - 1
-        map_start = time()
-        while round < END + 1:
-            round = Rounds.round_check(round, map_start, data[2])
-            if round == BEGIN:
-                ...
-    '''
->
+def play(data):
+    BEGIN, END = menu_start.load(*data)
+    round = BEGIN - 1
+    map_start = time()
+    while round < END + 1:
+        round = Rounds.round_check(round, map_start, data[2])
+        if round == BEGIN:
+            ...
+'''
+```
 
 First remove the two comment lines starting with ''' symbols (not the """) so bot is able to execute plan code:
 
-    """  
-    [Hero]  
-    [Monkey Knowledge] -
-    -------------------------------------------------------------
-    ===Monkeys & upgrades required===
-    _______________________________________
-    """
+```python
+"""  
+[Hero]  
+[Monkey Knowledge] -
+-------------------------------------------------------------
+===Monkeys & upgrades required===
+_______________________________________
+"""
 
-    from._plan_imports import *
+from._plan_imports import *
 
 
-    def play(data):
-        BEGIN, END = menu_start.load(*data)
-        round = BEGIN - 1
-        map_start = time()
-        while round < END + 1:
-            round = Rounds.round_check(round, map_start, data[2])
-            if round == BEGIN:
-                ...
->
+def play(data):
+    BEGIN, END = menu_start.load(*data)
+    round = BEGIN - 1
+    map_start = time()
+    while round < END + 1:
+        round = Rounds.round_check(round, map_start, data[2])
+        if round == BEGIN:
+            ...
+```
 
 This is about the minimal code needed to run a plan file. To quickly summarize what's in here:
 
@@ -1451,7 +1494,7 @@ for current plan: it will be displayed both under main and queue windows. It con
         row.
 
     With sections 1.-4. combined, here's a simple info text example:
-  
+
         [Hero] Quincy
         [Monkey Knowledge] -
         -------------------------------------------------------------
@@ -1478,16 +1521,18 @@ for current plan: it will be displayed both under main and queue windows. It con
 
 Now that you know what the info panel is, let us have a look at the main body:
 
-    from._plan_imports import *
+```python
+from._plan_imports import *
 
-    def play(data):
-        BEGIN, END = menu_start.load(*data)
-        round = BEGIN - 1
-        map_start = time()
-        while round < END + 1:
-            round = Rounds.round_check(round, map_start, data[2])
-            if round == BEGIN:
-                ...
+def play(data):
+    BEGIN, END = menu_start.load(*data)
+    round = BEGIN - 1
+    map_start = time()
+    while round < END + 1:
+        round = Rounds.round_check(round, map_start, data[2])
+        if round == BEGIN:
+            ...
+```
 
 This block is Python code. It includes
 
@@ -1501,41 +1546,50 @@ this to corresponding if/elif block to perform command for that round.
 
 Thus, you only need to interact with the part starting from
     
-        if round == BEGIN:
-            ...
+```python
+    if round == BEGIN:
+        ...
+```
 
 Note that BEGIN is a variable: <u>YOU DON'T NEED TO CHANGE THIS VALUE</u>, it will always stand for first round.
 
 Usually you have multiple rounds which means rounds look like this:
 
-        if round == BEGIN:
-            ...
-        elif round == 7:
-            ...
-        elif round == 10:
-        .
-        .
-        .
-        elif round == 99:
-            ...
+```python
+    if round == BEGIN:
+        ...
+    elif round == 7:
+        ...
+    elif round == 10:
+    .
+    .
+    .
+    elif round == 99:
+        ...
+```
 
 Previous block could serve as chimps mode plan template: here BEGIN stands for 6. Note that if nothing happens during a
 round, you can exclude it from if/elif: here rounds 8 and 9 are skipped over. For final round you can just use the round
 number or variable END:
         
-        elif round == 100:
-            ...
+```python
+    elif round == 100:
+        ...
 
-        # or
+    # or
 
-        elif round == END:
-            ...
+    elif round == END:
+        ...
+```
+
 Again, no need to include final round block if it has no commands.
 
 On two special cases, you can just use the first if-block
 
-        if round == BEGIN:
-            ...
+```python
+    if round == BEGIN:
+        ...
+```
 to include all commands. These are deflation and apopalypse. In fact, for apopalypse, you 
 **have to use only the first round block!**. After first round ends, bot sets internal flag for end round and stops
 processing other rounds.
@@ -1785,19 +1839,25 @@ execution.
     can be placed normally, but cannot be clicked and accesed again at same location. Thus following commands are 
     performed:
 
+    ```python
         sniper3 = Monkey("sniper", 0.1619791666667, 0.0268518518519, placement_check=False)
         sniper3.target("strong", cpos=(0.1291666666667, 0.0601851851852))
+    ```
     
     Here, as you can see, sniper ignores the placement check, and next target command updates the (x,y) position of 
     sniper by moving slightly left and up from initial x and y coordinates.
 
 - [**Order of arguments**] In command examples, commands often exclude the argument names. For example
 
+    ```python
         dart = Monkey("dart", 0.5, 0.5)
+    ```
 
     is the same as
 
+    ```python
         dart = Monkey(name="dart", pos_x=0.5, pos_y=0.5)
+    ```
     
     Reason is, **if you use arguments in order**, `arg_name=` syntax is not needed: Python knows that, in above 
     example, `"dart"` refers to argument `name`, the first `0.5` value refers to `pos_x` and second to 
@@ -1810,7 +1870,9 @@ execution.
     cpos argument is needed. Now, target command has syntax `target(set_target, x, y, cpos)` 
     which means if you write
 
+    ```python
         dart.target("strong", 0.45, 0.3)
+    ```
     
     this will actually just click dart's current internal location (0.5, 0.5) and try to set monkey at that location
     on "strong". Well there could be a monkey, or not. Nontheless, it's not the intended outcome! After 
@@ -1819,19 +1881,27 @@ execution.
 
     The problem? Just as stated at the first example, this argument means
 
+    ```python
         dart.target("strong", pos_x=0.45, pos_y=0.3)
+    ```
 
     Because x and y values are not needed for dart, command needs to be provided with argument names:
 
+    ```python
         dart.target("strong", cpos=(0.45, 0.3))
+    ```
 
     This would do what we originally wanted. Of course, something like
 
+    ```python
         dart.target("strong", 0.2, 0.3, 0.45, 0.3)
+    ```
 
     would also work in sense, because it does the same as
 
+    ```python
         dart.target("strong", pos_x=0.2, pos_y=0.3, cpos=(0.45, 0.3))
+    ```
     
     but again bot would set the target location of 0-0-0 dart at (0.2, 0.3). Luckily, it would cause no harm, but is 
     not what was intended.
@@ -2012,6 +2082,7 @@ So only files you likely need to modify are
 
     Example: if your monkey is called `"test_monkey"` and it belongs to military category, then code becomes
 
+    ```python
         _MONKEY_NAMES = (
         "dart",  # primary
         "boomer",
@@ -2041,8 +2112,9 @@ So only files you likely need to modify are
         "beast",
         "hero",  # hero
     )
+    ```
 
-    **Don't forget to add comma `,` at the end of each row, except the last "hero" row!**
+    **Don't forget to add comma `,` at the end of each row!**
 
 2. **Set hotkey**
 
@@ -2057,8 +2129,10 @@ So only files you likely need to modify are
 
     - in `bot/commands/monkeys.py`, search `_get_hotkey` and support for new hotkey:
 
-            case "test_monkey":
-                return hotkeys["test monkey"]
+        ```python
+        case "test_monkey":
+            return hotkeys["test monkey"]
+        ```
 
     Here, 
     
@@ -2086,8 +2160,10 @@ So only files you likely need to modify are
     - in `monkeys.py`, search `_update_auto_target_paths`
     - then simply add a new line like this:
 
-            if self._name == "test_monkey" and i == 0 and int(u[2*i]) == 4:
-                self._targeting = "strong"
+        ```python
+        if self._name == "test_monkey" and i == 0 and int(u[2*i]) == 4:
+            self._targeting = "strong"
+        ```
     
     Here, 
     
@@ -2183,29 +2259,31 @@ This in in fact the only mandatory step for adding heroes. However, if hero uses
     - search for method `_change_hero_target` and find following part (or something that looks very similar to it in 
     case this has not been updated) under it:
 
-            match self._hero_name:
-                case "benjamin":
-                    print("???")
-                case "etienne":
-                    if target == "d&q":
-                        if current == "first":
-                            kb_mouse.kb_input(hotkeys["target change"])
-                        elif current == "zone":
-                            kb_mouse.kb_input(hotkeys["target reverse"])
-                    elif target == "first":
-                        if current == "d&q":
-                            kb_mouse.kb_input(hotkeys["target reverse"])
-                        elif current == "zone":
-                            kb_mouse.kb_input(hotkeys["target change"])
-                    elif target == "zone":
-                        if current == "first":
-                            kb_mouse.kb_input(hotkeys["target reverse"])
-                        elif current == "d&q":
-                            kb_mouse.kb_input(hotkeys["target change"])
-                    else:
-                        return self._name, target
-                case _:
-                    return self._normal_targeting(current, target) 
+        ```python
+        match self._hero_name:
+            case "benjamin":
+                print("???")
+            case "etienne":
+                if target == "d&q":
+                    if current == "first":
+                        kb_mouse.kb_input(hotkeys["target change"])
+                    elif current == "zone":
+                        kb_mouse.kb_input(hotkeys["target reverse"])
+                elif target == "first":
+                    if current == "d&q":
+                        kb_mouse.kb_input(hotkeys["target reverse"])
+                    elif current == "zone":
+                        kb_mouse.kb_input(hotkeys["target change"])
+                elif target == "zone":
+                    if current == "first":
+                        kb_mouse.kb_input(hotkeys["target reverse"])
+                    elif current == "d&q":
+                        kb_mouse.kb_input(hotkeys["target change"])
+                else:
+                    return self._name, target
+            case _:
+                return self._normal_targeting(current, target)
+        ```
 
         Here the special cases: all other heroes operate under basic system. 
         
