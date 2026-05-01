@@ -20,7 +20,7 @@ import io
 import os
 import shutil
 import subprocess
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 import difflib
 import sys
 import time
@@ -71,7 +71,7 @@ elif sys.platform == "linux":
 
 if TYPE_CHECKING:
     from easyocr import Reader
-    from typing import Any, cast
+    from typing import Any
 
 
 class OcrValues:
@@ -99,31 +99,32 @@ class OcrValues:
 
 
 def _wayland_grab(coordinates: tuple[int, int, int, int]) -> Image.Image:
-    raw_img: Any
+    raw_img: bytes
     tl_x, tl_y, br_x, br_y = coordinates
     width, height = br_x - tl_x, br_y - tl_y
     if width <= 0 or height <= 0:
         raise ValueError("Invalid screenshot dimensions")
-    time.sleep(0.05)
+
+    region = f"{tl_x},{tl_y} {width}x{height}"
+
     try:
-        region = f"{tl_x},{tl_y}, {width}x{height}"
-        cmd = ["grim", "-g", region, "-t", "ppm", "-"]  # write into stdout -> saving images should not be required
-        raw_img = subprocess.check_output(cmd, timeout=5)
+        raw_img = subprocess.check_output(["grim", "-g", region, "-"], timeout=5, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        cprint("grim failed: ", e.stderr)
+        raise RuntimeError(f"grim failed: {e}") from e
+
     return Image.open(io.BytesIO(raw_img)).convert("RGB")
 
 
 def _wayland_pixelcolor(x: float, y: float) -> tuple[int, int, int]:
-    raw_img: Any
+    raw_img: bytes
     px, py = kb_mouse.pixel_position((x, y))
-    time.sleep(0.05)
+    region = f"{px},{py} 1x1"
+
     try:
-        region = f"{px},{py}, 1x1"
-        cmd = ["grim", "-g", region, "-t", "ppm", "-"]
-        raw_img = subprocess.check_output(cmd, timeout=5)
+        raw_img = subprocess.check_output(["grim", "-g", region, "-"], timeout=5, stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
-        cprint("grim failed: ", e.stderr)
+        raise RuntimeError(f"grim failed: {e.output.decode()}") from e
+
     img = Image.open(io.BytesIO(raw_img)).convert("RGB")
     pixel: tuple[int, int, int] = cast(tuple[int, int, int], img.getpixel((0, 0)))  # type cast for mypy
     return pixel
