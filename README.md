@@ -1192,9 +1192,7 @@ it.
     [this section](#any-aspect-ratio) of advanced resolutions guide.
 
 - **Ocr time limit**: How long will bot attempt to search for various text flags before it gives up and attempts to
-return to main menu. Typically, this should never occur so a high value of 300 seconds or more is recommended: this 
-is especially important for apopalypse plans as in those you can have long periods of downtime where bot attempts to 
-place/upgrade a monkey.
+return to main menu. Typically, this should never occur so a high value of 300 seconds or more is recommended
 
 - **Ocr frequency**: Pause interval between most ocr operations, in seconds. Naturally every operation has base cost
 which depends on cpu/gpu speed on top of which this value is then added. Raising this value will greatly decrease 
@@ -1584,17 +1582,25 @@ number or variable END:
 
 Again, no need to include final round block if it has no commands.
 
-On two special cases, you can just use the first if-block
+On a special case, you can just use the first if-block
 
 ```python
     if round == BEGIN:
         ...
 ```
-to include all commands. These are deflation and apopalypse. In fact, for apopalypse, you 
-**have to use only the first round block!**. After first round ends, bot sets internal flag for end round and stops
-processing other rounds.
+to include all commands. This is used in **deflation mode**, but you could technically use this on every single game
+mode.
+- If you do end using this on **non-deflation game modes (= don't use this on deflation plans!)**, for example in apopalypse because you can't bother tracking each round (understandable because pausing is disabled), you should **ALWAYS** write
+
+    ```python
+        round = END
+    ```
+
+  as the very final command, setting bot's round tracking to last round. This avoids the issue with executing all commands on BEGIN round and then waiting bot to skip over all the rounds between BEGIN and END, printing lots of empty rounds.  
+  More importantly, without round = END, while bot is catching up in rounds, game actually finishes. This results the background becoming darker which makes round reading pretty much impossible, leaving bot to hang until ocr time limit is reached (and even with that bot might fail to leave end screen, requiring user to manually reset the state).
+
     
-For examples see *dark_castleEasyDeflation.py* and *infernalMediumApopalypse.py* plan files.
+For examples see *dark_castleEasyDeflation.py* and also *infernalMediumApopalypse.py* where the latter uses only BEGIN round block and thus includes the "round = END".
 
 
 ## **Commands**

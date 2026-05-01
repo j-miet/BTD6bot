@@ -14,7 +14,8 @@ druid 1-3-0
 
 village 0-2-0
 _______________________________________
-Apopalypse round rng might fail you. Should work after a few tries, though.
+Apopalypse round rng might fail you, should work after a few tries, though. This happens on zero monkey knowledge, but
+if you have some of the more important ones, this should work 100% of the time.
 """
 
 from ._plan_imports import *
@@ -65,3 +66,9 @@ def play(data):
             sub2 = Monkey("sub", 0.6197916666667, 0.2509259259259)
             sub2.upgrade(["0-0-1", "0-0-2", "1-0-2", "2-0-2", "2-0-3", "2-0-4"])
             sub1.upgrade(["2-0-4"])
+            # because this plan uses the old BEGIN round only logic, it's necessary to force final round here
+            # otherwise bot needs to catch up each, skipping each round with 0:00 time. 
+            # The actual issue is that bot fails go from 1 to 60 before bot finishes. When the victory screen appears, 
+            # bot is unable to read the rounds because text becomes much darker. It hangs on somewhere between 30-50, 
+            # not being able to progress
+            round = END
