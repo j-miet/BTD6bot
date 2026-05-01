@@ -262,6 +262,8 @@ class Rounds:
         current_round = prev_round + 1
         if current_round == Rounds.begin_round:
             Rounds.start()
+            if mode.lower() == "apopalypse":
+                forward(1)
         elif current_round == Rounds.end_round + 1:
             if _maindata.debug_get_mode() == _maindata.Debug.SETUP_STATIC_STATE:
                 dprint("Reached the end of current plan, stopping here!")
@@ -282,8 +284,6 @@ class Rounds:
                 forward()
             else:
                 dprint(f"Round {current_round}:")
-        elif mode.lower() == "apopalypse":
-            return Rounds.end_round
         else:
             if not AutoStart.called_forward:
                 forward()

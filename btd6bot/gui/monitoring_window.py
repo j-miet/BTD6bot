@@ -71,9 +71,9 @@ class MonitoringWindow:
         icon = tk.PhotoImage(file=gui_paths.FILES_PATH / "btd6bot.png")
         self.monitoringwindow.iconphoto(True, icon)
         if sys.platform == "linux":
-            self.monitoringwindow.geometry("815x505")
-            self.monitoringwindow.minsize(815, 505)
-            self.monitoringwindow.maxsize(815, 505)
+            self.monitoringwindow.geometry("815x530")
+            self.monitoringwindow.minsize(815, 530)
+            self.monitoringwindow.maxsize(815, 530)
         else:
             self.monitoringwindow.geometry("800x480")
             self.monitoringwindow.minsize(800, 480)

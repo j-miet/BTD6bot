@@ -10,6 +10,8 @@ import sys
 import time
 
 import pyautogui
+if sys.platform != "darwin":
+    from pynput import keyboard
 
 from bot import _maindata, kb_mouse, locations
 from bot.commands.flow import AutoStart
@@ -153,7 +155,11 @@ def _choose_map(map_name: str) -> bool:
     time.sleep(0.4)
     kb_mouse.click(get_click("menu", "search_map_bar"))
     time.sleep(0.4)
-    pyautogui.write(map_str)  # types map name to search bar.
+    # types map name to search bar
+    if sys.platform == "darwin":    # for mac testers: use pyautogui, pynput caused crashes before
+        pyautogui.write(map_str)
+    else:
+        keyboard.Controller().type(map_str)
     kb_mouse.click(get_click("menu", "choose_map"))
     return True
 
