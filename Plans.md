@@ -986,7 +986,8 @@
 			
 			village 0-2-0
 			_______________________________________
-			Apopalypse round rng might fail you. Should work after a few tries, though.
+			Apopalypse round rng might fail you, should work after a few tries, though. This happens on zero monkey knowledge, but
+			if you have some of the more important ones, this should work 100% of the time.
 			
 - Hard
 	- [Chimps](btd6bot/plans/infernalHardChimps.py)
