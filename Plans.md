@@ -1,4 +1,4 @@
-# Supported game plans (Last updated 2026-04-30)
+# Supported game plans (Last updated 2026-05-01)
 
 - this list is auto-updated using ``scripts/update_plans.py``
 - all implemented plans are listed. Each game mode includes
