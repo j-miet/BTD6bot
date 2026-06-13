@@ -59,8 +59,11 @@ Following observations are based on testing the bot on
     You can also specify python version in all python-based installations e.g. python3.13.10. Bot supports currently 
     versions 3.12-3.14.
 
-- if you plan to use the install script, you also need `sudo apt install curl`. Curl handles the BTD6bot github repo content 
-downloading.
+- if you plan to use the install script, you also need `sudo apt install`
+	- curl
+	- zip.
+	
+	Curl handles the BTD6bot github repo content downloading, zip the unzipping the contents.
 
 - Linux has two different display protocols: **X (most recent version X11)** and **Wayland**. Modern distros use Wayland by default which is 
 build to be safer+modernized but also stricter than X11, and this causes some issues with ocr screenshot functions:

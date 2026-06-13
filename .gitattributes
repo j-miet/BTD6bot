@@ -9,3 +9,4 @@
 # This would ignore .github directory
 "docs/project history/" export-ignore
 "tests/**" export-ignore
+".github/**" export-ignore
