@@ -1,4 +1,4 @@
-# Supported game plans (Last updated 2026-05-01)
+# Supported game plans (Last updated 2026-06-13)
 
 - this list is auto-updated using ``scripts/update_plans.py``
 - all implemented plans are listed. Each game mode includes
@@ -75,6 +75,7 @@
 - [Sanctuary](#sanctuary)
 - [Scrapyard](#scrapyard)
 - [Skates](#skates)
+- [Skull Tweak](#skull-tweak)
 - [Spa Pits](#spa-pits)
 - [Spice Island](#spice-island)
 - [Spillway](#spillway)
@@ -1703,6 +1704,22 @@
 ### Skates
 - Hard
 	- [Chimps](btd6bot/plans/skatesHardChimps.py)
+
+			[Hero] Sauda
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			glue 0-2-4
+			
+			sniper 4-2-0
+			heli 5-0-5
+			
+			village 2-3-0
+			_______________________________________
+			
+### Skull Tweak
+- Hard
+	- [Chimps](btd6bot/plans/skull_tweakHardChimps.py)
 
 			[Hero] Sauda
 			[Monkey Knowledge] -
