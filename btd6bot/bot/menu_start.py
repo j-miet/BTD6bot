@@ -22,6 +22,7 @@ from bot.kb_mouse import ScreenRes
 from bot.locations import get_click, get_text, get_locationdict
 from bot.ocr.ocr import weak_substring_check
 from bot.ocr.ocr_reader import OCR_READER
+from bot.ocr.ocr import reset_mss
 from bot.rounds import Rounds
 from bot.times import PauseControl
 from customprint import cprint
@@ -214,6 +215,9 @@ def _update_external_variables(begin_r: int, end_r: int) -> None:
         begin_r: First round.
         end_r: Final round.
     """
+    # reinitialize ocr mss object to prevent threading errors
+    reset_mss()
+
     _maindata.maindata["bot_vars"]["check_ingame_resolution"] = False
     ScreenRes.update_shift(0, 0)  # shift must not be applied during menu navigation
     ScreenRes.update_winpos_status("centered")
