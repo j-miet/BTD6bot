@@ -34,7 +34,7 @@ section.
 ---
 #### [Update status]
 
-- Latest version of bot is **1.0.2** which matches BTD6's *Update 54*. 
+- Latest version of bot is **1.1.0** which matches BTD6's *Update 55*. 
 
     => Release notes can be found [here](https://github.com/j-miet/BTD6bot/releases/tag/v1.0.0)
     - For now, bot is planned to be updated after each major game update. These **updates** are marked as `1.X.0`
@@ -46,7 +46,7 @@ section.
     => Plans were previously updated in **1.0.0**. Next update cycle is scheduled for **1.2.0**.
 
     - <u>Main goal is to keep all Chimps plans available and updated</u>. This process is repeated 
-    **every 2-3 updates**. Other plans could stay untested for extended periods of time, but then again, are also less 
+    **every 2-3 updates**. Other plans could stay untested for extended periods of time, however they are also less 
     affected by tower balancing/price changes.
 
 
@@ -117,7 +117,8 @@ Linux distribution, then run btd6 + bot in this environment.
 
 #### [Keyboard languages]
 
-There's an issue with keyboard value conversion with different input languages on keyboard. This reason is current system stores values in strings instead of keycodes.
+There's an issue with keyboard value conversion with different input languages on keyboard. This reason is current 
+system stores values in strings instead of keycodes.
 
 Current saving process:
 - user gives input
@@ -128,19 +129,25 @@ Current saving process:
     -  numpad keys which become become strings from "<96>" (numpad1) to "<105>" (numpad9)
 - save string into a hotkeys.txt file in custom `value = key` syntax
 
-Here the main issue is character literals: keyboards can output different value when key at same position is pressed. For example
+Here the main issue is character literals: keyboards can output different value when key at same position is pressed. 
+For example
 - Nordic and US keyboards => `-` outputs `-`
 - German keyboard => `-` outputs `/`
 
 **Why this (possibly) breaks hotkeys:**  
-Bot uses Python libraries which innately default to US-centric which would also produce the "-" and this same value is now the output. So when user with german keyboard system attempts to input `/`, bot saves this as "-" BUT Bloons TD 6 game still excepts the "/". So the chain becomes
+Bot uses Python libraries which innately default to US-centric which would also produce the "-" and this same value 
+is now the output. So when user with german keyboard system attempts to input `/`, bot saves this as "-" BUT 
+Bloons TD 6 game still excepts the "/". So the chain becomes
 
 > User sets hotkey "/" -> bot converts this to "-" -> game still expects "/", but instead receives "-"
 
-Fixing this system would require some larger changes in code base. While annoying, this is not a critical issue and won't prevent bot from running. It will be fixed at some point in the future, but **there's no estimated time of arrival for this yet**.
+Fixing this system would require some larger changes in code base. While annoying, this is not a critical issue and 
+won't prevent bot from running. It will be fixed at some point in the future, but 
+**there's no estimated time of arrival for this fix yet**.
 
 **Temporary fix (until hotkey system gets overhauled)**  
-If your hotfix doesn't map properly, you can edit the hotkeys file directly in `btd6bot/btd6bot/Files/text files/hotkeys.txt`. Simply change the right side of hotkey and save file. For example:
+If your hotfix doesn't map properly, you can edit the hotkeys file directly in `btd6bot/Files/text files/hotkeys.txt`. 
+Simply change the right side of hotkey and save file. For example:
 - you use german keyboard layout and want to replace the default `-` value for bottom path upgrades to match `/`
 - just like above, pressing `-` on a german keyboard results in just `-` again
 - so instead open the file hotkeys.txt file, find the line `upgrade bot = -` and change this to `upgrade bot = /`
@@ -158,9 +165,11 @@ Will mostly depend on what features/changes BTD6 does. For bot this usually mean
 Since bot has reached version 1.0.0, it's unlikely any major features gets added.  
 Some possible ones **with no specific ETA:**
 - project code/structure changes:
-    - update hotkey system from string chars to keycodes (this would prevent issues with different keyboard language systems)
+    - update hotkey system from string chars to keycodes (this would prevent issues with different keyboard language 
+    systems)
     - update plans directory structure by adding subdirectories for each map
-    - use a proper plan file format like yaml/toml/json instead of python files. Would require a major rework of the codebase, but also make writing plans much easier.
+    - use a proper plan file format like yaml/toml/json instead of python files. Would require a major rework of the 
+    codebase, but also make writing plans much easier.
     - go over entire codebase and see if there's anything that absolutely needs to be updated/reworked
     - add integration test suite: unit testing the bot is difficult due to extensive ocr usage. To do this: either 
     build a simple simulation environment, or prepare and use a sequence of test images
@@ -870,8 +879,8 @@ and validity checks.
 
 **Full explanation:**  
 Game adds horizontal or vertical borders depending of current aspect ratio and extends them based on resolution. 
-As shifting feature of bot is based on 16:9 aspect ratio, such as 1920x1080 resolution, 0 height means no vertical border and 0 width 
-means some horizontal border width which gets added on each side of screen
+As shifting feature of bot is based on 16:9 aspect ratio, such as 1920x1080 resolution, 0 height means no vertical 
+border and 0 width means some horizontal border width which gets added on each side of screen
 
 - as 16:9 resolution have no borders at the top/bottom of screen, it already has the minimal border height of 0. Thus, 
 height can only get values >= 0 because other resolution can only possibly add more border.
@@ -1590,17 +1599,23 @@ On a special case, you can just use the first if-block
 ```
 to include all commands. This is used in **deflation mode**, but you could technically use this on every single game
 mode.
-- If you do end using this on **non-deflation game modes (= don't use this on deflation plans!)**, for example in apopalypse because you can't bother tracking each round (understandable because pausing is disabled), you should **ALWAYS** write
+- If you do end using this on **non-deflation game modes (= don't use this on deflation plans!)**, for example in 
+apopalypse because you can't bother tracking each round (understandable because pausing is disabled), you should **ALWAYS** write
 
     ```python
         round = END
     ```
 
-  as the very final command, setting bot's round tracking to last round. This avoids the issue with executing all commands on BEGIN round and then waiting bot to skip over all the rounds between BEGIN and END, printing lots of empty rounds.  
-  More importantly, without round = END, while bot is catching up in rounds, game actually finishes. This results the background becoming darker which makes round reading pretty much impossible, leaving bot to hang until ocr time limit is reached (and even with that bot might fail to leave end screen, requiring user to manually reset the state).
+  as the very final command, setting bot's round tracking to last round. This avoids the issue with executing all 
+  commands on BEGIN round and then waiting bot to skip over all the rounds between BEGIN and END, printing lots of 
+  empty rounds.  
+  More importantly, without round = END, while bot is catching up in rounds, game actually finishes. This results the 
+  background becoming darker which makes round reading pretty much impossible, leaving bot to hang until ocr time 
+  limit is reached (and even with that bot might fail to leave end screen, requiring user to manually reset the state).
 
     
-For examples see *dark_castleEasyDeflation.py* and also *infernalMediumApopalypse.py* where the latter uses only BEGIN round block and thus includes the "round = END".
+For examples see *dark_castleEasyDeflation.py* and also *infernalMediumApopalypse.py* where the latter uses only 
+BEGIN round block and thus includes the "round = END".
 
 
 ## **Commands**
@@ -1930,10 +1945,7 @@ intended rounds/timings.
 
 ## Tables: Monkeys, heroes and targeting options
 
-<p id="monkeynames"></p>
-
-*Monkey names*
--
+<p id="monkeynames"><h2>Monkeys</h2></p>
 
 Use these values when placing a new monkey with `Monkey(name, pos_x, pos_y)` command
 
@@ -1950,10 +1962,7 @@ Use these values when placing a new monkey with `Monkey(name, pos_x, pos_y)` com
 
 **1**: If you plan to use `wingmonkey` monkey knowledge, see [Targeting](#targeting) (**2**).
 
-<p id="heronames"></p>
-
-*Heroes*
--
+<p id="heronames"><h2>Heroes</h2></p>
 
  Hero for current plan is selected based on `[Hero]` value inside the plan file info panel.  
 *In the following table, Heroes are categorized by their xp ratio. Higher ratio means slower xp gain.*
@@ -1966,16 +1975,14 @@ Use these values when placing a new monkey with `Monkey(name, pos_x, pos_y)` com
 | Obyn              | Pat
 | Quincy            | Rosalia
 | Striker           | Sauda
+|                   | Dan
 
 **1**: When Etienne hits level **11**, he auto-updates targeting mode from whatever you currently use to "zone control". 
 If you plan to change Etienne's targeting afterwards, you must call `force_target()` on same turn as Etienne levels up 
 to 11. This command sets bot targeting internally to "zone control". Otherwise game and bot have different targeting 
 values which will most likely cause issues.
 
-<p id="targetingchoices"></p>
-
-*Targeting*
--
+<p id="targetingchoices"><h2>Targeting</h2></p>
 
 Use `target(set_target, x, y, cpos)` to change targeting.
 

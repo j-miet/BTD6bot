@@ -130,6 +130,17 @@ def _wayland_pixelcolor(x: float, y: float) -> tuple[int, int, int]:
     return pixel
 
 
+def reset_mss() -> None:
+    """Reinitialize mss object
+    
+    Call this before a new bot loop, otherwise mss.grab() tries to access threading objects from previous instance and
+    throwing an error. This would then prevent restarting the bot loop and instead requires closing and reopening the
+    entire program.
+    """
+    if os_env in OcrValues._MSS_SUPPORTED and OcrValues._sct is not None:
+        OcrValues._sct = mss()
+
+
 def get_pixelcolor(x: float, y: float) -> tuple[int, int, int]:
     """Returns rgb color tuple of a coordinate location.
 
