@@ -1,0 +1,14 @@
+{
+    "pause": {
+        "value": "f8",
+        "display": "f8"
+    },
+    "start-stop": {
+        "value": "f9",
+        "display": "f9"
+    },
+    "exit": {
+        "value": "f11",
+        "display": "f11"
+    }
+}

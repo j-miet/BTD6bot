@@ -1,6 +1,7 @@
 """Implements HotkeyWindow class."""
 
 from __future__ import annotations
+import json
 from typing import TYPE_CHECKING
 import sys
 import tkinter as tk
@@ -12,7 +13,8 @@ from bot.hotkeys import PYNPUT_KEYS
 from gui.guihotkeys import GuiHotkeys
 import gui.gui_paths as gui_paths
 from gui.gui_tools import os_font
-from utils import plan_data
+
+from pynput.keyboard import Key, KeyCode
 
 if TYPE_CHECKING:
     from pynput.keyboard import Key, KeyCode
@@ -49,9 +51,14 @@ class HotkeyWindow:
         self.input_key: pynput.keyboard.Listener
 
         with open(gui_paths.HOTKEYS_PATH) as hotkey_read:
-            self.hotkey_list: list[str] = plan_data.list_format(hotkey_read.readlines())
+            self.hotkey_dict: dict[str, dict[str, str]] = json.load(hotkey_read)
         with open(gui_paths.GUIHOTKEYS_PATH) as guihotkey_read:
-            self.guihotkey_list: list[str] = plan_data.list_format(guihotkey_read.readlines())
+            self.guihotkey_dict: dict[str, dict[str, str]] = json.load(guihotkey_read)
+
+        self.hotkey_list: list[str] = []
+        self._formatHotkeyDictIntoList()
+        self.guihotkey_list: list[str] = []
+        self._formatGUIHotkeyDictIntoList()
 
         hotkeylabel = tk.Label(self.hotkeywindow, text="Hotkeys", height=1, relief="groove", font=os_font)
         hotkeylabel.grid(column=0, row=0, sticky="nsew", padx=20, pady=5)
@@ -92,10 +99,20 @@ class HotkeyWindow:
             self.guihotkeyoptionlist.insert(2, "")
             self.guihotkeyoptionlist["state"] = "disabled"
 
+    def _formatHotkeyDictIntoList(self) -> None:
+        for k, v in self.hotkey_dict.items():
+            displayValue = v["display"].strip()
+            self.hotkey_list.append(k + " = " + displayValue)
+
+    def _formatGUIHotkeyDictIntoList(self) -> None:
+        for k, v in self.guihotkey_dict.items():
+            displayValue = v["display"].strip()
+            self.guihotkey_list.append(k + " = " + displayValue)
+
     def _save_hotkeys(self) -> None:
         """Set a hotkey value for currently highlighted row without pynput.Listener.
 
-        Similar to set_hotkey, but requires user to manually type in hotkeys.
+        Similar to set_hotkey, but requires user to manually type in hotkey keycodes.
 
         Used with Mac operating systems as pynput Listener/Controller thread objects cause critical error when used
         alongside tkinter gui.
@@ -113,9 +130,12 @@ class HotkeyWindow:
             if user_input is not None:
                 if len(user_input) != 0:
                     self.hotkey_list[selected] = selected_text + " = " + user_input.lower()
+
+                    self.hotkey_dict[selected_text]["value"] = user_input
+                    self.hotkey_dict[selected_text]["display"] = user_input
                     with open(gui_paths.HOTKEYS_PATH, "w") as file_write:
-                        for line in self.hotkey_list:
-                            file_write.write(line + "\n")
+                        json.dump(self.hotkey_dict, file_write, indent=4)
+
                     self.hotkeyoptionlist.delete(0, "end")
                     self._read_hotkeys()
             self.sethotkeybutton.configure(state="active")
@@ -126,9 +146,12 @@ class HotkeyWindow:
             if user_input is not None:
                 if len(user_input) != 0:
                     self.guihotkey_list[selected] = selected_text + " = " + user_input.lower()
+
+                    self.guihotkey_dict[selected_text]["value"] = user_input
+                    self.guihotkey_dict[selected_text]["display"] = user_input
                     with open(gui_paths.GUIHOTKEYS_PATH, "w") as file_write:
-                        for line in self.guihotkey_list:
-                            file_write.write(line + "\n")
+                        json.dump(self.guihotkey_dict, file_write, indent=4)
+
                     self.guihotkeyoptionlist.delete(0, "end")
                     self._read_guihotkeys()
             self.sethotkeybutton.configure(state="active")
@@ -176,18 +199,29 @@ class HotkeyWindow:
             selected_row: Number of currently selected row: top row is 0, increases downwards.
         """
         previous_key_begin: str = self.hotkey_list[selected_row].split(" = ")[0]
-        key_pressed: str = str(key)
-        if "Key." in key_pressed:
-            key_pressed = key_pressed.replace("Key.", "")
-            if key_pressed not in PYNPUT_KEYS.keys():
+
+        key_displayed: str = str(key)
+        key_pressed: str
+        if isinstance(key, KeyCode):
+            key_pressed = str(key.vk)
+        else:
+            key_pressed = key_displayed
+
+        if "Key." in key_displayed:
+            key_displayed = key_displayed.replace("Key.", "")
+            key_pressed = key_displayed
+            if key_displayed not in PYNPUT_KEYS.keys():
                 self.input_key.stop()
                 self.sethotkeybutton.configure(state="active")
                 return
 
-        self.hotkey_list[selected_row] = previous_key_begin + " = " + key_pressed.replace("'", "")
+        displayVal = key_displayed.replace("'", "")
+
+        self.hotkey_list[selected_row] = previous_key_begin + " = " + displayVal
+        self.hotkey_dict[previous_key_begin]["value"] = key_pressed
+        self.hotkey_dict[previous_key_begin]["display"] = displayVal
         with open(gui_paths.HOTKEYS_PATH, "w") as file_write:
-            for line in self.hotkey_list:
-                file_write.write(line + "\n")
+            json.dump(self.hotkey_dict, file_write, indent=4)
 
         self.hotkeyoptionlist.delete(0, "end")
         self._read_hotkeys()
@@ -206,19 +240,30 @@ class HotkeyWindow:
            key: Latest keyboard key the user has pressed.
            selected_row: Number of currently selected row: top row is 0, increases downwards.
         """
-        previous_key_begin = self.guihotkey_list[selected_row].split(" = ")[0]
-        key_pressed: str = str(key)
-        if "Key." in key_pressed:
-            key_pressed = key_pressed.replace("Key.", "")
-            if key_pressed not in PYNPUT_KEYS.keys():
+        previous_key_begin: str = self.guihotkey_list[selected_row].split(" = ")[0]
+
+        key_displayed: str = str(key)
+        key_pressed: str
+        if isinstance(key, KeyCode):
+            key_pressed = str(key.vk)
+        else:
+            key_pressed = key_displayed
+
+        if "Key." in key_displayed:
+            key_displayed = key_displayed.replace("Key.", "")
+            key_pressed = key_displayed
+            if key_displayed not in PYNPUT_KEYS.keys():
                 self.input_key.stop()
                 self.sethotkeybutton.configure(state="active")
                 return
 
-        self.guihotkey_list[selected_row] = previous_key_begin + " = " + key_pressed.replace("'", "")
+        displayVal = key_displayed.replace("'", "")
+
+        self.guihotkey_list[selected_row] = previous_key_begin + " = " + displayVal
+        self.guihotkey_dict[previous_key_begin]["value"] = key_pressed
+        self.guihotkey_dict[previous_key_begin]["display"] = displayVal
         with open(gui_paths.GUIHOTKEYS_PATH, "w") as file_write:
-            for line in self.guihotkey_list:
-                file_write.write(line + "\n")
+            json.dump(self.guihotkey_dict, file_write, indent=4)
 
         self.guihotkeyoptionlist.delete(0, "end")
         self._read_guihotkeys()

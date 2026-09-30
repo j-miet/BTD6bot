@@ -205,23 +205,13 @@ def kb_input(
         times: How many times key is pressed. Default value is 1.
         kb_controller: pynput keyboard controller object.
     """
-    if isinstance(times, int) and times >= 1:
-        if isinstance(input, str) and input.strip("<>") in {f"{num}" for num in range(96, 106)}:  # numpad keys
-            input_key = KeyCode(int(input.strip("<>")))
-            if input_key is not None:
-                for _ in range(times):
-                    kb_controller.press(input_key)
-                    time.sleep(0.1)
-                    kb_controller.release(input_key)
-                    if times >= 2:
-                        time.sleep(0.1)
-        else:
-            for _ in range(times):
-                kb_controller.press(input)
+    if input is not None and isinstance(times, int) and times >= 1:
+        for _ in range(times):
+            kb_controller.press(input)
+            time.sleep(0.1)
+            kb_controller.release(input)
+            if times >= 2:
                 time.sleep(0.1)
-                kb_controller.release(input)
-                if times >= 2:
-                    time.sleep(0.1)
 
 
 def press_esc() -> None:

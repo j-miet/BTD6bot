@@ -3,10 +3,11 @@
 Pynput docs: https://pynput.readthedocs.io/en/latest/keyboard.html#pynput.keyboard.Key
 """
 
-from pynput.keyboard import Key
+from copy import deepcopy
+
+from pynput.keyboard import Key, KeyCode
 
 from bot import _maindata
-from utils import plan_data
 
 PYNPUT_KEYS: dict[str, Key] = {
     "alt": Key.alt,
@@ -48,35 +49,34 @@ PYNPUT_KEYS: dict[str, Key] = {
 """Dictionary of supported pynput special keys."""
 
 
-def generate_hotkeys(hotkey_dict: dict[str, str | Key], source: list[str]) -> None:
-    """Reads hotkey.txt file from 'text files' folder and saves these to dictionary.
+def generate_hotkeys(hotkey_dict: dict[str, KeyCode | Key], source: dict[str, dict[str, str]]) -> None:
+    """Reads hotkey.json file from 'Files' folder and writes formatted hotkey data into hotkey_dict dictionary.
 
-    Because this program uses pynput library to handle key presses, it needs to convert special/modifier keys
-    to specific 'Key' type.
+    For pynput library to handle key presses, it needs convert 1. normal keys into 'KeyCode' type and 2.
+    special/modifier keys into 'Key' type.
 
-    This function is run every time a new monitoring window is created, updating any hotkey changes.
-
-    Returns:
-        actual_hotkeys: Dictionary with keys as strings and values as string or Key type.
+    This function runs every time a new monitoring window is created, updating any hotkey changes.
     """
-    hotkeys_text = plan_data.list_format(source.copy())
-    h_keys: list[str] = []
-    h_values: list[str] = []
-    for text_line in hotkeys_text:
-        text_line_split = text_line.split("=")
-        h_keys.append(text_line_split[0].rstrip())
-        h_values.append(text_line_split[1].lstrip())
-    hotkeys_dict: dict[str, str] = {k: h for (k, h) in zip(h_keys, h_values, strict=True)}
+    modifierKeys = PYNPUT_KEYS.keys()
+    dict_copy = deepcopy(source)
 
-    actual_hotkeys: dict[str, str | Key] = {}
-    for key, val in hotkeys_dict.items():
-        if val in PYNPUT_KEYS.keys():
-            actual_hotkeys.update({key: PYNPUT_KEYS[val]})
+    actual_hotkeys: dict[str, KeyCode | Key] = {}
+    for name, fields in dict_copy.items():
+        value: str = fields["value"]
+
+        # - KeyCode types are stored as a string "N", Keys as text.
+        # first check allows theoretical Mac users to enter modifier keys if they include "m_" prefix when manually
+        # typing the hotkey e.g. "m_enter". Later else handles KeyCode types normally as long as number is correct.
+        # However this feature is pretty much obsolete as BTD6bot has no official Mac support, but it can stay for now.
+        if value in modifierKeys:
+            actual_hotkeys.update({name: PYNPUT_KEYS[value]})
         else:
-            actual_hotkeys[key] = val
+            keycode = KeyCode.from_vk(int(value))
+            actual_hotkeys[name] = keycode
+
     hotkey_dict.update(actual_hotkeys)
 
 
-hotkeys: dict[str, str | Key] = {}
+hotkeys: dict[str, KeyCode | Key] = {}
 """Dictionary of current hotkeys read from hotkeys.txt."""
 generate_hotkeys(hotkeys, _maindata.maindata["hotkeys"])
