@@ -2022,7 +2022,7 @@ So only files you likely need to modify are
     - `commands/hero.py`
 - `Files`
     - `_ocr_upgradedata.json`
-    - `text files/hotkeys.txt`
+    - `text files/hotkeys.json`
     - `custom_locations.json`
 
 
@@ -2077,27 +2077,35 @@ So only files you likely need to modify are
 
 2. **Set hotkey**
 
-    - open `Files/text files/hotkeys.txt` and add a new row:
+    1. Open `Files/text files/hotkeys.json` and add a new entry:
 
-        - first, name of the monkey e.g. `test monkey`
-        - then, one space, followed by `=` then another space
-        - then, set an initial hotkey value; user sees this in gui. Some existing symbols can display weirdly when you
-         edit this file manually: make sure to update these through gui.
-        
-        Lets say you used just `q` as hotkey. Then simply write `test monkey = q`.
+    ```json
+        "test monkey": {
+            "value": "81",
+            "display": "q"
+        },
+    ```
 
-    - in `bot/commands/monkeys.py`, search `_get_hotkey` and support for new hotkey:
+    - Replace "test monkey" with actual name.
+    - "value" field is the internal KeyCode/Key string, "display" the name displayed in GUI. Make sure both values are 
+    strings. 
+        - You can keep the placeholders: here 81 corresponds to the letter 'q'. For actual value, just open the bot and 
+        update the hotkey, this will always update both fields.
+        - Known that some values don't work properly: this is a limitation with the `pynput` library API. One such 
+        example is the the slash numpad key "/" which turns to "-" even if game displays something like "NumpadDivide".
+
+    2. In `bot/commands/monkeys.py`, search `_get_hotkey` and support for new hotkey:
 
         ```python
         case "test_monkey":
             return hotkeys["test monkey"]
         ```
 
-    Here, 
-    
-    - use the code-level name you added in `_MONKEY_NAMES` inside `case` e.g. `case "test_monkey"`
-    - hotkey string you wrote in `hotkeys.txt` inside `hotkeys[...]`; remember to add `" "` to use string type
-    e.g. `hotkeys["test monkey"]`.
+        Here: 
+        
+        - use the code-level name you added in `_MONKEY_NAMES` inside `case` e.g. `case "test_monkey"`
+        - hotkey string you wrote in `hotkeys.json` inside `hotkeys[...]`; remember to add `" "` to use string type
+        e.g. `hotkeys["test monkey"]`.
 
 
 3. **Add targeting settings**
