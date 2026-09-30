@@ -10,7 +10,7 @@ from bot.commands.monkey import Monkey
 from bot.locations import get_click, get_text
 from bot.kb_mouse import ScreenRes
 from bot.menu_start import _choose_map, _choose_diff
-from bot.ocr.ocr import weak_substring_check, OcrValues
+from bot.ocr.ocr import weak_substring_check, OcrValues, reset_mss
 from bot.ocr.ocr_reader import OCR_READER
 from customprint import cprint
 from utils import timing
@@ -326,4 +326,6 @@ def run() -> None:
         f"Delta: {delta}\n\n"
         "=>Bot will next enter 'spa pits' map in sandbox mode."
     )
+
+    reset_mss()
     _adjust_upg_deltas(monkey_list, delta)

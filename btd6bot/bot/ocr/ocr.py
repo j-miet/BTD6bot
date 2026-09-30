@@ -133,7 +133,7 @@ def _wayland_pixelcolor(x: float, y: float) -> tuple[int, int, int]:
 def reset_mss() -> None:
     """Reinitialize mss object
     
-    Call this before a new bot loop, otherwise mss.grab() tries to access threading objects from previous instance and
+    Call this before a new bot loop, otherwise mss.grab() tries to access threading objects from previous instance,
     throwing an error. This would then prevent restarting the bot loop and instead requires closing and reopening the
     entire program.
     """

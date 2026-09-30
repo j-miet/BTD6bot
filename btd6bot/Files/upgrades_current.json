@@ -1207,6 +1207,66 @@
     "the final harmonic",
     0.93
   ],
+  "skywarden 1-x-x": [
+    "aerial attunement",
+    0.86
+  ],
+  "skywarden 2-x-x": [
+    "zephyr sense",
+    0.91
+  ],
+  "skywarden 3-x-x": [
+    "wind weaver",
+    0.91
+  ],
+  "skywarden 4-x-x": [
+    "galesage",
+    0.96
+  ],
+  "skywarden 5-x-x": [
+    "farwind seer",
+    0.86
+  ],
+  "skywarden x-1-x": [
+    "storm's pulse",
+    0.84
+  ],
+  "skywarden x-2-x": [
+    "thundering arc",
+    0.84
+  ],
+  "skywarden x-3-x": [
+    "galvanic conduit",
+    0.92
+  ],
+  "skywarden x-4-x": [
+    "thunder's decree",
+    0.79
+  ],
+  "skywarden x-5-x": [
+    "stormwrath archon",
+    0.78
+  ],
+  "skywarden x-x-1": [
+    "shatterpoint",
+    0.87
+  ],
+  "skywarden x-x-2": [
+    "icebore",
+    0.81
+  ],
+  "skywarden x-x-3": [
+    "coldchain",
+    0.96
+  ],
+  "skywarden x-x-4": [
+    "frozen verdict",
+    0.92
+  ],
+  "skywarden x-x-5": [
+    "winter's mercy",
+    0.84
+  ],
   "farm 1-x-x": [
     "increased production",
     0.91
