@@ -1,4 +1,4 @@
-# Supported game plans (Last updated 2026-06-17)
+# Supported game plans (Last updated 2026-10-01)
 
 - this list is auto-updated using ``scripts/update_plans.py``
 - all implemented plans are listed. Each game mode includes
@@ -14,6 +14,7 @@
 - [Alpine Run](#alpine-run)
 - [Ancient Portal](#ancient-portal)
 - [Another Brick](#another-brick)
+- [Ascent](#ascent)
 - [Balance](#balance)
 - [Bazaar](#bazaar)
 - [Bloody Puddles](#bloody-puddles)
@@ -220,6 +221,27 @@
 			heli 5-0-2
 			
 			alch 4-2-0
+			
+			village 2-3-0
+			_______________________________________
+			
+### Ascent
+- Hard
+	- [Chimps](btd6bot/plans/ascentHardChimps.py)
+
+			[Hero] Obyn
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-0-0
+			
+			sniper 0-2-5
+			sub 0-0-0
+			heli 5-0-2
+			
+			wizard 5-2-0
+			alch 4-2-0
+			druid 0-0-0
 			
 			village 2-3-0
 			_______________________________________
