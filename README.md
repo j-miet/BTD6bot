@@ -34,21 +34,14 @@ section.
 ---
 #### [Update status]
 
-- Latest version of bot is **1.1.0** which matches BTD6's *Update 55*. 
+- Latest version of bot is **1.2.0** which matches BTD6's *Update 56*. 
 
-    => Release notes can be found [here](https://github.com/j-miet/BTD6bot/releases/tag/v1.0.0)
+    => Release notes can be found [here](https://github.com/j-miet/BTD6bot/releases/tag/v1.2.0)
     - For now, bot is planned to be updated after each major game update. These **updates** are marked as `1.X.0`
     - Sometimes bug fixes, small changes, new plans etc. are added between updates. These  **patches** are marked 
     as `1.X.Y`
 
 - All available game plans are listed [here](Plans.md)
-
-    => Plans were previously updated in **1.0.0**. Next update cycle is scheduled for **1.2.0**.
-
-    - <u>Main goal is to keep all Chimps plans available and updated</u>. This process is repeated 
-    **every 2-3 updates**. Other plans could stay untested for extended periods of time, however they are also less 
-    affected by tower balancing/price changes.
-
 
 
 #### [Supported display resolutions]
@@ -69,7 +62,6 @@ button/text locations during gameplay. Bot has two solutions for this:
 
 
 #### [OS support]
-
 
 Because of limited access to other operating systems than Windows, it's very difficult to ensure bot works on 
 all of them. Currently:
@@ -99,7 +91,7 @@ all of them. Currently:
 - **MacOS => Not supported, but could still work** 
 
     Bot functionality remains largely untested without access to modern native Mac system i.e. owning a Mac PC. 
-    <u>Thus the responsibility of testing is left to user</u>.
+    <u>Thus the responsibility of testing is left to the user</u>.
 
     - some code-level testing has been done using VirtualBox on much older versions (Catalina, Big Sur):
         - custom gui-only hotkeys are disabled for Mac systems. Reason is Python libraries used for gui and 
@@ -115,67 +107,19 @@ The only *"OS-independent solution"* would be a dual boot setup: install a separ
 Linux distribution, then run btd6 + bot in this environment.
 - Don't try to use virtual machine. These cannot properly utilize GPU which makes your game run on extremely low fps.
 
-#### [Keyboard languages]
-
-There's an issue with keyboard value conversion with different input languages on keyboard. This reason is current 
-system stores values in strings instead of keycodes.
-
-Current saving process:
-- user gives input
-- input is parsed. This can happen in three ways:
-    - store a character literal of that value -> `a` -> "a", `+` -> "+", `-` -> "-"
-    - interpret it as a special key (Space, Enter, Shift, Alt, Ctrl etc.), still initially store it as a string
-    but adds a Key suffix e.g. "Key.Enter".
-    -  numpad keys which become become strings from "<96>" (numpad1) to "<105>" (numpad9)
-- save string into a hotkeys.txt file in custom `value = key` syntax
-
-Here the main issue is character literals: keyboards can output different value when key at same position is pressed. 
-For example
-- Nordic and US keyboards => `-` outputs `-`
-- German keyboard => `-` outputs `/`
-
-**Why this (possibly) breaks hotkeys:**  
-Bot uses Python libraries which innately default to US-centric which would also produce the "-" and this same value 
-is now the output. So when user with german keyboard system attempts to input `/`, bot saves this as "-" BUT 
-Bloons TD 6 game still excepts the "/". So the chain becomes
-
-> User sets hotkey "/" -> bot converts this to "-" -> game still expects "/", but instead receives "-"
-
-Fixing this system would require some larger changes in code base. While annoying, this is not a critical issue and 
-won't prevent bot from running. It will be fixed at some point in the future, but 
-**there's no estimated time of arrival for this fix yet**.
-
-**Temporary fix (until hotkey system gets overhauled)**  
-If your hotfix doesn't map properly, you can edit the hotkeys file directly in `btd6bot/Files/text files/hotkeys.txt`. 
-Simply change the right side of hotkey and save file. For example:
-- you use german keyboard layout and want to replace the default `-` value for bottom path upgrades to match `/`
-- just like above, pressing `-` on a german keyboard results in just `-` again
-- so instead open the file hotkeys.txt file, find the line `upgrade bot = -` and change this to `upgrade bot = /`
-- save the file
-
-And you're good to go.
-
 
 #### [Future updates]
 
-Will mostly depend on what features/changes BTD6 does. For bot this usually means:
-- add support for new towers/heroes
-- add Chimps plans for new maps
+There are no major features to be planned for now, but this could change in the future.
 
-Since bot has reached version 1.0.0, it's unlikely any major features gets added.  
-Some possible ones **with no specific ETA:**
-- project code/structure changes:
-    - update hotkey system from string chars to keycodes (this would prevent issues with different keyboard language 
-    systems)
-    - update plans directory structure by adding subdirectories for each map
-    - use a proper plan file format like yaml/toml/json instead of python files. Would require a major rework of the 
-    codebase, but also make writing plans much easier.
-    - go over entire codebase and see if there's anything that absolutely needs to be updated/reworked
-    - add integration test suite: unit testing the bot is difficult due to extensive ocr usage. To do this: either 
-    build a simple simulation environment, or prepare and use a sequence of test images
+Therefore new stuff depends mostly on what features/changes BTD6 does. This usually means:
+- support for new towers/heroes
+- Chimps plans for new maps
 
-- add support for farming in-game achievements in some form
-
+**Plan file updates:** don't except frequent updates anymore. 
+Thing is, this process was naturally easier to do back when total plan count was smaller, but now that there are 
+over 100 plan files, it takes a lot of time to test and possibly update/rewrite the strats for all of 
+them.
 
 
 ## Table of contents
@@ -293,8 +237,8 @@ To install bot you have two options:
 
     See [Use batch/shell script file](#use-batchshell-script-file) for details
 
-2. manual installation by downloading source files and installing dependencies yourself. **Still very easy to do** and you 
-might prefer this in case you
+2. manual installation by downloading source files and installing dependencies yourself. **Still very easy to do** and 
+you might prefer this in case you
     - want to customize your installation, 
     - failed to install bot with auto-install script, or
     - don't trust/want to use install script files
@@ -532,7 +476,8 @@ You should quickly read the "Instructions" but here's the important parts:
 - Not stated, but should be obvious: Do not use same hotkey for two different actions
 - You can scroll hotkey panel down to find more hotkeys
 - supported keys:
-    - letters a-z, digits 0-9, other symbols like +, -, *, § etc.
+    - letters a-z, digits 0-9, most general character keys like +, -, *, § etc.
+        - **There are however non-functional char inputs**: for example, the "/" input above numpad shows in-game as "NumpadDivide" yet hotkey API treats it as "-".
     - numpad keys 0-9; these show up as <96> to <105>
     - modifier keys; these are displayed as Key.keyname e.g. Key.ctrl
 - Some keys like § might get displayed weirdly but should still work
@@ -1957,7 +1902,7 @@ Use these values when placing a new monkey with `Monkey(name, pos_x, pos_y)` com
 | tack      | ace (**1**)   | alch          | engineer
 | ice       | heli          | druid         | beast
 | glue      | mortar        | mermonkey     |
-| desperado | dartling      |               |
+| desperado | dartling      | skywarden     |
 
 
 **1**: If you plan to use `wingmonkey` monkey knowledge, see [Targeting](#targeting) (**2**).
@@ -2077,7 +2022,7 @@ So only files you likely need to modify are
     - `commands/hero.py`
 - `Files`
     - `_ocr_upgradedata.json`
-    - `text files/hotkeys.txt`
+    - `text files/hotkeys.json`
     - `custom_locations.json`
 
 
@@ -2118,6 +2063,7 @@ So only files you likely need to modify are
         "alch",
         "druid",
         "mermonkey",
+        "skywarden",
         "farm",  # support
         "spike",
         "village",
@@ -2131,27 +2077,35 @@ So only files you likely need to modify are
 
 2. **Set hotkey**
 
-    - open `Files/text files/hotkeys.txt` and add a new row:
+    1. Open `Files/text files/hotkeys.json` and add a new entry:
 
-        - first, name of the monkey e.g. `test monkey`
-        - then, one space, followed by `=` then another space
-        - then, set an initial hotkey value; user sees this in gui. Some existing symbols can display weirdly when you
-         edit this file manually: make sure to update these through gui.
-        
-        Lets say you used just `q` as hotkey. Then simply write `test monkey = q`.
+    ```json
+        "test monkey": {
+            "value": "81",
+            "display": "q"
+        },
+    ```
 
-    - in `bot/commands/monkeys.py`, search `_get_hotkey` and support for new hotkey:
+    - Replace "test monkey" with actual name.
+    - "value" field is the internal KeyCode/Key string, "display" the name displayed in GUI. Make sure both values are 
+    strings. 
+        - You can keep the placeholders: here 81 corresponds to the letter 'q'. For actual value, just open the bot and 
+        update the hotkey, this will always update both fields.
+        - Known that some values don't work properly: this is a limitation with the `pynput` library API. One such 
+        example is the the slash numpad key "/" which turns to "-" even if game displays something like "NumpadDivide".
+
+    2. In `bot/commands/monkeys.py`, search `_get_hotkey` and support for new hotkey:
 
         ```python
         case "test_monkey":
             return hotkeys["test monkey"]
         ```
 
-    Here, 
-    
-    - use the code-level name you added in `_MONKEY_NAMES` inside `case` e.g. `case "test_monkey"`
-    - hotkey string you wrote in `hotkeys.txt` inside `hotkeys[...]`; remember to add `" "` to use string type
-    e.g. `hotkeys["test monkey"]`.
+        Here: 
+        
+        - use the code-level name you added in `_MONKEY_NAMES` inside `case` e.g. `case "test_monkey"`
+        - hotkey string you wrote in `hotkeys.json` inside `hotkeys[...]`; remember to add `" "` to use string type
+        e.g. `hotkeys["test monkey"]`.
 
 
 3. **Add targeting settings**

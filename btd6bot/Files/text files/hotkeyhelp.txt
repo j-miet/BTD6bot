@@ -1,15 +1,19 @@
 [Supported keys]
--letters (a-z), digits (0-9) and other keys that input text symbols (+ - * etc.)
--numpad keys 0-9: these will show as <96> for num0, <97> for num1, etc. up to <105> for num9.
--following special/modifier keys:
-  ctrl, ctrl_l, ctrl_r, enter, space, shift, shift_l, shift_r, backspace, tab, delete, home, 
-  end, page_up, page_down, up, down, left, right, f1-f12
+- letters (a-z), digits (0-9) and most keys that input text symbols (+ - * etc.)
+- following special/modifier keys:
+    ctrl, ctrl_l, ctrl_r, enter, space, shift, shift_l, shift_r, backspace, tab, delete, home, 
+    end, page_up, page_down, up, down, left, right, f1-f12
   ## alt, alt_l, alt_r, alt_gr are all supported, but only alt_l seems to register ##
+- various other numerical keycodes are supported, but these will simply show as <KEYCODE>.
+  For example numpad keys 0-9: <96> for num0, <97> for num1, ... up to <105> for num9.
+  ## Same button will most likely use a different keycode on other operating system! ##
+=> unfortunately, some keys have API limitations and won't work. For example pressing the "/" 
+key above numpad produces keycode "111": game shows "NumpadDivide" yet API treats it as "-".
 
 [How to set a hotkey]
--Click the hotkey row from panel that you'd like to modify - row is now highlighted.
--Press 'Set Hotkey' button below hotkey box. When button is grayed out, press any supported key.
--You should now see the right side of '=' change on that row you chose.
+- Click the hotkey row from panel that you'd like to modify - row is now highlighted.
+- Press 'Set Hotkey' button below hotkey box. When button is grayed out, press any supported key.
+- You should now see the right side of '=' change on that row you chose.
 ## Remember to scroll the hotkey panel down to access rest of the hotkeys ##
 ## Some keys might not get displayed correctly, but should still work ##
 
@@ -25,6 +29,6 @@ Most hotkey meanings should be easy to interpret but here's a breakdown:
  'centered path' for switching center location for x-x-2+ aces.
 
 [Custom gui hotkeys]
- 'pause' pauses the bot during plan execution, 
- 'start-stop' begins or stops (and resets) the current bot loop,
- 'exit' stop entire program and closes all gui windows.
+ 'pause' = pauses the bot during plan execution, 
+ 'start-stop' = begins or stops (and resets) the current bot loop/queue,
+ 'exit' = stops the program and closes all gui windows

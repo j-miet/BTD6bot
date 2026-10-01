@@ -1,0 +1,194 @@
+{
+    "dart monkey": {
+        "value": "81",
+        "display": "q"
+    },
+    "boomerang monkey": {
+        "value": "87",
+        "display": "w"
+    },
+    "bomb shooter": {
+        "value": "69",
+        "display": "e"
+    },
+    "tack shooter": {
+        "value": "82",
+        "display": "r"
+    },
+    "ice monkey": {
+        "value": "84",
+        "display": "t"
+    },
+    "glue gunner": {
+        "value": "89",
+        "display": "y"
+    },
+    "desperado": {
+        "value": "80",
+        "display": "p"
+    },
+    "sniper monkey": {
+        "value": "90",
+        "display": "z"
+    },
+    "monkey sub": {
+        "value": "88",
+        "display": "x"
+    },
+    "monkey buccaneer": {
+        "value": "67",
+        "display": "c"
+    },
+    "monkey ace": {
+        "value": "86",
+        "display": "v"
+    },
+    "heli pilot": {
+        "value": "66",
+        "display": "b"
+    },
+    "mortar monkey": {
+        "value": "78",
+        "display": "n"
+    },
+    "dartling gunner": {
+        "value": "77",
+        "display": "m"
+    },
+    "wizard monkey": {
+        "value": "65",
+        "display": "a"
+    },
+    "super monkey": {
+        "value": "83",
+        "display": "s"
+    },
+    "ninja monkey": {
+        "value": "68",
+        "display": "d"
+    },
+    "alchemist": {
+        "value": "70",
+        "display": "f"
+    },
+    "druid": {
+        "value": "71",
+        "display": "g"
+    },
+    "mermonkey": {
+        "value": "79",
+        "display": "o"
+    },
+    "banana farm": {
+        "value": "72",
+        "display": "h"
+    },
+    "skywarden": {
+        "value": "97",
+        "display": "<97>"
+    },
+    "spike factory": {
+        "value": "74",
+        "display": "j"
+    },
+    "monkey village": {
+        "value": "75",
+        "display": "k"
+    },
+    "engineer monkey": {
+        "value": "76",
+        "display": "l"
+    },
+    "beast handler": {
+        "value": "73",
+        "display": "i"
+    },
+    "hero": {
+        "value": "85",
+        "display": "u"
+    },
+    "upgrade top": {
+        "value": "188",
+        "display": ","
+    },
+    "upgrade mid": {
+        "value": "190",
+        "display": "."
+    },
+    "upgrade bot": {
+        "value": "189",
+        "display": "-"
+    },
+    "target change": {
+        "value": "tab",
+        "display": "tab"
+    },
+    "target reverse": {
+        "value": "220",
+        "display": "\u00a7"
+    },
+    "special 1": {
+        "value": "page_down",
+        "display": "page_down"
+    },
+    "special 2": {
+        "value": "page_up",
+        "display": "page_up"
+    },
+    "sell": {
+        "value": "backspace",
+        "display": "backspace"
+    },
+    "play/fast forward": {
+        "value": "space",
+        "display": "space"
+    },
+    "ability 1": {
+        "value": "49",
+        "display": "1"
+    },
+    "ability 2": {
+        "value": "50",
+        "display": "2"
+    },
+    "ability 3": {
+        "value": "51",
+        "display": "3"
+    },
+    "ability 4": {
+        "value": "52",
+        "display": "4"
+    },
+    "ability 5": {
+        "value": "53",
+        "display": "5"
+    },
+    "ability 6": {
+        "value": "54",
+        "display": "6"
+    },
+    "ability 7": {
+        "value": "55",
+        "display": "7"
+    },
+    "ability 8": {
+        "value": "56",
+        "display": "8"
+    },
+    "ability 9": {
+        "value": "57",
+        "display": "9"
+    },
+    "ability 10": {
+        "value": "48",
+        "display": "0"
+    },
+    "merge beast": {
+        "value": "103",
+        "display": "<103>"
+    },
+    "centered path": {
+        "value": "104",
+        "display": "<104>"
+    }
+}

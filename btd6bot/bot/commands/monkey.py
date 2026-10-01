@@ -123,6 +123,7 @@ class Monkey:
         "alch",
         "druid",
         "mermonkey",
+        "skywarden",
         "farm",  # support
         "spike",
         "village",
@@ -271,7 +272,7 @@ class Monkey:
             case "dart":
                 return hotkeys["dart monkey"]
             case "boomer":
-                return hotkeys["boomerang"]
+                return hotkeys["boomerang monkey"]
             case "bomb":
                 return hotkeys["bomb shooter"]
             case "tack":
@@ -310,6 +311,8 @@ class Monkey:
                 return hotkeys["druid"]
             case "mermonkey":
                 return hotkeys["mermonkey"]
+            case "skywarden":
+                return hotkeys["skywarden"]
             # Support
             case "farm":
                 return hotkeys["banana farm"]

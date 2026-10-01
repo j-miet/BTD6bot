@@ -49,8 +49,8 @@ def init_maindata(maindata_dict: dict[str, Any] = maindata) -> bool:
     failed: bool = False
     temp_dict: dict[str, Any] = {}
     try:
-        with open(Path(__file__).parent.parent / "Files" / "text files" / "hotkeys.txt") as hotkeys:
-            temp_dict["hotkeys"] = hotkeys.readlines()
+        with open(Path(__file__).parent.parent / "Files" / "hotkeys.json") as hotkeys:
+            temp_dict["hotkeys"] = json.load(hotkeys)
     except FileNotFoundError:
         cprint("Can't access hotkeys.txt file")
         failed = True
