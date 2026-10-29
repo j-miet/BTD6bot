@@ -31,7 +31,7 @@ _DEFAULT_LOCATIONS: dict[str, Any] = {
             "heroscreen_scroll": (0.1401041666667, 0.5731481481481),
             "hero_select": (0.5734375, 0.5592592592593),
             "menu_play": (0.5, 0.8657407407407),
-            "collection_bonusrewards": (0.7026041666667, 0.0444444444444),
+            "collection_bonusrewards": (0.7427083333333, 0.0444444444444),
             "search_map": (0.0395833333333, 0.1518518518519),
             "search_map_bar": (0.4338541666667, 0.0462962962963),
             "choose_map": (0.2817708333333, 0.3055555555556),
