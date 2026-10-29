@@ -34,9 +34,9 @@ section.
 ---
 #### [Update status]
 
-- Latest version of bot is **1.2.0** which matches BTD6's *Update 56*. 
+- Latest version of bot is **1.3.0** which matches BTD6's *Update 57*. 
 
-    => Release notes can be found [here](https://github.com/j-miet/BTD6bot/releases/tag/v1.2.0)
+    => Release notes can be found [here](https://github.com/j-miet/BTD6bot/releases/tag/v1.3.0)
     - For now, bot is planned to be updated after each major game update. These **updates** are marked as `1.X.0`
     - Sometimes bug fixes, small changes, new plans etc. are added between updates. These  **patches** are marked 
     as `1.X.Y`
