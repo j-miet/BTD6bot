@@ -1,4 +1,4 @@
-# Supported game plans (Last updated 2026-10-01)
+# Supported game plans (Last updated 2026-10-29)
 
 - this list is auto-updated using ``scripts/update_plans.py``
 - all implemented plans are listed. Each game mode includes
@@ -75,6 +75,7 @@
 - [Resort](#resort)
 - [Sanctuary](#sanctuary)
 - [Scrapyard](#scrapyard)
+- [Ship Capture](#ship-capture)
 - [Skates](#skates)
 - [Skull Tweak](#skull-tweak)
 - [Spa Pits](#spa-pits)
@@ -1720,6 +1721,26 @@
 			sniper 4-2-0
 			heli 5-0-5
 			
+			village 2-3-0
+			_______________________________________
+			
+### Ship Capture
+- Hard
+	- [Chimps](btd6bot/plans/ship_captureHardChimps.py)
+
+			[Hero] Striker
+			[Monkey Knowledge] -
+			-------------------------------------------------------------
+			===Monkeys & upgrades required===
+			dart 0-2-4
+			glue 0-2-5
+			
+			boat 3-2-0
+			
+			alch 4-2-0
+			druid 0-0-0
+			
+			spike 2-4-5
 			village 2-3-0
 			_______________________________________
 			
